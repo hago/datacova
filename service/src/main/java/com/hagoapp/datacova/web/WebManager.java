@@ -1,5 +1,6 @@
 package com.hagoapp.datacova.web;
 
+import com.hagoapp.datacova.CoVaException;
 import com.hagoapp.datacova.CoVaLogger;
 import com.hagoapp.datacova.config.WebConfig;
 import com.hagoapp.datacova.util.http.ResponseHelper;
@@ -27,6 +28,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -42,11 +44,11 @@ public class WebManager {
         return instance;
     }
 
-    public HttpServer createWebServer(WebConfig config) {
+    public HttpServer createWebServer(WebConfig config) throws CoVaException {
         return createWebServer(config, null);
     }
 
-    public HttpServer createWebServer(WebConfig config, String packageName) {
+    public HttpServer createWebServer(WebConfig config, String packageName) throws CoVaException {
         logger = CoVaLogger.getLogger();
         webConfig = config;
         VertxOptions options = new VertxOptions();
@@ -60,7 +62,7 @@ public class WebManager {
         return webServer;
     }
 
-    private Router findRouter(Vertx vertx, String packageName) {
+    private Router findRouter(Vertx vertx, String packageName) throws CoVaException {
         Map<String, WebHandler> handlers = loadAnnotatedWebHandlers(packageName);
         handlers.putAll(loadWebInterfaces(packageName));
         Router router = Router.router(vertx);
@@ -246,7 +248,7 @@ public class WebManager {
         return headers;
     }
 
-    private Map<String, WebHandler> loadAnnotatedWebHandlers(String packageName) {
+    private Map<String, WebHandler> loadAnnotatedWebHandlers(String packageName) throws CoVaException {
         logger.debug("searching annotated methods in {}", packageName);
         Reflections reflections = new Reflections(packageName, new MethodAnnotationsScanner());
         Set<Method> methods = reflections.getMethodsAnnotatedWith(WebEndPoint.class);
@@ -276,6 +278,7 @@ public class WebManager {
                 handler.setPath(endPoint.path());
                 handler.setMethod(httpMethod);
                 handler.setPathAsRegex(endPoint.isPathRegex());
+                checkDuplicateHandler(handler, map);
                 map.put(handler.getKey(), handler);
                 logger.info("Annotated web handler found for {} {}", httpMethod.name(), endPoint.path());
             }
@@ -283,7 +286,7 @@ public class WebManager {
         return map;
     }
 
-    private Map<String, WebHandler> loadWebInterfaces(String packageName) {
+    private Map<String, WebHandler> loadWebInterfaces(String packageName) throws CoVaException {
         Reflections reflections = new Reflections(packageName, new SubTypesScanner());
         Set<Class<? extends WebInterface>> types = reflections.getSubTypesOf(WebInterface.class);
         Map<String, WebHandler> map = new HashMap<>();
@@ -303,6 +306,7 @@ public class WebManager {
                     handler.setPath(instance.getPath());
                     handler.setMethod(entry.getKey());
                     handler.setPathAsRegex(instance.isPathRegex());
+                    checkDuplicateHandler(handler, map);
                     map.put(handler.getKey(), handler);
                     logger.info("WebInterface descendant web handler found for {} {}",
                             entry.getKey().name(), instance.getPath());
@@ -315,5 +319,24 @@ public class WebManager {
             }
         }
         return map;
+    }
+
+    private void checkDuplicateHandler(WebHandler handler, Map<String, WebHandler> map) throws CoVaException {
+        if (map.containsKey(handler.getKey())) {
+            String error = String.format("duplicated handler for %s %s",
+                    handler.getMethod().name(), handler.getPath());
+            logger.error(error);
+            throw new CoVaException(error);
+        }
+        if (handler.isPathAsRegex()) {
+            Pattern pattern = Pattern.compile(handler.getPath());
+            if (map.entrySet().stream().anyMatch(entry -> entry.getValue().getMethod().equals(handler.getMethod()) &&
+                    pattern.matcher(entry.getValue().getPath()).find())) {
+                String error = String.format("duplicated handler for %s %s",
+                        handler.getMethod().name(), handler.getPath());
+                logger.error(error);
+                throw new CoVaException(error);
+            }
+        }
     }
 }
