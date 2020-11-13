@@ -19,7 +19,7 @@ class PostgreSqlConnection(connectionConfig: PgSqlConfig) : DatabaseConnection(c
         }
     }
 
-    private var config: PgSqlConfig = connectionConfig
+    override var config: PgSqlConfig = connectionConfig
 
     init {
         if (config.database.isNullOrBlank()) {

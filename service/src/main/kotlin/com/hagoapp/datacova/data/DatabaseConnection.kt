@@ -16,6 +16,8 @@ abstract class DatabaseConnection(connectionConfig: ConnectionConfig) : Closeabl
         }
     }
 
+    protected open val config = connectionConfig
+
     protected lateinit var connection: Connection
 
     abstract fun getAvailableTables(): Map<String, List<Table>>
