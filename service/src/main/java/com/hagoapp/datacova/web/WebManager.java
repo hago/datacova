@@ -92,13 +92,13 @@ public class WebManager {
         logger.debug("Create handler for {}", handler.toString());
         if (WebInterface.class.isAssignableFrom(handler.getInstanceClass())) {
             route.handler(context -> {
-                logger.info("{} {} from {}", handler.getMethod().name(), handler.getPath(),
-                        context.request().remoteAddress().host());
                 try {
                     Object instance = handler.getInstanceClass().getDeclaredConstructor().newInstance();
                     WebInterface webInterface = (WebInterface) instance;
                     WebInterface.Handler theHandler = webInterface.requestHandlers().get(handler.getMethod());
                     theHandler.handle(context);
+                    logger.info("{} {} from {}\t{}", handler.getMethod().name(), handler.getPath(),
+                            context.request().remoteAddress().host(), context.response().getStatusCode());
                 } catch (InstantiationException | IllegalAccessException |
                         InvocationTargetException | NoSuchMethodException e) {
                     // not gonna happen since instantiation has been performed once while annotated end point
@@ -106,15 +106,17 @@ public class WebManager {
                     e.printStackTrace();
                     ResponseHelper.respondError(context, HttpResponseStatus.INTERNAL_SERVER_ERROR,
                             "Unexpected Server Error", e.getMessage());
+                    logger.info("{} {} from {}\t500", handler.getMethod().name(), handler.getPath(),
+                            context.request().remoteAddress().host());
                 }
             });
         } else {
             route.handler(context -> {
-                logger.info("{} {} from {}", handler.getMethod().name(), handler.getPath(),
-                        context.request().remoteAddress().host());
                 try {
                     Object instance = handler.getInstanceClass().getDeclaredConstructor().newInstance();
                     handler.getFunction().invoke(instance, context);
+                    logger.info("{} {} from {}\t{}", handler.getMethod().name(), handler.getPath(),
+                            context.request().remoteAddress().host(), context.response().getStatusCode());
                 } catch (InstantiationException | IllegalAccessException |
                         InvocationTargetException | NoSuchMethodException e) {
                     // not gonna happen since instantiation has been performed once while annotated end point
@@ -122,6 +124,8 @@ public class WebManager {
                     e.printStackTrace();
                     ResponseHelper.respondError(context, HttpResponseStatus.INTERNAL_SERVER_ERROR,
                             "Unexpected Server Error", e.getMessage());
+                    logger.info("{} {} from {}\t500", handler.getMethod().name(), handler.getPath(),
+                            context.request().remoteAddress().host());
                 }
             });
         }
