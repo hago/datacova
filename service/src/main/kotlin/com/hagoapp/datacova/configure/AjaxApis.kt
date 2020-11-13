@@ -16,7 +16,7 @@ class AjaxApis {
 
     private val logger = CoVaLogger.getLogger();
 
-    @WebEndPoint(methods = [HttpMethod.POST], path = "/db/connect")
+    @WebEndPoint(methods = [HttpMethod.POST], path = "/db/connect", isBlocking = true)
     fun connectDatabase(routingContext: RoutingContext) {
         logger.debug("database config data received: ${RequestHelper.readBodyString(routingContext)}")
         val config = RequestHelper.readBodyClass(routingContext, DatabaseConfig::class.java)
