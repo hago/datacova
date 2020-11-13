@@ -56,8 +56,13 @@
                 data: JSON.stringify(load),
                 dataType: 'json'
             }).done(function (json) {
-                messageBox("success");
+                if (json.data.result) {
+                    messageBox("success");
+                } else {
+                    messageBox(json.data.detail, "danger");
+                }
             }).fail(function (jqxhr, status, error) {
+                console.log(error)
                 messageBox(error, 'danger');
             })
         }
@@ -82,7 +87,6 @@
                 autohide: true,
                 delay: 1500
             });
-            messageBox('error', 'danger', 2000);
         })
     </script>
 </head>
@@ -291,7 +295,7 @@
             <button class="btn btn-lg btn-primary">Save</button>
         </h1>
     </div>
-    <div class="toast fade hide" role="alert" aria-live="assertive" aria-atomic="true" style="position: absolute; z-index: 10; margin: auto">
+    <div class="toast fade hide fixed-top" role="alert" aria-live="assertive" aria-atomic="true" style="margin: auto">
         <div class="toast-header">
             <strong class="mr-auto">Connection Verification</strong>
             <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
