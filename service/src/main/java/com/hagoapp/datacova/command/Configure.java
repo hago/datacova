@@ -31,8 +31,8 @@ public class Configure implements Callable<Integer> {
     public Integer call() throws Exception {
         WebConfig config = createConfigureWebConfig();
         WebManager.getManager().createWebServer(config, "com.hagoapp.datacova.configure");
-        System.out.println(String.format("Please visit http://%s:%d to create config file."
-                , bindIpAddress, port));
+        System.out.printf("Please visit http://%s:%d to create config file.%n"
+                , bindIpAddress, port);
         logger = CoVaLogger.getLogger();
         return 0;
     }
