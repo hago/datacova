@@ -86,12 +86,20 @@ public class WebManager {
         return router;
     }
 
-    @SuppressWarnings("unchecked")
     private void createRouteHandlers(Router router, WebHandler handler) {
         Route route = createRoute(router, handler);
         logger.debug("Create handler for {}", handler.toString());
+        if (handler.isBlocking()) {
+            createBlockHandler(handler, route);
+        } else {
+            createNonBlockHandler(handler, route);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void createBlockHandler(WebHandler handler, Route route) {
         if (WebInterface.class.isAssignableFrom(handler.getInstanceClass())) {
-            route.handler(context -> {
+            route.blockingHandler(context -> {
                 try {
                     Object instance = handler.getInstanceClass().getDeclaredConstructor().newInstance();
                     WebInterface webInterface = (WebInterface) instance;
@@ -99,10 +107,10 @@ public class WebManager {
                     theHandler.handle(context);
                     logger.info("{} {} from {}\t{}", handler.getMethod().name(), handler.getPath(),
                             context.request().remoteAddress().host(), context.response().getStatusCode());
-                } catch (InstantiationException | IllegalAccessException |
-                        InvocationTargetException | NoSuchMethodException e) {
-                    // not gonna happen since instantiation has been performed once while annotated end point
-                    // discovering
+                    if (!context.response().ended()) {
+                        context.response().end();
+                    }
+                } catch (Throwable e) {
                     e.printStackTrace();
                     ResponseHelper.respondError(context, HttpResponseStatus.INTERNAL_SERVER_ERROR,
                             "Unexpected Server Error", e.getMessage());
@@ -111,22 +119,71 @@ public class WebManager {
                 }
             });
         } else {
-            route.handler(context -> {
+            route.blockingHandler(context -> {
                 try {
                     Object instance = handler.getInstanceClass().getDeclaredConstructor().newInstance();
                     handler.getFunction().invoke(instance, context);
                     logger.info("{} {} from {}\t{}", handler.getMethod().name(), handler.getPath(),
                             context.request().remoteAddress().host(), context.response().getStatusCode());
-                } catch (InstantiationException | IllegalAccessException |
-                        InvocationTargetException | NoSuchMethodException e) {
-                    // not gonna happen since instantiation has been performed once while annotated end point
-                    // discovering
+                    if (!context.response().ended()) {
+                        context.response().end();
+                    }
+                } catch (Throwable e) {
                     e.printStackTrace();
                     ResponseHelper.respondError(context, HttpResponseStatus.INTERNAL_SERVER_ERROR,
                             "Unexpected Server Error", e.getMessage());
                     logger.info("{} {} from {}\t500", handler.getMethod().name(), handler.getPath(),
                             context.request().remoteAddress().host());
                 }
+            });
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void createNonBlockHandler(WebHandler handler, Route route) {
+        if (WebInterface.class.isAssignableFrom(handler.getInstanceClass())) {
+            route.handler(context -> {
+                try {
+                    Object instance = handler.getInstanceClass().getDeclaredConstructor().newInstance();
+                    WebInterface webInterface = (WebInterface) instance;
+                    WebInterface.Handler theHandler = webInterface.requestHandlers().get(handler.getMethod());
+                    theHandler.handle(context);
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                    context.fail(e);
+                }
+            }).handler(context -> {
+                logger.info("{} {} from {}\t{}", handler.getMethod().name(), handler.getPath(),
+                        context.request().remoteAddress().host(), context.response().getStatusCode());
+                if (!context.response().ended()) {
+                    context.response().end();
+                }
+            }).failureHandler(context -> {
+                ResponseHelper.respondError(context, HttpResponseStatus.INTERNAL_SERVER_ERROR,
+                        "Unexpected Server Error", context.failure().getMessage());
+                logger.info("{} {} from {}\t500", handler.getMethod().name(), handler.getPath(),
+                        context.request().remoteAddress().host());
+            });
+        } else {
+            route.handler(context -> {
+                try {
+                    Object instance = handler.getInstanceClass().getDeclaredConstructor().newInstance();
+                    handler.getFunction().invoke(instance, context);
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                    context.fail(e);
+                }
+            }).handler(context -> {
+                logger.info("{} {} from {}\t{}", handler.getMethod().name(), handler.getPath(),
+                        context.request().remoteAddress().host(), context.response().getStatusCode());
+                if (!context.response().ended()) {
+                    context.response().end();
+                }
+            }).failureHandler(context -> {
+                ResponseHelper.respondError(context, HttpResponseStatus.INTERNAL_SERVER_ERROR,
+                        "Unexpected Server Error", context.failure().getMessage());
+                logger.info("{} {} from {}\t500", handler.getMethod().name(), handler.getPath(),
+                        context.request().remoteAddress().host());
             });
         }
     }
