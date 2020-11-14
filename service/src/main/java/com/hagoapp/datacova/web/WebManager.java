@@ -323,20 +323,36 @@ public class WebManager {
 
     private void checkDuplicateHandler(WebHandler handler, Map<String, WebHandler> map) throws CoVaException {
         if (map.containsKey(handler.getKey())) {
-            String error = String.format("duplicated handler for %s %s",
-                    handler.getMethod().name(), handler.getPath());
-            logger.error(error);
-            throw new CoVaException(error);
+            generateDuplicateException(handler, map.get(handler.getKey()));
         }
         if (handler.isPathAsRegex()) {
             Pattern pattern = Pattern.compile(handler.getPath());
-            if (map.entrySet().stream().anyMatch(entry -> entry.getValue().getMethod().equals(handler.getMethod()) &&
-                    pattern.matcher(entry.getValue().getPath()).find())) {
-                String error = String.format("duplicated handler for %s %s",
-                        handler.getMethod().name(), handler.getPath());
-                logger.error(error);
-                throw new CoVaException(error);
+            List<WebHandler> nonRegexHandlers = map.values().stream().filter(entry ->
+                    entry.getMethod().equals(handler.getMethod()) && !entry.isPathAsRegex())
+                    .collect(Collectors.toList());
+            for (WebHandler exHandler : nonRegexHandlers) {
+                if (pattern.matcher(exHandler.getPath()).find()) {
+                    generateDuplicateException(handler, exHandler);
+                }
+            }
+        } else {
+            List<WebHandler> regexHandlers = map.values().stream().filter(webHandler -> webHandler.getMethod().equals(handler.getMethod()) &&
+                    webHandler.isPathAsRegex()).collect(Collectors.toList());
+            for (WebHandler exHandler : regexHandlers) {
+                Pattern p = Pattern.compile(exHandler.getPath());
+                if (p.matcher(handler.getPath()).find()) {
+                    generateDuplicateException(handler, exHandler);
+                }
             }
         }
+    }
+
+    private void generateDuplicateException(WebHandler handler1, WebHandler handler2) throws CoVaException {
+        String error = String.format("duplicated handler for %s [%s, %s] between %s.%s and %s.%s",
+                handler1.getMethod().name(), handler1.getPath(), handler2.getPath(),
+                handler1.getInstanceClass().getCanonicalName(), handler1.getFunction().getName(),
+                handler2.getInstanceClass(), handler2.getFunction().getName());
+        logger.error(error);
+        throw new CoVaException(error);
     }
 }
