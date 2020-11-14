@@ -48,7 +48,7 @@ public class WebManager {
         return createWebServer(config, null);
     }
 
-    public HttpServer createWebServer(WebConfig config, String packageName) throws CoVaException {
+    public HttpServer createWebServer(WebConfig config, List<String> packageNames) throws CoVaException {
         logger = CoVaLogger.getLogger();
         webConfig = config;
         VertxOptions options = new VertxOptions();
@@ -56,15 +56,18 @@ public class WebManager {
         Vertx vx = Vertx.vertx(options);
         HttpServerOptions webOptions = new HttpServerOptions();
         HttpServer webServer = vx.createHttpServer(webOptions);
-        Router router = findRouter(vx, packageName);
+        Router router = findRouter(vx, packageNames);
         webServer.requestHandler(router);
         webServer.listen(config.getPort(), config.getBindIp());
         return webServer;
     }
 
-    private Router findRouter(Vertx vertx, String packageName) throws CoVaException {
-        Map<String, WebHandler> handlers = loadAnnotatedWebHandlers(packageName);
-        handlers.putAll(loadWebInterfaces(packageName));
+    private Router findRouter(Vertx vertx, List<String> packageNames) throws CoVaException {
+        Map<String, WebHandler> handlers = new HashMap<>();
+        for (String packageName : packageNames) {
+            handlers.putAll(loadAnnotatedWebHandlers(packageName));
+            handlers.putAll(loadWebInterfaces(packageName));
+        }
         Router router = Router.router(vertx);
         router.route().failureHandler(context -> {
             Throwable e = context.failure();
