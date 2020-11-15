@@ -8,6 +8,7 @@ import picocli.CommandLine;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 @CommandLine.Command(name = "config", description = "create config file")
@@ -30,7 +31,10 @@ public class Configure implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         WebConfig config = createConfigureWebConfig();
-        WebManager.getManager().createWebServer(config, "com.hagoapp.datacova.configure");
+        WebManager.getManager().createWebServer(config, List.of(
+                "com.hagoapp.datacova.configure",
+                "com.hagoapp.datacova.web.default"
+        ));
         System.out.printf("Please visit http://%s:%d to create config file.%n"
                 , bindIpAddress, port);
         logger = CoVaLogger.getLogger();
