@@ -77,7 +77,7 @@ public class ResponseHelper {
         rsp.putHeader("Content-Length", String.valueOf(content.length));
         rsp.setStatusCode(status.code());
         rsp.write(Buffer.buffer(content));
-        rsp.end();
+        //rsp.end();
     }
 
     public static <T> void sendResponse(RoutingContext routeContext, HttpResponseStatus status, T content) {
