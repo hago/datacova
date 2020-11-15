@@ -19,6 +19,15 @@ public class WebConfig {
     private String tempDirectory = "./";
     private String uploadTempDirectory = "./";
     private long uploadSizeLimit = -1;
+    private boolean outputStackTrace = true;
+
+    public boolean isOutputStackTrace() {
+        return outputStackTrace;
+    }
+
+    public void setOutputStackTrace(boolean outputStackTrace) {
+        this.outputStackTrace = outputStackTrace;
+    }
 
     public String getBindIp() {
         return bindIp;
