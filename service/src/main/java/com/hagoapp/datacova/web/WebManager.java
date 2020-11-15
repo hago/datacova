@@ -331,7 +331,7 @@ public class WebManager {
         if (handler.isPathAsRegex()) {
             Pattern pattern = Pattern.compile(handler.getPath());
             List<WebHandler> nonRegexHandlers = map.values().stream().filter(entry ->
-                    entry.getMethod().equals(handler.getMethod()) && !entry.isPathAsRegex())
+                    !entry.getMethod().equals(handler.getMethod()) && !entry.isPathAsRegex())
                     .collect(Collectors.toList());
             for (WebHandler exHandler : nonRegexHandlers) {
                 if (pattern.matcher(exHandler.getPath()).find()) {
