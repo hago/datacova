@@ -71,11 +71,20 @@ public class WebManager {
         Router router = Router.router(vertx);
         router.route().failureHandler(context -> {
             Throwable e = context.failure();
-            logger.error("Unexpected server error: {}", e.getMessage());
-            e.printStackTrace();
-            ResponseHelper.respondError(context, HttpResponseStatus.INTERNAL_SERVER_ERROR, e.getMessage(), Map.of(
-                    "stackTrace", e.getStackTrace()
-            ));
+            int code = context.statusCode();
+            String errorMessage;
+            if (e == null) {
+                errorMessage = HttpResponseStatus.valueOf(code).reasonPhrase();
+            } else {
+                errorMessage = e.getMessage();
+                e.printStackTrace();
+            }
+            System.out.println(e);
+            System.out.println(code);
+            logger.info("{} {} from {}\t{}", context.request().method().name(), context.request().path(),
+                    context.request().remoteAddress().host(), code);
+            ResponseHelper.respondError(context, HttpResponseStatus.valueOf(code), errorMessage,
+                    webConfig.isOutputStackTrace() && (e != null) ? Map.of("stackTrace", e.getStackTrace()) : null);
         });
         BodyHandler bodyHandler = BodyHandler.create()
                 .setBodyLimit(webConfig.getUploadSizeLimit())
@@ -115,12 +124,9 @@ public class WebManager {
                     if (!context.response().ended()) {
                         context.response().end();
                     }
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                    ResponseHelper.respondError(context, HttpResponseStatus.INTERNAL_SERVER_ERROR,
-                            "Unexpected Server Error", e.getMessage());
-                    logger.info("{} {} from {}\t500", handler.getMethod().name(), handler.getPath(),
-                            context.request().remoteAddress().host());
+                } catch (NoSuchMethodException | InstantiationException |
+                        IllegalAccessException | InvocationTargetException e) {
+                    context.fail(e);
                 }
             });
         } else {
@@ -133,12 +139,9 @@ public class WebManager {
                     if (!context.response().ended()) {
                         context.response().end();
                     }
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                    ResponseHelper.respondError(context, HttpResponseStatus.INTERNAL_SERVER_ERROR,
-                            "Unexpected Server Error", e.getMessage());
-                    logger.info("{} {} from {}\t500", handler.getMethod().name(), handler.getPath(),
-                            context.request().remoteAddress().host());
+                } catch (NoSuchMethodException | InstantiationException |
+                        IllegalAccessException | InvocationTargetException e) {
+                    context.fail(e);
                 }
             });
         }
@@ -163,11 +166,6 @@ public class WebManager {
                 if (!context.response().ended()) {
                     context.response().end();
                 }
-            }).failureHandler(context -> {
-                ResponseHelper.respondError(context, HttpResponseStatus.INTERNAL_SERVER_ERROR,
-                        "Unexpected Server Error", context.failure().getMessage());
-                logger.info("{} {} from {}\t500", handler.getMethod().name(), handler.getPath(),
-                        context.request().remoteAddress().host());
             });
         } else {
             route.handler(context -> {
@@ -184,11 +182,6 @@ public class WebManager {
                 if (!context.response().ended()) {
                     context.response().end();
                 }
-            }).failureHandler(context -> {
-                ResponseHelper.respondError(context, HttpResponseStatus.INTERNAL_SERVER_ERROR,
-                        "Unexpected Server Error", context.failure().getMessage());
-                logger.info("{} {} from {}\t500", handler.getMethod().name(), handler.getPath(),
-                        context.request().remoteAddress().host());
             });
         }
     }
