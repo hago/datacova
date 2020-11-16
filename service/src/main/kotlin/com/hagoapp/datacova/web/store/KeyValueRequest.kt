@@ -9,5 +9,5 @@ package com.hagoapp.datacova.web.store
 
 data class KeyValueRequest (
     val key: String,
-    val value: String
+    val value: String?
 )
