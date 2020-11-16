@@ -1,4 +1,4 @@
-package com.hagoapp.datacova.configure
+package com.hagoapp.datacova.web.default
 
 import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.util.http.ResponseHelper
@@ -17,7 +17,7 @@ class FavIcon : WebInterface {
     override fun requestHandlers(): Map<HttpMethod, WebInterface.Handler> {
         return mapOf(
             HttpMethod.GET to WebInterface.Handler { context ->
-                val stream = PageDisplay::class.java.getResourceAsStream("/web/favicon.ico")
+                val stream = FavIcon::class.java.getResourceAsStream("/web/favicon.png")
                 if (stream == null) {
                     context.fail(404)
                 } else {
@@ -26,7 +26,7 @@ class FavIcon : WebInterface {
                         ResponseHelper.sendResponse(
                             context, HttpResponseStatus.OK,
                             mutableMapOf(
-                                HttpHeaders.CONTENT_TYPE.toString() to "text/html"
+                                HttpHeaders.CONTENT_TYPE.toString() to "image/png"
                             ),
                             content
                         )
