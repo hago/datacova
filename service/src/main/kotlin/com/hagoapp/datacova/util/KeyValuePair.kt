@@ -5,7 +5,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package com.hagoapp.datacova.web.store
+package com.hagoapp.datacova.util
 
 data class KeyValuePair (
     val key: String,

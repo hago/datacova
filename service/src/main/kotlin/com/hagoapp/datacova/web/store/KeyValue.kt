@@ -14,6 +14,7 @@ import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.redis.RedisPool
 import com.hagoapp.datacova.user.UserInfo
+import com.hagoapp.datacova.util.KeyValuePair
 import com.hagoapp.datacova.util.http.RequestHelper
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.annotation.WebEndPoint
