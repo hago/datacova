@@ -3,6 +3,7 @@ package com.hagoapp.datacova.config;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.hagoapp.datacova.CoVaException;
+import com.hagoapp.datacova.data.redis.RedisConfig;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -41,6 +42,7 @@ public class CoVaConfig {
     private WebConfig web;
     private DatabaseConfig database;
     private LoggingConfig logging;
+    private RedisConfig redis;
 
     public WebConfig getWeb() {
         return web;
@@ -64,5 +66,13 @@ public class CoVaConfig {
 
     public void setLogging(LoggingConfig logging) {
         this.logging = logging;
+    }
+
+    public RedisConfig getRedis() {
+        return redis;
+    }
+
+    public void setRedis(RedisConfig redis) {
+        this.redis = redis;
     }
 }
