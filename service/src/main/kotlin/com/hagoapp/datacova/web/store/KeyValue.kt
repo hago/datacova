@@ -70,4 +70,41 @@ class KeyValue {
             }
         }
     }
+
+    @WebEndPoint(methods = [HttpMethod.GET], path = "/store/pair/:key", authTypes = [AuthType.UserToken])
+    fun readKey(context: RoutingContext) {
+        RedisPool(CoVaConfig.getConfig().redis).use { pool ->
+            pool.jedis.use {
+                val key = context.request().getParam("key")
+                val value = it.hget(
+                    Authenticator.getUser(context).toString(),
+                    context.request().getParam("key")
+                )
+                ResponseHelper.sendResponse(
+                    context, HttpResponseStatus.OK, mapOf(
+                        "code" to 0,
+                        "data" to KeyValueRequest(key, if (value == "nil") null else value)
+                    )
+                )
+            }
+        }
+    }
+
+    @WebEndPoint(methods = [HttpMethod.POST], path = "/store/pairs/:key", authTypes = [AuthType.UserToken])
+    fun readMultipleKeys(context: RoutingContext) {
+        RedisPool(CoVaConfig.getConfig().redis).use { pool ->
+            pool.jedis.use {
+                val key = context.request().getParam("key")
+                val value = it.hget(Authenticator.getUser(context).toString(), key)
+                ResponseHelper.sendResponse(
+                    context, HttpResponseStatus.OK, mapOf(
+                        "code" to 0,
+                        "data" to mapOf(
+                            key to if (value == "nil") null else value
+                        )
+                    )
+                )
+            }
+        }
+    }
 }
