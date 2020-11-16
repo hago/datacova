@@ -27,7 +27,7 @@ class KeyValue {
 
     @WebEndPoint(methods = [HttpMethod.POST, HttpMethod.PUT], path = "/store/pair", authTypes = [AuthType.UserToken])
     fun storeKeyValue(context: RoutingContext) {
-        val kv = RequestHelper.readBodyClass(context, KeyValueRequest::class.java)
+        val kv = RequestHelper.readBodyClass(context, KeyValuePair::class.java)
         if (kv != null) {
             saveKeyPairs(Authenticator.getUser(context), listOf(kv))
             ResponseHelper.sendResponse(
@@ -43,10 +43,10 @@ class KeyValue {
 
     @WebEndPoint(methods = [HttpMethod.POST, HttpMethod.PUT], path = "/store/pairs", authTypes = [AuthType.UserToken])
     fun storeKeyValues(context: RoutingContext) {
-        val token = object : TypeToken<List<KeyValueRequest>>() {}
+        val token = object : TypeToken<List<KeyValuePair>>() {}
         val json = RequestHelper.readBodyString(context)
         try {
-            val lst = Gson().fromJson<List<KeyValueRequest>>(json, token.type)
+            val lst = Gson().fromJson<List<KeyValuePair>>(json, token.type)
             if (lst != null) {
                 saveKeyPairs(Authenticator.getUser(context), lst)
                 ResponseHelper.sendResponse(
@@ -63,7 +63,7 @@ class KeyValue {
         }
     }
 
-    private fun saveKeyPairs(userInfo: UserInfo, pairs: List<KeyValueRequest>) {
+    private fun saveKeyPairs(userInfo: UserInfo, pairs: List<KeyValuePair>) {
         RedisPool(CoVaConfig.getConfig().redis).use { pool ->
             pool.jedis.use { it ->
                 it.hset(userInfo.toString(), pairs.map { item -> Pair(item.key, item.value) }.toMap())
@@ -83,28 +83,38 @@ class KeyValue {
                 ResponseHelper.sendResponse(
                     context, HttpResponseStatus.OK, mapOf(
                         "code" to 0,
-                        "data" to KeyValueRequest(key, if (value == "nil") null else value)
+                        "data" to KeyValuePair(key, if (value == "nil") null else value)
                     )
                 )
             }
         }
     }
 
-    @WebEndPoint(methods = [HttpMethod.POST], path = "/store/pairs/:key", authTypes = [AuthType.UserToken])
+    @WebEndPoint(methods = [HttpMethod.POST], path = "/store/pairs/fetch", authTypes = [AuthType.UserToken])
     fun readMultipleKeys(context: RoutingContext) {
-        RedisPool(CoVaConfig.getConfig().redis).use { pool ->
-            pool.jedis.use {
-                val key = context.request().getParam("key")
-                val value = it.hget(Authenticator.getUser(context).toString(), key)
-                ResponseHelper.sendResponse(
-                    context, HttpResponseStatus.OK, mapOf(
-                        "code" to 0,
-                        "data" to mapOf(
-                            key to if (value == "nil") null else value
+        val json = RequestHelper.readBodyString(context)
+        val token = object : TypeToken<List<KeyValuePair>>() {}
+        try {
+            val keys = Gson().fromJson<List<String>>(json, token.type)
+            RedisPool(CoVaConfig.getConfig().redis).use { pool ->
+                pool.jedis.use {
+                    val values = it.hmget(Authenticator.getUser(context).toString(), *keys.toTypedArray())
+                    val pairs = Array(keys.size) { i ->
+                        KeyValuePair(
+                            keys[i],
+                            if (values[i] == "nil") null else values[i]
+                        )
+                    }
+                    ResponseHelper.sendResponse(
+                        context, HttpResponseStatus.OK, mapOf(
+                            "code" to 0,
+                            "data" to pairs
                         )
                     )
-                )
+                }
             }
+        } catch (e: JsonSyntaxException) {
+            context.fail(HttpResponseStatus.BAD_REQUEST.code(), CoVaException("invalid body"))
         }
     }
 }
