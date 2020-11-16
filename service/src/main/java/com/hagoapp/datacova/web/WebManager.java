@@ -40,6 +40,8 @@ public class WebManager {
     private Logger logger;
     private WebConfig webConfig;
     private static final WebManager instance = new WebManager();
+    private final Map<String, WebHandler> handlers = new HashMap<>();
+    ;
 
     public static WebManager getManager() {
         return instance;
@@ -64,10 +66,9 @@ public class WebManager {
     }
 
     private Router findRouter(Vertx vertx, List<String> packageNames) throws CoVaException {
-        Map<String, WebHandler> handlers = new HashMap<>();
         for (String packageName : packageNames) {
-            handlers.putAll(loadAnnotatedWebHandlers(packageName));
-            handlers.putAll(loadWebInterfaces(packageName));
+            loadAnnotatedWebHandlers(packageName);
+            loadWebInterfaces(packageName);
         }
         Router router = Router.router(vertx);
         router.route().failureHandler(context -> {
@@ -238,11 +239,10 @@ public class WebManager {
         return headers;
     }
 
-    private Map<String, WebHandler> loadAnnotatedWebHandlers(String packageName) throws CoVaException {
+    private void loadAnnotatedWebHandlers(String packageName) throws CoVaException {
         logger.info("searching WebEndPoint annotated methods in {}", packageName);
         Reflections reflections = new Reflections(packageName, new MethodAnnotationsScanner());
         Set<Method> methods = reflections.getMethodsAnnotatedWith(WebEndPoint.class);
-        Map<String, WebHandler> map = new HashMap<>();
         for (Method method : methods) {
             Class<?> clz = method.getDeclaringClass();
             if ((packageName != null) && !clz.getPackageName().startsWith(packageName)) {
@@ -268,19 +268,17 @@ public class WebManager {
                 handler.setPath(endPoint.path());
                 handler.setMethod(httpMethod);
                 handler.setPathAsRegex(endPoint.isPathRegex());
-                checkDuplicateHandler(handler, map);
-                map.put(handler.getKey(), handler);
+                checkDuplicateHandler(handler, handlers);
+                handlers.put(handler.getKey(), handler);
                 logger.info("Annotated web handler found for {} {}", httpMethod.name(), endPoint.path());
             }
         }
-        return map;
     }
 
-    private Map<String, WebHandler> loadWebInterfaces(String packageName) throws CoVaException {
+    private void loadWebInterfaces(String packageName) throws CoVaException {
         logger.info("searching WebInterface descendants in {}", packageName);
         Reflections reflections = new Reflections(packageName, new SubTypesScanner());
         Set<Class<? extends WebInterface>> types = reflections.getSubTypesOf(WebInterface.class);
-        Map<String, WebHandler> map = new HashMap<>();
         for (Class<? extends WebInterface> clz : types) {
             if ((packageName != null) && !clz.getPackageName().startsWith(packageName)) {
                 continue;
@@ -297,8 +295,8 @@ public class WebManager {
                     handler.setPath(instance.getPath());
                     handler.setMethod(entry.getKey());
                     handler.setPathAsRegex(instance.isPathRegex());
-                    checkDuplicateHandler(handler, map);
-                    map.put(handler.getKey(), handler);
+                    checkDuplicateHandler(handler, handlers);
+                    handlers.put(handler.getKey(), handler);
                     logger.info("WebInterface descendant web handler found for {} {}",
                             entry.getKey().name(), instance.getPath());
                 }
@@ -309,7 +307,6 @@ public class WebManager {
                         clz.getCanonicalName(), e.getMessage());
             }
         }
-        return map;
     }
 
     private void checkDuplicateHandler(WebHandler handler, Map<String, WebHandler> map) throws CoVaException {
