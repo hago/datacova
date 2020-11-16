@@ -7,7 +7,7 @@
 
 package com.hagoapp.datacova.web.store
 
-data class KeyValueRequest (
+data class KeyValuePair (
     val key: String,
     val value: String?
 )
