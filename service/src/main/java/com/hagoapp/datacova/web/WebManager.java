@@ -9,6 +9,7 @@ import com.hagoapp.datacova.web.authentication.AuthType;
 import com.hagoapp.datacova.web.authentication.Authenticator;
 import com.hagoapp.datacova.web.authentication.AuthenticatorFactory;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.http.HttpMethod;
@@ -79,8 +80,8 @@ public class WebManager {
                 errorMessage = e.getMessage();
                 e.printStackTrace();
             }
-            System.out.println(e);
-            System.out.println(code);
+            //System.out.println(e);
+            //System.out.println(code);
             logger.info("{} {} from {}\t{}", context.request().method().name(), context.request().path(),
                     context.request().remoteAddress().host(), code);
             ResponseHelper.respondError(context, HttpResponseStatus.valueOf(code), errorMessage,
@@ -119,31 +120,23 @@ public class WebManager {
                     WebInterface webInterface = (WebInterface) instance;
                     WebInterface.Handler theHandler = webInterface.requestHandlers().get(handler.getMethod());
                     theHandler.handle(context);
-                    logger.info("{} {} from {}\t{}", handler.getMethod().name(), handler.getPath(),
-                            context.request().remoteAddress().host(), context.response().getStatusCode());
-                    if (!context.response().ended()) {
-                        context.response().end();
-                    }
+                    context.next();
                 } catch (NoSuchMethodException | InstantiationException |
                         IllegalAccessException | InvocationTargetException e) {
                     context.fail(e);
                 }
-            });
+            }).handler(logHandler);
         } else {
             route.blockingHandler(context -> {
                 try {
                     Object instance = handler.getInstanceClass().getDeclaredConstructor().newInstance();
                     handler.getFunction().invoke(instance, context);
-                    logger.info("{} {} from {}\t{}", handler.getMethod().name(), handler.getPath(),
-                            context.request().remoteAddress().host(), context.response().getStatusCode());
-                    if (!context.response().ended()) {
-                        context.response().end();
-                    }
+                    context.next();
                 } catch (NoSuchMethodException | InstantiationException |
                         IllegalAccessException | InvocationTargetException e) {
                     context.fail(e);
                 }
-            });
+            }).blockingHandler(logHandler);
         }
     }
 
@@ -156,35 +149,36 @@ public class WebManager {
                     WebInterface webInterface = (WebInterface) instance;
                     WebInterface.Handler theHandler = webInterface.requestHandlers().get(handler.getMethod());
                     theHandler.handle(context);
+                    context.next();
                 } catch (Throwable e) {
                     e.printStackTrace();
                     context.fail(e);
                 }
-            }).handler(context -> {
-                logger.info("{} {} from {}\t{}", handler.getMethod().name(), handler.getPath(),
-                        context.request().remoteAddress().host(), context.response().getStatusCode());
-                if (!context.response().ended()) {
-                    context.response().end();
-                }
-            });
+            }).handler(logHandler);
         } else {
             route.handler(context -> {
                 try {
                     Object instance = handler.getInstanceClass().getDeclaredConstructor().newInstance();
                     handler.getFunction().invoke(instance, context);
+                    context.next();
                 } catch (Throwable e) {
                     e.printStackTrace();
                     context.fail(e);
                 }
-            }).handler(context -> {
-                logger.info("{} {} from {}\t{}", handler.getMethod().name(), handler.getPath(),
-                        context.request().remoteAddress().host(), context.response().getStatusCode());
-                if (!context.response().ended()) {
-                    context.response().end();
-                }
-            });
+            }).handler(logHandler);
         }
     }
+
+    private Handler<RoutingContext> logHandler = new Handler<RoutingContext>() {
+        @Override
+        public void handle(RoutingContext context) {
+            logger.info("{} {} from {}\t{}", context.request().method().name(), context.request().path(),
+                    context.request().remoteAddress().host(), context.response().getStatusCode());
+            if (!context.response().ended()) {
+                context.response().end();
+            }
+        }
+    };
 
     private void createAuthenticateHandlers(Router router, WebHandler handler) {
         createRoute(router, handler).handler(context -> {
@@ -245,7 +239,7 @@ public class WebManager {
     }
 
     private Map<String, WebHandler> loadAnnotatedWebHandlers(String packageName) throws CoVaException {
-        logger.debug("searching annotated methods in {}", packageName);
+        logger.info("searching WebEndPoint annotated methods in {}", packageName);
         Reflections reflections = new Reflections(packageName, new MethodAnnotationsScanner());
         Set<Method> methods = reflections.getMethodsAnnotatedWith(WebEndPoint.class);
         Map<String, WebHandler> map = new HashMap<>();
@@ -283,6 +277,7 @@ public class WebManager {
     }
 
     private Map<String, WebHandler> loadWebInterfaces(String packageName) throws CoVaException {
+        logger.info("searching WebInterface descendants in {}", packageName);
         Reflections reflections = new Reflections(packageName, new SubTypesScanner());
         Set<Class<? extends WebInterface>> types = reflections.getSubTypesOf(WebInterface.class);
         Map<String, WebHandler> map = new HashMap<>();
