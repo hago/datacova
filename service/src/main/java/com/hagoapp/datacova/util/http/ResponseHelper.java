@@ -70,16 +70,6 @@ public class ResponseHelper {
         sendResponse(routeContext, status, headers, bytes);
     }
 
-    public static void sendResponse(RoutingContext routeContext, HttpResponseStatus
-            status, Map<String, String> headers, byte[] content) {
-        HttpServerResponse rsp = routeContext.response();
-        if (headers != null) headers.forEach(rsp::putHeader);
-        rsp.putHeader("Content-Length", String.valueOf(content.length));
-        rsp.setStatusCode(status.code());
-        rsp.write(Buffer.buffer(content));
-        //rsp.end();
-    }
-
     public static <T> void sendResponse(RoutingContext routeContext, HttpResponseStatus status, T content) {
         Map<String, String> headers = new HashMap<String, String>() {{
             put("Content-Type", "application/json");
@@ -89,11 +79,20 @@ public class ResponseHelper {
 
     public static <T> void sendResponse(RoutingContext routeContext, HttpResponseStatus
             status, Map<String, String> headers, T content) {
-        Gson gson = createGson();
-        String msg = gson.toJson(content);
-        HashMap<String, String> allHeaders = new HashMap<>(headers);
-        allHeaders.put("Content-Type", "application/json");
-        sendResponse(routeContext, status, allHeaders, msg, "UTF-8");
+        if (content instanceof byte[]) {
+            byte[] buffer = (byte[]) content;
+            HttpServerResponse rsp = routeContext.response();
+            if (headers != null) headers.forEach(rsp::putHeader);
+            rsp.putHeader("Content-Length", String.valueOf(buffer.length));
+            rsp.setStatusCode(status.code());
+            rsp.write(Buffer.buffer(buffer));
+        } else {
+            Gson gson = createGson();
+            String msg = gson.toJson(content);
+            HashMap<String, String> allHeaders = new HashMap<>(headers);
+            allHeaders.put("Content-Type", "application/json");
+            sendResponse(routeContext, status, allHeaders, msg, "UTF-8");
+        }
     }
 
     public static void respondError(RoutingContext routeContext, HttpResponseStatus status, String message) {
