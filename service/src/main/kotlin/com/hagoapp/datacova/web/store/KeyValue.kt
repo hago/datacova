@@ -11,6 +11,8 @@ import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
 import com.hagoapp.datacova.CoVaException
+import com.hagoapp.datacova.config.CoVaConfig
+import com.hagoapp.datacova.data.redis.RedisPool
 import com.hagoapp.datacova.user.UserInfo
 import com.hagoapp.datacova.util.http.RequestHelper
 import com.hagoapp.datacova.util.http.ResponseHelper
@@ -62,6 +64,10 @@ class KeyValue {
     }
 
     private fun saveKeyPairs(userInfo: UserInfo, pairs: List<KeyValueRequest>) {
-        //TODO("store key values")
+        RedisPool(CoVaConfig.getConfig().redis).use { pool ->
+            pool.jedis.use { it ->
+                it.hset(userInfo.toString(), pairs.map { item -> Pair(item.key, item.value) }.toMap())
+            }
+        }
     }
 }
