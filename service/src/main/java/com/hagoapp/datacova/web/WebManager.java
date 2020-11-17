@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2020.
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ */
+
 package com.hagoapp.datacova.web;
 
 import com.hagoapp.datacova.CoVaException;
@@ -41,28 +49,36 @@ public class WebManager {
     private WebConfig webConfig;
     private static final WebManager instance = new WebManager();
     private final Map<String, WebHandler> handlers = new HashMap<>();
-    ;
+    private Vertx vertx;
+    private HttpServer webServer;
 
     public static WebManager getManager() {
         return instance;
     }
 
-    public HttpServer createWebServer(WebConfig config) throws CoVaException {
-        return createWebServer(config, null);
+    public void createWebServer(WebConfig config) throws CoVaException {
+        createWebServer(config, null);
     }
 
-    public HttpServer createWebServer(WebConfig config, List<String> packageNames) throws CoVaException {
+    public void createWebServer(WebConfig config, List<String> packageNames) throws CoVaException {
         logger = CoVaLogger.getLogger();
         webConfig = config;
         VertxOptions options = new VertxOptions();
         options.getFileSystemOptions().setFileCacheDir(config.getTempDirectory());
-        Vertx vx = Vertx.vertx(options);
+        vertx = Vertx.vertx(options);
         HttpServerOptions webOptions = new HttpServerOptions();
-        HttpServer webServer = vx.createHttpServer(webOptions);
-        Router router = findRouter(vx, packageNames);
+        webServer = vertx.createHttpServer(webOptions);
+        Router router = findRouter(vertx, packageNames);
         webServer.requestHandler(router);
         webServer.listen(config.getPort(), config.getBindIp());
-        return webServer;
+    }
+
+    public void shutDownWebServer() {
+        try {
+            webServer.close(handler -> vertx.close());
+        } catch (Throwable e) {
+            //
+        }
     }
 
     private Router findRouter(Vertx vertx, List<String> packageNames) throws CoVaException {
