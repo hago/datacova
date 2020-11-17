@@ -7,7 +7,7 @@
 
 package com.hagoapp.datacova.execution.entity.execution
 
-import com.hagoapp.datacova.task.TaskAction
+import com.hagoapp.datacova.execution.task.TaskAction
 
 data class ExecutionActionDetail (
     val     result: Boolean,
