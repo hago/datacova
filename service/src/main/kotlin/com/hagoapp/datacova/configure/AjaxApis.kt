@@ -1,7 +1,11 @@
 package com.hagoapp.datacova.configure
 
+import com.google.gson.GsonBuilder
+import com.hagoapp.datacova.Application
 import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.CoVaLogger
+import com.hagoapp.datacova.command.Configure
+import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.config.DatabaseConfig
 import com.hagoapp.datacova.data.DatabaseConnection
 import com.hagoapp.datacova.util.http.RequestHelper
@@ -10,7 +14,10 @@ import com.hagoapp.datacova.web.annotation.WebEndPoint
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.RoutingContext
+import java.io.FileOutputStream
+import java.io.IOException
 import java.lang.Exception
+import java.nio.charset.StandardCharsets
 
 class AjaxApis {
 
@@ -22,7 +29,7 @@ class AjaxApis {
         val config = RequestHelper.readBodyClass(routingContext, DatabaseConfig::class.java)
         if (config == null) {
             logger.error("/db/connect got invalid post")
-            ResponseHelper.sendResponse(routingContext, HttpResponseStatus.BAD_REQUEST);
+            ResponseHelper.sendResponse(routingContext, HttpResponseStatus.BAD_REQUEST)
         } else {
             var databases: List<String>? = null
             val result = try {
@@ -44,6 +51,38 @@ class AjaxApis {
                     )
                 )
             )
+        }
+    }
+
+    @WebEndPoint(methods = [HttpMethod.POST], path = "/config/save")
+    fun generateConfigFile(context: RoutingContext) {
+        logger.debug("database config data received: ${RequestHelper.readBodyString(context)}")
+        val config = RequestHelper.readBodyClass(context, CoVaConfig::class.java)
+        if (config == null) {
+            logger.error("/config/save got invalid post")
+            ResponseHelper.sendResponse(context, HttpResponseStatus.BAD_REQUEST)
+        } else {
+            when (val filename = Application.getData(Configure.CONFIG_FILE_TO_WRITE)) {
+                null -> {
+                    context.fail(HttpResponseStatus.BAD_REQUEST.code(), CoVaException("file name null"))
+                }
+                else -> {
+                    try {
+                        val stream = FileOutputStream(filename.toString())
+                        stream.use {
+                            val json = GsonBuilder().serializeNulls().setPrettyPrinting().create().toJson(config)
+                            stream.write(json.toByteArray(StandardCharsets.UTF_8))
+                            logger.info("file $filename created")
+                        }
+                        ResponseHelper.sendResponse(context, HttpResponseStatus.OK);
+                    } catch (e: IOException) {
+                        context.fail(
+                            HttpResponseStatus.INTERNAL_SERVER_ERROR.code(),
+                            CoVaException("/config/save create $filename failed")
+                        )
+                    }
+                }
+            }
         }
     }
 }

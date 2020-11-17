@@ -37,19 +37,7 @@
             }
         }
         function verifyConnect() {
-            var host = $("#dbhost").val();
-            var port = $.trim($("#dbport").val());
-            var username = $("#dbuser").val();
-            var password = $("#dbpwd").val();
-            var database = $("#dbname").val();
-            var load = {
-                "dbType": "pgsql",
-                "host": host,
-                "port": port == "" ? null : port,
-                "username": username,
-                "password": password,
-                "database": database
-            }
+            var load = createDatabaseConfig();
             $.ajax({
                 method: "POST",
                 url: "/db/connect",
@@ -65,6 +53,61 @@
                 console.log(error)
                 messageBox(error, 'danger');
             })
+        }
+        function saveConfig() {
+            var load = {
+                database: createDatabaseConfig(),
+                web: {
+                    bindIp: emptyDefault($("#listen").val(), "127.0.0.1"),
+                    port: emptyDefault($("#listen").val(), null),
+                    allowCrossOriginResourceSharing: $("#cors").prop('checked'),
+                    crossOriginSources: $("#cors").prop('checked')
+                        ? $("#corssource input").toArray().map(elem => elem.value)
+                        : [],
+                    tempDirectory: emptyDefault($("#temp").val(), "./"),
+                    uploadTempDirectory: emptyDefault($("#tempupload").val(), "./"),
+                    uploadSizeLimit: emptyDefault($("#sizelimit").val(), -1),
+                    privilegedIpAddresses: splitIps($("#whitelist").val())
+                },
+                logging: {
+                    logFilePath: emptyDefault($("#logfile").val(), "./cova.log"),
+                    rollingLogFilePattern: emptyDefault($("#logfilepattern").val(), "./cova.log.%d{yyyyMMdd}"),
+                    log2Console: $("#consolelog").prop('checked'),
+                    log2File: $("#filelog").prop('checked'),
+                    messagePattern: emptyDefault($("#message").val(), "%d{DEFAULT_MICROS}\t%-5level\t%msg%n"),
+                    level: $("select option:selected").text()
+                }
+            };
+            console.log(load);
+            $.ajax({
+                url: "/config/save",
+                method: "POST",
+                data: JSON.stringify(load),
+            }).done(json => {
+                messageBox("success");
+            }).fail((jqxhr, status, error) => {
+                messageBox(error, "danger");
+            })
+        }
+        function emptyDefault(val, func) {
+            var v = $.trim(val);
+            var func1 = (func instanceof Function) ? func : (function() {return func;});
+            return v === "" ? func1() : v;
+        }
+        function splitIps(ipstr) {
+            var x = emptyDefault($("#whitelist").val(), null);
+            return x == null ? [] : x.split(",");
+        }
+        function createDatabaseConfig() {
+            var load = {
+                "dbType": "pgsql",
+                "host": emptyDefault($("#dbhost").val(), "127.0.0.1"),
+                "port": emptyDefault($.trim($("#dbport").val(), null)),
+                "username": emptyDefault($.trim($("#dbuser").val(), null)),
+                "password": emptyDefault($.trim($("#dbpwd").val(), null)),
+                "database": emptyDefault($.trim($("#dbname").val(), null))
+            }
+            return load;
         }
         function messageBox(msg, type) {
             var text = $(".toast-body p").html(msg).removeClass();
@@ -117,7 +160,7 @@
                 <div class="input-group">
                     <div class="input-group-prepend">
                         <div class="input-group-text">
-                            <input type="checkbox" id="cors" onchange="toggleCors()">
+                            <input type="checkbox" id="cors" onchange="toggleCors()" />
                         </div>
                     </div>
                     <span class="input-group-text">Allow CORS</span>
@@ -130,7 +173,7 @@
                 <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text">Source</span>
-                        <button class="btn btn-warning" onclick="removeCors(this)">-</span>
+                        <button class="btn btn-warning" onclick="removeCors(this)">-</button>
                     </div>
                     <input type="text" class="form-control">
                 </div>
@@ -260,7 +303,7 @@
                         <span class="input-group-text">Level</span>
                     </div>
                     <select class="form-control">
-                        <option value="All">All</option>
+                        <option value="All" selected>All</option>
                         <option value="Error">Error</option>
                         <option value="Debug">Debug</option>
                         <option value="Info">Info</option>
@@ -292,7 +335,7 @@
             </div>
         </div>
         <h1>
-            <button class="btn btn-lg btn-primary">Save</button>
+            <button class="btn btn-lg btn-primary" onclick="saveConfig()">Save</button>
         </h1>
     </div>
     <div class="toast fade hide fixed-top" role="alert" aria-live="assertive" aria-atomic="true" style="margin: auto">
