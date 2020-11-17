@@ -21,10 +21,6 @@ import java.util.List;
 @CommandLine.Command(name = "start", description = "start service")
 public class Start extends CommandWithConfig {
 
-    @CommandLine.Option(names = {"--config", "-c"},
-            description = "specify config file, ./config.json by default ")
-    private String configFile = "config.json";
-
     private Logger logger;
 
     @Override

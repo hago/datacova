@@ -17,8 +17,8 @@ import java.util.concurrent.Callable;
 
 @CommandLine.Command
 public class CommandWithConfig implements Callable<Integer> {
-    @CommandLine.Option(names = {"-c", "--config"}, required = true)
-    protected String configFile;
+    @CommandLine.Option(names = {"-c", "--config"}, description = "specify config file, ./config.json by default ")
+    protected String configFile = "config.json";
 
     @Override
     public Integer call() throws CoVaException {
