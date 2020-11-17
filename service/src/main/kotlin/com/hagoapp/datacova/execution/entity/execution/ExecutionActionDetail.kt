@@ -14,5 +14,7 @@ data class ExecutionActionDetail(
     val errors: List<Exception>,
     val messages: List<String>,
     val dataMessages: Map<Int, List<String>>,
-    val action: TaskAction
+    val action: TaskAction,
+    val startTime: Long,
+    val endTime: Long
 )
