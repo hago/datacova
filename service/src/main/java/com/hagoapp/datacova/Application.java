@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 })
 public class Application {
 
-    private static Map<String, Object> internalData = new ConcurrentHashMap<>();
+    private static final Map<String, Object> internalData = new ConcurrentHashMap<>();
 
     public static void main(String[] args) {
         Application app = new Application();
