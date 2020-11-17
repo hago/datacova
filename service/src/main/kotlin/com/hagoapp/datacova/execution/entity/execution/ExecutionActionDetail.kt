@@ -9,8 +9,8 @@ package com.hagoapp.datacova.execution.entity.execution
 
 import com.hagoapp.datacova.execution.task.TaskAction
 
-data class ExecutionActionDetail (
-    val     result: Boolean,
+data class ExecutionActionDetail(
+    val result: Boolean,
     val errors: List<Exception>,
     val messages: List<String>,
     val dataMessages: Map<Int, List<String>>,
