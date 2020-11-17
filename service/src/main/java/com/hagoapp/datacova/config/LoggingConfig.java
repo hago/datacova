@@ -1,8 +1,8 @@
 package com.hagoapp.datacova.config;
 
 public class LoggingConfig {
-    private String logFilePath = "./";
-    private String rollingLogFilePattern;
+    private String logFilePath = "./cova.log";
+    private String rollingLogFilePattern = "./cova.log.%d{yyyyMMdd}";
     private boolean log2Console = true;
     private boolean log2File = true;
     private String messagePattern = "%d{DEFAULT_MICROS}\\t%-5level\\t%msg%n";
