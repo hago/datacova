@@ -9,9 +9,6 @@ package com.hagoapp.datacova.execution
 
 import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.config.CoVaConfig
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.locks.ReentrantReadWriteLock
 
 class Service private constructor() {
@@ -59,83 +56,7 @@ class Service private constructor() {
     }
 
     private fun startExecutionWatcher() {
-        serviceStopped = false
-        val loader = TaskExecutionLoader()
-        GlobalScope.launch {
-            while (!exitFlag) {
-                if (getWorkerCount() >= config.task.worker_count) {
-                    logger.debug("Worker amount exceeds upper limit ${config.task.worker_count}")
-                    Thread.sleep(EXECUTION_QUERY_INTERVAL)
-                    continue
-                }
-                val te = loader.loadNextTaskExecution()
-                if (te == null) {
-                    logger.debug("No more task execution, take a break")
-                    Thread.sleep(EXECUTION_QUERY_INTERVAL)
-                    continue
-                }
-                runExecution(te)
-            }
-        }
+//
     }
 
-    private fun runExecution(te: TaskExecution) {
-        val t = Thread(Runnable {
-            try {
-                val worker = ExecutionWorker(te)
-                worker.execute()
-            } catch (ex: Exception) {
-                logger.error("Error occurs in task execution ${te.id}")
-            } finally {
-                decreaseWorker()
-            }
-        })
-        t.isDaemon = true
-        t.start()
-        increaseWorker()
-    }
-
-    private inner class TaskExecutionLoader {
-
-        private val queue = ConcurrentLinkedQueue<TaskExecution>()
-
-        fun loadNextTaskExecution(): TaskExecution? {
-            val dal = WorkSpaceTaskData()
-            return queue.poll()
-                ?: try {
-                    val l = dal.getTaskExecutions(ExecutionStatus.added, count = LOADING_TASk_EXECUTION_BATCH)
-                    if (l.isNotEmpty()) {
-                        queue.addAll(l.takeLast(l.size - 1))
-                        l[0]
-                    } else null
-                } catch (ex: CoDiVaException) {
-                    val id = ex.message!!.toInt()
-                    val result = ExecutionDetail()
-                    result.addError(ex)
-                    this@ExecutionService.logger.debug("Loading of task execution $id failed: $ex")
-                    dal.completeTaskExecution(id, result)
-                    null
-                }
-        }
-    }
-
-    private fun increaseWorker() {
-        counterLock.write {
-            workerCount++
-        }
-        logger.debug("a worker started, all $workerCount workers now!")
-    }
-
-    private fun decreaseWorker() {
-        counterLock.write {
-            workerCount--
-        }
-        logger.debug("a worker finished, all $workerCount workers now!")
-    }
-
-    private fun getWorkerCount(): Int {
-        counterLock.read {
-            return workerCount
-        }
-    }
 }
