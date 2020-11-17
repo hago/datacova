@@ -6,7 +6,7 @@
  *
  */
 
-package com.hagoapp.datacova.entity.task;
+package com.hagoapp.datacova.entity.action;
 
 public class TaskAction {
     private TaskActionType type;

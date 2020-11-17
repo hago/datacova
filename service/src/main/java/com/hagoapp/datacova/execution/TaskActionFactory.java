@@ -11,8 +11,8 @@ package com.hagoapp.datacova.execution;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.hagoapp.datacova.CoVaException;
-import com.hagoapp.datacova.entity.task.TaskAction;
-import com.hagoapp.datacova.entity.task.TaskActionType;
+import com.hagoapp.datacova.entity.action.TaskAction;
+import com.hagoapp.datacova.entity.action.TaskActionType;
 
 import java.util.Map;
 

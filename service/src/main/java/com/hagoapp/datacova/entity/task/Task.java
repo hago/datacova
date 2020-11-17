@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.hagoapp.datacova.CoVaException;
+import com.hagoapp.datacova.entity.action.TaskAction;
 import com.hagoapp.datacova.execution.TaskActionFactory;
 import org.jetbrains.annotations.NotNull;
 

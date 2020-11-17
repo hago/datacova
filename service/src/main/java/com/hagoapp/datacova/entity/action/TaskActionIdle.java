@@ -6,7 +6,7 @@
  *
  */
 
-package com.hagoapp.datacova.entity.task;
+package com.hagoapp.datacova.entity.action;
 
 import com.hagoapp.datacova.entity.action.idle.IdleConfig;
 
