@@ -1,8 +1,18 @@
-package com.hagoapp.datacova.entity.task;
+/*
+ * Copyright (c) 2020.
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ */
+
+package com.hagoapp.datacova.execution;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.hagoapp.datacova.CoVaException;
+import com.hagoapp.datacova.entity.task.TaskAction;
+import com.hagoapp.datacova.entity.task.TaskActionType;
 
 import java.util.Map;
 
