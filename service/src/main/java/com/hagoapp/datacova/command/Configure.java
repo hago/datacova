@@ -19,7 +19,7 @@ public class Configure implements Callable<Integer> {
 
     @CommandLine.Option(names = {"--out", "-o"},
             description = "the generated config file name, default to 'config.yyyyMMdd.json'")
-    private final String outputFileName = String.format("config.%s.json",
+    private String outputFileName = String.format("config.%s.json",
             LocalDateTime.now().format(DateTimeFormatter.BASIC_ISO_DATE));
 
     @CommandLine.Option(names = {"--bind", "-b"}, description = "Bind Address", defaultValue = "127.0.0.1")
