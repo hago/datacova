@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
  */
 public class WebManager {
 
-    private Logger logger;
+    private Logger logger = CoVaLogger.getLogger();
     private WebConfig webConfig;
     private static final WebManager instance = new WebManager();
     private final Map<String, WebHandler> handlers = new HashMap<>();
@@ -61,24 +61,34 @@ public class WebManager {
     }
 
     public void createWebServer(WebConfig config, List<String> packageNames) throws CoVaException {
-        logger = CoVaLogger.getLogger();
-        webConfig = config;
-        VertxOptions options = new VertxOptions();
-        options.getFileSystemOptions().setFileCacheDir(config.getTempDirectory());
-        vertx = Vertx.vertx(options);
-        HttpServerOptions webOptions = new HttpServerOptions();
-        webServer = vertx.createHttpServer(webOptions);
-        Router router = findRouter(vertx, packageNames);
-        webServer.requestHandler(router);
-        webServer.listen(config.getPort(), config.getBindIp());
+        if (!isWebRunning()) {
+            webConfig = config;
+            VertxOptions options = new VertxOptions();
+            options.getFileSystemOptions().setFileCacheDir(config.getTempDirectory());
+            vertx = Vertx.vertx(options);
+            HttpServerOptions webOptions = new HttpServerOptions();
+            webServer = vertx.createHttpServer(webOptions);
+            Router router = findRouter(vertx, packageNames);
+            webServer.requestHandler(router);
+            webServer.listen(config.getPort(), config.getBindIp());
+        }
     }
 
     public void shutDownWebServer() {
         try {
-            webServer.close(handler -> vertx.close());
+            webServer.close(handler -> {
+                vertx.close();
+                webServer = null;
+                vertx = null;
+                handlers.clear();
+            });
         } catch (Throwable e) {
             //
         }
+    }
+
+    public boolean isWebRunning() {
+        return (webServer != null) && webServer.isMetricsEnabled();
     }
 
     private Router findRouter(Vertx vertx, List<String> packageNames) throws CoVaException {
