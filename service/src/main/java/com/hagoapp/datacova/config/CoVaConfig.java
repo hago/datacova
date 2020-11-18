@@ -51,6 +51,15 @@ public class CoVaConfig {
     private DatabaseConfig database;
     private LoggingConfig logging;
     private RedisConfig redis;
+    private TaskExecutionConfig task;
+
+    public TaskExecutionConfig getTask() {
+        return task;
+    }
+
+    public void setTask(TaskExecutionConfig task) {
+        this.task = task;
+    }
 
     public WebConfig getWeb() {
         return web;
