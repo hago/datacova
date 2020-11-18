@@ -1,0 +1,52 @@
+{
+  "web": {
+    "bindIp": "0.0.0.0",
+    "port": 6786,
+    "allowCrossOriginResourceSharing": true,
+    "crossOriginSources": [
+      "127.0.0.1",
+      "192.168.0.0/24",
+      "10.*.*.*"
+    ],
+    "privilegedIpAddresses": ["127.0.0.1"],
+    "tempDirectory": "/tmp",
+    "uploadTempDirectory": "/tmp",
+    "uploadSizeLimit": -1,
+    "outputStackTrace": true
+  },
+  "database": {
+    "host": "127.0.0.1",
+    "port": 5432,
+    "username": "cova",
+    "password": "cova",
+    "database": "covadb"
+  },
+  "logging": {
+    "logFilePath": "./cova.log",
+    "rollingLogFilePattern": "./cova.log.%d{yyyyMMdd}",
+    "log2Console": true,
+    "log2File": false,
+    "messagePattern": "%d{DEFAULT_MICROS}\\t%-5level\\t%msg%n",
+    "level": "All"
+  },
+  "redis": {
+    "isSentinel": false,
+    "serverConfig": {
+      "host": "127.0.0.1",
+      "port": 6379
+    },
+    "sentinelConfig": {
+      "master": "192.168.3.1",
+      "nodes": {
+        "192.168.3.1": 26379,
+        "192.168.3.2": 26379,
+        "192.168.3.3": 26379
+      }
+    },
+    "database": 0,
+    "password": null
+  },
+  "task": {
+    "fileStoreRoot": ""
+  }
+}
