@@ -11,4 +11,5 @@ package user
 interface UserAuthProvider {
     fun authenticate(userId: String, vararg credentials: String): Boolean
     fun getProviderName(): String
+    fun isValidUserId(userId: String): Boolean
 }

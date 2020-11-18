@@ -14,6 +14,15 @@ public class UserInfo {
     private String userId;
     private String provider;
 
+    public UserInfo() {
+
+    }
+
+    public UserInfo(String userId, String provider) {
+        this.userId = userId;
+        this.provider = provider;
+    }
+
     public String getUserId() {
         return userId;
     }

@@ -53,6 +53,7 @@ class RedisPool(config: RedisConfig) : Closeable {
 
     override fun close() {
         try {
+            internalPool.resource.close()
             internalPool.close()
         } catch (e: Throwable) {
             //
