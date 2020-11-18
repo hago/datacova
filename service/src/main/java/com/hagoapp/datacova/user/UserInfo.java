@@ -8,6 +8,8 @@
 
 package com.hagoapp.datacova.user;
 
+import com.google.gson.GsonBuilder;
+
 public class UserInfo {
     private String userId;
     private String provider;
@@ -48,9 +50,6 @@ public class UserInfo {
 
     @Override
     public String toString() {
-        return "UserInfo{"
-                + "userId='" + userId + '\''
-                + ", provider='" + provider + '\''
-                + '}';
+        return new GsonBuilder().serializeNulls().create().toJson(this);
     }
 }
