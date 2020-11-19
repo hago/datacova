@@ -14,3 +14,4 @@ yarn-error.log*
 *.sln
 
 !build/
+package-lock.json
