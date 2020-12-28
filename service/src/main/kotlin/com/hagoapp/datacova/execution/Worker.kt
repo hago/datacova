@@ -13,7 +13,9 @@ import com.hagoapp.datacova.entity.action.TaskAction
 import com.hagoapp.datacova.entity.execution.ExecutionActionDetail
 import com.hagoapp.datacova.entity.execution.ExecutionDetail
 import com.hagoapp.datacova.entity.execution.TaskExecution
-import com.hagoapp.datacova.execution.datafile.DataContainer
+import com.hagoapp.f2t.DataTable
+import com.hagoapp.f2t.FileParser
+import com.hagoapp.f2t.datafile.FileInfo
 
 class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExecutionWatcher {
 
@@ -36,12 +38,13 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
     fun execute() {
         detail.startTiming()
         observers.forEach { it.onStart(taskExec) }
-        val dc: DataContainer
+        val dt: DataTable
         try {
             observers.forEach { it.onDataLoadStart(taskExec) }
-            dc = DataContainer.getDataContainer(taskExec.fileInfo)
+            val parser = FileParser(FileInfo(taskExec.fileInfo.name))
+            dt = parser.extractData()
             observers.forEach { it.onDataLoadComplete(taskExec, true) }
-            detail.lineCount = dc.size
+            detail.lineCount = dt.rows.size
         } catch (ex: Exception) {
             val msg =
                 "Data source loading fail, abort execution ${taskExec.id} of task ${taskExec.task.name}(${taskExec.taskId})"
@@ -62,7 +65,7 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
                 val executor = TaskActionExecutorFactory.createTaskActionExecutor(action)
                 executor.locale = taskExec.task.extra.locale
                 executor.watcher = this
-                executor.execute(action, dc)
+                executor.execute(action, dt)
                 currentActionDetail!!.isSucceeded = true
                 observers.forEach { it.onActionComplete(taskExec, i, currentActionDetail!!) }
             } catch (ex: Exception) {
