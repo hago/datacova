@@ -15,7 +15,7 @@ import com.hagoapp.datacova.web.WebInterface
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.RoutingContext
-import user.UserAuthFactory
+import com.hagoapp.datacova.user.UserAuthFactory
 
 class Login : WebInterface {
     override fun getPath(): String {
@@ -67,7 +67,7 @@ class Login : WebInterface {
             ResponseHelper.sendResponse(
                 routeContext, HttpResponseStatus.OK, mapOf(
                     "code" to 0,
-                    "data" to mapOf("user" to user, "token" to token)
+                    "data" to mapOf("com/hagoapp/datacova/user" to user, "token" to token)
                 )
             )
         }

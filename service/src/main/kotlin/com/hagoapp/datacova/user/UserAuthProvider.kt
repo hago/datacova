@@ -6,7 +6,7 @@
  *
  */
 
-package user
+package com.hagoapp.datacova.user
 
 interface UserAuthProvider {
     fun authenticate(userId: String, vararg credentials: String): Boolean

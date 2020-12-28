@@ -39,7 +39,7 @@ class PostgreSqlConnection(connectionConfig: PgSqlConfig) : DatabaseConnection(c
         try {
             val conStr = "jdbc:postgresql://${config.host}:${config.port}/${config.database}"
             val props = Properties()
-            props.putAll(mapOf("user" to config.username, "password" to config.password))
+            props.putAll(mapOf("com/hagoapp/datacova/user" to config.username, "password" to config.password))
             connection = DriverManager.getConnection(conStr, props)
         } catch (e: Exception) {
             throw CoVaException("pgsql connect failed", e)

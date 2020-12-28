@@ -6,7 +6,7 @@
  *
  */
 
-package user
+package com.hagoapp.datacova.user
 
 import org.reflections.Reflections
 import org.reflections.scanners.SubTypesScanner
