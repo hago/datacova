@@ -15,7 +15,6 @@ import com.hagoapp.datacova.entity.execution.ExecutionDetail
 import com.hagoapp.datacova.entity.execution.TaskExecution
 import com.hagoapp.f2t.DataTable
 import com.hagoapp.f2t.FileParser
-import com.hagoapp.f2t.datafile.FileInfo
 
 class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExecutionWatcher {
 
@@ -41,7 +40,7 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
         val dt: DataTable
         try {
             observers.forEach { it.onDataLoadStart(taskExec) }
-            val parser = FileParser(FileInfo(taskExec.fileInfo.name))
+            val parser = FileParser(taskExec.fileInfo)
             dt = parser.extractData()
             observers.forEach { it.onDataLoadComplete(taskExec, true) }
             detail.lineCount = dt.rows.size

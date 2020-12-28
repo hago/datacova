@@ -3,22 +3,19 @@ package com.hagoapp.datacova.entity.execution;
 import com.fasterxml.jackson.jr.ob.JSON;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.hagoapp.f2t.datafile.FileInfo;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.Map;
 
-public class ExecutionFileInfo {
-    private String name;
+public class ExecutionFileInfo extends FileInfo {
     private String originalName;
     private long size;
     private ExecutionFileExtra extra;
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public ExecutionFileInfo(@NotNull String filename) {
+        super(filename);
     }
 
     public void setOriginalName(String originalName) {
