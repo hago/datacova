@@ -3,13 +3,14 @@ package com.hagoapp.datacova.entity.execution;
 import com.fasterxml.jackson.jr.ob.JSON;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.hagoapp.datacova.JsonStringify;
 import com.hagoapp.f2t.datafile.FileInfo;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.Map;
 
-public class ExecutionFileInfo extends FileInfo {
+public class ExecutionFileInfo extends FileInfo implements JsonStringify {
     private String originalName;
     private long size;
     private ExecutionFileExtra extra;
@@ -47,10 +48,6 @@ public class ExecutionFileInfo extends FileInfo {
             eai.extra = ExecutionFileExtra.createExtra(extraStr, eai);
         }
         return eai;
-    }
-
-    public String toString() {
-        return new Gson().toJson(this);
     }
 
     public long getSize() {
