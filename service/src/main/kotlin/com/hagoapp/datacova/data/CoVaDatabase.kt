@@ -9,13 +9,13 @@
 package com.hagoapp.datacova.data
 
 import com.hagoapp.datacova.CoVaException
-import com.hagoapp.f2t.database.config.PgSqlConfig
+import com.hagoapp.datacova.config.DatabaseConfig
 import java.io.Closeable
 import java.sql.Connection
 import java.sql.DriverManager
 import java.util.*
 
-abstract class DatabaseConnection(connectionConfig: PgSqlConfig) : Closeable {
+abstract class CoVaDatabase(connectionConfig: DatabaseConfig) : Closeable {
 
     companion object {
         private const val PGSQL_DRIVER_CLASS_NAME = "org.postgresql.Driver"
