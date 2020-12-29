@@ -24,30 +24,102 @@ import java.util.List;
 import java.util.Map;
 
 public class Task implements JsonStringify {
-    public int id;
-    public String name;
-    public String description = "";
-    public int workspaceId;
-    public List<TaskAction> actions;
-    public TaskExtra extra;
-    public String addBy;
-    public long addTime;
-    public String modifyBy;
-    public Long modifyTime;
+    private long id;
+    private String name;
+    private String description = "";
+    private int workspaceId;
+    private List<TaskAction> actions;
+    private TaskExtra extra;
+    private String addBy;
+    private long addTime;
+    private String modifyBy;
+    private Long modifyTime;
 
-    private static Gson gson = null;
+    private static final Gson gson = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
 
-    private synchronized static Gson getGson() {
-        if (gson == null) {
-            gson = new GsonBuilder().create();
-        }
-        return gson;
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public int getWorkspaceId() {
+        return workspaceId;
+    }
+
+    public void setWorkspaceId(int workspaceId) {
+        this.workspaceId = workspaceId;
+    }
+
+    public List<TaskAction> getActions() {
+        return actions;
+    }
+
+    public void setActions(List<TaskAction> actions) {
+        this.actions = actions;
+    }
+
+    public TaskExtra getExtra() {
+        return extra;
+    }
+
+    public void setExtra(TaskExtra extra) {
+        this.extra = extra;
+    }
+
+    public String getAddBy() {
+        return addBy;
+    }
+
+    public void setAddBy(String addBy) {
+        this.addBy = addBy;
+    }
+
+    public long getAddTime() {
+        return addTime;
+    }
+
+    public void setAddTime(long addTime) {
+        this.addTime = addTime;
+    }
+
+    public String getModifyBy() {
+        return modifyBy;
+    }
+
+    public void setModifyBy(String modifyBy) {
+        this.modifyBy = modifyBy;
+    }
+
+    public Long getModifyTime() {
+        return modifyTime;
+    }
+
+    public void setModifyTime(Long modifyTime) {
+        this.modifyTime = modifyTime;
     }
 
     @NotNull
     @SuppressWarnings("unchecked")
     public static Task fromJson(String s) throws CoVaException, IOException {
-        Gson gson = getGson();
         Task task = gson.fromJson(s, Task.class);
         Map<String, Object> map = JSON.std.mapFrom(s);
         List<Map<String, Object>> mapActions = (List<Map<String, Object>>) map.get("actions");
@@ -61,8 +133,7 @@ public class Task implements JsonStringify {
 
     @NotNull
     public static List<TaskAction> actionsFromJson(String s) throws CoVaException {
-        Gson gson = getGson();
-        TypeToken<ArrayList<Map<String, Object>>> token = new TypeToken<ArrayList<Map<String, Object>>>() {
+        TypeToken<ArrayList<Map<String, Object>>> token = new TypeToken<>() {
         };
         List<Map<String, Object>> actionsMap = gson.fromJson(s, token.getType());
         List<TaskAction> actions = new ArrayList<>();
@@ -74,15 +145,6 @@ public class Task implements JsonStringify {
 
     @NotNull
     public String actions2Json() {
-        Gson gson = getGson();
         return gson.toJson(this.actions);
-    }
-
-    public TaskExtra getExtra() {
-        return extra;
-    }
-
-    public List<TaskAction> getActions() {
-        return actions;
     }
 }

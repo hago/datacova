@@ -12,9 +12,9 @@ import com.hagoapp.datacova.JsonStringify;
 import com.hagoapp.datacova.entity.task.Task;
 
 public class TaskExecution implements JsonStringify {
-    private int id;
+    private long id;
     private ExecutionFileInfo fileInfo;
-    private int taskId;
+    private long taskId;
     private Task task;
     private String addBy;
     private long addTime;
@@ -31,11 +31,11 @@ public class TaskExecution implements JsonStringify {
         return fileInfo;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -43,11 +43,11 @@ public class TaskExecution implements JsonStringify {
         this.fileInfo = fileInfo;
     }
 
-    public int getTaskId() {
+    public long getTaskId() {
         return taskId;
     }
 
-    public void setTaskId(int taskId) {
+    public void setTaskId(long taskId) {
         this.taskId = taskId;
     }
 
