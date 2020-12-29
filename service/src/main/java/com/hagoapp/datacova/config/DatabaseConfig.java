@@ -8,7 +8,7 @@
 
 package com.hagoapp.datacova.config;
 
-import com.hagoapp.datacova.data.PgSqlConfig;
+import com.hagoapp.f2t.database.config.PgSqlConfig;
 
 public class DatabaseConfig extends PgSqlConfig {
 
