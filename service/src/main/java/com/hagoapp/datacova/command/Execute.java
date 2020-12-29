@@ -33,12 +33,17 @@ public class Execute extends CommandWithConfig implements TaskExecutionWatcher {
     public Integer call() throws CoVaException {
         CoVaConfig.loadConfig(configFile);
         logger = CoVaLogger.getLogger();
-        TaskData taskData = new TaskData(CoVaConfig.getConfig().getDatabase());
-        TaskExecution taskExecution = taskData.loadTaskExecution(taskExecId);
-        Worker worker = new Worker(taskExecution);
-        worker.addWatcher(this);
-        worker.execute();
-        return super.call();
+        try (TaskData taskData = new TaskData(CoVaConfig.getConfig().getDatabase())) {
+            TaskExecution taskExecution = taskData.loadTaskExecution(taskExecId);
+            if (taskExecution == null) {
+                logger.error("Task execution {} not found", taskExecId);
+                return -1;
+            }
+            Worker worker = new Worker(taskExecution);
+            worker.addWatcher(this);
+            worker.execute();
+            return super.call();
+        }
     }
 
     @Override
@@ -54,7 +59,7 @@ public class Execute extends CommandWithConfig implements TaskExecutionWatcher {
 
     @Override
     public void onError(@NotNull TaskExecution te, @NotNull Exception error) {
-        logger.info("Execution {} of task {} detected error: {}",
+        logger.error("Execution {} of task {} detected error: {}",
                 te.getId(), te.getTask().getId(), error.getMessage());
         error.printStackTrace();
     }
@@ -74,7 +79,7 @@ public class Execute extends CommandWithConfig implements TaskExecutionWatcher {
 
     @Override
     public void onActionError(@NotNull TaskExecution te, int actionIndex, @NotNull Exception error) {
-        logger.info("Execution {} of task {} is performing action {}: {}, error: {} occurs",
+        logger.error("Execution {} of task {} is performing action {}: {}, error: {} occurs",
                 te.getId(), te.getTask().getId(), actionIndex,
                 te.getTask().getActions().get(actionIndex).getName(), error.getMessage());
         error.printStackTrace();

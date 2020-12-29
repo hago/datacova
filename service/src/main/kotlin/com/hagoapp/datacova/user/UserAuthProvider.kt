@@ -11,5 +11,9 @@ package com.hagoapp.datacova.user
 interface UserAuthProvider {
     fun authenticate(userId: String, vararg credentials: String): Boolean
     fun getProviderName(): String
-    fun isValidUserId(userId: String): Boolean
+    fun isValidUserId(userId: String): Boolean {
+        return getUserInfo(userId) != null
+    }
+
+    fun getUserInfo(userId: String): UserInfo?
 }

@@ -13,6 +13,14 @@ import com.hagoapp.datacova.JsonStringify;
 public class UserInfo implements JsonStringify {
     private String userId;
     private String provider;
+    private String name;
+    private String description;
+    private String addBy;
+    private long addTime;
+    private String modifyBy;
+    private Long modifyTime;
+    private byte[] thumbnail;
+    private UserStatus status;
 
     public UserInfo() {
 
@@ -37,6 +45,70 @@ public class UserInfo implements JsonStringify {
 
     public void setProvider(String provider) {
         this.provider = provider;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getAddBy() {
+        return addBy;
+    }
+
+    public void setAddBy(String addBy) {
+        this.addBy = addBy;
+    }
+
+    public long getAddTime() {
+        return addTime;
+    }
+
+    public void setAddTime(long addTime) {
+        this.addTime = addTime;
+    }
+
+    public String getModifyBy() {
+        return modifyBy;
+    }
+
+    public void setModifyBy(String modifyBy) {
+        this.modifyBy = modifyBy;
+    }
+
+    public Long getModifyTime() {
+        return modifyTime;
+    }
+
+    public void setModifyTime(Long modifyTime) {
+        this.modifyTime = modifyTime;
+    }
+
+    public byte[] getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(byte[] thumbnail) {
+        this.thumbnail = thumbnail;
+    }
+
+    public UserStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(UserStatus status) {
+        this.status = status;
     }
 
     @Override
