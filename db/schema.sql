@@ -7,7 +7,7 @@ create database covadb owner cova encoding 'utf-8';
 create database testimpdb owner cova encoding 'utf-8';
 
 */
-create table if not exists workspaces (
+create table if not exists workspace (
     id serial,
     name text not null,
     description text not null,
@@ -21,9 +21,9 @@ create table if not exists workspaces (
     primary key(id)
 );
 
-create table if not exists workspaceusers (
+create table if not exists workspaceuser (
     id serial,
-    wkid int not null references workspaces(id),
+    wkid int not null references workspace(id),
     usergroup int not null,        /* 0 - admin  1 - maintainer  2 - loader */
     userid varchar(100) not null,
     primary key(id),
@@ -32,14 +32,14 @@ create table if not exists workspaceusers (
 
 create table if not exists workspacelog (
     id serial,
-    wkid int not null references workspaces(id),
+    wkid int not null references workspace(id),
     userid varchar(100) not null,
     useraction json default '{}',    /* {"action":..., "data": {...} */
     addtime timestamp WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     primary key(id)
 );
 
-create table if not exists users (
+create table if not exists user (
     id serial,
     userid varchar(100) not null unique,
     name varchar(200) not null,
@@ -55,7 +55,7 @@ create table if not exists users (
 );
 
 /* create test user with password 123456 */
-insert into users (userid, name, pwdhash, addby, modifyby, modifytime)
+insert into user (userid, name, pwdhash, addby, modifyby, modifytime)
 values ('cova_test@outlook.com', 'CoVa Test', 'c524b8ab6854ae4097662d3687a2c265b0248712', 'AutoCreated', 'AutoCreated', now());
 
 /*
@@ -70,11 +70,11 @@ actions: array of
         }
     }
 */
-create table if not exists tasks (
+create table if not exists task (
     id serial,
     name text not null,
     description text not null default '',
-    wkid int not null references workspaces(id),
+    wkid int not null references workspace(id),
     actions json not null default '[]',
     extra json not null default '{}',
     addtime timestamp with time zone default CURRENT_TIMESTAMP not null,
@@ -99,13 +99,13 @@ create table if not exists taskexecution (
 	primary key(id)
 );
 
-create table if not exists connections (
+create table if not exists connection (
     id serial,
     name text not null,
     description text not null,
     configuration json not null default '{}',
     extra json not null default '{}',
-    wkid int not null references workspaces(id),
+    wkid int not null references workspace(id),
     addby varchar(100) not null,
     addtime timestamp WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     modifyby varchar(100) null,
