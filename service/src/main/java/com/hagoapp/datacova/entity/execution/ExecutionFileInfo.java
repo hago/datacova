@@ -5,52 +5,46 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.hagoapp.datacova.JsonStringify;
 import com.hagoapp.f2t.datafile.FileInfo;
-import org.jetbrains.annotations.NotNull;
+import com.hagoapp.f2t.datafile.FileInfoReader;
 
 import java.io.IOException;
 import java.util.Map;
 
-public class ExecutionFileInfo extends FileInfo implements JsonStringify {
+public class ExecutionFileInfo implements JsonStringify {
+    private FileInfo dataFileInfo;
     private String originalName;
     private long size;
-    private ExecutionFileExtra extra;
-
-    public ExecutionFileInfo(@NotNull String filename) {
-        super(filename);
-    }
 
     public void setOriginalName(String originalName) {
         this.originalName = originalName;
-    }
-
-    public void setSize(long size) {
-        this.size = size;
-    }
-
-    public ExecutionFileExtra getExtra() {
-        return extra;
-    }
-
-    public void setExtra(ExecutionFileExtra extra) {
-        this.extra = extra;
     }
 
     public String getOriginalName() {
         return originalName;
     }
 
-    public static ExecutionFileInfo getFileInfo(String s) throws IOException {
-        Gson gson = new GsonBuilder().create();
-        ExecutionFileInfo eai = gson.fromJson(s, ExecutionFileInfo.class);
-        Map<String, Object> map = JSON.std.mapFrom(s);
-        if (map.containsKey("extra")) {
-            String extraStr = gson.toJson(map.get("extra"));
-            eai.extra = ExecutionFileExtra.createExtra(extraStr, eai);
-        }
-        return eai;
+    public void setSize(long size) {
+        this.size = size;
     }
 
     public long getSize() {
         return size;
+    }
+
+    public FileInfo getDataFileInfo() {
+        return dataFileInfo;
+    }
+
+    public void setDataFileInfo(FileInfo dataFileInfo) {
+        this.dataFileInfo = dataFileInfo;
+    }
+
+    public static ExecutionFileInfo getFileInfo(String s) throws IOException {
+        Gson gson = new GsonBuilder().create();
+        ExecutionFileInfo eai = gson.fromJson(s, ExecutionFileInfo.class);
+        Map<String, Object> map = JSON.std.mapFrom(s);
+        String fiString = gson.toJson(map.get("fileInfo"));
+        eai.dataFileInfo = FileInfoReader.json2FileInfo(fiString);
+        return eai;
     }
 }
