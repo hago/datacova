@@ -9,19 +9,85 @@
 package com.hagoapp.datacova.command;
 
 import com.hagoapp.datacova.CoVaException;
+import com.hagoapp.datacova.CoVaLogger;
 import com.hagoapp.datacova.config.CoVaConfig;
+import com.hagoapp.datacova.data.TaskData;
+import com.hagoapp.datacova.entity.execution.ExecutionActionDetail;
+import com.hagoapp.datacova.entity.execution.ExecutionDetail;
+import com.hagoapp.datacova.entity.execution.TaskExecution;
+import com.hagoapp.datacova.execution.TaskExecutionWatcher;
+import com.hagoapp.datacova.execution.Worker;
+import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "exec", description = "execute a task")
-public class Execute extends CommandWithConfig {
+public class Execute extends CommandWithConfig implements TaskExecutionWatcher {
 
-    @CommandLine.Option(names = {"-i", "--id"}, description = "id of task to be executed", required = true)
-    private long taskId;
+    @CommandLine.Option(names = {"-i", "--id"}, description = "id of task execution to be executed", required = true)
+    private long taskExecId;
+
+    private Logger logger;
 
     @Override
     public Integer call() throws CoVaException {
         CoVaConfig.loadConfig(configFile);
-
+        logger = CoVaLogger.getLogger();
+        TaskData taskData = new TaskData(CoVaConfig.getConfig().getDatabase());
+        TaskExecution taskExecution = taskData.loadTaskExecution(taskExecId);
+        Worker worker = new Worker(taskExecution);
+        worker.addWatcher(this);
+        worker.execute();
         return super.call();
+    }
+
+    @Override
+    public void onStart(@NotNull TaskExecution te) {
+        logger.info("Execution {} of task {} started", te.getId(), te.getTask().getId());
+    }
+
+    @Override
+    public void onComplete(@NotNull TaskExecution te, @NotNull ExecutionDetail result) {
+        logger.info("Execution {} of task {} completed: {}",
+                te.getId(), te.getTask().getId(), result.isSucceeded() ? "succeeded" : "failed");
+    }
+
+    @Override
+    public void onError(@NotNull TaskExecution te, @NotNull Exception error) {
+        logger.info("Execution {} of task {} detected error: {}",
+                te.getId(), te.getTask().getId(), error.getMessage());
+        error.printStackTrace();
+    }
+
+    @Override
+    public void onActionStart(@NotNull TaskExecution te, int actionIndex) {
+        logger.info("Execution {} of task {} started action {}: {}",
+                te.getId(), te.getTask().getId(), actionIndex, te.getTask().getActions().get(actionIndex).getName());
+    }
+
+    @Override
+    public void onActionComplete(@NotNull TaskExecution te, int actionIndex, @NotNull ExecutionActionDetail result) {
+        logger.info("Execution {} of task {} completed action {}: {}, action {}",
+                te.getId(), te.getTask().getId(), actionIndex,
+                te.getTask().getActions().get(actionIndex).getName(), result.isSucceeded() ? "succeeded" : "failed");
+    }
+
+    @Override
+    public void onActionError(@NotNull TaskExecution te, int actionIndex, @NotNull Exception error) {
+        logger.info("Execution {} of task {} is performing action {}: {}, error: {} occurs",
+                te.getId(), te.getTask().getId(), actionIndex,
+                te.getTask().getActions().get(actionIndex).getName(), error.getMessage());
+        error.printStackTrace();
+    }
+
+    @Override
+    public void onDataLoadStart(@NotNull TaskExecution te) {
+        logger.info("Execution {} of task {} started loading data", te.getId(), te.getTask().getId());
+    }
+
+    @Override
+    public void onDataLoadComplete(@NotNull TaskExecution te, boolean isLoadingSuccessful) {
+        logger.info("Execution {} of task {} completed loading data, {}", te.getId(), te.getTask().getId(),
+                isLoadingSuccessful ? "succeeded" : "failed");
     }
 }
