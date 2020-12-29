@@ -39,7 +39,7 @@ create table if not exists workspacelog (
     primary key(id)
 );
 
-create table if not exists user (
+create table if not exists users (
     id serial,
     userid varchar(100) not null unique,
     name varchar(200) not null,
