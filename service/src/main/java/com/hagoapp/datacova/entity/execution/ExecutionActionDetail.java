@@ -8,7 +8,7 @@
 
 package com.hagoapp.datacova.entity.execution;
 
-import com.google.gson.GsonBuilder;
+import com.hagoapp.datacova.JsonStringify;
 import com.hagoapp.datacova.entity.action.TaskAction;
 
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ExecutionActionDetail {
+public class ExecutionActionDetail implements JsonStringify {
     private boolean succeeded;
     private List<Throwable> errors = new ArrayList<>();
     private List<String> messages = new ArrayList<>();
@@ -83,10 +83,6 @@ public class ExecutionActionDetail {
 
     public void setEndTime(Long endTime) {
         this.endTime = endTime;
-    }
-
-    public String toString() {
-        return new GsonBuilder().setPrettyPrinting().serializeNulls().create().toJson(this);
     }
 
 }

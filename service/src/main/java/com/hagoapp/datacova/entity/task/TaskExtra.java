@@ -9,12 +9,13 @@
 package com.hagoapp.datacova.entity.task;
 
 import com.google.gson.GsonBuilder;
+import com.hagoapp.datacova.JsonStringify;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class TaskExtra {
+public class TaskExtra implements JsonStringify {
     private String tag = "";
     private Locale locale = Locale.getDefault();
     private List<String> mailRecipients = new ArrayList<>();
@@ -53,7 +54,4 @@ public class TaskExtra {
         return new GsonBuilder().create().fromJson(s, TaskExtra.class);
     }
 
-    public String toString() {
-        return new GsonBuilder().serializeNulls().setPrettyPrinting().create().toJson(this);
-    }
 }

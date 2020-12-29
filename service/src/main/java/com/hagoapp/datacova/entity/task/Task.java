@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.hagoapp.datacova.CoVaException;
+import com.hagoapp.datacova.JsonStringify;
 import com.hagoapp.datacova.entity.action.TaskAction;
 import com.hagoapp.datacova.execution.TaskActionFactory;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class Task {
+public class Task implements JsonStringify {
     public int id;
     public String name;
     public String description = "";
@@ -69,12 +70,6 @@ public class Task {
             actions.add(TaskActionFactory.getTaskAction(map));
         }
         return actions;
-    }
-
-    @NotNull
-    public String toJson() {
-        Gson gson = getGson();
-        return gson.toJson(this);
     }
 
     @NotNull

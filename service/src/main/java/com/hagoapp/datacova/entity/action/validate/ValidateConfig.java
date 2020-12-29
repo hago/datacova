@@ -8,13 +8,13 @@
 
 package com.hagoapp.datacova.entity.action.validate;
 
-import com.google.gson.GsonBuilder;
+import com.hagoapp.datacova.JsonStringify;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ValidateConfig {
+public class ValidateConfig implements JsonStringify {
     private ValidateType type;
     private List<String> fields = new ArrayList<>();
     private boolean nullable = false;
@@ -55,10 +55,6 @@ public class ValidateConfig {
 
     public List<String> getFields() {
         return fields;
-    }
-
-    public String toString() {
-        return new GsonBuilder().serializeNulls().setPrettyPrinting().create().toJson(this);
     }
 
     public boolean isValid() {

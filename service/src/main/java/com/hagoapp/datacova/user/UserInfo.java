@@ -8,9 +8,9 @@
 
 package com.hagoapp.datacova.user;
 
-import com.google.gson.GsonBuilder;
+import com.hagoapp.datacova.JsonStringify;
 
-public class UserInfo {
+public class UserInfo implements JsonStringify {
     private String userId;
     private String provider;
 
@@ -57,8 +57,4 @@ public class UserInfo {
         return result;
     }
 
-    @Override
-    public String toString() {
-        return new GsonBuilder().serializeNulls().create().toJson(this);
-    }
 }

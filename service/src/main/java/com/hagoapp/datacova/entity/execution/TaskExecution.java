@@ -8,10 +8,10 @@
 
 package com.hagoapp.datacova.entity.execution;
 
-import com.google.gson.Gson;
+import com.hagoapp.datacova.JsonStringify;
 import com.hagoapp.datacova.entity.task.Task;
 
-public class TaskExecution {
+public class TaskExecution implements JsonStringify {
     private int id;
     private ExecutionFileInfo fileInfo;
     private int taskId;
@@ -22,10 +22,6 @@ public class TaskExecution {
     private Long endTime;
     private ExecutionDetail detail;
     private ExecutionStatus status;
-
-    public String toString() {
-        return new Gson().toJson(this);
-    }
 
     public Task getTask() {
         return task;

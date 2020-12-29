@@ -11,6 +11,7 @@ package com.hagoapp.datacova.entity.execution;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.hagoapp.datacova.CoVaException;
+import com.hagoapp.datacova.JsonStringify;
 import com.hagoapp.datacova.entity.action.TaskAction;
 
 import java.time.ZonedDateTime;
@@ -19,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ExecutionDetail {
+public class ExecutionDetail implements JsonStringify {
     private boolean succeeded;
     private long startTime = -1;
     private long endTime = -1;
@@ -35,11 +36,6 @@ public class ExecutionDetail {
     public static ExecutionDetail fromString(String s) {
         Gson gson = new GsonBuilder().create();
         return gson.fromJson(s, ExecutionDetail.class);
-    }
-
-    public String toString() {
-        isSucceeded();
-        return new GsonBuilder().serializeNulls().setPrettyPrinting().create().toJson(this);
     }
 
     public void startTiming() {
@@ -93,5 +89,11 @@ public class ExecutionDetail {
 
     public long getEndTime() {
         return endTime;
+    }
+
+    @Override
+    public String toJson() {
+        isSucceeded();
+        return JsonStringify.super.toJson();
     }
 }
