@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2020.
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
 package com.hagoapp.datacova.data
 
 import com.hagoapp.datacova.config.DatabaseConfig
@@ -9,7 +16,14 @@ import com.hagoapp.datacova.util.data.getDBValue
 import java.sql.ResultSet
 import java.sql.Timestamp
 
-class UserData(config: DatabaseConfig): CoVaDatabase(config) {
+class UserData(config: DatabaseConfig) : CoVaDatabase(config) {
+
+    companion object {
+        fun computePwdHash(password: String): String {
+            return Utils.sha1Digest("$password|${Utils.sha256Digest(password)}")
+        }
+    }
+
     fun findUser(userId: String): UserInfo? {
         val sql = "select * from users where userid = ?"
         connection.prepareStatement(sql).use { stmt ->
@@ -22,7 +36,7 @@ class UserData(config: DatabaseConfig): CoVaDatabase(config) {
 
     private fun row2User(rs: ResultSet): UserInfo {
         val user = UserInfo(rs.getString("userid"), LocalUserProvider.PROVIDER_NAME)
-        with (user) {
+        with(user) {
             name = rs.getString("name")
             description = rs.getString("description")
             addBy = rs.getString("addby")
@@ -31,6 +45,7 @@ class UserData(config: DatabaseConfig): CoVaDatabase(config) {
             modifyTime = getDBValue<Timestamp>(rs, "modifytime")?.toInstant()?.toEpochMilli()
             thumbnail = getDBValue<ByteArray>(rs, "thumbnail")
             status = UserStatus.valueOf(rs.getInt("eustatus").toString())
+            pwdHash = rs.getString("pwdhash")
         }
         return user
     }
@@ -44,9 +59,5 @@ class UserData(config: DatabaseConfig): CoVaDatabase(config) {
                 return rs.next()
             }
         }
-    }
-
-    private fun computePwdHash(password: String): String {
-        return Utils.sha1Digest("$password|${Utils.sha256Digest(password)}")
     }
 }

@@ -12,6 +12,7 @@ import com.hagoapp.datacova.JsonStringify;
 
 public class UserInfo implements JsonStringify {
     private String userId;
+    private String pwdHash;
     private String provider;
     private String name;
     private String description;
@@ -37,6 +38,14 @@ public class UserInfo implements JsonStringify {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getPwdHash() {
+        return pwdHash;
+    }
+
+    public void setPwdHash(String pwdHash) {
+        this.pwdHash = pwdHash;
     }
 
     public String getProvider() {
