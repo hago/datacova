@@ -11,6 +11,59 @@ import java.lang.reflect.Type
 class RedisCacheReader<T> private constructor() {
     companion object {
         const val DEFAULT_VALIDITY = 60 * 5;
+
+        @JvmStatic
+        fun <T> readCachedData(
+            cacheName: String,
+            dataLifetime: Int,
+            loader: GenericLoader<T>,
+            type: Type,
+            vararg params: Any?
+        ): T? {
+            val builder = Builder<T>()
+                .shouldSkipCache(false)
+                .withLoadFunction(loader)
+                .withDataLifeTime(dataLifetime)
+                .withCacheName(cacheName)
+                .withType(type)
+            val reader = builder.create()
+            return reader.readData(*params)
+        }
+
+        @JvmStatic
+        fun <T> readDataAndUpdateCache(
+            cacheName: String,
+            dataLifetime: Int,
+            loader: GenericLoader<T>,
+            type: Type,
+            vararg params: Any?
+        ): T? {
+            val builder = Builder<T>()
+                .shouldSkipCache(true)
+                .withLoadFunction(loader)
+                .withDataLifeTime(dataLifetime)
+                .withCacheName(cacheName)
+                .withType(type)
+            val reader = builder.create()
+            return reader.readData(*params)
+        }
+
+        @JvmStatic
+        fun <T> readDataAndClearCache(
+            cacheName: String,
+            loader: GenericLoader<T>,
+            type: Type,
+            vararg params: Any?
+        ): T? {
+            val builder = Builder<T>()
+                .shouldSkipCache(true)
+                .withLoadFunction(loader)
+                .withDataLifeTime(-1)
+                .withCacheName(cacheName)
+                .withType(type)
+            val reader = builder.create()
+            return reader.readData(*params)
+        }
     }
 
     private var redis: RedisPool? = null
@@ -20,6 +73,10 @@ class RedisCacheReader<T> private constructor() {
     private lateinit var loadFunction: GenericLoader<T>
     private var skipCache: Boolean = false
     private var cacheName: String? = null
+    private lateinit var actualKey: String
+
+    val lastKey: String
+        get() = actualKey
 
     class Builder<T> {
         private val reader = RedisCacheReader<T>()
@@ -76,13 +133,13 @@ class RedisCacheReader<T> private constructor() {
             redis = RedisPool(CoVaConfig.getConfig().redis)
         }
         redis!!.jedis.use { jedis ->
-            val k = key ?: createKey(*params)
+            actualKey = key ?: createKey(*params)
             return if (skipCache) {
-                doDataLoadAndUpdateRedis(jedis, k, *params)
+                doDataLoadAndUpdateRedis(jedis, actualKey, *params)
             } else {
-                val jsonStr = jedis.get(k)
+                val jsonStr = jedis.get(actualKey)
                 if (jsonStr == null) {
-                    doDataLoadAndUpdateRedis(jedis, k, *params)
+                    doDataLoadAndUpdateRedis(jedis, actualKey, *params)
                 } else {
                     Gson().fromJson(jsonStr, type)
                 }
@@ -97,6 +154,7 @@ class RedisCacheReader<T> private constructor() {
             when {
                 dataLifeTime == 0 -> jedis.set(key, jsonStr)
                 dataLifeTime > 0 -> jedis.setex(key, dataLifeTime, jsonStr)
+                else -> jedis.del(key)
             }
             data
         } catch (e: JsonSyntaxException) {
@@ -117,3 +175,4 @@ class RedisCacheReader<T> private constructor() {
         }
     }
 }
+

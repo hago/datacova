@@ -7,12 +7,13 @@ import org.junit.jupiter.api.Test
 
 class RedisCacheReaderTester {
 
-    private val configFile: String = System.getProperty("cfg") ?: "./config.json"
+    private val configFile: String = System.getProperty("cfg") ?: "./config.sample.json"
 
     private var dataLoadCount: Int = 0
 
     @Test
     fun regularTest() {
+        dataLoadCount = 0
         CoVaConfig.loadConfig(configFile)
         val builder = RedisCacheReader.Builder<String>()
             .shouldSkipCache(false)
@@ -38,6 +39,80 @@ class RedisCacheReaderTester {
             dataLoadCount++
             return params.filterNotNull().joinToString(" + ")
         }
+    }
+
+    @Test
+    fun regularTestClass() {
+        dataLoadCount = 0
+        CoVaConfig.loadConfig(configFile)
+        val builder = RedisCacheReader.Builder<TestClass>()
+            .shouldSkipCache(false)
+            .withLoadFunction(regularLoaderObject)
+            .withDataLifeTime(5)
+            .withType(TestClass::class.java)
+            .withCacheName("RegularTestObject")
+        val reader = builder.create()
+        var x = reader.readData(1, "b", 2.01, false, null)
+        Assertions.assertNotNull(x)
+        Assertions.assertTrue(x is TestClass)
+        Assertions.assertEquals(1, dataLoadCount)
+        x = reader.readData(1, "b", 2.01, false, null)
+        Assertions.assertNotNull(x)
+        Assertions.assertEquals(1, dataLoadCount)
+        Thread.sleep(1000 * 6)
+        x = reader.readData(1, "b", 2.01, false, null)
+        Assertions.assertNotNull(x)
+        Assertions.assertEquals(2, dataLoadCount)
+    }
+
+    private val regularLoaderObject: GenericLoader<TestClass> = object : GenericLoader<TestClass> {
+        override fun perform(vararg params: Any?): TestClass {
+            dataLoadCount++
+            return TestClass(
+                a = params[0] as Int,
+                b = params[1] as String,
+                c = params[2] as Double,
+                d = params[3] as Boolean,
+                e = params[4] as TestClass?
+            )
+        }
+    }
+
+    data class TestClass(
+        val a: Int,
+        val b: String,
+        val c: Double,
+        val d: Boolean,
+        val e: TestClass?
+    )
+
+    @Test
+    fun testCompanion() {
+        dataLoadCount = 0
+        var s = RedisCacheReader.readCachedData(
+            "CompanionObject", 10, regularLoaderObject, TestClass::class.java, 1, "b", 2.01, false, null
+        )
+        Assertions.assertNotNull(s)
+        Assertions.assertTrue(s is TestClass)
+        Assertions.assertEquals(1, dataLoadCount)
+        s = RedisCacheReader.readDataAndUpdateCache(
+            "CompanionObject", 10, regularLoaderObject, TestClass::class.java, 1, "b", 2.01, false, null
+        )
+        Assertions.assertNotNull(s)
+        Assertions.assertTrue(s is TestClass)
+        Assertions.assertEquals(2, dataLoadCount)
+        s = RedisCacheReader.readDataAndClearCache(
+            "CompanionObject", regularLoaderObject, TestClass::class.java, 1, "b", 2.01, false, null
+        )
+        Assertions.assertNotNull(s)
+        Assertions.assertTrue(s is TestClass)
+        Assertions.assertEquals(3, dataLoadCount)
+        s = RedisCacheReader.readCachedData(
+            "CompanionObject", 10, regularLoaderObject, TestClass::class.java, 1, "b", 2.01, false, null
+        )
+        Assertions.assertNotNull(s)
+        Assertions.assertTrue(s is TestClass)
+        Assertions.assertEquals(4, dataLoadCount)
     }
 
 }
