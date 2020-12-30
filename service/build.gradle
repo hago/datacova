@@ -40,6 +40,12 @@ dependencies {
     implementation group: 'org.reflections', name: 'reflections', version: '0.9.11'
 
     implementation group: 'com.github.whvcse', name: 'easy-captcha', version: '1.6.2'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
+    testImplementation group: 'ch.qos.logback', name:'logback-classic', version: '1.2.3'
+
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
+    testRuntimeOnly fileTree('libs') { include '*.jar' }
 }
 
 compileKotlin {
@@ -47,6 +53,15 @@ compileKotlin {
         jvmTarget = "1.8"
         freeCompilerArgs = ['-Xjvm-default=compatibility']
     }
+}
+
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+test {
+    useJUnitPlatform()
+    systemProperties = System.properties as Map<String, ?>
 }
 
 jar {
