@@ -11,7 +11,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonSyntaxException
 import com.hagoapp.datacova.config.CoVaConfig
-import com.hagoapp.datacova.data.redis.RedisPool
+import com.hagoapp.datacova.data.redis.JedisManager
 import redis.clients.jedis.Jedis
 import java.lang.reflect.Type
 
@@ -73,7 +73,7 @@ class RedisCacheReader<T> private constructor() {
         }
     }
 
-    private var redis: RedisPool? = null
+    private var redis: JedisManager? = null
     private var dataLifeTime: Int = 0
     private var key: String? = null
     private var type: Type = String::class.java
@@ -88,7 +88,7 @@ class RedisCacheReader<T> private constructor() {
     class Builder<T> {
         private val reader = RedisCacheReader<T>()
 
-        fun withRedis(redis: RedisPool): Builder<T> {
+        fun withRedis(redis: JedisManager): Builder<T> {
             reader.redis = redis
             return this
         }
@@ -137,7 +137,7 @@ class RedisCacheReader<T> private constructor() {
             throw Exception("Data loading function is not defined")
         }
         if (redis == null) {
-            redis = RedisPool(CoVaConfig.getConfig().redis)
+            redis = JedisManager(CoVaConfig.getConfig().redis)
         }
         redis!!.jedis.use { jedis ->
             actualKey = key ?: createKey(*params)

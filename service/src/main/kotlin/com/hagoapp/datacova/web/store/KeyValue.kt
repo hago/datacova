@@ -12,7 +12,7 @@ import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
 import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.config.CoVaConfig
-import com.hagoapp.datacova.data.redis.RedisPool
+import com.hagoapp.datacova.data.redis.JedisManager
 import com.hagoapp.datacova.user.UserInfo
 import com.hagoapp.datacova.util.KeyValuePair
 import com.hagoapp.datacova.util.http.RequestHelper
@@ -65,7 +65,7 @@ class KeyValue {
     }
 
     private fun saveKeyPairs(userInfo: UserInfo, pairs: List<KeyValuePair>) {
-        RedisPool(CoVaConfig.getConfig().redis).use { pool ->
+        JedisManager(CoVaConfig.getConfig().redis).use { pool ->
             pool.jedis.use { it ->
                 it.hset(userInfo.toString(), pairs.map { item -> Pair(item.key, item.value) }.toMap())
             }
@@ -74,7 +74,7 @@ class KeyValue {
 
     @WebEndPoint(methods = [HttpMethod.GET], path = "/store/pair/:key", authTypes = [AuthType.UserToken])
     fun readKey(context: RoutingContext) {
-        RedisPool(CoVaConfig.getConfig().redis).use { pool ->
+        JedisManager(CoVaConfig.getConfig().redis).use { pool ->
             pool.jedis.use {
                 val key = context.request().getParam("key")
                 val value = it.hget(
@@ -97,7 +97,7 @@ class KeyValue {
         val token = object : TypeToken<List<KeyValuePair>>() {}
         try {
             val keys = Gson().fromJson<List<String>>(json, token.type)
-            RedisPool(CoVaConfig.getConfig().redis).use { pool ->
+            JedisManager(CoVaConfig.getConfig().redis).use { pool ->
                 pool.jedis.use {
                     val values = it.hmget(Authenticator.getUser(context).toString(), *keys.toTypedArray())
                     val pairs = Array(keys.size) { i ->

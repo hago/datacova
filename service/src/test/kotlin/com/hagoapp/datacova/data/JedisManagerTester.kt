@@ -8,11 +8,11 @@
 package com.hagoapp.datacova.data
 
 import com.hagoapp.datacova.config.CoVaConfig
-import com.hagoapp.datacova.data.redis.RedisPool
+import com.hagoapp.datacova.data.redis.JedisManager
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
-class RedisPoolTester {
+class JedisManagerTester {
 
     private val configFile: String = System.getProperty("cfg") ?: "./config.sample.json"
 
@@ -26,7 +26,7 @@ class RedisPoolTester {
         var success = 0
         for (i in 0 until count) {
             try {
-                RedisPool(redisConfig).use { redis ->
+                JedisManager(redisConfig).use { redis ->
                     val pong = redis.jedis.ping()
                     println("No. $i ping: $pong")
                 }

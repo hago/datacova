@@ -14,7 +14,7 @@ import redis.clients.jedis.JedisSentinelPool
 
 import java.io.Closeable
 
-class RedisPool(config: RedisConfig) : Closeable {
+class JedisManager(config: RedisConfig) : Closeable {
 
     private val cfg = config
     private val internalPool: JedisPoolAbstract
