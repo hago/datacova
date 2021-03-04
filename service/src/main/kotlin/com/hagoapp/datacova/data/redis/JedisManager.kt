@@ -24,7 +24,14 @@ class JedisManager(config: RedisConfig) : Closeable {
     }
 
     val jedis: Jedis
-        get() = internalPool.resource
+        get() {
+            val resource = internalPool.resource
+            if (cfg.password == null) {
+                resource.client.setPassword(cfg.password)
+            }
+            resource.select(cfg.database)
+            return resource
+        }
 
 
     private fun getJedisPool(): JedisPoolAbstract {
@@ -43,12 +50,10 @@ class JedisManager(config: RedisConfig) : Closeable {
         val nodes = cfg.sentinelConfig.nodes.map { node ->
             "${node.key}:${node.value}"
         }.toSet()
-        val pool = when (cfg.password) {
+        return when (cfg.password) {
             null -> JedisSentinelPool(cfg.sentinelConfig.master, nodes)
             else -> JedisSentinelPool(cfg.sentinelConfig.master, nodes, cfg.password)
         }
-        pool.resource.select(cfg.database)
-        return pool
     }
 
     override fun close() {
