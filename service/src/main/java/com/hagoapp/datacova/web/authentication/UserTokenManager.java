@@ -7,14 +7,14 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class UserTokenManager {
-    private static UserTokenManager manager = new UserTokenManager();
+    private static final UserTokenManager manager = new UserTokenManager();
 
     public static UserTokenManager getManager() {
         return manager;
     }
 
-    private Map<String, UserInfo> tokenUserMap = new ConcurrentHashMap<>();
-    private Map<UserInfo, List<String>> userTokensMap = new ConcurrentHashMap<>();
+    private final Map<String, UserInfo> tokenUserMap = new ConcurrentHashMap<>();
+    private final Map<UserInfo, List<String>> userTokensMap = new ConcurrentHashMap<>();
 
     public String createToken(UserInfo userInfo) {
         String token = "";
