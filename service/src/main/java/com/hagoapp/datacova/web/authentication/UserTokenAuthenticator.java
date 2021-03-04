@@ -5,7 +5,7 @@ import io.vertx.ext.web.RoutingContext;
 
 public class UserTokenAuthenticator extends Authenticator {
 
-    private static final String HEADER_TOKEN = "USERTOKEN";
+    private static final String HEADER_TOKEN = "USER_TOKEN";
 
     private UserInfo userInfo;
 

@@ -34,7 +34,7 @@ class UserAuthFactory private constructor() {
         return providers.values.toList()
     }
 
-    fun getAuthProvider(name: String): UserAuthProvider? {
-        return providers[name]
+    fun getAuthProvider(name: String?): UserAuthProvider {
+        return providers[name] ?: providers[LocalUserProvider.PROVIDER_NAME]!!
     }
 }

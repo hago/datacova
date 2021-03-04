@@ -41,9 +41,7 @@ class Login : WebInterface {
             }
             if (providerName != null) {
                 val provider = UserAuthFactory.getFactory().getAuthProvider(providerName)
-                if ((provider != null) &&
-                    provider.authenticate(userId, password, *extra.toTypedArray())
-                ) {
+                if (provider.authenticate(userId, password, *extra.toTypedArray())) {
                     val user = UserInfo(userId, provider.getProviderName())
                     loginSucceed(routeContext, user)
                     return
@@ -59,7 +57,7 @@ class Login : WebInterface {
                     }
                 }
             }
-            ResponseHelper.respondError(routeContext, HttpResponseStatus.BAD_REQUEST, "authentication failed")
+            ResponseHelper.respondError(routeContext, HttpResponseStatus.FORBIDDEN, "authentication failed")
         }
 
         private fun loginSucceed(routeContext: RoutingContext, user: UserInfo) {
