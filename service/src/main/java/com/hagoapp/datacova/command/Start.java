@@ -21,12 +21,10 @@ import java.util.List;
 @CommandLine.Command(name = "start", description = "start service")
 public class Start extends CommandWithConfig {
 
-    private Logger logger;
-
     @Override
     public Integer call() throws CoVaException {
         CoVaConfig.loadConfig(configFile);
-        logger = CoVaLogger.getLogger();
+        Logger logger = CoVaLogger.getLogger();
         WebManager.getManager().createWebServer(CoVaConfig.getConfig().getWeb(), List.of(
                 "com.hagoapp.datacova.web"
         ));

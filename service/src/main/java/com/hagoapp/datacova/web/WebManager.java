@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
  */
 public class WebManager {
 
-    private Logger logger = CoVaLogger.getLogger();
+    private final Logger logger = CoVaLogger.getLogger();
     private WebConfig webConfig;
     private static final WebManager instance = new WebManager();
     private final Map<String, WebHandler> handlers = new HashMap<>();
@@ -107,8 +107,6 @@ public class WebManager {
                 errorMessage = e.getMessage();
                 e.printStackTrace();
             }
-            //System.out.println(e);
-            //System.out.println(code);
             logger.info("{} {} from {}\t{}", context.request().method().name(), context.request().path(),
                     context.request().remoteAddress().host(), code);
             ResponseHelper.respondError(context, HttpResponseStatus.valueOf(code), errorMessage,
@@ -196,14 +194,11 @@ public class WebManager {
         }
     }
 
-    private Handler<RoutingContext> logHandler = new Handler<RoutingContext>() {
-        @Override
-        public void handle(RoutingContext context) {
-            logger.info("{} {} from {}\t{}", context.request().method().name(), context.request().path(),
-                    context.request().remoteAddress().host(), context.response().getStatusCode());
-            if (!context.response().ended()) {
-                context.response().end();
-            }
+    private final Handler<RoutingContext> logHandler = context -> {
+        logger.info("{} {} from {}\t{}", context.request().method().name(), context.request().path(),
+                context.request().remoteAddress().host(), context.response().getStatusCode());
+        if (!context.response().ended()) {
+            context.response().end();
         }
     };
 
