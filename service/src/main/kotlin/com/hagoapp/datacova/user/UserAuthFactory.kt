@@ -24,7 +24,9 @@ class UserAuthFactory private constructor() {
 
     init {
         val ref = Reflections("com.hagoapp.datacova", SubTypesScanner())
+        println(ref.allTypes)
         ref.getSubTypesOf(UserAuthProvider::class.java).forEach { clz ->
+            println("found" + clz.canonicalName)
             val provider = clz.getDeclaredConstructor().newInstance()
             providers[provider.getProviderName()] = provider
         }
@@ -35,6 +37,10 @@ class UserAuthFactory private constructor() {
     }
 
     fun getAuthProvider(name: String?): UserAuthProvider {
-        return providers[name] ?: providers[LocalUserProvider.PROVIDER_NAME]!!
+        return when {
+            name == null -> providers[LocalUserProvider.PROVIDER_NAME]!!
+            !providers.containsKey(name) -> providers[LocalUserProvider.PROVIDER_NAME]!!
+            else -> providers.getValue(name)
+        }
     }
 }

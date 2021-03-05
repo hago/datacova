@@ -8,6 +8,7 @@
 
 package com.hagoapp.datacova.web.auth
 
+import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.user.UserInfo
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.util.web.AuthUtils
@@ -30,29 +31,13 @@ class Login : WebInterface {
 
     private val respondFunc = object : WebInterface.Handler {
         override fun handle(routeContext: RoutingContext) {
-            val req = routeContext.request()
-            val password = req.getParam("password")
-            val userId = req.getParam("userId")
-            val extra = req.params().getAll("extra")
-            val providerName = req.getParam("provider")
-            if ((userId == null) || (password == null)) {
-                ResponseHelper.respondError(routeContext, HttpResponseStatus.BAD_REQUEST, "invalid arguments")
-                return
-            }
-            if (providerName != null) {
-                val provider = UserAuthFactory.getFactory().getAuthProvider(providerName)
-                if (provider.authenticate(userId, password, *extra.toTypedArray())) {
-                    val user = UserInfo(userId, provider.getProviderName())
-                    loginSucceed(routeContext, user)
-                    return
-                }
-            } else {
-                for (provider in UserAuthFactory.getFactory().availableAuthProviders()) {
-                    if (provider.isValidUserId(userId) &&
-                        provider.authenticate(userId, password, *extra.toTypedArray())
-                    ) {
-                        val user = UserInfo(userId, provider.getProviderName())
-                        loginSucceed(routeContext, user)
+            CoVaLogger.getLogger().debug("/login")
+            for (provider in UserAuthFactory.getFactory().availableAuthProviders()) {
+                CoVaLogger.getLogger().debug("provider {}", provider.getProviderName())
+                when (val userInfo = provider.authenticate(routeContext)) {
+                    null -> continue
+                    else -> {
+                        loginSucceed(routeContext, userInfo)
                         return
                     }
                 }
@@ -65,7 +50,7 @@ class Login : WebInterface {
             ResponseHelper.sendResponse(
                 routeContext, HttpResponseStatus.OK, mapOf(
                     "code" to 0,
-                    "data" to mapOf("com/hagoapp/datacova/user" to user, "token" to token)
+                    "data" to mapOf("user" to user, "token" to token)
                 )
             )
         }
