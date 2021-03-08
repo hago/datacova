@@ -27,12 +27,10 @@ class LocalUserProvider : UserAuthProvider {
     private val logger = CoVaLogger.getLogger()
 
     override fun authenticate(context: RoutingContext): UserInfo? {
-        logger.debug("123")
         val req = context.request()
         val password = req.getParam(PASSWORD_FIELD)
         val userId = req.getParam(USERNAME_FIELD)
         val captcha = req.getParam(CAPTCHA_FIELD)
-        logger.debug("1234")
         if (!CaptchaUtils.verifyCaptcha(context, captcha)) {
             logger.error("Captcha error when user {} try to login", userId)
             return null
