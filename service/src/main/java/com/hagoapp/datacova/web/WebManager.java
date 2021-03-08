@@ -33,6 +33,9 @@ import org.reflections.Reflections;
 import org.reflections.scanners.MethodAnnotationsScanner;
 import org.reflections.scanners.SubTypesScanner;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -57,7 +60,8 @@ public class WebManager {
     }
 
     public void createWebServer(WebConfig config) throws CoVaException {
-        createWebServer(config, null);
+        Set<String> packageNames = Arrays.stream(Package.getPackages()).map(Package::getName).collect(Collectors.toSet());
+        createWebServer(config, new ArrayList<>(packageNames));
     }
 
     public void createWebServer(WebConfig config, List<String> packageNames) throws CoVaException {
@@ -105,12 +109,27 @@ public class WebManager {
                 errorMessage = HttpResponseStatus.valueOf(code).reasonPhrase();
             } else {
                 errorMessage = e.getMessage();
-                e.printStackTrace();
             }
             logger.info("{} {} from {}\t{}", context.request().method().name(), context.request().path(),
                     context.request().remoteAddress().host(), code);
-            ResponseHelper.respondError(context, HttpResponseStatus.valueOf(code), errorMessage,
-                    webConfig.isOutputStackTrace() && (e != null) ? Map.of("stackTrace", e.getStackTrace()) : null);
+            //logger.debug("message {}", errorMessage);
+            List<String> stacktrace = new ArrayList<>();
+            if (webConfig.isOutputStackTrace() && (e != null)) {
+                try (StringWriter sw = new StringWriter()) {
+                    try (PrintWriter writer = new PrintWriter(sw)) {
+                        e.printStackTrace(writer);
+                        stacktrace = Arrays.asList(sw.toString().split(System.lineSeparator()).clone());
+                    }
+                } catch (IOException ignored) {
+                    //
+                }
+                logger.error("Unexpected error: {}", e.getMessage() == null ? e : e.getMessage());
+                stacktrace.forEach(logger::error);
+                ResponseHelper.respondError(context, HttpResponseStatus.valueOf(code), errorMessage,
+                        Map.of("stackTrace", stacktrace));
+            } else {
+                ResponseHelper.respondError(context, HttpResponseStatus.valueOf(code), errorMessage);
+            }
         });
         BodyHandler bodyHandler = BodyHandler.create()
                 .setBodyLimit(webConfig.getUploadSizeLimit())
@@ -176,7 +195,6 @@ public class WebManager {
                     theHandler.handle(context);
                     context.next();
                 } catch (Throwable e) {
-                    e.printStackTrace();
                     context.fail(e);
                 }
             }).handler(logHandler);
@@ -187,7 +205,6 @@ public class WebManager {
                     handler.getFunction().invoke(instance, context);
                     context.next();
                 } catch (Throwable e) {
-                    e.printStackTrace();
                     context.fail(e);
                 }
             }).handler(logHandler);
@@ -218,8 +235,8 @@ public class WebManager {
     }
 
     private void createCrossOriginRouteHandlers(Router router, WebHandler handler) {
-        if (webConfig.isAllowCrossOriginResourceSharing() &&
-                (List.of(HttpMethod.POST, HttpMethod.PUT).contains(handler.getMethod()))) {
+        if (webConfig.isAllowCrossOriginResourceSharing()) {
+            //logger.debug("CORS sources: {}", webConfig.getCrossOriginSources());
             webConfig.getCrossOriginSources().forEach(origin -> {
                 List<String> headers = getAllowedHeaders(handler);
                 createRoute(router, handler).handler(
@@ -229,7 +246,7 @@ public class WebManager {
     }
 
     private CorsHandler createCrossOriginHandler(List<HttpMethod> methods, List<String> allowHeaders, String pattern) {
-        List<String> headers = new ArrayList<>();
+        Set<String> headers = new HashSet<>();
         headers.addAll(allowHeaders);
         headers.addAll(List.of(
                 "Content-Type",
@@ -240,8 +257,8 @@ public class WebManager {
         Set<HttpMethod> allowedMethods = new HashSet<>();
         allowedMethods.add(HttpMethod.OPTIONS);
         allowedMethods.addAll(methods);
-        return CorsHandler.create(pattern).allowedHeaders(new HashSet<>(headers))
-                .allowedMethods(allowedMethods);
+        //logger.debug("CORS allow: {} {}", allowedMethods, headers);
+        return CorsHandler.create(pattern).allowedHeaders(headers).allowedMethods(allowedMethods);
     }
 
     private Route createRoute(Router router, WebHandler handler) {
