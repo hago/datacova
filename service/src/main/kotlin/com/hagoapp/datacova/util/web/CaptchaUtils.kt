@@ -57,6 +57,7 @@ class CaptchaUtils {
             captcha.charType = Captcha.TYPE_NUM_AND_UPPER
             val code = captcha.text()
             val cookie = Cookie.cookie(CAPTCHA_COOKIE, identity)
+            cookie.path = "/"
             routingContext.addCookie(cookie)
             associator.storeAssociation(identity, code, CAPTCHA_EXPIRY)
             ByteArrayOutputStream().use { baos ->
