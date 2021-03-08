@@ -2,6 +2,14 @@
   <div>
     <div class="loginarea">
       <div class="form-group row">
+        <select class="" v-model="loginChoice">
+          <option v-if="loginMethods.length === 0" value="-1">Login Disabled</option>
+          <option v-for="(method, index) in loginMethods" v-bind:value="index" v-bind:key="index">
+            {{ method }}
+          </option>
+        </select>
+      </div>
+      <div class="form-group row">
         <label for="username" class="col-form-label col-4">User</label>
         <div class="col-6">
           <input
@@ -23,18 +31,7 @@
             class="form-control" />
         </div>
       </div>
-      <div class="form-group row" v-if="!external && frominternet">
-        <label for="otp" class="col-form-label col-4">OTP</label>
-        <div class="col-6">
-          <input
-            type="text"
-            placeholder="OTP Code"
-            id="otp"
-            v-model="otpcode"
-            class="form-control" />
-        </div>
-      </div>
-      <div class="form-group row" v-if="external">
+      <div class="form-group row">
         <label for="captcha" class="col-form-label col-4">Captcha</label>
         <div class="col-6">
           <input
@@ -45,23 +42,12 @@
             class="form-control" />
         </div>
       </div>
-      <div class="row" v-if="external">
+      <div class="row">
         <img v-bind:src="captchaUrl"/>
         <button class="btn btn-info" v-on:click="refreshCaptcha()">Refresh</button>
       </div>
       <div class="row">
         <span class="badge badge-danger veryfyMessage">{{ errorMessage }}</span>
-      </div>
-      <div class="form-group row">
-        <label for="captcha" class="col-form-label col-4">Internal / External</label>
-        <div class="col-6">
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="chkexternal" v-model="external">
-            <label class="form-check-label" for="chkexternal">
-              External
-            </label>
-          </div>
-        </div>
       </div>
       <button class="btn btn-primary" v-on:click="login()">Login</button>
     </div>
@@ -84,7 +70,11 @@ export default {
       external: false,
       captchaUrl: `${process.env.SERVICE_BASE_URL === undefined ? '' : process.env.SERVICE_BASE_URL}/api/auth/captcha`,
       errorMessage: '',
-      frominternet: false
+      frominternet: false,
+      loginMethods: [
+        'General(username, password and captcha)'
+      ],
+      loginChoice: 0
     }
   },
   props: {
@@ -103,8 +93,16 @@ export default {
         return
       }
       let api = new UserAPIHelper(process.env.SERVICE_BASE_URL)
-      let logincall = this.external ? api.loginExternal(this.user.trim(), this.password.trim(), this.captcha.trim())
-        : api.login(this.user.trim(), this.password, this.otpcode.trim())
+      let logincall = null
+      switch (this.loginChoice) {
+        case 0:
+          logincall = api.loginExternal(this.user.trim(), this.password.trim(), this.captcha.trim())
+          break
+      }
+      if (logincall == null) {
+        this.errorMessage = 'undefined login method'
+        return
+      }
       logincall.then(rsp => {
         this.errorMessage = '';
         (new User()).setLogin(rsp.data.data)
