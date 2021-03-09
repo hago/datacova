@@ -56,7 +56,7 @@ create table if not exists users (
 
 /* create test user with password 123456 */
 insert into users (userid, name, pwdhash, addby, modifyby, modifytime)
-values ('test', 'CoVa Test', 'c524b8ab6854ae4097662d3687a2c265b0248712', 'AutoCreated', 'AutoCreated', now());
+values ('test', 'CoVa Test', '4e7dde2c5adfd4189fd0962ed9e7e821ef43b1d6', 'AutoCreated', 'AutoCreated', now());
 
 /*
 actions: array of 
