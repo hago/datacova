@@ -19,7 +19,7 @@
     "port": 5432,
     "username": "cova",
     "password": "cova",
-    "database": "covadb"
+    "databaseName": "covadb"
   },
   "logging": {
     "logFilePath": "./cova.log",
