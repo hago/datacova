@@ -32,22 +32,21 @@ class LocalUserProvider : UserAuthProvider {
         val userId = req.getParam(USERNAME_FIELD)
         val captcha = req.getParam(CAPTCHA_FIELD)
         if (!CaptchaUtils.verifyCaptcha(context, captcha)) {
-            logger.error("Captcha error when user {} try to login", userId)
+            logger.error("Local Database user auth: Captcha error when user {} try to login", userId)
             return null
         }
-        logger.debug("12345")
         val userInfo = getUserInfo(userId)
         return when {
             userInfo == null -> {
-                logger.error("user not found for {} when try to login", userId)
+                logger.error("Local Database user auth: user not found for {} when try to login", userId)
                 null
             }
             userInfo.pwdHash != UserData.computePwdHash(password) -> {
-                logger.error("password mismatch when user {} try to login", userId)
+                logger.error("Local Database user auth: password mismatch when user {} try to login", userId)
                 null
             }
             else -> {
-                logger.info("user {} log in", userId)
+                logger.info("Local Database user auth: user {} log in", userId)
                 userInfo
             }
         }
