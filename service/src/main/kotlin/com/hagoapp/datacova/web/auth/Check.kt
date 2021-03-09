@@ -42,7 +42,7 @@ class Check : WebInterface {
             context, HttpResponseStatus.OK, mapOf(
                 "code" to 0,
                 "data" to mapOf(
-                    "userId" to user,
+                    "user" to user,
                     "token" to AuthUtils.getCurrentToken(context)
                 )
             )
