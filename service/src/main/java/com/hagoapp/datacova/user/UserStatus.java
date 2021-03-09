@@ -17,9 +17,18 @@ public enum UserStatus {
     @SerializedName("2")
     PasswordReset(2);
 
-    private int value;
+    private final int value;
 
     UserStatus(int i) {
         value = i;
+    }
+
+    public static UserStatus parseInt(int i) {
+        for (UserStatus u: UserStatus.values()) {
+            if (i == u.value) {
+                return u;
+            }
+        }
+        return UserStatus.Normal;
     }
 }

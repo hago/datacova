@@ -44,7 +44,7 @@ class UserData(config: DatabaseConfig) : CoVaDatabase(config) {
             modifyBy = getDBValue(rs, "modifyby")
             modifyTime = getDBValue<Timestamp>(rs, "modifytime")?.toInstant()?.toEpochMilli()
             thumbnail = getDBValue<ByteArray>(rs, "thumbnail")
-            status = UserStatus.valueOf(rs.getInt("eustatus").toString())
+            status = UserStatus.parseInt(rs.getInt("eustatus"))
             pwdHash = rs.getString("pwdhash")
         }
         return user
