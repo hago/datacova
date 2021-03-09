@@ -39,7 +39,6 @@ class CaptchaUtils {
         }
 
         override fun findCode(identity: String): String? {
-            println(cache.keys)
             return cache.remove(identity)
         }
     }
