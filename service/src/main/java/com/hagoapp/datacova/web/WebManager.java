@@ -258,7 +258,8 @@ public class WebManager {
         allowedMethods.add(HttpMethod.OPTIONS);
         allowedMethods.addAll(methods);
         //logger.debug("CORS allow: {} {}", allowedMethods, headers);
-        return CorsHandler.create(pattern).allowedHeaders(headers).allowedMethods(allowedMethods);
+        return CorsHandler.create(pattern).allowedHeaders(headers).allowedMethods(allowedMethods)
+                .allowCredentials(true);
     }
 
     private Route createRoute(Router router, WebHandler handler) {
