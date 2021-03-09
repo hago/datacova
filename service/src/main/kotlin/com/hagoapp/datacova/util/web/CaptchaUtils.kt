@@ -17,7 +17,7 @@ import java.io.ByteArrayOutputStream
 
 class CaptchaUtils {
 
-    interface CaptchaAssociator {
+    interface CaptchaStorage {
         fun storeAssociation(identity: String, code: String, expiry: Int)
         fun findCode(identity: String): String?
     }
@@ -28,7 +28,7 @@ class CaptchaUtils {
         val length: Int
     )
 
-    class CaptchaAssociatorMemory : CaptchaAssociator {
+    class CaptchaStorageMemory : CaptchaStorage {
 
         companion object {
             val cache = mutableMapOf<String, String>()
@@ -39,6 +39,7 @@ class CaptchaUtils {
         }
 
         override fun findCode(identity: String): String? {
+            println(cache.keys)
             return cache.remove(identity)
         }
     }
@@ -51,7 +52,7 @@ class CaptchaUtils {
             routingContext: RoutingContext,
             config: CaptchaConfig,
             identity: String = Utils.genRandomString(12),
-            associator: CaptchaAssociator = CaptchaAssociatorMemory()
+            storage: CaptchaStorage = CaptchaStorageMemory()
         ): Pair<String, ByteArray> {
             val captcha = SpecCaptcha(config.width, config.height, config.length)
             captcha.charType = Captcha.TYPE_NUM_AND_UPPER
@@ -59,7 +60,7 @@ class CaptchaUtils {
             val cookie = Cookie.cookie(CAPTCHA_COOKIE, identity)
             cookie.path = "/"
             routingContext.addCookie(cookie)
-            associator.storeAssociation(identity, code, CAPTCHA_EXPIRY)
+            storage.storeAssociation(identity, code, CAPTCHA_EXPIRY)
             ByteArrayOutputStream().use { baos ->
                 captcha.out(baos)
                 val img = baos.toByteArray()
@@ -71,11 +72,11 @@ class CaptchaUtils {
             routingContext: RoutingContext,
             userInput: String,
             caseInSensitive: Boolean = false,
-            associator: CaptchaAssociator = CaptchaAssociatorMemory()
+            storage: CaptchaStorage = CaptchaStorageMemory()
         ): Boolean {
             val cookie = routingContext.getCookie(CAPTCHA_COOKIE) ?: return false
             val identity = cookie.value ?: return false
-            val code = associator.findCode(identity) ?: return false
+            val code = storage.findCode(identity) ?: return false
             return userInput.compareTo(code, caseInSensitive) == 0
         }
     }
