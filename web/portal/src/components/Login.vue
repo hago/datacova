@@ -68,9 +68,8 @@ export default {
       captcha: '',
       captchaUrl: `${process.env.SERVICE_BASE_URL === undefined ? '' : process.env.SERVICE_BASE_URL}/api/auth/captcha`,
       errorMessage: '',
-      frominternet: false,
       loginMethods: [
-        'General(username, password and captcha)'
+        'Regular(username, password and captcha)'
       ],
       loginChoice: 0
     }
@@ -92,7 +91,7 @@ export default {
       let logincall = null
       switch (this.loginChoice) {
         case 0:
-          logincall = api.loginExternal(this.user.trim(), this.password.trim(), this.captcha.trim())
+          logincall = api.loginRegular(this.user.trim(), this.password.trim(), this.captcha.trim())
           break
       }
       if (logincall == null) {
@@ -111,11 +110,8 @@ export default {
     },
     check () {
       let userId = this.user.trim()
-      if (!this.external) {
-        return this.isExtraNet ? (userId !== '' && this.password !== '' && this.otpcode.trim() !== '')
-          : (userId !== '' && this.password !== '')
-      } else {
-        return userId !== '' && this.password !== '' && this.captcha.trim() !== ''
+      if (this.loginChoice === 0) {
+        return userId !== '' && this.password.trim() !== '' && this.captcha.trim() !== ''
       }
     },
     refreshCaptcha () {

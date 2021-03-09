@@ -16,14 +16,12 @@ class UserApiHelper {
     return rsp
   }
 
-  async login (user, pwd, otp) {
+  async loginRegular (user, pwd, captcha) {
     let data = {
       userId: user,
       password: pwd,
-      external: false,
-      otp: otp
+      captcha: captcha
     }
-    // console.log(data)
     let rsp = await axios({
       method: 'POST',
       url: `${this.urlprefix}/api/auth/login`,
