@@ -26,7 +26,7 @@ export default {
       for (let k in user) {
         Vue.set(this.loginStatus, k, user[k])
       }
-      this.name = user.user.displayName
+      this.name = user.user.name
       router.push('/main')
     }
   }

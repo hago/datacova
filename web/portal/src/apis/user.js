@@ -30,7 +30,7 @@ class User {
       if (jump) {
         this.gotoLogin()
       } else {
-        this.user = {user: null, isExternalUser: null, token: null}
+        this.user = {user: null, token: null}
       }
     })
   }
@@ -55,7 +55,7 @@ class User {
   }
 
   setLogin (userObj) {
-    if ((userObj.user === undefined) || (userObj.token === undefined) || (userObj.isExternalUser === undefined)) {
+    if ((userObj.user === undefined) || (userObj.token === undefined)) {
       console.log(`invalid user object: ${JSON.stringify(userObj)}`)
       return false
     }

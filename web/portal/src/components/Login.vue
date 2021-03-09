@@ -65,9 +65,7 @@ export default {
     return {
       user: '',
       password: '',
-      otpcode: '',
       captcha: '',
-      external: false,
       captchaUrl: `${process.env.SERVICE_BASE_URL === undefined ? '' : process.env.SERVICE_BASE_URL}/api/auth/captcha`,
       errorMessage: '',
       frominternet: false,
@@ -82,9 +80,7 @@ export default {
     loginStatus: Object
   },
   created: function () {
-    (new UserAPIHelper(process.env.SERVICE_BASE_URL)).checkNetwork().then(rsp => {
-      this.frominternet = rsp.data.data.isExtraNet
-    }).catch(err => console.log(`check network error: ${err}`))
+    //
   },
   methods: {
     login () {

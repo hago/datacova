@@ -33,30 +33,6 @@ class UserApiHelper {
     return rsp
   }
 
-  async loginExternal (user, pwd, captcha) {
-    let data = {
-      userId: user,
-      password: pwd,
-      captcha: captcha,
-      external: true
-    }
-    let rsp = await axios({
-      method: 'POST',
-      url: `${this.urlprefix}/api/auth/login`,
-      data: querystring.stringify(data),
-      withCredentials: true
-    })
-    return rsp
-  }
-
-  async checkNetwork () {
-    let rsp = await axios({
-      method: 'GET',
-      url: `${this.urlprefix}/api/auth/networktype`
-    })
-    return rsp
-  }
-
   async logout () {
     let rsp = await axios({
       method: 'GET',
