@@ -14,7 +14,7 @@ import com.hagoapp.datacova.entity.execution.ExecutionStatus
 import com.hagoapp.datacova.entity.execution.TaskExecution
 import com.hagoapp.datacova.entity.task.Task
 import com.hagoapp.datacova.entity.task.TaskExtra
-import com.hagoapp.datacova.util.data.getDBValue
+import com.hagoapp.datacova.util.data.DatabaseFunctions
 import java.sql.ResultSet
 import java.sql.Timestamp
 
@@ -40,8 +40,8 @@ class TaskData(config: DatabaseConfig) : CoVaDatabase(config) {
             extra = TaskExtra.fromJson(rs.getString("extra"))
             addBy = rs.getString("addby")
             addTime = rs.getTimestamp("addtime").toInstant().toEpochMilli()
-            modifyBy = getDBValue(rs, "modifyby")
-            modifyTime = getDBValue<Timestamp>(rs, "modifytime")?.toInstant()?.toEpochMilli()
+            modifyBy = DatabaseFunctions.getDBValue(rs, "modifyby")
+            modifyTime = DatabaseFunctions.getDBValue<Timestamp>(rs, "modifytime")?.toInstant()?.toEpochMilli()
             workspaceId = rs.getInt("wkid")
         }
         return task
@@ -75,8 +75,8 @@ class TaskData(config: DatabaseConfig) : CoVaDatabase(config) {
             id = rs.getLong("id")
             addBy = rs.getString("addby")
             addTime = rs.getTimestamp("addtime").toInstant().toEpochMilli()
-            startTime = getDBValue<Timestamp>(rs, "starttime")?.toInstant()?.toEpochMilli()
-            endTime = getDBValue<Timestamp>(rs, "endtime")?.toInstant()?.toEpochMilli()
+            startTime = DatabaseFunctions.getDBValue<Timestamp>(rs, "starttime")?.toInstant()?.toEpochMilli()
+            endTime = DatabaseFunctions.getDBValue<Timestamp>(rs, "endtime")?.toInstant()?.toEpochMilli()
             status = ExecutionStatus.valueOf(rs.getInt("xstatus"))
             detail = ExecutionDetail.fromString(rs.getString("detail"))
             fileInfo = ExecutionFileInfo.getFileInfo(rs.getString("fileinfo"))
