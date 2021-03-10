@@ -1,47 +1,53 @@
 package com.hagoapp.datacova.web.authentication;
 
+import com.hagoapp.datacova.config.CoVaConfig;
 import com.hagoapp.datacova.user.UserInfo;
+import com.hagoapp.datacova.web.authentication.usertoken.UserTokenStore;
+import com.hagoapp.datacova.web.authentication.usertoken.UserTokenStoreMemory;
+import com.hagoapp.datacova.web.authentication.usertoken.UserTokenStoreRedis;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class UserTokenManager {
     private static final UserTokenManager manager = new UserTokenManager();
+
+    static {
+        manager.stores.add(new UserTokenStoreMemory());
+        manager.stores.add(new UserTokenStoreRedis(CoVaConfig.getConfig().getRedis()));
+    }
 
     public static UserTokenManager getManager() {
         return manager;
     }
 
-    private final Map<String, UserInfo> tokenUserMap = new ConcurrentHashMap<>();
-    private final Map<UserInfo, List<String>> userTokensMap = new ConcurrentHashMap<>();
+    private UserTokenManager() {
+        //
+    }
+
+    private final List<UserTokenStore> stores = new ArrayList<>();
+
+    public void addStore(UserTokenStore store) {
+        stores.add(store);
+    }
 
     public String createToken(UserInfo userInfo) {
         String token = "";
-        tokenUserMap.put(token, userInfo);
-        userTokensMap.merge(userInfo, List.of(token), (currentTokenList, newTokenList) -> {
-            if (newTokenList.get(0) == null) {
-                return currentTokenList;
-            }
-            String aToken = newTokenList.get(0);
-            currentTokenList.add(aToken);
-            return currentTokenList;
-        });
+        stores.forEach(store -> store.storeUserToken(token, userInfo));
         return token;
     }
 
     public void removeToken(String token) {
-        UserInfo userInfo = tokenUserMap.remove(token);
-        if (userInfo != null) {
-            List<String> list = userTokensMap.get(userInfo);
-            if (list != null) {
-                list.remove(token);
-                userTokensMap.put(userInfo, list);
-            }
-        }
+        stores.forEach(store -> store.removeUserToken(token));
     }
 
     public UserInfo findToken(String token) {
-        return tokenUserMap.get(token);
+        for (var store : stores) {
+            UserInfo u = store.findUserToken(token);
+            if (u != null) {
+                return u;
+            }
+        }
+        return null;
     }
 }
