@@ -106,6 +106,7 @@ export default {
       }).catch(err => {
         console.log(err)
         this.errorMessage = err.response.data.error.message
+        this.refreshCaptcha()
       })
     },
     check () {
