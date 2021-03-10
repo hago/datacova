@@ -22,6 +22,7 @@ public class UserInfo implements JsonStringify {
     private Long modifyTime;
     private byte[] thumbnail;
     private UserStatus status;
+    private UserType userType;
 
     public UserInfo() {
 
@@ -118,6 +119,14 @@ public class UserInfo implements JsonStringify {
 
     public void setStatus(UserStatus status) {
         this.status = status;
+    }
+
+    public UserType getUserType() {
+        return userType;
+    }
+
+    public void setUserType(UserType userType) {
+        this.userType = userType;
     }
 
     @Override

@@ -11,6 +11,7 @@ import com.hagoapp.datacova.config.DatabaseConfig
 import com.hagoapp.datacova.user.LocalUserProvider
 import com.hagoapp.datacova.user.UserInfo
 import com.hagoapp.datacova.user.UserStatus
+import com.hagoapp.datacova.user.UserType
 import com.hagoapp.datacova.util.Utils
 import com.hagoapp.datacova.util.data.getDBValue
 import java.sql.ResultSet
@@ -46,6 +47,7 @@ class UserData(config: DatabaseConfig) : CoVaDatabase(config) {
             thumbnail = getDBValue<ByteArray>(rs, "thumbnail")
             status = UserStatus.parseInt(rs.getInt("eustatus"))
             pwdHash = rs.getString("pwdhash")
+            userType = UserType.parseInt(rs.getInt("usertype"))
         }
         return user
     }

@@ -51,6 +51,7 @@ create table if not exists users (
     modifytime TIMESTAMP WITH TIME ZONE null,
     thumbnail bytea null,
     eustatus int not null default 0, /* 0 - normal 1 - deleted 2 - password reset*/
+    usertype int not null default 0, /* 0 - local db 1 - ldap */
     primary key(id)
 );
 
