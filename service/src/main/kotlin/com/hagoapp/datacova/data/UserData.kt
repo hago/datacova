@@ -13,7 +13,7 @@ import com.hagoapp.datacova.user.UserInfo
 import com.hagoapp.datacova.user.UserStatus
 import com.hagoapp.datacova.user.UserType
 import com.hagoapp.datacova.util.Utils
-import com.hagoapp.datacova.util.data.getDBValue
+import com.hagoapp.datacova.util.data.DatabaseFunctions
 import java.sql.ResultSet
 import java.sql.Timestamp
 
@@ -41,10 +41,10 @@ class UserData(config: DatabaseConfig) : CoVaDatabase(config) {
             name = rs.getString("name")
             description = rs.getString("description")
             addBy = rs.getString("addby")
-            addTime = getDBValue<Timestamp>(rs, "addtime")!!.toInstant().toEpochMilli()
-            modifyBy = getDBValue(rs, "modifyby")
-            modifyTime = getDBValue<Timestamp>(rs, "modifytime")?.toInstant()?.toEpochMilli()
-            thumbnail = getDBValue<ByteArray>(rs, "thumbnail")
+            addTime = DatabaseFunctions.getDBValue<Timestamp>(rs, "addtime")!!.toInstant().toEpochMilli()
+            modifyBy = DatabaseFunctions.getDBValue(rs, "modifyby")
+            modifyTime = DatabaseFunctions.getDBValue<Timestamp>(rs, "modifytime")?.toInstant()?.toEpochMilli()
+            thumbnail = DatabaseFunctions.getDBValue<ByteArray>(rs, "thumbnail")
             status = UserStatus.parseInt(rs.getInt("eustatus"))
             pwdHash = rs.getString("pwdhash")
             userType = UserType.parseInt(rs.getInt("usertype"))
