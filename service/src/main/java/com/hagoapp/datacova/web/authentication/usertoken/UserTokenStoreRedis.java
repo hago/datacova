@@ -18,6 +18,7 @@ import java.util.Set;
 public class UserTokenStoreRedis implements UserTokenStore {
 
     private final RedisConfig config;
+    private final int TOKEN_LIFE = 3600;
 
     public UserTokenStoreRedis(RedisConfig config) {
         this.config = config;
@@ -27,7 +28,7 @@ public class UserTokenStoreRedis implements UserTokenStore {
     public void storeUserToken(String token, UserInfo userInfo) {
         try (JedisManager man = new JedisManager(config)) {
             Jedis redis = man.getJedis();
-            redis.set(token, userInfo.toJson());
+            redis.setex(token, TOKEN_LIFE, userInfo.toJson());
             redis.hset(userInfo.toString(), token, "1");
         }
     }
