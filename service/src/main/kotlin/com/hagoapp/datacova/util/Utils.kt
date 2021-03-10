@@ -18,6 +18,7 @@ import kotlin.random.Random
 
 class Utils {
     companion object {
+        @JvmStatic
         fun joinPath(vararg paths: String): String {
             var f = File(paths[0])
             paths.takeLast(paths.size - 1).forEach { path ->
@@ -26,10 +27,12 @@ class Utils {
             return f.path
         }
 
+        @JvmStatic
         fun getCurrentPath(): String {
             return File(".").canonicalPath
         }
 
+        @JvmStatic
         fun generateUploadedFileName(original: String): String {
             val f = File(original)
             val path = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"))
@@ -39,45 +42,52 @@ class Utils {
             return "$path/$name.${f.extension}"
         }
 
+        @JvmStatic
         fun md5Digest(obj: Any): String {
             val md5 = MessageDigest.getInstance("MD5")
             md5.update("$obj".toByteArray())
             return BigInteger(1, md5.digest()).toString(16)
         }
 
+        @JvmStatic
         fun sha1Digest(obj: Any): String {
             val sha1 = MessageDigest.getInstance("SHA-1")
             sha1.update("$obj".toByteArray())
             return BigInteger(1, sha1.digest()).toString(16)
         }
 
+        @JvmStatic
         fun sha256Digest(obj: Any): String {
             val sha1 = MessageDigest.getInstance("SHA-256")
             sha1.update("$obj".toByteArray())
             return BigInteger(1, sha1.digest()).toString(16)
         }
 
+        @JvmStatic
         fun getRandomNumber(): Long {
             return Instant.now().toEpochMilli() + Random(Instant.now().toEpochMilli()).nextLong()
         }
 
+        @JvmStatic
         fun genRandomString(
             length: Int,
-            candidates: String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+            candidates: String?
         ): String {
+            val chars = candidates ?: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
             return when {
                 length <= 0 -> throw Exception("Length of string to be generated must be positive")
                 else -> {
                     val rand = Random(Instant.now().toEpochMilli())
                     val sb = StringBuilder()
                     for (i in 0 until length) {
-                        sb.append(candidates[rand.nextInt(0, candidates.length)])
+                        sb.append(chars[rand.nextInt(0, chars.length)])
                     }
                     sb.toString()
                 }
             }
         }
 
+        @JvmStatic
         fun parseFileName(name: String): FileNameParts {
             val pathParts = name.split(File.separator)
             val path = if (pathParts.size == 1) ""

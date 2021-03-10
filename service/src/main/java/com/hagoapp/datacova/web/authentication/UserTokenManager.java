@@ -2,6 +2,7 @@ package com.hagoapp.datacova.web.authentication;
 
 import com.hagoapp.datacova.config.CoVaConfig;
 import com.hagoapp.datacova.user.UserInfo;
+import com.hagoapp.datacova.util.Utils;
 import com.hagoapp.datacova.web.authentication.usertoken.UserTokenStore;
 import com.hagoapp.datacova.web.authentication.usertoken.UserTokenStoreMemory;
 import com.hagoapp.datacova.web.authentication.usertoken.UserTokenStoreRedis;
@@ -32,7 +33,7 @@ public class UserTokenManager {
     }
 
     public String createToken(UserInfo userInfo) {
-        String token = "";
+        String token = Utils.genRandomString(12, null);
         stores.forEach(store -> store.storeUserToken(token, userInfo));
         return token;
     }
