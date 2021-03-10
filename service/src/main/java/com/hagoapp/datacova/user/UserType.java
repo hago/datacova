@@ -15,7 +15,7 @@ public enum UserType {
     @SerializedName("1")
     LDAP(1);
 
-    private int value;
+    private final int value;
 
     UserType(int i) {
         value = i;
