@@ -13,6 +13,7 @@ import io.vertx.ext.web.RoutingContext
 interface UserAuthProvider {
     fun authenticate(context: RoutingContext): UserInfo?
     fun getProviderName(): String
+    fun getProviderType(): Int
     fun isValidUserId(userId: String): Boolean {
         return getUserInfo(userId) != null
     }

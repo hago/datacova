@@ -21,6 +21,7 @@ class LocalUserProvider : UserAuthProvider {
         private const val USERNAME_FIELD = "userId"
         private const val PASSWORD_FIELD = "password"
         private const val CAPTCHA_FIELD = "captcha"
+        const val LOCAL_DATABASE_USER_TYPE = 0
     }
 
     private val dbConfig = CoVaConfig.getConfig().database
@@ -54,6 +55,10 @@ class LocalUserProvider : UserAuthProvider {
 
     override fun getProviderName(): String {
         return PROVIDER_NAME
+    }
+
+    override fun getProviderType(): Int {
+        return LOCAL_DATABASE_USER_TYPE
     }
 
     override fun getUserInfo(userId: String): UserInfo? {
