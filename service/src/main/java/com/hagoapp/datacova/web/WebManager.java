@@ -246,10 +246,10 @@ public class WebManager {
         }
     }
 
-    private CorsHandler createCrossOriginHandler(List<HttpMethod> methods, List<String> allowHeaders, String pattern) {
-        Set<String> headers = new HashSet<>();
-        headers.addAll(allowHeaders);
-        headers.addAll(List.of(
+    private CorsHandler createCrossOriginHandler(List<HttpMethod> methods, List<String> headers, String pattern) {
+        Set<String> allowHeaders = new HashSet<>();
+        allowHeaders.addAll(headers);
+        allowHeaders.addAll(List.of(
                 "Content-Type",
                 "Access-Control-Allow-Method",
                 "Access-Control-Allow-Origin",
@@ -259,7 +259,7 @@ public class WebManager {
         allowedMethods.add(HttpMethod.OPTIONS);
         allowedMethods.addAll(methods);
         //logger.debug("CORS allow: {} {}", allowedMethods, headers);
-        return CorsHandler.create(pattern).allowedHeaders(headers).allowedMethods(allowedMethods)
+        return CorsHandler.create(pattern).allowedMethods(allowedMethods).allowedHeaders(allowHeaders)
                 .allowCredentials(true);
     }
 
