@@ -8,7 +8,7 @@
         <span class="title_red">Va</span><span>lidation</span>
       </div>
       <div class="user">
-        <a v-if="this.loginStatus.user !== undefined" href="javascript:void(0);" v-on:click="logout()">{{this.loginStatus.user.fullName}}</a>
+        <a v-if="this.loginStatus.user !== undefined" href="javascript:void(0);" v-on:click="logout()">{{this.loginStatus.user.name}}</a>
         <span v-if="this.loginStatus.user === undefined">Anonymous</span>
       </div>
     </div>
