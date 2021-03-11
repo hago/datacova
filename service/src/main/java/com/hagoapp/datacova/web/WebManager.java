@@ -228,7 +228,8 @@ public class WebManager {
                 logger.error("Authentication failed for {} {}", handler.getMethod().name(), handler.getPath());
                 ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, "Not authenticated");
             } else {
-                logger.debug("authentication passed for {}, execute next handler", handler.getPath());
+                logger.debug("authentication passed for {} {}, execute next handler",
+                        handler.getMethod().name(), handler.getPath());
                 context.next();
             }
         });

@@ -19,6 +19,9 @@ import io.vertx.ext.web.RoutingContext
 import com.hagoapp.datacova.user.UserAuthFactory
 
 class Login : WebInterface {
+
+    private val logger = CoVaLogger.getLogger()
+
     override fun getPath(): String {
         return "/api/auth/login"
     }
@@ -31,12 +34,11 @@ class Login : WebInterface {
 
     private val respondFunc = object : WebInterface.Handler {
         override fun handle(routeContext: RoutingContext) {
-            CoVaLogger.getLogger().debug("/login")
             for (provider in UserAuthFactory.getFactory().availableAuthProviders()) {
-                CoVaLogger.getLogger().debug("provider {}", provider.getProviderName())
                 when (val userInfo = provider.authenticate(routeContext)) {
                     null -> continue
                     else -> {
+                        logger.debug("authenticate succeeded by provider {}", provider.getProviderName())
                         loginSucceed(routeContext, userInfo)
                         return
                     }

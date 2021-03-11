@@ -43,11 +43,11 @@ class LocalUserProvider : UserAuthProvider {
                 null
             }
             userInfo.pwdHash != UserData.computePwdHash(password) -> {
-                logger.error("Local Database user auth: password mismatch when user {} try to login", userId)
+                logger.error("Local Database user auth: password mismatch when user '{} try to login", userId)
                 null
             }
             else -> {
-                logger.info("Local Database user auth: user {} log in", userId)
+                logger.info("Local Database user auth: user '{}' log in", userId)
                 userInfo
             }
         }
