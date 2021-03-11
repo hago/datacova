@@ -150,6 +150,9 @@ export default {
       Vue.set(this.conninfo, 'connections', connections)
     },
     loadConnections: function () {
+      if ((this.workspacesIndex < 0) || (this.workspaces.length >= this.workspaceIndex)) {
+        return
+      }
       let wkid = this.workspaces[this.workspaceIndex].id;
       (new WorkspaceApiHelper()).getConnections(wkid).then(rsp => {
         this.conninfo = rsp.data.data
