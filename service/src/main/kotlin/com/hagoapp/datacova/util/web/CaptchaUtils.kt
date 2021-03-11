@@ -50,7 +50,7 @@ class CaptchaUtils {
         fun createCaptcha(
             routingContext: RoutingContext,
             config: CaptchaConfig,
-            identity: String = Utils.genRandomString(12),
+            identity: String = Utils.genRandomString(12, null),
             storage: CaptchaStorage = CaptchaStorageMemory()
         ): Pair<String, ByteArray> {
             val captcha = SpecCaptcha(config.width, config.height, config.length)

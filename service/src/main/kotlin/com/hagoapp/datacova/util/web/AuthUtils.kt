@@ -41,7 +41,7 @@ class AuthUtils {
         }
 
         fun loginUser(context: RoutingContext, user: UserInfo): String {
-            val identity = Utils.genRandomString(12)
+            val identity = Utils.genRandomString(12, null)
             JedisManager(CoVaConfig.getConfig().redis).use { pool ->
                 pool.jedis.setex(identity, 86400, toJson(user))
             }
@@ -57,7 +57,7 @@ class AuthUtils {
         }
 
         fun setImpersonator(context: RoutingContext, impersonatedUser: UserInfo) {
-            val identity = Utils.genRandomString(12)
+            val identity = Utils.genRandomString(12, null)
             JedisManager(CoVaConfig.getConfig().redis).use {
                 it.jedis.setex(identity, 86400, toJson(impersonatedUser))
             }
