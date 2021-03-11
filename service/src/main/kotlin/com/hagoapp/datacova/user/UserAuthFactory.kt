@@ -44,4 +44,9 @@ class UserAuthFactory private constructor() {
             else -> providers.getValue(name)
         }
     }
+
+    fun getAuthProvider(id: Int): UserAuthProvider {
+        val p = providers.values.firstOrNull { it.getProviderType() == id }
+        return p ?: providers.getValue(LocalUserProvider.PROVIDER_NAME)
+    }
 }

@@ -17,6 +17,7 @@ import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.RoutingContext
 import com.hagoapp.datacova.user.UserAuthFactory
+import com.hagoapp.datacova.user.UserAuthProvider
 
 class Login : WebInterface {
 
@@ -34,20 +35,31 @@ class Login : WebInterface {
 
     private val respondFunc = object : WebInterface.Handler {
         override fun handle(routeContext: RoutingContext) {
-            for (provider in UserAuthFactory.getFactory().availableAuthProviders()) {
-                when (val userInfo = provider.authenticate(routeContext)) {
-                    null -> continue
-                    else -> {
-                        logger.debug("authenticate succeeded by provider {}", provider.getProviderName())
-                        loginSucceed(routeContext, userInfo)
-                        return
+            val factory = UserAuthFactory.getFactory()
+            if (routeContext.request().params().contains(LOGIN_PROVIDER)) {
+                val providerType = routeContext.request().getParam(LOGIN_PROVIDER).toIntOrNull() ?: 0
+                val provider = factory.getAuthProvider(providerType)
+                val userInfo = provider.authenticate(routeContext)
+                if (userInfo != null) {
+                    loginSucceed(routeContext, userInfo, provider)
+                    return
+                }
+            } else {
+                for (providerCandidate in UserAuthFactory.getFactory().availableAuthProviders()) {
+                    when (val userInfo = providerCandidate.authenticate(routeContext)) {
+                        null -> continue
+                        else -> {
+                            loginSucceed(routeContext, userInfo, providerCandidate)
+                            return
+                        }
                     }
                 }
             }
             ResponseHelper.respondError(routeContext, HttpResponseStatus.FORBIDDEN, "authentication failed")
         }
 
-        private fun loginSucceed(routeContext: RoutingContext, user: UserInfo) {
+        private fun loginSucceed(routeContext: RoutingContext, user: UserInfo, provider: UserAuthProvider) {
+            logger.debug("authenticate succeeded by provider {}", provider.getProviderName())
             val token = AuthUtils.loginUser(routeContext, user)
             ResponseHelper.sendResponse(
                 routeContext, HttpResponseStatus.OK, mapOf(
@@ -56,6 +68,10 @@ class Login : WebInterface {
                 )
             )
         }
+    }
+
+    companion object {
+        private const val LOGIN_PROVIDER = "provider"
     }
 
 
