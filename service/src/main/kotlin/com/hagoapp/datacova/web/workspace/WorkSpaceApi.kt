@@ -27,7 +27,6 @@ class WorkSpaceApi {
     )
     fun myWorkSpaces(routeContext: RoutingContext) {
         val user = Authenticator.getUser(routeContext)
-        println(user)
         val workspaces = getMyWorkSpaces(user.id)
         ResponseHelper.sendResponse(
             routeContext, HttpResponseStatus.OK, mapOf(
