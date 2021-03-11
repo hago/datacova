@@ -19,6 +19,10 @@ public enum WorkSpaceUserRole {
 
     private final int value;
 
+    public int getValue() {
+        return value;
+    }
+
     WorkSpaceUserRole(int i) {
         value = i;
     }

@@ -11,10 +11,10 @@ public class WorkSpace {
     private int id;
     private String name;
     private String description;
-    private String ownerId;
-    private String addBy;
+    private long ownerId;
+    private long addBy;
     private long addTime;
-    private String modifyBy;
+    private Long modifyBy;
     private Long modifyTime;
 
     public int getId() {
@@ -41,19 +41,19 @@ public class WorkSpace {
         this.description = description;
     }
 
-    public String getOwnerId() {
+    public long getOwnerId() {
         return ownerId;
     }
 
-    public void setOwnerId(String ownerId) {
+    public void setOwnerId(long ownerId) {
         this.ownerId = ownerId;
     }
 
-    public String getAddBy() {
+    public long getAddBy() {
         return addBy;
     }
 
-    public void setAddBy(String addBy) {
+    public void setAddBy(long addBy) {
         this.addBy = addBy;
     }
 
@@ -65,11 +65,11 @@ public class WorkSpace {
         this.addTime = addTime;
     }
 
-    public String getModifyBy() {
+    public Long getModifyBy() {
         return modifyBy;
     }
 
-    public void setModifyBy(String modifyBy) {
+    public void setModifyBy(long modifyBy) {
         this.modifyBy = modifyBy;
     }
 
@@ -77,7 +77,7 @@ public class WorkSpace {
         return modifyTime;
     }
 
-    public void setModifyTime(Long modifyTime) {
+    public void setModifyTime(long modifyTime) {
         this.modifyTime = modifyTime;
     }
 }
