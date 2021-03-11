@@ -16,7 +16,7 @@ import io.vertx.ext.web.RoutingContext
 class WorkSpaceApi {
 
     companion object {
-        private const val MY_WORKSPACES_CACHE_KEY = "workspace_%s"
+        private const val MY_WORKSPACES_CACHE_KEY = "workspace_%d"
     }
 
     @WebEndPoint(
@@ -26,7 +26,7 @@ class WorkSpaceApi {
     )
     fun myWorkSpaces(routeContext: RoutingContext) {
         val user = Authenticator.getUser(routeContext)
-        val workspaces = getMyWorkSpaces(user.userId)
+        val workspaces = getMyWorkSpaces(user.id)
         ResponseHelper.sendResponse(
             routeContext, HttpResponseStatus.OK, mapOf(
                 "code" to 0,
@@ -35,16 +35,17 @@ class WorkSpaceApi {
         )
     }
 
-    private fun getMyWorkSpaces(user: String): List<WorkSpace> {
-        val key = MY_WORKSPACES_CACHE_KEY.format(user)
+    private fun getMyWorkSpaces(userId: Long): List<WorkSpace> {
+        val key = MY_WORKSPACES_CACHE_KEY.format(userId)
         val token = object : TypeToken<List<WorkSpace>>() {}
-        val workspaces = RedisCacheReader.readCachedData(key, 1800,
+        val workspaces = RedisCacheReader.readCachedData(
+            key, 1800,
             object : RedisCacheReader.GenericLoader<List<WorkSpace>> {
                 override fun perform(vararg params: Any?): List<WorkSpace> {
                     return if (params.isEmpty()) listOf() else
-                        WorkSpaceData(CoVaConfig.getConfig().database).getMyWorkSpaces(params[0] as String)
+                        WorkSpaceData(CoVaConfig.getConfig().database).getMyWorkSpaces(params[0] as Long)
                 }
-            }, token.type, listOf(user)
+            }, token.type, userId
         )
         return workspaces ?: listOf()
     }

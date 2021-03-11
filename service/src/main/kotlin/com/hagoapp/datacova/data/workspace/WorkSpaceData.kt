@@ -11,11 +11,11 @@ class WorkSpaceData(connectionConfig: DatabaseConfig) : CoVaDatabase(connectionC
     /**
      * get all work spaces owned by user
      */
-    fun getOwnedWorkSpaces(userId: String): List<WorkSpace> {
-        val sql = "select * from workspaces where ownerid = ?"
+    fun getOwnedWorkSpaces(userId: Long): List<WorkSpace> {
+        val sql = "select * from workspace where ownerid = ?"
         val workspaces = mutableListOf<WorkSpace>()
         connection.prepareStatement(sql).use { stmt ->
-            stmt.setString(1, userId)
+            stmt.setLong(1, userId)
             stmt.executeQuery().use { rs ->
                 while (rs.next()) {
                     workspaces.add(resultSet2WorkSpace(rs))
@@ -28,12 +28,12 @@ class WorkSpaceData(connectionConfig: DatabaseConfig) : CoVaDatabase(connectionC
     /**
      * get all work spaces the user is involved
      */
-    private fun getInvolvedWorkSpaces(userId: String): List<WorkSpace> {
+    private fun getInvolvedWorkSpaces(userId: Long): List<WorkSpace> {
         val sql =
-            "select distinct ws.* from workspaces as ws inner join workspaceusers as wsu on ws.id = wsu.wkid where wsu.userid = ?"
+            "select distinct ws.* from workspace as ws inner join workspaceuser as wsu on ws.id = wsu.wkid where wsu.userid = ?"
         val workspaces = mutableListOf<WorkSpace>()
         connection.prepareStatement(sql).use { stmt ->
-            stmt.setString(1, userId)
+            stmt.setLong(1, userId)
             stmt.executeQuery().use { rs ->
                 while (rs.next()) {
                     workspaces.add(resultSet2WorkSpace(rs))
@@ -46,7 +46,7 @@ class WorkSpaceData(connectionConfig: DatabaseConfig) : CoVaDatabase(connectionC
     /**
      * get all work spaces a user has something to do with
      */
-    fun getMyWorkSpaces(userId: String): List<WorkSpace> {
+    fun getMyWorkSpaces(userId: Long): List<WorkSpace> {
         val owned = getOwnedWorkSpaces(userId)
         return getInvolvedWorkSpaces(userId).plus(owned)
     }
