@@ -35,9 +35,21 @@ class UserData(config: DatabaseConfig) : CoVaDatabase(config) {
         }
     }
 
+    fun findUser(userId: String, userType: Int): UserInfo? {
+        val sql = "select * from users where userid = ? and usertype = ?"
+        connection.prepareStatement(sql).use { stmt ->
+            stmt.setString(1, userId)
+            stmt.setInt(2, userType)
+            stmt.executeQuery().use { rs ->
+                return if (!rs.next()) null else row2User(rs)
+            }
+        }
+    }
+
     private fun row2User(rs: ResultSet): UserInfo {
         val user = UserInfo(rs.getString("userid"), LocalUserProvider.PROVIDER_NAME)
         with(user) {
+            id = rs.getLong("id")
             name = rs.getString("name")
             description = rs.getString("description")
             addBy = rs.getString("addby")
@@ -48,18 +60,8 @@ class UserData(config: DatabaseConfig) : CoVaDatabase(config) {
             status = UserStatus.parseInt(rs.getInt("eustatus"))
             pwdHash = rs.getString("pwdhash")
             userType = UserType.parseInt(rs.getInt("usertype"))
+            provider = rs.getString("usertype")
         }
         return user
-    }
-
-    fun authenticate(userId: String, password: String): Boolean {
-        val sql = "select * from users where userid = ? and pwdhash = ?"
-        connection.prepareStatement(sql).use { stmt ->
-            stmt.setString(1, userId)
-            stmt.setString(2, computePwdHash(password))
-            stmt.executeQuery().use { rs ->
-                return rs.next()
-            }
-        }
     }
 }

@@ -32,7 +32,7 @@ class LocalUserProvider : UserAuthProvider {
         val password = req.getParam(PASSWORD_FIELD)
         val userId = req.getParam(USERNAME_FIELD)
         val captcha = req.getParam(CAPTCHA_FIELD)
-        if (!CaptchaUtils.verifyCaptcha(context, captcha)) {
+        if (!CaptchaUtils.verifyCaptcha(context, captcha, true)) {
             logger.error("Local Database user auth: Captcha error when user {} try to login", userId)
             return null
         }
