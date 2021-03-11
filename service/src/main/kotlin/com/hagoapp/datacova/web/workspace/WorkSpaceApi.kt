@@ -1,5 +1,6 @@
 package com.hagoapp.datacova.web.workspace
 
+import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.RedisCacheReader
@@ -26,6 +27,7 @@ class WorkSpaceApi {
     )
     fun myWorkSpaces(routeContext: RoutingContext) {
         val user = Authenticator.getUser(routeContext)
+        println(user)
         val workspaces = getMyWorkSpaces(user.id)
         ResponseHelper.sendResponse(
             routeContext, HttpResponseStatus.OK, mapOf(
@@ -48,5 +50,32 @@ class WorkSpaceApi {
             }, token.type, userId
         )
         return workspaces ?: listOf()
+    }
+
+    @WebEndPoint(
+        methods = [HttpMethod.PUT, HttpMethod.POST],
+        path = "/api/workspace/add",
+        authTypes = [AuthType.UserToken]
+    )
+    fun addWorkSpace(routeContext: RoutingContext) {
+        val userInfo = Authenticator.getUser(routeContext)
+        val wk = parseWorkSpace(routeContext)
+        if (wk == null) {
+            ResponseHelper.respondError(routeContext, HttpResponseStatus.BAD_REQUEST, "Invalid Workspace Data")
+            return
+        }
+        wk.ownerId = userInfo.id
+        wk.addBy = userInfo.id
+        val workSpace = WorkSpaceData().addWorkSpace(wk)
+        ResponseHelper.sendResponse(routeContext, HttpResponseStatus.OK, mapOf("code" to 0, "data" to workSpace))
+    }
+
+    private fun parseWorkSpace(routeContext: RoutingContext): WorkSpace? {
+        return try {
+            val load = routeContext.bodyAsString
+            GsonBuilder().create().fromJson(load, WorkSpace::class.java)
+        } catch (ex: Exception) {
+            null
+        }
     }
 }

@@ -69,7 +69,7 @@ public class WorkSpace {
         return modifyBy;
     }
 
-    public void setModifyBy(long modifyBy) {
+    public void setModifyBy(Long modifyBy) {
         this.modifyBy = modifyBy;
     }
 
@@ -77,7 +77,7 @@ public class WorkSpace {
         return modifyTime;
     }
 
-    public void setModifyTime(long modifyTime) {
+    public void setModifyTime(Long modifyTime) {
         this.modifyTime = modifyTime;
     }
 }

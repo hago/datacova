@@ -1,13 +1,18 @@
 package com.hagoapp.datacova.data.workspace
 
+import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.config.DatabaseConfig
 import com.hagoapp.datacova.data.CoVaDatabase
 import com.hagoapp.datacova.entity.workspace.WorkSpace
+import com.hagoapp.datacova.entity.workspace.WorkSpaceUserRole
 import com.hagoapp.datacova.util.data.DatabaseFunctions
 import java.sql.ResultSet
 import java.sql.Timestamp
 
 class WorkSpaceData(connectionConfig: DatabaseConfig) : CoVaDatabase(connectionConfig) {
+
+    constructor() : this(CoVaConfig.getConfig().database)
+
     /**
      * get all work spaces owned by user
      */
@@ -60,12 +65,56 @@ class WorkSpaceData(connectionConfig: DatabaseConfig) : CoVaDatabase(connectionC
             id = rs.getInt("id")
             name = rs.getString("name")
             description = rs.getString("description")
-            addBy = rs.getString("addby")
+            addBy = rs.getLong("addby")
             addTime = rs.getTimestamp("addtime").toInstant().toEpochMilli()
-            modifyBy = DatabaseFunctions.getDBValue<String>(rs, "modifyby")
+            modifyBy = DatabaseFunctions.getDBValue(rs, "modifyby")
             modifyTime = DatabaseFunctions.getDBValue<Timestamp>(rs, "modifytime")?.toInstant()?.toEpochMilli()
-            ownerId = rs.getString("ownerid")
+            ownerId = rs.getLong("ownerid")
         }
         return workSpace
+    }
+
+    fun addWorkSpace(workSpace: WorkSpace): WorkSpace? {
+        connection.autoCommit = false
+        val id = try {
+            connection.prepareStatement("insert into workspace (name, description, ownerid, addby) values (?,?,?,?) returning id")
+                .use { stmt ->
+                    stmt.setString(1, workSpace.name)
+                    stmt.setString(2, workSpace.description)
+                    stmt.setLong(3, workSpace.ownerId)
+                    stmt.setLong(4, workSpace.addBy)
+                    stmt.executeQuery().use { rs ->
+                        rs.next()
+                        rs.getInt(1)
+                    }
+                }
+        } catch (ex: Exception) {
+            logger.error("create workspace in database failed: {}", ex.message)
+            return null
+        }
+        connection.prepareStatement("insert into workspaceuser (wkid, usergroup, userid) values (?,?,?)").use { stmt ->
+            stmt.setInt(1, id)
+            stmt.setInt(2, WorkSpaceUserRole.Admin.value)
+            stmt.setLong(3, workSpace.ownerId)
+            stmt.addBatch()
+            stmt.executeBatch()
+            stmt.clearParameters()
+        }
+        connection.commit()
+        connection.autoCommit = true
+        return getWorkSpace(id)
+    }
+
+    /**
+     * get a single workspace data
+     */
+    fun getWorkSpace(id: Int): WorkSpace? {
+        return connection.prepareStatement("select * from workspace where id = ?").use { stmt ->
+            stmt.setInt(1, id)
+            stmt.executeQuery().use { rs ->
+                if (!rs.next()) null
+                else resultSet2WorkSpace(rs)
+            }
+        }
     }
 }
