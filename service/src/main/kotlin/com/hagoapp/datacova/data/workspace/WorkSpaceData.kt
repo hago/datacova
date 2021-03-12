@@ -76,6 +76,16 @@ class WorkSpaceData(connectionConfig: DatabaseConfig) : CoVaDatabase(connectionC
 
     fun addWorkSpace(workSpace: WorkSpace): WorkSpace? {
         connection.autoCommit = false
+        connection.prepareStatement("select id from workspace where name = ? and ownerid = ?").use { stmt ->
+            stmt.setString(1, workSpace.name)
+            stmt.setLong(2, workSpace.ownerId)
+            stmt.executeQuery().use { rs ->
+                if (rs.next()) {
+                    connection.rollback()
+                    return null
+                }
+            }
+        }
         val id = try {
             connection.prepareStatement("insert into workspace (name, description, ownerid, addby) values (?,?,?,?) returning id")
                 .use { stmt ->
@@ -90,6 +100,7 @@ class WorkSpaceData(connectionConfig: DatabaseConfig) : CoVaDatabase(connectionC
                 }
         } catch (ex: Exception) {
             logger.error("create workspace in database failed: {}", ex.message)
+            connection.rollback()
             return null
         }
         connection.prepareStatement("insert into workspaceuser (wkid, usergroup, userid) values (?,?,?)").use { stmt ->
