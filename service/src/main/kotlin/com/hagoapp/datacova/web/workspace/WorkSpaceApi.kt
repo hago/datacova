@@ -6,6 +6,7 @@ import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.RedisCacheReader
 import com.hagoapp.datacova.data.workspace.WorkSpaceData
 import com.hagoapp.datacova.entity.workspace.WorkSpace
+import com.hagoapp.datacova.entity.workspace.WorkSpaceUsers
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import com.hagoapp.datacova.web.authentication.AuthType
@@ -66,7 +67,11 @@ class WorkSpaceApi {
         wk.ownerId = userInfo.id
         wk.addBy = userInfo.id
         val workSpace = WorkSpaceData().addWorkSpace(wk)
-        ResponseHelper.sendResponse(routeContext, HttpResponseStatus.OK, mapOf("code" to 0, "data" to workSpace))
+        if (workSpace == null) {
+            ResponseHelper.respondError(routeContext, HttpResponseStatus.CONFLICT, "duplicated name")
+        } else {
+            ResponseHelper.sendResponse(routeContext, HttpResponseStatus.OK, mapOf("code" to 0, "data" to workSpace))
+        }
     }
 
     private fun parseWorkSpace(routeContext: RoutingContext): WorkSpace? {
