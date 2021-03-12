@@ -17,6 +17,10 @@ public enum UserType {
 
     private final int value;
 
+    public int getValue() {
+        return value;
+    }
+
     UserType(int i) {
         value = i;
     }
