@@ -128,4 +128,37 @@ class WorkSpaceData(connectionConfig: DatabaseConfig) : CoVaDatabase(connectionC
             }
         }
     }
+
+    /**
+     * get user list with role of a
+     */
+    fun getWorkspaceUserIdList(id: Int): List<WorkspaceBasicUser> {
+        val sql = "select u.userid, u.usertype, wsu.usergroup" +
+                "from workspaceuser as wsu inner join user as u on wsu.userid == u.id " +
+                "where wkid = ?"
+        return connection.prepareCall(sql).use { stmt ->
+            stmt.setInt(1, id)
+            stmt.executeQuery().use { rs ->
+                val list = mutableListOf<WorkspaceBasicUser>()
+                while (rs.next()) {
+                    list.add(
+                        WorkspaceBasicUser(
+                            id,
+                            rs.getString("userid"),
+                            rs.getInt("usertype"),
+                            WorkSpaceUserRole.parseInt(rs.getInt("usergroup"))
+                        )
+                    )
+                }
+                list
+            }
+        }
+    }
+
+    data class WorkspaceBasicUser(
+        val workspaceId: Int,
+        val userid: String,
+        val userType: Int,
+        val role: WorkSpaceUserRole
+    )
 }

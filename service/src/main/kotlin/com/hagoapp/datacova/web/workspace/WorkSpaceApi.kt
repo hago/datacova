@@ -6,7 +6,7 @@ import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.RedisCacheReader
 import com.hagoapp.datacova.data.workspace.WorkSpaceData
 import com.hagoapp.datacova.entity.workspace.WorkSpace
-import com.hagoapp.datacova.entity.workspace.WorkSpaceUsers
+import com.hagoapp.datacova.user.UserAuthFactory
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import com.hagoapp.datacova.web.authentication.AuthType
@@ -37,7 +37,7 @@ class WorkSpaceApi {
         )
     }
 
-    private fun getMyWorkSpaces(userId: Long): List<WorkSpace> {
+    private fun getMyWorkSpaces(userId: Long): List<WorkspaceWithUser> {
         val key = MY_WORKSPACES_CACHE_KEY.format(userId)
         val token = object : TypeToken<List<WorkSpace>>() {}
         val workspaces = RedisCacheReader.readCachedData(
@@ -49,7 +49,22 @@ class WorkSpaceApi {
                 }
             }, token.type, userId
         )
-        return workspaces ?: listOf()
+        return workspaces?.map {
+            WorkspaceWithUser(workspace = it, users = findWorkspaceUsers(it.id))
+        } ?: listOf()
+    }
+
+    private fun findWorkspaceUsers(workspaceId: Int): List<WorkspaceUser> {
+        val list = WorkSpaceData().getWorkspaceUserIdList(workspaceId)
+        val userInfoList = list.map { Pair(it.userid, it.userType) }.toSet().map { p ->
+            UserAuthFactory.getFactory().getAuthProvider(p.second).getUserInfo(p.first)
+        }.filterNotNull()
+        return userInfoList.map { u ->
+            WorkspaceUser(
+                user = u,
+                roles = list.filter { it.userid == u.userId && it.userType == u.userType.value }.map { it.role }
+            )
+        }
     }
 
     @WebEndPoint(
