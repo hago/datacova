@@ -15,7 +15,7 @@ public enum WorkSpaceUserRole {
     @SerializedName("1")
     Maintainer(1),
     @SerializedName("2")
-    User(2);
+    Loader(2);
 
     private final int value;
 
@@ -33,6 +33,6 @@ public enum WorkSpaceUserRole {
                 return u;
             }
         }
-        return WorkSpaceUserRole.User;
+        return WorkSpaceUserRole.Loader;
     }
 }
