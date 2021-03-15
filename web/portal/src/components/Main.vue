@@ -5,8 +5,8 @@
           <h4><b>My Workspaces</b></h4>
           <select class="wklist custom-select" v-model="workspaceIndex" v-on:change="switchWorkspace()">
             <option v-if="workspaces.length === 0" value="-1">No Workspace</option>
-            <option v-for="(workspace, index) in workspaces" v-bind:value="index" v-bind:key="index">
-              {{ workspace.name }}
+            <option v-for="(item, index) in workspaces" v-bind:value="index" v-bind:key="index">
+              {{ item.workspace.name }}
             </option>
           </select>
         </div>
@@ -31,11 +31,11 @@
       <div v-if="(workspaces.length > 0) && !edit_workspace.show" style="margin:5px 0px 0px 0px">
         <div class="card bg-dark">
           <h4 class="card-title">{{ workspaces[workspaceIndex].name }}</h4>
-          <h6 class="card-subtitle">Owner: {{ workspaces[workspaceIndex].ownerId }}</h6>
+          <h6 class="card-subtitle">Owner: {{ workspaces[workspaceIndex].owner.name }}</h6>
           <h6 class="card-subtitle">My Role: {{ myRoles.join(', ') }}</h6>
           <p class="card-body">{{ workspaces[workspaceIndex].description }}</p>
         </div>
-        <div v-if="workspaces[workspaceIndex].ownerId === loginStatus.user.userId" style="margin-top:5px">
+        <div v-if="workspaces[workspaceIndex].workspace.ownerId === loginStatus.user.id" style="margin-top:5px">
           <button class="btn btn-info" v-on:click="showWorkspace(false)">Edit</button>
           <button class="btn btn-warning">Transfer</button>
         </div>
@@ -45,7 +45,7 @@
         v-bind:loginStatus="loginStatus"
         ></MemberList>
     </div>
-    <div class="rightpanel">
+    <!-- <div class="rightpanel">
       <b-tabs content-class="mt-3" active>
         <b-tab title="Tasks">
           <TaskList v-if="workspaceIndex >= 0"
@@ -70,7 +70,7 @@
         v-bind:workspace="workspaces[workspaceIndex]"
         v-bind:loginStatus="loginStatus"
         ></TaskExecutionList>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -120,11 +120,12 @@ export default {
       if (this.workspaceIndex < 0) {
         return []
       }
-      let wkug = this.workspaces[this.workspaceIndex].users
-      return [wkug.Admin.indexOf(this.loginStatus.user.userId) >= 0 ? 'Administrator' : null,
-        wkug.Maintainer.indexOf(this.loginStatus.user.userId) >= 0 ? 'Maintainer' : null,
-        wkug.Loader.indexOf(this.loginStatus.user.userId) >= 0 ? 'Data Loader' : null]
-        .filter(it => it !== null)
+      let me = this.workspaces[this.workspaceIndex].users.find(user => user.user.id === this.loginStatus.user.id)
+      return [
+        me.roles.indexOf('0') >= 0 ? 'Administrator' : null,
+        me.roles.indexOf('1') >= 0 ? 'Maintainer' : null,
+        me.roles.indexOf('2') >= 0 ? 'Data Loader' : null
+      ].filter(it => it !== null)
     }
   },
   watch: {
@@ -139,7 +140,7 @@ export default {
           console.log(rsp)
           this.workspaces = rsp.data.data
           this.workspaceIndex = this.workspaces.length > 0 ? 0 : -1
-          this.loadConnections()
+          // this.loadConnections()
         })
       }
     },

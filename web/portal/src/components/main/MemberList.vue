@@ -8,6 +8,9 @@
         </h5>
       </div>
       <ul class="list-group">
+        <li class="list-group-item bg-dark">
+          <span class="clickable"><i>{{ workspace.owner.name }}</i></span>
+        </li>
         <li class="list-group-item bg-dark" v-for="(user, index) in workspace.users.Admin" v-bind:key="index">
           <span class="clickable"><i>{{ user }}</i></span>
           <span v-on:click="removeMember(user, 0)" style="float: right" class="clickable"
@@ -67,7 +70,7 @@ export default {
   },
   computed: {
     isAdmin: function () {
-      return this.workspace.users.Admin.indexOf(this.loginStatus.user.userId) >= 0
+      return this.workspace.users.find(item => item.user.id === this.loginStatus.user.id).roles.indexOf('0') >= 0
     }
   },
   methods: {
