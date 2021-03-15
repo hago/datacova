@@ -4,17 +4,17 @@
       <div class="card-header">
         <h5>
           <span>Administrators</span>
-          <span class="clickable" style="float: right" v-on:click="addMember(0)" title="Add Administrator">+</span>
+          <span class="clickable" style="float: right" v-on:click="addMember('0')" title="Add Administrator">+</span>
         </h5>
       </div>
       <ul class="list-group">
         <li class="list-group-item bg-dark">
           <span class="clickable"><i>{{ workspace.owner.name }}</i></span>
         </li>
-        <li class="list-group-item bg-dark" v-for="(user, index) in workspace.users.Admin" v-bind:key="index">
-          <span class="clickable"><i>{{ user }}</i></span>
-          <span v-on:click="removeMember(user, 0)" style="float: right" class="clickable"
-            v-if="(workspace.ownerId === loginStatus.user.userId) || isAdmin" v-bind:title="`Remove ${user}`">-</span>
+        <li class="list-group-item bg-dark" v-for="(user, index) in admins" v-bind:key="index">
+          <span class="clickable"><i>{{ user.user.name }}</i></span>
+          <span v-on:click="removeMember(user.user, '0')" style="float: right" class="clickable"
+            v-if="(workspace.owner.id === loginStatus.user.userId) || isAdmin" v-bind:title="`Remove ${user.user.name}`">-</span>
         </li>
       </ul>
     </div>
@@ -22,14 +22,14 @@
       <div class="card-header">
         <h5>
           <span>Maintainers</span>
-          <span class="clickable" style="float: right" v-on:click="addMember(1)" title="Add Maintainer">+</span>
+          <span class="clickable" style="float: right" v-on:click="addMember('1')" title="Add Maintainer">+</span>
         </h5>
       </div>
       <ul class="list-group">
-        <li class="list-group-item bg-dark" v-for="(user, index) in workspace.users.Maintainer" v-bind:key="index">
-          <span class="clickable"><i>{{ user }}</i></span>
-          <span v-on:click="removeMember(user, 1)" style="float: right" class="clickable"
-            v-if="(workspace.ownerId === loginStatus.user.userId) || isAdmin" v-bind:title="`Remove ${user}`">-</span>
+        <li class="list-group-item bg-dark" v-for="(user, index) in maintainers" v-bind:key="index">
+          <span class="clickable"><i>{{ user.user.name }}</i></span>
+          <span v-on:click="removeMember(user.user, '1')" style="float: right" class="clickable"
+            v-if="(workspace.owner.id === loginStatus.user.userId) || isAdmin" v-bind:title="`Remove ${user.user.name}`">-</span>
         </li>
       </ul>
     </div>
@@ -37,14 +37,14 @@
       <div class="card-header">
         <h5>
           <span>Data Loaders</span>
-          <span class="clickable" style="float: right" v-on:click="addMember(2)" title="Add Data Loader">+</span>
+          <span class="clickable" style="float: right" v-on:click="addMember('2')" title="Add Data Loader">+</span>
         </h5>
       </div>
       <ul class="list-group">
-        <li class="list-group-item bg-dark" v-for="(user, index) in workspace.users.Loader" v-bind:key="index">
-          <span class="clickable"><i>{{ user }}</i></span>
-          <span v-on:click="removeMember(user, 2)" style="float: right" class="clickable"
-            v-if="(workspace.ownerId === loginStatus.user.userId) || isAdmin" v-bind:title="`Remove ${user}`">-</span>
+        <li class="list-group-item bg-dark" v-for="(user, index) in loaders" v-bind:key="index">
+          <span class="clickable"><i>{{ user.user.name }}</i></span>
+          <span v-on:click="removeMember(user.user, '2')" style="float: right" class="clickable"
+            v-if="(workspace.owner.id === loginStatus.user.userId) || isAdmin" v-bind:title="`Remove ${user.user.name}`">-</span>
         </li>
       </ul>
     </div>
@@ -71,17 +71,26 @@ export default {
   computed: {
     isAdmin: function () {
       return this.workspace.users.find(item => item.user.id === this.loginStatus.user.id).roles.indexOf('0') >= 0
+    },
+    admins: function () {
+      return this.workspace.users.filter(item => item.roles.indexOf('0') >= 0 && item.user.id !== this.loginStatus.user.id)
+    },
+    maintainers: function () {
+      return this.workspace.users.filter(item => item.roles.indexOf('1') >= 0)
+    },
+    loaders: function () {
+      return this.workspace.users.filter(item => item.roles.indexOf('2') >= 0)
     }
   },
   methods: {
     addMember: function (type) {
       router.push({
         name: 'WorkspaceMember',
-        params: {workspaceId: this.workspace.id, type: type, id: 'add', workspace: this.workspace}
+        params: {workspaceId: this.workspace.workspace.id, type: type, id: 'add', workspace: this.workspace}
       })
     },
     removeMember: function (user, type) {
-      if (user === this.workspace.ownerId) {
+      if (user.id === this.workspace.owner.id) {
         this.$toasted.show(`The owner ${user} CAN NOT be removed`, {
           position: 'bottom-center',
           duration: 2000,

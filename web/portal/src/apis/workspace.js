@@ -84,14 +84,11 @@ class WorkspaceApiHelper {
     return rsp
   }
 
-  async addMember (workspaceId, type, internals, externals) {
+  async addMember (workspaceId, type, userids) {
     let rsp = await axios({
       method: 'PUT',
       url: `${this.urlprefix}/api/workspace/${workspaceId}/member/${type}/add`,
-      data: {
-        internal: internals,
-        external: externals
-      },
+      data: userids,
       withCredentials: true
     })
     return rsp

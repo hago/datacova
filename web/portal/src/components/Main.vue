@@ -170,7 +170,7 @@ export default {
       let call = (this.edit_workspace.isnew ? wsapi.newWorkspace({
         name: this.edit_workspace.name,
         description: this.edit_workspace.description,
-        ownerId: this.loginStatus.user.id,
+        ownerId: this.loginStatus.user.id
       })
         : wsapi.updateWorkspace({
           id: this.workspaces[this.workspaceIndex].workspace.id,

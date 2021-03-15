@@ -3,7 +3,7 @@
     <div>
       <h4>pick users to add them as
         <b><i>{{ type === 0 ? 'Administrator' : (type === 1 ? 'Maintainer' : 'Loader') }}</i></b> of workspace
-        <b><i>{{ workspace.name }}</i></b>
+        <b><i>{{ workspace.workspace.name }}</i></b>
       </h4>
     </div>
     <div>
@@ -11,64 +11,32 @@
       <button class="btn btn-warning" v-on:click="cancel()">Cancel</button>
     </div>
     <div>
-      <b-tabs content-class="mt-3">
-        <b-tab title="Internal" active>
-          <div class="leftpanel">
-            <div class="form-group">
-              <label for="searchInternal" class="col-form-label">Search Internal User</label>
-              <div class="form-row">
-                <input class="form-control col-6" id="searchInternal" v-model="searchContent" v-on:keyup="userInputInternal()" />
-                <div class="verifyArea col-1">
-                  <img src="@/assets/gear-loading.gif" v-if="isLoading" />
-                </div>
-              </div>
-              <ul class="list-group">
-                <li class="list-group-item bg-dark" v-for="(user, index) in searchResult" v-bind:key="index"
-                v-on:click="addUser(index)">
-                  <span class="clickable">{{ user.fullName }}  <i>({{ user.userId }})</i></span>
-                </li>
-              </ul>
+      <div class="leftpanel">
+        <div class="form-group">
+          <label for="search" class="col-form-label">Search User</label>
+          <div class="form-row">
+            <input class="form-control col-6" id="search" v-model="searchContent" v-on:keyup="userInput()" />
+            <div class="verifyArea col-1">
+              <img src="@/assets/gear-loading.gif" v-if="isLoading" />
             </div>
           </div>
-          <div class="rightpanel">
-            <p>Internal Users selected</p>
-            <ul class="list-group">
-              <li class="list-group-item bg-dark" v-for="(user, index) in selected" v-bind:key="index"
-              v-on:click="removeUser(index)">
-                <span class="clickable">{{ user.fullName }}  <i>({{ user.userId }})</i></span>
-              </li>
-            </ul>
-          </div>
-        </b-tab>
-        <b-tab title="External">
-          <div class="leftpanel">
-            <div class="form-group">
-              <label for="searchExternal" class="col-form-label">Search External User</label>
-              <div class="form-row">
-                <input class="form-control col-6" id="searchExternal" v-model="externalSearchContent" v-on:keyup="userInputExternal()" />
-                <div class="verifyArea col-1">
-                  <img src="@/assets/gear-loading.gif" v-if="isLoading" />
-                </div>
-              </div>
-              <ul class="list-group">
-                <li class="list-group-item bg-dark" v-for="(user, index) in externalSearchResult" v-bind:key="index"
-                v-on:click="addExternalUser(index)">
-                  <span class="clickable">{{ user.fullName }}  <i>({{ user.userId }})</i></span>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div class="rightpanel">
-            <p>External Users selected</p>
-            <ul class="list-group">
-              <li class="list-group-item bg-dark" v-for="(user, index) in externalSelected" v-bind:key="index"
-              v-on:click="removeExternalUser(index)">
-                <span class="clickable">{{ user.fullName }}  <i>({{ user.userId }})</i></span>
-              </li>
-            </ul>
-          </div>
-        </b-tab>
-      </b-tabs>
+          <ul class="list-group">
+            <li class="list-group-item bg-dark" v-for="(user, index) in searchResult" v-bind:key="index"
+            v-on:click="addUser(index)">
+              <span class="clickable">{{ user.name }}  <i>({{ user.userId }})</i></span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="rightpanel">
+        <p>Users selected</p>
+        <ul class="list-group">
+          <li class="list-group-item bg-dark" v-for="(user, index) in selected" v-bind:key="index"
+          v-on:click="removeUser(index)">
+            <span class="clickable">{{ user.name }}  <i>({{ user.userId }})</i></span>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
@@ -90,7 +58,7 @@ export default {
   props: {
     loginStatus: Object,
     workspace: Object,
-    type: Number,
+    type: String,
     id: String
   },
   data () {
@@ -102,17 +70,12 @@ export default {
       lastSearch: '',
       searchContent: '',
       errorMessage: '',
-      readonly: true,
-      externalSelected: [],
-      externalSearchResult: [],
-      externalTimer: null,
-      externalLastSearch: '',
-      externalSearchContent: ''
+      readonly: true
     }
   },
   mounted: function () {
-    this.readonly = (this.loginStatus.user.userId !== this.workspace.ownerId) &&
-      (this.workspace.users.Admin.indexOf(this.loginStatus.user.userId) < 0)
+    this.readonly = (this.loginStatus.user.id !== this.workspace.owner.id) &&
+      (this.workspace.users.find(it => this.loginStatus.user.id === it.user.id && it.roles.indexOf('0') >= 0) !== undefined)
   },
   methods: {
     addUser: function (index) {
@@ -124,57 +87,26 @@ export default {
     removeUser: function (index) {
       this.selected.splice(index, 1)
     },
-    addExternalUser: function (index) {
-      let user = this.externalSearchResult[index]
-      if (this.externalSelected.indexOf(user) < 0) {
-        this.externalSelected.push(user)
-      }
-    },
-    removeExternalUser: function (index) {
-      this.externalSelected.splice(index, 1)
-    },
-    searchInternal: function () {
+    search: function () {
       let w = this.searchContent.trim()
       if (w === '') {
         this.searchResult = []
         return
       }
-      (new UserApiHelper()).searchInternalUser(w).then(rsp => {
+      (new UserApiHelper()).searchUser(w).then(rsp => {
         this.searchResult = rsp.data.data
       }).catch(err => {
         this.errorMessage = err
       })
     },
-    userInputInternal: function () {
+    userInput: function () {
       if (this.lastSearch === this.searchContent.trim()) {
         return
       }
       this.lastSearch = this.searchContent.trim()
       clearTimeout(this.timer)
       this.timer = setTimeout(_ => {
-        this.searchInternal()
-      }, 500)
-    },
-    searchExternal: function () {
-      let w = this.externalSearchContent.trim()
-      if (w === '') {
-        this.externalSearchResult = []
-        return
-      }
-      (new UserApiHelper()).searchExternalUser(w).then(rsp => {
-        this.externalSearchResult = rsp.data.data
-      }).catch(err => {
-        this.errorMessage = err
-      })
-    },
-    userInputExternal: function () {
-      if (this.externalLastSearch === this.externalSearchContent.trim()) {
-        return
-      }
-      this.externalLastSearch = this.externalSearchContent.trim()
-      clearTimeout(this.externalTimer)
-      this.externalTimer = setTimeout(_ => {
-        this.searchExternal()
+        this.search()
       }, 500)
     },
     cancel: function () {
@@ -184,10 +116,9 @@ export default {
     },
     save: function () {
       (new WorkspaceApiHelper()).addMember(
-        this.workspace.id,
+        this.workspace.workspace.id,
         this.type,
-        this.selected.map(user => user.userId),
-        this.externalSelected.map(user => user.userId))
+        this.selected.map(user => user.id))
         .then(rsp => {
           this.$toasted.show('Members Added', {
             position: 'bottom-center',
