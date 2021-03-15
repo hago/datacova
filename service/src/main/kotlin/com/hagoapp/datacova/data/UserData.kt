@@ -17,10 +17,13 @@ import com.hagoapp.datacova.util.Utils
 import com.hagoapp.datacova.util.data.DatabaseFunctions
 import java.sql.ResultSet
 import java.sql.Timestamp
+import java.time.Instant
 
 class UserData(config: DatabaseConfig) : CoVaDatabase(config) {
 
     companion object {
+        private val basicUsers = mutableListOf<BasicUser>()
+        private var userLoadedAt: Long = Instant.now().toEpochMilli()
         fun computePwdHash(password: String): String {
             return Utils.sha1Digest("$password|${Utils.sha256Digest(password)}")
         }
@@ -76,5 +79,32 @@ class UserData(config: DatabaseConfig) : CoVaDatabase(config) {
             provider = rs.getString("usertype")
         }
         return user
+    }
+
+    private data class BasicUser(
+        val name: String,
+        val description: String
+    )
+
+    private fun loadBasicUser() {
+
+    }
+
+    fun searchUser(word: String, limit: Int = 10): List<UserInfo> {
+        val sql = "select * from users where userid ilike ? or name ilike ? or description ilike ? limit ?"
+        connection.prepareStatement(sql).use { stmt ->
+            val keyword = "%${DatabaseFunctions.escapePGLike(word)}%"
+            stmt.setString(1, keyword)
+            stmt.setString(2, keyword)
+            stmt.setString(3, keyword)
+            stmt.setInt(4, limit)
+            val users = mutableListOf<UserInfo>()
+            stmt.executeQuery().use { rs ->
+                while (rs.next()) {
+                    users.add(row2User(rs))
+                }
+            }
+            return users
+        }
     }
 }
