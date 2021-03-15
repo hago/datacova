@@ -182,4 +182,41 @@ class WorkSpaceData(connectionConfig: DatabaseConfig) : CoVaDatabase(connectionC
         connection.commit()
         return getWorkSpace(workspace.id)
     }
+
+    fun addMemberForWorkspace(workspaceId: Int, role: WorkSpaceUserRole, userIds: List<Long>) {
+        getWorkSpace(workspaceId) ?: return
+        connection.autoCommit = false
+        val sql = "select id from users where id in (${userIds.map { "?" }.joinToString(",")})"
+        val validUserIds = mutableListOf<Long>()
+        connection.prepareStatement(sql).use { stmt ->
+            userIds.forEachIndexed { i, uid -> stmt.setLong(i + 1, uid) }
+            stmt.executeQuery().use { rs ->
+                while (rs.next()) {
+                    validUserIds.add(rs.getLong("id"))
+                }
+            }
+        }
+        connection.prepareStatement("select userid from workspaceuser where wkid = ? and usergroup = ?")
+            .use { stmt ->
+                stmt.setInt(1, workspaceId)
+                stmt.setInt(2, role.value)
+                stmt.executeQuery().use { rs ->
+                    while (rs.next()) {
+                        val uid = rs.getLong("userid")
+                        validUserIds.remove(uid)
+                    }
+                }
+            }
+        connection.prepareStatement("insert into workspaceuser (wkid, usergroup, userid) values (?, ?, ?)")
+            .use { stmt ->
+                validUserIds.forEach { uid ->
+                    stmt.setInt(1, workspaceId)
+                    stmt.setInt(2, role.value)
+                    stmt.setLong(3, uid)
+                    stmt.addBatch()
+                }
+                stmt.executeBatch()
+            }
+        connection.commit()
+    }
 }
