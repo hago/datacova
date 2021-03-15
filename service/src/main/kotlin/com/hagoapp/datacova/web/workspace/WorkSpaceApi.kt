@@ -2,8 +2,10 @@ package com.hagoapp.datacova.web.workspace
 
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
+import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.RedisCacheReader
+import com.hagoapp.datacova.data.user.UserAccess
 import com.hagoapp.datacova.data.workspace.WorkSpaceData
 import com.hagoapp.datacova.entity.workspace.WorkSpace
 import com.hagoapp.datacova.user.UserAuthFactory
@@ -50,19 +52,30 @@ class WorkSpaceApi {
             }, token.type, userId
         )
         return workspaces?.map {
-            WorkspaceWithUser(workspace = it, users = findWorkspaceUsers(it.id))
+            WorkspaceWithUser(
+                workspace = it,
+                users = findWorkspaceUsers(it.id),
+                owner = UserAccess.getUser(it.ownerId)!!
+            )
         } ?: listOf()
     }
 
     private fun findWorkspaceUsers(workspaceId: Int): List<WorkspaceUser> {
-        val list = WorkSpaceData().getWorkspaceUserIdList(workspaceId)
-        val userInfoList = list.map { Pair(it.userid, it.userType) }.toSet().map { p ->
-            UserAuthFactory.getFactory().getAuthProvider(p.second).getUserInfo(p.first)
-        }.filterNotNull()
+        val token = object : TypeToken<List<WorkSpaceData.WorkspaceBasicUser>>() {}
+        val list = RedisCacheReader.readCachedData(
+            "WorkspaceBasicUser", 1800,
+            object : RedisCacheReader.GenericLoader<List<WorkSpaceData.WorkspaceBasicUser>> {
+                override fun perform(vararg params: Any?): List<WorkSpaceData.WorkspaceBasicUser> {
+                    return if (params.isEmpty()) listOf() else
+                        WorkSpaceData().getWorkspaceUserIdList(params[0] as Int)
+                }
+            }, token.type, workspaceId
+        ) ?: throw CoVaException("Workspace $workspaceId user list null")
+        val userInfoList = list.mapNotNull { UserAccess.getUser(it.userid) }
         return userInfoList.map { u ->
             WorkspaceUser(
                 user = u,
-                roles = list.filter { it.userid == u.userId && it.userType == u.userType.value }.map { it.role }
+                roles = list.filter { it.userid == u.id }.map { it.role }
             )
         }
     }

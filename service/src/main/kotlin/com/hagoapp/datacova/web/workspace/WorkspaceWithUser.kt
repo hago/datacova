@@ -13,6 +13,7 @@ import com.hagoapp.datacova.user.UserInfo
 
 data class WorkspaceWithUser(
     val workspace: WorkSpace,
+    val owner: UserInfo,
     val users: List<WorkspaceUser>
 )
 

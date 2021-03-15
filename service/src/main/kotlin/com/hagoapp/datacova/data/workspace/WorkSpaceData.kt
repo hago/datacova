@@ -34,11 +34,12 @@ class WorkSpaceData(connectionConfig: DatabaseConfig) : CoVaDatabase(connectionC
      * get all work spaces the user is involved
      */
     private fun getInvolvedWorkSpaces(userId: Long): List<WorkSpace> {
-        val sql =
-            "select distinct ws.* from workspace as ws inner join workspaceuser as wsu on ws.id = wsu.wkid where wsu.userid = ?"
+        val sql = "select distinct ws.* from workspace as ws inner join workspaceuser as wsu on ws.id = wsu.wkid " +
+                "where wsu.userid = ? and ws.ownerid <> ?"
         val workspaces = mutableListOf<WorkSpace>()
         connection.prepareStatement(sql).use { stmt ->
             stmt.setLong(1, userId)
+            stmt.setLong(2, userId)
             stmt.executeQuery().use { rs ->
                 while (rs.next()) {
                     workspaces.add(resultSet2WorkSpace(rs))
@@ -133,8 +134,8 @@ class WorkSpaceData(connectionConfig: DatabaseConfig) : CoVaDatabase(connectionC
      * get user list with role of a
      */
     fun getWorkspaceUserIdList(id: Int): List<WorkspaceBasicUser> {
-        val sql = "select u.userid, u.usertype, wsu.usergroup" +
-                "from workspaceuser as wsu inner join user as u on wsu.userid == u.id " +
+        val sql = "select u.id as userid, wsu.usergroup " +
+                "from workspaceuser as wsu inner join users as u on wsu.userid = u.id " +
                 "where wkid = ?"
         return connection.prepareCall(sql).use { stmt ->
             stmt.setInt(1, id)
@@ -144,8 +145,7 @@ class WorkSpaceData(connectionConfig: DatabaseConfig) : CoVaDatabase(connectionC
                     list.add(
                         WorkspaceBasicUser(
                             id,
-                            rs.getString("userid"),
-                            rs.getInt("usertype"),
+                            rs.getLong("userid"),
                             WorkSpaceUserRole.parseInt(rs.getInt("usergroup"))
                         )
                     )
@@ -157,8 +157,7 @@ class WorkSpaceData(connectionConfig: DatabaseConfig) : CoVaDatabase(connectionC
 
     data class WorkspaceBasicUser(
         val workspaceId: Int,
-        val userid: String,
-        val userType: Int,
+        val userid: Long,
         val role: WorkSpaceUserRole
     )
 }
