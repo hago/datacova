@@ -11,6 +11,7 @@ package com.hagoapp.datacova.web;
 import com.hagoapp.datacova.CoVaException;
 import com.hagoapp.datacova.CoVaLogger;
 import com.hagoapp.datacova.config.WebConfig;
+import com.hagoapp.datacova.util.StackTraceWriter;
 import com.hagoapp.datacova.util.http.ResponseHelper;
 import com.hagoapp.datacova.web.annotation.WebEndPoint;
 import com.hagoapp.datacova.web.authentication.AuthType;
@@ -102,7 +103,8 @@ public class WebManager {
         }
         Router router = Router.router(vertx);
         router.route().failureHandler(context -> {
-            Throwable e = context.failure();
+            Throwable error = context.failure();
+            Throwable e = error instanceof InvocationTargetException ? error.getCause() : error;
             int code = context.statusCode();
             String errorMessage;
             if (e == null) {
@@ -115,16 +117,7 @@ public class WebManager {
             //logger.debug("message {}", errorMessage);
             List<String> stacktrace = new ArrayList<>();
             if (webConfig.isOutputStackTrace() && (e != null)) {
-                try (StringWriter sw = new StringWriter()) {
-                    try (PrintWriter writer = new PrintWriter(sw)) {
-                        e.printStackTrace(writer);
-                        stacktrace = Arrays.asList(sw.toString().split(System.lineSeparator()).clone());
-                    }
-                } catch (IOException ignored) {
-                    //
-                }
-                logger.error("Unexpected error: {}", e.getMessage() == null ? e : e.getMessage());
-                stacktrace.forEach(logger::error);
+                stacktrace = StackTraceWriter.write(e, logger);
                 ResponseHelper.respondError(context, HttpResponseStatus.valueOf(code), errorMessage,
                         Map.of("stackTrace", stacktrace));
             } else {
