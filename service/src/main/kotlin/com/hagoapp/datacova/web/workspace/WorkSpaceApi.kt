@@ -1,14 +1,11 @@
 package com.hagoapp.datacova.web.workspace
 
 import com.google.gson.GsonBuilder
-import com.google.gson.reflect.TypeToken
-import com.hagoapp.datacova.CoVaException
-import com.hagoapp.datacova.config.CoVaConfig
-import com.hagoapp.datacova.data.RedisCacheReader
 import com.hagoapp.datacova.data.user.UserAccess
+import com.hagoapp.datacova.data.user.WorkspaceCache
 import com.hagoapp.datacova.data.workspace.WorkSpaceData
 import com.hagoapp.datacova.entity.workspace.WorkSpace
-import com.hagoapp.datacova.user.UserAuthFactory
+import com.hagoapp.datacova.entity.workspace.WorkSpaceUserRole
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import com.hagoapp.datacova.web.authentication.AuthType
@@ -18,10 +15,6 @@ import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.RoutingContext
 
 class WorkSpaceApi {
-
-    companion object {
-        private const val MY_WORKSPACES_CACHE_KEY = "workspace_%d"
-    }
 
     @WebEndPoint(
         methods = [HttpMethod.GET],
@@ -40,17 +33,7 @@ class WorkSpaceApi {
     }
 
     private fun getMyWorkSpaces(userId: Long): List<WorkspaceWithUser> {
-        val key = MY_WORKSPACES_CACHE_KEY.format(userId)
-        val token = object : TypeToken<List<WorkSpace>>() {}
-        val workspaces = RedisCacheReader.readCachedData(
-            key, 1800,
-            object : RedisCacheReader.GenericLoader<List<WorkSpace>> {
-                override fun perform(vararg params: Any?): List<WorkSpace> {
-                    return if (params.isEmpty()) listOf() else
-                        WorkSpaceData(CoVaConfig.getConfig().database).getMyWorkSpaces(params[0] as Long)
-                }
-            }, token.type, userId
-        )
+        val workspaces = WorkspaceCache.getMyWorkSpaces(userId)
         return workspaces?.map {
             WorkspaceWithUser(
                 workspace = it,
@@ -61,16 +44,7 @@ class WorkSpaceApi {
     }
 
     private fun findWorkspaceUsers(workspaceId: Int): List<WorkspaceUser> {
-        val token = object : TypeToken<List<WorkSpaceData.WorkspaceBasicUser>>() {}
-        val list = RedisCacheReader.readCachedData(
-            "WorkspaceBasicUser", 1800,
-            object : RedisCacheReader.GenericLoader<List<WorkSpaceData.WorkspaceBasicUser>> {
-                override fun perform(vararg params: Any?): List<WorkSpaceData.WorkspaceBasicUser> {
-                    return if (params.isEmpty()) listOf() else
-                        WorkSpaceData().getWorkspaceUserIdList(params[0] as Int)
-                }
-            }, token.type, workspaceId
-        ) ?: throw CoVaException("Workspace $workspaceId user list null")
+        val list = WorkspaceCache.getWorkspaceUserInRoles(workspaceId)
         val userInfoList = list.mapNotNull { UserAccess.getUser(it.userid) }
         return userInfoList.map { u ->
             WorkspaceUser(
@@ -109,5 +83,30 @@ class WorkSpaceApi {
         } catch (ex: Exception) {
             null
         }
+    }
+
+    @WebEndPoint(
+        methods = [HttpMethod.PUT],
+        path = "/api/workspace/update",
+        authTypes = [AuthType.UserToken]
+    )
+    fun updateWorkSpace(routeContext: RoutingContext) {
+        val wk = parseWorkSpace(routeContext)
+        if (wk == null) {
+            ResponseHelper.respondError(routeContext, HttpResponseStatus.BAD_REQUEST, "Invalid Workspace Data")
+            return
+        }
+        val user = Authenticator.getUser(routeContext)
+        val workspace = WorkspaceCache.getWorkspace(wk.id)
+        if ((workspace == null) || (workspace.ownerId != wk.ownerId) ||
+            WorkspaceCache.getWorkspaceUserInRoles(workspace.id, listOf(WorkSpaceUserRole.Admin))
+                .none { it.userid == user.id }
+        ) {
+            ResponseHelper.respondError(routeContext, HttpResponseStatus.NOT_FOUND, "WorkSpace ${wk.id} not found")
+            return
+        }
+        wk.modifyBy = user.id
+        val workspace0 = WorkSpaceData().updateWorkSpace(wk)
+        ResponseHelper.sendResponse(routeContext, HttpResponseStatus.OK, mapOf("code" to 0, "data" to workspace0))
     }
 }

@@ -160,4 +160,26 @@ class WorkSpaceData(connectionConfig: DatabaseConfig) : CoVaDatabase(connectionC
         val userid: Long,
         val role: WorkSpaceUserRole
     )
+
+    fun updateWorkSpace(workspace: WorkSpace): WorkSpace? {
+        connection.autoCommit = false
+        connection.prepareStatement("select * from workspace where id = ?").use { stmt ->
+            stmt.setInt(1, workspace.id)
+            stmt.executeQuery().use { rs ->
+                if (!rs.next()) {
+                    return null
+                }
+            }
+        }
+        val sql = "update workspace set name = ?, description = ?, modifyby = ?, modifytime = now() where id = ?"
+        connection.prepareStatement(sql).use { stmt ->
+            stmt.setString(1, workspace.name)
+            stmt.setString(2, workspace.description)
+            stmt.setLong(3, workspace.modifyBy)
+            stmt.setInt(4, workspace.id)
+            stmt.executeUpdate()
+        }
+        connection.commit()
+        return getWorkSpace(workspace.id)
+    }
 }
