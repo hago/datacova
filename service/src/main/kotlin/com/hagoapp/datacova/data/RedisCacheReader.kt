@@ -10,6 +10,7 @@ package com.hagoapp.datacova.data
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonSyntaxException
+import com.hagoapp.datacova.Application
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.redis.JedisManager
 import redis.clients.jedis.Jedis
@@ -18,6 +19,7 @@ import java.lang.reflect.Type
 class RedisCacheReader<T> private constructor() {
     companion object {
         const val DEFAULT_VALIDITY = 60 * 5;
+        private val skipCache = !Application.productionMode
 
         @JvmStatic
         fun <T> readCachedData(
@@ -28,7 +30,8 @@ class RedisCacheReader<T> private constructor() {
             vararg params: Any?
         ): T? {
             val builder = Builder<T>()
-                .shouldSkipCache(false)
+                .shouldSkipCache(skipCache)
+                .shouldSkipCache(true)
                 .withLoadFunction(loader)
                 .withDataLifeTime(dataLifetime)
                 .withCacheName(cacheName)
@@ -46,7 +49,7 @@ class RedisCacheReader<T> private constructor() {
             vararg params: Any?
         ): T? {
             val builder = Builder<T>()
-                .shouldSkipCache(true)
+                .shouldSkipCache(skipCache)
                 .withLoadFunction(loader)
                 .withDataLifeTime(dataLifetime)
                 .withCacheName(cacheName)
@@ -63,7 +66,7 @@ class RedisCacheReader<T> private constructor() {
             vararg params: Any?
         ): T? {
             val builder = Builder<T>()
-                .shouldSkipCache(true)
+                .shouldSkipCache(skipCache)
                 .withLoadFunction(loader)
                 .withDataLifeTime(-1)
                 .withCacheName(cacheName)
