@@ -39,19 +39,10 @@ class UserApiHelper {
     return rsp
   }
 
-  async searchInternalUser (word) {
+  async searchUser (word) {
     let rsp = await axios({
       method: 'POST',
-      url: `${this.urlprefix}/api/user/internal/search`,
-      data: word
-    })
-    return rsp
-  }
-
-  async searchExternalUser (word) {
-    let rsp = await axios({
-      method: 'POST',
-      url: `${this.urlprefix}/api/user/external/search`,
+      url: `${this.urlprefix}/api/user/search`,
       data: word
     })
     return rsp
