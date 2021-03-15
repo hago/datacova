@@ -162,23 +162,21 @@ export default {
     showWorkspace: function (isNew = true) {
       this.edit_workspace.show = true
       this.edit_workspace.isnew = isNew
-      this.edit_workspace.description = isNew ? '' : this.workspaces[this.workspaceIndex].description
-      this.edit_workspace.name = isNew ? '' : this.workspaces[this.workspaceIndex].name
+      this.edit_workspace.description = isNew ? '' : this.workspaces[this.workspaceIndex].workspace.description
+      this.edit_workspace.name = isNew ? '' : this.workspaces[this.workspaceIndex].workspace.name
     },
     submitWorkspace: function () {
       let wsapi = new WorkspaceApiHelper()
       let call = (this.edit_workspace.isnew ? wsapi.newWorkspace({
         name: this.edit_workspace.name,
         description: this.edit_workspace.description,
-        ownerId: this.loginStatus.user.cn,
-        users: {}
+        ownerId: this.loginStatus.user.id,
       })
         : wsapi.updateWorkspace({
-          id: this.workspaces[this.workspaceIndex].id,
+          id: this.workspaces[this.workspaceIndex].workspace.id,
           name: this.edit_workspace.name,
           description: this.edit_workspace.description,
-          ownerId: this.loginStatus.user.userId,
-          users: null
+          ownerId: this.loginStatus.user.id
         }))
       call.then(wks => {
         console.log(wks)
