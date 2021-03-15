@@ -17,9 +17,9 @@ public class UserInfo implements JsonStringify {
     private String provider;
     private String name;
     private String description;
-    private String addBy;
+    private long addBy;
     private long addTime;
-    private String modifyBy;
+    private Long modifyBy;
     private Long modifyTime;
     private byte[] thumbnail;
     private UserStatus status;
@@ -82,11 +82,11 @@ public class UserInfo implements JsonStringify {
         this.description = description;
     }
 
-    public String getAddBy() {
+    public long getAddBy() {
         return addBy;
     }
 
-    public void setAddBy(String addBy) {
+    public void setAddBy(long addBy) {
         this.addBy = addBy;
     }
 
@@ -98,11 +98,11 @@ public class UserInfo implements JsonStringify {
         this.addTime = addTime;
     }
 
-    public String getModifyBy() {
+    public Long getModifyBy() {
         return modifyBy;
     }
 
-    public void setModifyBy(String modifyBy) {
+    public void setModifyBy(Long modifyBy) {
         this.modifyBy = modifyBy;
     }
 

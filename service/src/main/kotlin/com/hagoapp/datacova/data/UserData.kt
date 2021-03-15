@@ -65,7 +65,7 @@ class UserData(config: DatabaseConfig) : CoVaDatabase(config) {
             id = rs.getLong("id")
             name = rs.getString("name")
             description = rs.getString("description")
-            addBy = rs.getString("addby")
+            addBy = rs.getLong("addby")
             addTime = DatabaseFunctions.getDBValue<Timestamp>(rs, "addtime")!!.toInstant().toEpochMilli()
             modifyBy = DatabaseFunctions.getDBValue(rs, "modifyby")
             modifyTime = DatabaseFunctions.getDBValue<Timestamp>(rs, "modifytime")?.toInstant()?.toEpochMilli()
