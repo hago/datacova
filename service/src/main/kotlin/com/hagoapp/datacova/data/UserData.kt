@@ -7,6 +7,7 @@
 
 package com.hagoapp.datacova.data
 
+import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.config.DatabaseConfig
 import com.hagoapp.datacova.user.LocalUserProvider
 import com.hagoapp.datacova.user.UserInfo
@@ -25,6 +26,8 @@ class UserData(config: DatabaseConfig) : CoVaDatabase(config) {
         }
     }
 
+    constructor() : this(CoVaConfig.getConfig().database)
+
     fun findUser(userId: String): UserInfo? {
         val sql = "select * from users where userid = ?"
         connection.prepareStatement(sql).use { stmt ->
@@ -40,6 +43,16 @@ class UserData(config: DatabaseConfig) : CoVaDatabase(config) {
         connection.prepareStatement(sql).use { stmt ->
             stmt.setString(1, userId)
             stmt.setInt(2, userType)
+            stmt.executeQuery().use { rs ->
+                return if (!rs.next()) null else row2User(rs)
+            }
+        }
+    }
+
+    fun findUser(id: Long): UserInfo? {
+        val sql = "select * from users where id = ?"
+        connection.prepareStatement(sql).use { stmt ->
+            stmt.setLong(1, id)
             stmt.executeQuery().use { rs ->
                 return if (!rs.next()) null else row2User(rs)
             }
