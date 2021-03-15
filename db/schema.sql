@@ -45,9 +45,9 @@ create table if not exists users (
     name varchar(200) not null,
     pwdhash text not null,
     description text not null default '',
-    addby varchar(100) not null,
+    addby bigint not null,
     addtime timestamp WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    modifyby varchar(100) null,
+    modifyby bigint null,
     modifytime TIMESTAMP WITH TIME ZONE null,
     thumbnail bytea null,
     eustatus int not null default 0, /* 0 - normal 1 - deleted 2 - password reset*/
@@ -61,6 +61,18 @@ values ('Admin', 'System Administrator', '4e7dde2c5adfd4189fd0962ed9e7e821ef43b1
 insert into users (userid, name, pwdhash, addby, modifyby, modifytime)
 select
 'test', 'CoVa Test', '4e7dde2c5adfd4189fd0962ed9e7e821ef43b1d6', id, id, now()
+from users where userid = 'Admin';
+insert into users (userid, name, pwdhash, addby, modifyby, modifytime)
+select
+'uadmin', 'Role Admin Test', '4e7dde2c5adfd4189fd0962ed9e7e821ef43b1d6', id, id, now()
+from users where userid = 'Admin';
+insert into users (userid, name, pwdhash, addby, modifyby, modifytime)
+select
+'umaintain', 'Role Maintainer Test', '4e7dde2c5adfd4189fd0962ed9e7e821ef43b1d6', id, id, now()
+from users where userid = 'Admin';
+insert into users (userid, name, pwdhash, addby, modifyby, modifytime)
+select
+'uuser', 'Role User Test', '4e7dde2c5adfd4189fd0962ed9e7e821ef43b1d6', id, id, now()
 from users where userid = 'Admin';
 
 /*
