@@ -53,7 +53,7 @@ export default {
   },
   methods: {
     loadTasks: function () {
-      (new WorkspaceApiHelper()).getTasks(this.workspace.id).then(rsp => {
+      (new WorkspaceApiHelper()).getTasks(this.workspace.workspace.id).then(rsp => {
         this.tasks = rsp.data.data.tasks
       })
     },
@@ -61,7 +61,7 @@ export default {
       router.push({
         name: 'Task',
         params: {
-          'workspaceId': this.workspace.id,
+          'workspaceId': this.workspace.workspace.id,
           'id': 'add'
         }
       })
@@ -70,7 +70,7 @@ export default {
       router.push({
         name: 'Task',
         params: {
-          'workspaceId': this.workspace.id,
+          'workspaceId': this.workspace.workspace.id,
           'id': id
         }
       })
@@ -79,7 +79,7 @@ export default {
       if (!confirm('Are you SURE to DELETE this task?')) {
         return
       }
-      (new WorkspaceApiHelper()).deleteTask(this.workspace.id, id).then(rsp => {
+      (new WorkspaceApiHelper()).deleteTask(this.workspace.workspace.id, id).then(rsp => {
         this.tasks = this.tasks.filter(task => task.id !== id)
       })
     },
@@ -87,7 +87,7 @@ export default {
       router.push({
         name: 'TaskFileUpload',
         params: {
-          workspaceId: this.workspace.id,
+          workspaceId: this.workspace.workspace.id,
           id: id
         }
       })

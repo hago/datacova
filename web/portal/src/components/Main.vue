@@ -45,7 +45,7 @@
         v-bind:loginStatus="loginStatus"
         ></MemberList>
     </div>
-    <!-- <div class="rightpanel">
+    <div class="rightpanel">
       <b-tabs content-class="mt-3" active>
         <b-tab title="Tasks">
           <TaskList v-if="workspaceIndex >= 0"
@@ -65,7 +65,7 @@
         </b-tab>
       </b-tabs>
     </div>
-    <div class="centerpanel">
+    <!-- <div class="centerpanel">
       <TaskExecutionList v-if="workspaceIndex >= 0"
         v-bind:workspace="workspaces[workspaceIndex]"
         v-bind:loginStatus="loginStatus"
@@ -137,10 +137,9 @@ export default {
     loadWorkspaces: function () {
       if (this.loginStatus.user !== undefined) {
         (new WorkspaceApiHelper()).getMyWorkspaces().then(rsp => {
-          console.log(rsp)
           this.workspaces = rsp.data.data
           this.workspaceIndex = this.workspaces.length > 0 ? 0 : -1
-          // this.loadConnections()
+          this.loadConnections()
         })
       }
     },
@@ -151,10 +150,11 @@ export default {
       Vue.set(this.conninfo, 'connections', connections)
     },
     loadConnections: function () {
-      if ((this.workspacesIndex < 0) || (this.workspaces.length >= this.workspaceIndex)) {
+      if ((this.workspacesIndex < 0) || (this.workspaces.length <= this.workspaceIndex)) {
+        console.log('exit')
         return
       }
-      let wkid = this.workspaces[this.workspaceIndex].id;
+      let wkid = this.workspaces[this.workspaceIndex].workspace.id;
       (new WorkspaceApiHelper()).getConnections(wkid).then(rsp => {
         this.conninfo = rsp.data.data
       })
