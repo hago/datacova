@@ -30,9 +30,9 @@ public class Task implements JsonStringify {
     private int workspaceId;
     private List<TaskAction> actions;
     private TaskExtra extra;
-    private String addBy;
+    private long addBy;
     private long addTime;
-    private String modifyBy;
+    private Long modifyBy;
     private Long modifyTime;
 
     private static final Gson gson = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
@@ -85,11 +85,11 @@ public class Task implements JsonStringify {
         this.extra = extra;
     }
 
-    public String getAddBy() {
+    public long getAddBy() {
         return addBy;
     }
 
-    public void setAddBy(String addBy) {
+    public void setAddBy(long addBy) {
         this.addBy = addBy;
     }
 
@@ -101,11 +101,11 @@ public class Task implements JsonStringify {
         this.addTime = addTime;
     }
 
-    public String getModifyBy() {
+    public Long getModifyBy() {
         return modifyBy;
     }
 
-    public void setModifyBy(String modifyBy) {
+    public void setModifyBy(Long modifyBy) {
         this.modifyBy = modifyBy;
     }
 
