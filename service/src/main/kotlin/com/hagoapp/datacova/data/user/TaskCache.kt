@@ -25,7 +25,7 @@ class TaskCache {
                 object : RedisCacheReader.GenericLoader<List<Task>> {
                     override fun perform(vararg params: Any?): List<Task> {
                         return if (params.isEmpty()) listOf() else
-                            TaskData().listWorkspaceTask(params[0] as Int)
+                            TaskData().getTasks(params[0] as Int)
                     }
                 }, token.type, id
             )

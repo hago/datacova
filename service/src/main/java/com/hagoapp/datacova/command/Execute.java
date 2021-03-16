@@ -11,7 +11,7 @@ package com.hagoapp.datacova.command;
 import com.hagoapp.datacova.CoVaException;
 import com.hagoapp.datacova.CoVaLogger;
 import com.hagoapp.datacova.config.CoVaConfig;
-import com.hagoapp.datacova.data.TaskData;
+import com.hagoapp.datacova.data.workspace.TaskData;
 import com.hagoapp.datacova.entity.execution.ExecutionActionDetail;
 import com.hagoapp.datacova.entity.execution.ExecutionDetail;
 import com.hagoapp.datacova.entity.execution.TaskExecution;
