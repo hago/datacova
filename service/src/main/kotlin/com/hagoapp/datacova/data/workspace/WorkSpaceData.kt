@@ -219,4 +219,18 @@ class WorkSpaceData(connectionConfig: DatabaseConfig) : CoVaDatabase(connectionC
             }
         connection.commit()
     }
+
+    fun removeMemberForWorkspace(workspaceId: Int, role: WorkSpaceUserRole, userIds: List<Long>) {
+        connection.prepareStatement("delete from workspaceuser where wkid = ? and usergroup = ? and userid = ?")
+            .use { stmt ->
+                userIds.forEach { uid ->
+                    stmt.setInt(1, workspaceId)
+                    stmt.setInt(2, role.value)
+                    stmt.setLong(3, uid)
+                    stmt.addBatch()
+                }
+                println(stmt)
+                stmt.executeBatch()
+            }
+    }
 }

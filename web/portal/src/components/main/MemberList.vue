@@ -98,29 +98,20 @@ export default {
         })
         return
       }
-      if (!confirm(`Are you sure to DELETE "${user}"?`)) {
+      if (!confirm(`Are you sure to DELETE "${user.name}"?`)) {
         return
       }
-      (new WorkspaceApiHelper()).removeMember(this.workspace.id, user).then(rsp => {
+      (new WorkspaceApiHelper()).removeMember(this.workspace.workspace.id, user.id, type).then(rsp => {
         if (rsp.data.code === 0) {
-          let wk = Object.assign(this.workspace)
-          let arr = (type === 0 ? wk.users.Admin : (type === 1 ? wk.users.Maintainer : wk.users.Loader))
-            .filter((value, index, arr) => {
-              return value !== user
-            })
-          console.log(arr)
-          switch (type) {
-            case 0:
-              wk.users.Admin = arr
-              break
-            case 1:
-              wk.users.Maintainer = arr
-              break
-            case 2:
-              wk.users.Loader = arr
-              break
+          let cloneUsers = Object.assign(this.workspace.users)
+          let i = cloneUsers.findIndex(u => u.user.id === user.id)
+          if (i !== -1) {
+            cloneUsers[i].roles = cloneUsers[i].roles.filter(r => r !== type)
+            if (cloneUsers[i].roles.length === 0) {
+              cloneUsers.splice(i, 1)
+            }
           }
-          this.workspace = wk
+          Vue.set(this.workspace, 'users', cloneUsers)
           this.$toasted.show(`User ${user} removed successfully`, {
             position: 'bottom-center',
             duration: 1000,

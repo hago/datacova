@@ -65,5 +65,10 @@ class WorkspaceCache {
                 }, token.type, userId
             )
         }
+
+        @JvmStatic
+        fun clearWorkspaceUser(id: Int) {
+            RedisCacheReader.clearData(WORKSPACE_User_ROLE, id)
+        }
     }
 }

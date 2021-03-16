@@ -75,10 +75,10 @@ class WorkspaceApiHelper {
     return rsp
   }
 
-  async removeMember (workspaceId, userId) {
+  async removeMember (workspaceId, userId, type) {
     let rsp = await axios({
       method: 'DELETE',
-      url: `${this.urlprefix}/api/workspace/${workspaceId}/member/${userId}/delete`,
+      url: `${this.urlprefix}/api/workspace/${workspaceId}/member/${type}/remove/${userId}`,
       withCredentials: true
     })
     return rsp
