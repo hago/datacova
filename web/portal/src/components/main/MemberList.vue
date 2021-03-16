@@ -112,13 +112,13 @@ export default {
             }
           }
           Vue.set(this.workspace, 'users', cloneUsers)
-          this.$toasted.show(`User ${user} removed successfully`, {
+          this.$toasted.show(`User ${user.name} removed successfully`, {
             position: 'bottom-center',
             duration: 1000,
             type: 'success'
           })
         } else {
-          this.$toasted.show(`user ${user} removing failed`, {
+          this.$toasted.show(`user ${user.name} removing failed`, {
             position: 'bottom-center',
             duration: 2000,
             type: 'error'
