@@ -18,7 +18,7 @@ import java.lang.reflect.Type
 
 class RedisCacheReader<T> private constructor() {
     companion object {
-        const val DEFAULT_VALIDITY = 60 * 5;
+        const val DEFAULT_VALIDITY = 3600;
         private val skipCache = !Application.productionMode
 
         @JvmStatic
@@ -31,7 +31,6 @@ class RedisCacheReader<T> private constructor() {
         ): T? {
             val builder = Builder<T>()
                 .shouldSkipCache(skipCache)
-                .shouldSkipCache(true)
                 .withLoadFunction(loader)
                 .withDataLifeTime(dataLifetime)
                 .withCacheName(cacheName)
@@ -74,6 +73,16 @@ class RedisCacheReader<T> private constructor() {
             val reader = builder.create()
             return reader.readData(*params)
         }
+
+        @JvmStatic
+        fun clearData(cacheName: String, vararg params: Any?) {
+            val builder = Builder<Any>()
+                .shouldSkipCache(skipCache)
+                .withDataLifeTime(-1)
+                .withCacheName(cacheName)
+            val reader = builder.create()
+            return reader.clearData(*params)
+        }
     }
 
     private var redis: JedisManager? = null
@@ -97,7 +106,10 @@ class RedisCacheReader<T> private constructor() {
         }
 
         fun withDataLifeTime(lifeTime: Int): Builder<T> {
-            reader.dataLifeTime = lifeTime
+            reader.dataLifeTime = when {
+                lifeTime < 0 -> DEFAULT_VALIDITY
+                else -> lifeTime
+            }
             return this
         }
 
@@ -139,11 +151,19 @@ class RedisCacheReader<T> private constructor() {
         if (!this::loadFunction.isInitialized) {
             throw Exception("Data loading function is not defined")
         }
-        if (redis == null) {
-            redis = JedisManager(CoVaConfig.getConfig().redis)
+        if (redis != null) {
+            return doRedisOps(redis!!, *params)
+        } else {
+            JedisManager(CoVaConfig.getConfig().redis).use {
+                return doRedisOps(it, *params)
+            }
         }
-        redis!!.jedis.use { jedis ->
+    }
+
+    private fun doRedisOps(jedisManager: JedisManager, vararg params: Any?): T? {
+        jedisManager.jedis.use { jedis ->
             actualKey = key ?: createKey(*params)
+            //println("read key $actualKey")
             return if (skipCache) {
                 doDataLoadAndUpdateRedis(jedis, actualKey, *params)
             } else {
@@ -184,5 +204,15 @@ class RedisCacheReader<T> private constructor() {
             else -> "||$paramIdentity"
         }
     }
-}
 
+    fun clearData(vararg params: Any?) {
+        actualKey = key ?: createKey(*params)
+        //println("clear key $actualKey")
+        when (redis) {
+            null -> JedisManager(CoVaConfig.getConfig().redis).use { manager ->
+                manager.jedis.use { it.del(actualKey) }
+            }
+            else -> redis!!.jedis.use { it.del(actualKey) }
+        }
+    }
+}
