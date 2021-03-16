@@ -229,7 +229,6 @@ class WorkSpaceData(connectionConfig: DatabaseConfig) : CoVaDatabase(connectionC
                     stmt.setLong(3, uid)
                     stmt.addBatch()
                 }
-                println(stmt)
                 stmt.executeBatch()
             }
     }
