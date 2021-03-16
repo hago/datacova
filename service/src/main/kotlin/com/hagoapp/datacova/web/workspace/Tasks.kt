@@ -7,7 +7,7 @@
 
 package com.hagoapp.datacova.web.workspace
 
-import com.hagoapp.datacova.data.user.TaskCache
+import com.hagoapp.datacova.data.workspace.TaskCache
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import com.hagoapp.datacova.web.authentication.AuthType

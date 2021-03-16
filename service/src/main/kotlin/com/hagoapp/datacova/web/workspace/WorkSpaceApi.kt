@@ -1,8 +1,8 @@
 package com.hagoapp.datacova.web.workspace
 
 import com.google.gson.GsonBuilder
-import com.hagoapp.datacova.data.user.UserAccess
-import com.hagoapp.datacova.data.user.WorkspaceCache
+import com.hagoapp.datacova.data.user.UserCache
+import com.hagoapp.datacova.data.workspace.WorkspaceCache
 import com.hagoapp.datacova.data.workspace.WorkSpaceData
 import com.hagoapp.datacova.entity.workspace.WorkSpace
 import com.hagoapp.datacova.entity.workspace.WorkSpaceUserRole
@@ -38,14 +38,14 @@ class WorkSpaceApi {
             WorkspaceWithUser(
                 workspace = it,
                 users = findWorkspaceUsers(it.id),
-                owner = UserAccess.getUser(it.ownerId)!!
+                owner = UserCache.getUser(it.ownerId)!!
             )
         } ?: listOf()
     }
 
     private fun findWorkspaceUsers(workspaceId: Int): List<WorkspaceUser> {
         val list = WorkspaceCache.getWorkspaceUserInRoles(workspaceId)
-        val userInfoList = list.mapNotNull { UserAccess.getUser(it.userid) }
+        val userInfoList = list.mapNotNull { UserCache.getUser(it.userid) }
         return userInfoList.map { u ->
             WorkspaceUser(
                 user = u,

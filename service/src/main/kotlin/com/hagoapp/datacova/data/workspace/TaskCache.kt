@@ -5,11 +5,10 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package com.hagoapp.datacova.data.user
+package com.hagoapp.datacova.data.workspace
 
 import com.google.gson.reflect.TypeToken
 import com.hagoapp.datacova.data.RedisCacheReader
-import com.hagoapp.datacova.data.workspace.TaskData
 import com.hagoapp.datacova.entity.task.Task
 
 class TaskCache {

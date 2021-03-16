@@ -12,7 +12,7 @@ import com.hagoapp.datacova.data.RedisCacheReader.GenericLoader
 import com.hagoapp.datacova.data.UserData
 import com.hagoapp.datacova.user.UserInfo
 
-class UserAccess {
+class UserCache {
     companion object {
 
         private const val USER_INFO = "UserInfo"

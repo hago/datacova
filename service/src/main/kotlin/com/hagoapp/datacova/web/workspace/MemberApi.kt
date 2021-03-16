@@ -9,8 +9,7 @@ package com.hagoapp.datacova.web.workspace
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.hagoapp.datacova.data.UserData
-import com.hagoapp.datacova.data.user.WorkspaceCache
+import com.hagoapp.datacova.data.workspace.WorkspaceCache
 import com.hagoapp.datacova.data.workspace.WorkSpaceData
 import com.hagoapp.datacova.entity.workspace.WorkSpaceUserRole
 import com.hagoapp.datacova.util.http.ResponseHelper
