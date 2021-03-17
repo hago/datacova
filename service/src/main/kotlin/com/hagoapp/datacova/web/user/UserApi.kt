@@ -7,7 +7,7 @@
 
 package com.hagoapp.datacova.web.user
 
-import com.hagoapp.datacova.data.UserData
+import com.hagoapp.datacova.data.user.UserData
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import com.hagoapp.datacova.web.authentication.AuthType

@@ -9,7 +9,6 @@ package com.hagoapp.datacova.data.user
 
 import com.hagoapp.datacova.data.RedisCacheReader
 import com.hagoapp.datacova.data.RedisCacheReader.GenericLoader
-import com.hagoapp.datacova.data.UserData
 import com.hagoapp.datacova.user.UserInfo
 
 class UserCache {

@@ -10,7 +10,7 @@ package com.hagoapp.datacova.user
 import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.RedisCacheReader
-import com.hagoapp.datacova.data.UserData
+import com.hagoapp.datacova.data.user.UserData
 import com.hagoapp.datacova.util.web.CaptchaUtils
 import io.vertx.ext.web.RoutingContext
 

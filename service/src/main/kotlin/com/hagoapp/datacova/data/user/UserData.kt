@@ -1,14 +1,15 @@
 /*
- * Copyright (c) 2020.
+ * Copyright (c) 2021.
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package com.hagoapp.datacova.data
+package com.hagoapp.datacova.data.user
 
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.config.DatabaseConfig
+import com.hagoapp.datacova.data.CoVaDatabase
 import com.hagoapp.datacova.user.LocalUserProvider
 import com.hagoapp.datacova.user.UserInfo
 import com.hagoapp.datacova.user.UserStatus
