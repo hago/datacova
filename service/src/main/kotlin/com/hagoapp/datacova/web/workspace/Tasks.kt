@@ -18,7 +18,7 @@ import io.vertx.ext.web.RoutingContext
 class Tasks {
 
     @WebEndPoint(
-        path = "/api/workspace/:id/task/list",
+        path = "/api/workspace/:id/task",
         methods = [HttpMethod.GET],
         authTypes = [AuthType.UserToken]
     )
