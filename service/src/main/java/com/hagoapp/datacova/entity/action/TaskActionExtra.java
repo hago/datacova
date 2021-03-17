@@ -17,7 +17,7 @@ public class TaskActionExtra implements JsonStringify {
 
     private Map<String, Object> misc = new HashMap<>();
 
-    public boolean isContinueNextWhenError() {
+    public boolean getContinueNextWhenError() {
         return continueNextWhenError;
     }
 
