@@ -24,10 +24,10 @@ class ConnectionApiHelper {
     return rsp
   }
 
-  async verifyConnection (type, conf) {
+  async verifyConnection (conf) {
     let rsp = await axios({
       method: 'POST',
-      url: `${this.urlprefix}/api/connection/verify/${type}`,
+      url: `${this.urlprefix}/api/connection/verify`,
       data: conf
     })
     return rsp

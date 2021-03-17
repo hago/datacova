@@ -38,15 +38,15 @@ export default {
   },
   methods: {
     addConnection: function () {
-      let wkid = this.workspace.id
+      let wkid = this.workspace.workspace.id
       router.push(`/connection/${wkid}/add`)
     },
     editConnection: function (id) {
-      let wkid = this.workspace.id
+      let wkid = this.workspace.workspace.id
       router.push(`/connection/${wkid}/${id}`)
     },
     deleteConnection: function (id) {
-      (new WorkspaceApiHelper()).deleteConn4Workspace(this.workspace.id, id).then(rsp => {
+      (new WorkspaceApiHelper()).deleteConn4Workspace(this.workspace.workspace.id, id).then(rsp => {
         if (rsp.data.code === 0) {
           this.connectionInfo.connections = this.connectionInfo.connections.filter(function (value, index, arr) {
             return value.id !== id

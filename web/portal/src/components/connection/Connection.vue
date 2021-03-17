@@ -16,30 +16,30 @@
       <select v-model="connection.configuration.dbType" class="form-control col-6" :disabled="!isNew"
         v-on:change="changeDbType()">
         <option disabled value="undefined">Data Connection Type</option>
-        <option v-for="(fullname, name) in databaseTypes" :key="fullname" v-bind:value="name">
-            {{ fullname }}
+        <option v-for="(def) in databaseTypes" :key="def[1]" v-bind:value="def[1]">
+            {{ def[0] }}
         </option>
       </select>
     </div>
-    <PostgreSQLConfig v-if="connection.configuration.dbType==='pgsql'"
+    <PostgreSQLConfig v-if="connection.configuration.dbType===0"
       v-bind:pgconfig="connection.configuration"
       v-bind:extra="connection.extra"
       v-on:onConnectionVerified="connectionVerified"
       v-on:onErrorUpdate="errorUpdate"
     ></PostgreSQLConfig>
-    <SQLServerConfig v-if="connection.configuration.dbType==='mssql'"
+    <SQLServerConfig v-if="connection.configuration.dbType===1"
       v-bind:msconfig="connection.configuration"
       v-bind:extra="connection.extra"
       v-on:onConnectionVerified="connectionVerified"
       v-on:onErrorUpdate="errorUpdate"
     ></SQLServerConfig>
-    <HiveConfig v-if="connection.configuration.dbType==='hive'"
+    <HiveConfig v-if="connection.configuration.dbType===2"
       v-bind:hiveconfig="connection.configuration"
       v-bind:extra="connection.extra"
       v-on:onConnectionVerified="connectionVerified"
       v-on:onErrorUpdate="errorUpdate"
     ></HiveConfig>
-    <MariaDBConfig v-if="connection.configuration.dbType==='mysql'"
+    <MariaDBConfig v-if="connection.configuration.dbType===3"
       v-bind:mariadbconfig="connection.configuration"
       v-bind:extra="connection.extra"
       v-on:onConnectionVerified="connectionVerified"
@@ -84,10 +84,10 @@ export default {
   data () {
     return {
       databaseTypes: {
-        pgsql: 'PostgreSQL',
-        mssql: 'SQL Server',
-        hive: 'Hadoop Hive',
-        mysql: 'MySQL / MariaDB'
+        pgsql: ['PostgreSQL', 0],
+        mssql: ['SQL Server', 1],
+        hive: ['Hadoop Hive', 2],
+        mysql: ['MySQL / MariaDB', 3]
       },
       isNew: true,
       connection: {
