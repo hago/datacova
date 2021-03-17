@@ -8,6 +8,9 @@
 package com.hagoapp.datacova.entity.action.idle;
 
 import com.hagoapp.datacova.entity.action.TaskAction;
+import org.apache.poi.ss.formula.eval.NotImplementedException;
+
+import java.util.Map;
 
 public class TaskActionIdle extends TaskAction {
     private Configuration configuration;
@@ -36,5 +39,10 @@ public class TaskActionIdle extends TaskAction {
 
     public void setFailReason(String failReason) {
         this.failReason = failReason;
+    }
+
+    @Override
+    public void load(Map<String, Object> map) {
+        throw new NotImplementedException("");
     }
 }

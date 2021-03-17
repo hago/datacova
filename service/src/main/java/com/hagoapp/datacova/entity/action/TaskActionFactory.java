@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
@@ -49,7 +50,22 @@ public class TaskActionFactory {
     @NotNull
     public static TaskAction getTaskAction(String json) throws CoVaException {
         try {
-            Map<String, Object> map = MapSerializer.deserializeMap(json);
+            return doGetTaskAction(json, MapSerializer.deserializeMap(json));
+        } catch (IOException e) {
+            throw new CoVaException("Task Action Error", e);
+        }
+    }
+
+    public static TaskAction getTaskAction(Map<String, Object> map) throws CoVaException {
+        try {
+            return doGetTaskAction(MapSerializer.serializeMap(map), map);
+        } catch (IOException e) {
+            throw new CoVaException("Task Action Error", e);
+        }
+    }
+
+    private static TaskAction doGetTaskAction(String json, Map<String, Object> map) throws CoVaException {
+        try {
             int type = Integer.parseInt(map.get("type").toString());
             TaskAction ta = new Gson().fromJson(json, typeActionMap.get(type));
             ta.load(map);

@@ -7,6 +7,7 @@
 
 package com.hagoapp.datacova.data.workspace
 
+import com.hagoapp.datacova.MapSerializer
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.config.DatabaseConfig
 import com.hagoapp.datacova.data.CoVaDatabase
@@ -15,6 +16,8 @@ import com.hagoapp.datacova.entity.execution.ExecutionFileInfo
 import com.hagoapp.datacova.entity.execution.ExecutionStatus
 import com.hagoapp.datacova.entity.execution.TaskExecution
 import com.hagoapp.datacova.entity.task.Task
+import com.hagoapp.datacova.entity.action.TaskAction
+import com.hagoapp.datacova.entity.action.TaskActionFactory
 import com.hagoapp.datacova.entity.task.TaskExtra
 import com.hagoapp.datacova.util.data.DatabaseFunctions
 import java.sql.ResultSet
@@ -47,8 +50,16 @@ class TaskData(config: DatabaseConfig) : CoVaDatabase(config) {
             modifyBy = DatabaseFunctions.getDBValue<Timestamp>(rs, "modifyby")?.toInstant()?.toEpochMilli()
             modifyTime = DatabaseFunctions.getDBValue<Timestamp>(rs, "modifytime")?.toInstant()?.toEpochMilli()
             workspaceId = rs.getInt("wkid")
+            actions = loadTaskAction(rs.getString("actions"))
         }
         return task
+    }
+
+    private fun loadTaskAction(s: String): List<TaskAction> {
+        val lm = MapSerializer.deserializeList(s)
+        return lm.map { map ->
+            TaskActionFactory.getTaskAction(map)
+        }
     }
 
     fun getTasks(workspaceId: Int): List<Task> {

@@ -15,7 +15,7 @@ import com.google.gson.reflect.TypeToken;
 import com.hagoapp.datacova.CoVaException;
 import com.hagoapp.datacova.JsonStringify;
 import com.hagoapp.datacova.entity.action.TaskAction;
-import com.hagoapp.datacova.execution.TaskActionFactory;
+import com.hagoapp.datacova.entity.action.TaskActionFactory;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;

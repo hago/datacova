@@ -8,6 +8,9 @@
 package com.hagoapp.datacova.entity.action.ingest;
 
 import com.hagoapp.datacova.entity.action.TaskAction;
+import org.apache.poi.ss.formula.eval.NotImplementedException;
+
+import java.util.Map;
 
 public class TaskActionIngest extends TaskAction {
     private int connectionId;
@@ -36,5 +39,10 @@ public class TaskActionIngest extends TaskAction {
 
     public void setTargetSchema(String targetSchema) {
         this.targetSchema = targetSchema;
+    }
+
+    @Override
+    public void load(Map<String, Object> map) {
+        throw new NotImplementedException("");
     }
 }
