@@ -7,24 +7,15 @@
 
 package com.hagoapp.datacova.entity.connection;
 
-import com.fasterxml.jackson.jr.ob.JSON;
 import com.hagoapp.datacova.JsonStringify;
+import com.hagoapp.datacova.data.IDatabaseConnection;
 
-import java.io.IOException;
-import java.util.Map;
+public abstract class ConnectionConfig implements JsonStringify {
+    private int dbType;
+    private Class<IDatabaseConnection> clazz;
 
-public class ConnectionConfig implements JsonStringify {
-    private int type;
+    public abstract int getDbType();
 
-    public int getType() {
-        return type;
-    }
+    public abstract Class<? extends IDatabaseConnection> getConnectionClass();
 
-    public void setType(int type) {
-        this.type = type;
-    }
-
-    public Map<String, Object> toMap() throws IOException {
-        return JSON.std.mapFrom(this.toJson());
-    }
 }

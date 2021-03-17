@@ -7,6 +7,9 @@
 
 package com.hagoapp.datacova.entity.connection;
 
+import com.hagoapp.datacova.data.IDatabaseConnection;
+import com.hagoapp.datacova.data.connection.PostgreSQLConnection;
+
 public class PostgreSQLConfig extends ConnectionConfig {
     private String host;
     private int port;
@@ -55,7 +58,12 @@ public class PostgreSQLConfig extends ConnectionConfig {
     }
 
     @Override
-    public int getType() {
+    public int getDbType() {
         return 0;
+    }
+
+    @Override
+    public Class<? extends IDatabaseConnection> getConnectionClass() {
+        return PostgreSQLConnection.class;
     }
 }
