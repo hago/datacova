@@ -71,7 +71,7 @@ export default {
     verifyConnection: function () {
       this.loading = true
       this.verifyResult = undefined;
-      (new ConnectionApiHelper()).verifyConnection('pgsql', this.config).then(rsp => {
+      (new ConnectionApiHelper()).verifyConnection(this.config).then(rsp => {
         this.loading = false
         if (rsp.status === 200) {
           if (rsp.data.data.result) {
