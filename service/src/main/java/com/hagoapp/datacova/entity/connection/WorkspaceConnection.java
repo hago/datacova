@@ -7,7 +7,9 @@
 
 package com.hagoapp.datacova.entity.connection;
 
-public class WorkspaceConnection {
+import com.hagoapp.datacova.JsonStringify;
+
+public class WorkspaceConnection implements JsonStringify {
     private int id;
     private String name;
     private String description;
