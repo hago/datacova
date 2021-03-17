@@ -10,16 +10,14 @@ package com.hagoapp.datacova.execution
 
 import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.entity.action.TaskAction
-import com.hagoapp.datacova.entity.action.TaskActionType
 import com.hagoapp.datacova.execution.executor.BaseTaskActionExecutor
-import com.hagoapp.datacova.execution.executor.ImportExecutor
 
 class TaskActionExecutorFactory {
     companion object {
 
         fun createTaskActionExecutor(action: TaskAction): BaseTaskActionExecutor {
             return when (action.type) {
-                TaskActionType.DataImporting -> ImportExecutor()
+//                TaskActionType.DataImporting -> ImportExecutor()
 //                TaskActionType.Distributing -> DistributeExecutor()
 //                TaskActionType.Verifying -> VerifyExecutor()
 //                TaskActionType.IDLE -> IdleExecutor()
