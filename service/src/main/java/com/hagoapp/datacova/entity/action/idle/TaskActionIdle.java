@@ -1,25 +1,24 @@
 /*
- * Copyright (c) 2020.
+ * Copyright (c) 2021.
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
- *
  */
 
-package com.hagoapp.datacova.entity.action;
+package com.hagoapp.datacova.entity.action.idle;
 
-import com.hagoapp.datacova.entity.action.idle.IdleConfig;
+import com.hagoapp.datacova.entity.action.TaskAction;
 
 public class TaskActionIdle extends TaskAction {
-    private IdleConfig configuration;
+    private Configuration configuration;
     private boolean result = true;
     private String failReason = "Idle Action Fail";
 
-    public IdleConfig getConfiguration() {
+    public Configuration getConfiguration() {
         return configuration;
     }
 
-    public void setConfiguration(IdleConfig configuration) {
+    public void setConfiguration(Configuration configuration) {
         this.configuration = configuration;
     }
 

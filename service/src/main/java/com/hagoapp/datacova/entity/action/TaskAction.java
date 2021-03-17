@@ -1,25 +1,29 @@
 /*
- * Copyright (c) 2020.
+ * Copyright (c) 2021.
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
- *
  */
 
 package com.hagoapp.datacova.entity.action;
 
-public class TaskAction {
-    private TaskActionType type;
+import com.hagoapp.datacova.MapSerializer;
+
+import java.io.IOException;
+import java.util.Map;
+
+public abstract class TaskAction {
+    protected int type;
     private TaskActionExtra extra = new TaskActionExtra();
     private String name;
     private String description = "";
 
-    public TaskActionType getType() {
-        return type;
+    public TaskAction() {
+        //
     }
 
-    public void setType(TaskActionType type) {
-        this.type = type;
+    public int getType() {
+        return type;
     }
 
     public TaskActionExtra getExtra() {
@@ -28,6 +32,10 @@ public class TaskAction {
 
     public void setExtra(TaskActionExtra extra) {
         this.extra = extra;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public void setName(String name) {
@@ -42,7 +50,9 @@ public class TaskAction {
         this.description = description;
     }
 
-    public String getName() {
-        return name;
+    public abstract void load(Map<String, Object> map);
+
+    public void load(String s) throws IOException {
+        load(MapSerializer.deserializeMap(s));
     }
 }
