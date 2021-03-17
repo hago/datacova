@@ -18,7 +18,7 @@ import io.vertx.ext.web.RoutingContext
 class Connection {
 
     @WebEndPoint(
-        path = "/api/workspace/:id/connection/list",
+        path = "/api/workspace/:id/connection",
         methods = [HttpMethod.GET],
         authTypes = [AuthType.UserToken]
     )

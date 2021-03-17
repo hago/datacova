@@ -10,18 +10,19 @@ package com.hagoapp.datacova.data.workspace
 import com.google.gson.reflect.TypeToken
 import com.hagoapp.datacova.data.RedisCacheReader
 import com.hagoapp.datacova.entity.connection.ConnectionConfig
+import com.hagoapp.datacova.entity.connection.WorkspaceConnection
 
 class ConnectionCache {
     companion object {
         private const val CONNECTION_LIST = "CONNECTION_LIST"
 
         @JvmStatic
-        fun getConnections(workspaceId: Int): List<ConnectionConfig> {
-            val token = object : TypeToken<List<ConnectionConfig>>() {}
+        fun getConnections(workspaceId: Int): List<WorkspaceConnection> {
+            val token = object : TypeToken<List<WorkspaceConnection>>() {}
             val l = RedisCacheReader.readCachedData(
                 CONNECTION_LIST, 3600,
-                object : RedisCacheReader.GenericLoader<List<ConnectionConfig>> {
-                    override fun perform(vararg params: Any?): List<ConnectionConfig>? {
+                object : RedisCacheReader.GenericLoader<List<WorkspaceConnection>> {
+                    override fun perform(vararg params: Any?): List<WorkspaceConnection>? {
                         return ConnectionData().getWorkspaceConnections(params[0] as Int)
                     }
                 }, token.type, workspaceId
