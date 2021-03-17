@@ -7,8 +7,10 @@
 
 package com.hagoapp.datacova.web.workspace
 
+import com.hagoapp.datacova.data.IDatabaseConnection
 import com.hagoapp.datacova.data.workspace.ConnectionCache
 import com.hagoapp.datacova.data.workspace.WorkspaceCache
+import com.hagoapp.datacova.entity.connection.ConnectionConfigFactory
 import com.hagoapp.datacova.entity.workspace.WorkSpaceUserRole
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.annotation.WebEndPoint
@@ -60,5 +62,30 @@ class Connection {
                 "data" to data
             )
         )
+    }
+
+    @WebEndPoint(
+        path = "/api/connection/verify",
+        methods = [HttpMethod.POST]
+    )
+    fun verifyConnection(context: RoutingContext) {
+        val json = context.bodyAsString
+        val conf = ConnectionConfigFactory.getConnectionConfig(json)
+        val con = IDatabaseConnection.getDatabaseConnection(conf)
+        val result = con.canConnect(conf)
+        if (result.first) {
+            ResponseHelper.sendResponse(
+                context, HttpResponseStatus.OK, mapOf(
+                    "code" to 0,
+                    "data" to mapOf(
+                        "result" to result.first,
+                        "message" to result.second,
+                        "databases" to con.listDatabases(conf)
+                    )
+                )
+            )
+        } else {
+            ResponseHelper.respondError(context, HttpResponseStatus.INTERNAL_SERVER_ERROR, "connection fail")
+        }
     }
 }
