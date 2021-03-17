@@ -8,9 +8,12 @@
 package com.hagoapp.datacova.web.workspace
 
 import com.hagoapp.datacova.data.workspace.ConnectionCache
+import com.hagoapp.datacova.data.workspace.WorkspaceCache
+import com.hagoapp.datacova.entity.workspace.WorkSpaceUserRole
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import com.hagoapp.datacova.web.authentication.AuthType
+import com.hagoapp.datacova.web.authentication.Authenticator
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.RoutingContext
@@ -28,7 +31,34 @@ class Connection {
             ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "invalid workspace")
             return
         }
+        val wk = WorkspaceCache.getWorkspace(id)
+        if (wk == null) {
+            ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "invalid workspace")
+            return
+        }
+        val user = Authenticator.getUser(context)
         val l = ConnectionCache.getConnections(id)
-        ResponseHelper.sendResponse(context, HttpResponseStatus.OK, mapOf("code" to 0, "data" to l))
+        val roles = WorkspaceCache.getWorkspaceUserInRoles(id).filter { it.userid == user.id }.map { it.role }
+        val isWorkspaceOwner = wk.ownerId == user.id
+        val data = mapOf(
+            "connections" to l,
+            "owner" to isWorkspaceOwner,
+            "canDelete" to when {
+                isWorkspaceOwner -> l.map { it.id }
+                else -> l.filter { it.addBy == user.id }.map { it.id }
+            },
+            "canModify" to when {
+                isWorkspaceOwner || roles.any {
+                    (it == WorkSpaceUserRole.Admin) || (it == WorkSpaceUserRole.Maintainer)
+                } -> l.map { it.id }
+                else -> listOf()
+            }
+        )
+        ResponseHelper.sendResponse(
+            context, HttpResponseStatus.OK, mapOf(
+                "code" to 0,
+                "data" to data
+            )
+        )
     }
 }
