@@ -29,5 +29,10 @@ class ConnectionCache {
             )
             return l ?: listOf()
         }
+
+        @JvmStatic
+        fun clearConnections(workspaceId: Int) {
+            RedisCacheReader.clearData(CONNECTION_LIST, workspaceId)
+        }
     }
 }

@@ -9,8 +9,10 @@ package com.hagoapp.datacova.web.workspace
 
 import com.hagoapp.datacova.data.IDatabaseConnection
 import com.hagoapp.datacova.data.workspace.ConnectionCache
+import com.hagoapp.datacova.data.workspace.ConnectionData
 import com.hagoapp.datacova.data.workspace.WorkspaceCache
 import com.hagoapp.datacova.entity.connection.ConnectionConfigFactory
+import com.hagoapp.datacova.entity.connection.WorkspaceConnection
 import com.hagoapp.datacova.entity.workspace.WorkSpaceUserRole
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.annotation.WebEndPoint
@@ -19,6 +21,7 @@ import com.hagoapp.datacova.web.authentication.Authenticator
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.RoutingContext
+import kotlin.coroutines.coroutineContext
 
 class Connection {
 
@@ -66,7 +69,8 @@ class Connection {
 
     @WebEndPoint(
         path = "/api/connection/verify",
-        methods = [HttpMethod.POST]
+        methods = [HttpMethod.POST],
+        authTypes = [AuthType.UserToken]
     )
     fun verifyConnection(context: RoutingContext) {
         val json = context.bodyAsString
@@ -87,5 +91,32 @@ class Connection {
         } else {
             ResponseHelper.respondError(context, HttpResponseStatus.INTERNAL_SERVER_ERROR, "connection fail")
         }
+    }
+
+    @WebEndPoint(
+        path = "/api/workspace/:id/connection/add",
+        methods = [HttpMethod.PUT],
+        authTypes = [AuthType.UserToken]
+    )
+    fun addConnection(context: RoutingContext) {
+        val id = context.pathParam("id").toInt()
+        if (WorkspaceCache.getWorkspace(id) == null) {
+            ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "Invalid workspace")
+            return
+        }
+        val json = context.bodyAsString
+        val wsCon = WorkspaceConnection.load(json)
+        if (wsCon == null) {
+            ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "Invalid Connection")
+            return
+        }
+        wsCon.workspaceId = id
+        wsCon.addBy = Authenticator.getUser(context).id
+        val wk = ConnectionData().addWorkspaceConnection(wsCon)
+        ConnectionCache.clearConnections(id)
+        ResponseHelper.sendResponse(context, HttpResponseStatus.OK, mapOf(
+            "code" to 0,
+            "data" to wk
+        ))
     }
 }
