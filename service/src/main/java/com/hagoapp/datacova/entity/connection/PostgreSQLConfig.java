@@ -26,7 +26,7 @@ public class PostgreSQLConfig extends ConnectionConfig {
     }
 
     public void setPort(int port) {
-        this.port = port;
+        this.port = port <= 0 ? 5432 : port;
     }
 
     public String getHost() {
