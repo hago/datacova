@@ -59,7 +59,7 @@ public class ConnectionConfigFactory {
         }
     }
 
-    public static ConnectionConfig doGetConnectionConfig(String json, int type) throws CoVaException {
+    private static ConnectionConfig doGetConnectionConfig(String json, int type) throws CoVaException {
         try {
             return JSON.std.beanFrom(connectionMap.get(type), json);
         } catch (IOException e) {
