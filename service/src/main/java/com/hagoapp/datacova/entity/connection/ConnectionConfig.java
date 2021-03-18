@@ -10,12 +10,16 @@ package com.hagoapp.datacova.entity.connection;
 import com.hagoapp.datacova.JsonStringify;
 import com.hagoapp.datacova.data.IDatabaseConnection;
 
-public abstract class ConnectionConfig implements JsonStringify {
+public class ConnectionConfig implements JsonStringify {
     private int dbType;
     private Class<IDatabaseConnection> clazz;
 
-    public abstract int getDbType();
+    public int getDbType() {
+        return dbType;
+    }
 
-    public abstract Class<? extends IDatabaseConnection> getConnectionClass();
+    public Class<? extends IDatabaseConnection> getConnectionClass() {
+        return clazz;
+    }
 
 }

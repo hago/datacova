@@ -121,7 +121,6 @@ create table if not exists connection (
     name text not null,
     description text not null,
     configuration json not null default '{}',
-    extra json not null default '{}',
     wkid int not null references workspace(id),
     addby bigint not null,
     addtime timestamp WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,

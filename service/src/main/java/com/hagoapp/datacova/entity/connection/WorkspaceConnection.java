@@ -7,7 +7,13 @@
 
 package com.hagoapp.datacova.entity.connection;
 
+import com.google.gson.Gson;
+import com.hagoapp.datacova.CoVaException;
 import com.hagoapp.datacova.JsonStringify;
+import com.hagoapp.datacova.MapSerializer;
+
+import java.io.IOException;
+import java.util.Map;
 
 public class WorkspaceConnection implements JsonStringify {
     private int id;
@@ -15,7 +21,6 @@ public class WorkspaceConnection implements JsonStringify {
     private String description;
     private int workspaceId;
     private ConnectionConfig configuration;
-    private ConnectionExtra extra;
     private long addBy;
     private long addTime;
     private Long modifyBy;
@@ -61,14 +66,6 @@ public class WorkspaceConnection implements JsonStringify {
         this.configuration = configuration;
     }
 
-    public ConnectionExtra getExtra() {
-        return extra;
-    }
-
-    public void setExtra(ConnectionExtra extra) {
-        this.extra = extra;
-    }
-
     public long getAddBy() {
         return addBy;
     }
@@ -99,5 +96,21 @@ public class WorkspaceConnection implements JsonStringify {
 
     public void setModifyTime(Long modifyTime) {
         this.modifyTime = modifyTime;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static WorkspaceConnection load(String json) {
+        Map<String, Object> map = null;
+        try {
+            map = MapSerializer.deserializeMap(json);
+            Object o = map.get("configuration");
+            Map<String, Object> configMap = (Map<String, Object>) map.get("configuration");
+            WorkspaceConnection w = new Gson().fromJson(json, WorkspaceConnection.class);
+            ConnectionConfig config = ConnectionConfigFactory.getConnectionConfig(configMap);
+            w.setConfiguration(config);
+            return w;
+        } catch (IOException | CoVaException e) {
+            return null;
+        }
     }
 }
