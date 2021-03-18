@@ -11,15 +11,14 @@ import com.hagoapp.datacova.JsonStringify;
 import com.hagoapp.datacova.data.IDatabaseConnection;
 
 public class ConnectionConfig implements JsonStringify {
-    private int dbType;
-    private Class<IDatabaseConnection> clazz;
+    protected int dbType;
 
     public int getDbType() {
         return dbType;
     }
 
     public Class<? extends IDatabaseConnection> getConnectionClass() {
-        return clazz;
+        return null;
     }
 
 }

@@ -12,10 +12,14 @@ import com.hagoapp.datacova.data.connection.PostgreSQLConnection;
 
 public class PostgreSQLConfig extends ConnectionConfig {
     private String host;
-    private int port;
+    private int port = 5432;
     private String userName;
     private String password;
     private String dbName;
+
+    public PostgreSQLConfig() {
+        this.dbType = 0;
+    }
 
     public int getPort() {
         return port <= 0 ? 5432 : port;
