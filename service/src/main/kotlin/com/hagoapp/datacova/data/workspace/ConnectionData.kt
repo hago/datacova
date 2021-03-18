@@ -82,4 +82,19 @@ class ConnectionData(config: DatabaseConfig) : CoVaDatabase(config) {
             stmt.execute()
         }
     }
+
+    fun updateWorkspaceConnection(wkConnection: WorkspaceConnection): WorkspaceConnection {
+        val sql = "update connection set name = ?, description = ?, configuration = ?, wkid = ?, " +
+                "modifyby = ?, modifytime=now() where id = ?"
+        connection.prepareStatement(sql).use { stmt ->
+            stmt.setString(1, wkConnection.name)
+            stmt.setString(2, wkConnection.description)
+            stmt.setObject(3, DatabaseFunctions.createPgObject("json", wkConnection.configuration.toJson()))
+            stmt.setInt(4, wkConnection.workspaceId)
+            stmt.setLong(5, wkConnection.modifyBy)
+            stmt.setInt(6, wkConnection.id)
+            stmt.execute()
+        }
+        return getWorkspaceConnection(wkConnection.id)!!
+    }
 }

@@ -131,6 +131,49 @@ class Connection {
     }
 
     @WebEndPoint(
+        path = "/api/workspace/:id/connection/update",
+        methods = [HttpMethod.PUT],
+        authTypes = [AuthType.UserToken]
+    )
+    fun updateConnection(context: RoutingContext) {
+        val id = context.pathParam("id").toInt()
+        val workspace = WorkspaceCache.getWorkspace(id)
+        if (workspace == null) {
+            ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "Invalid workspace")
+            return
+        }
+        val json = context.bodyAsString
+        val wsCon = WorkspaceConnection.load(json)
+        if (wsCon == null) {
+            ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "Invalid Connection")
+            return
+        }
+        if (ConnectionCache.getConnection(id, wsCon.id) == null) {
+            ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "Invalid Connection")
+            return
+        }
+        val user = Authenticator.getUser(context)
+        if ((workspace.ownerId != user.id) && WorkspaceCache.getWorkspaceUserInRoles(
+                id,
+                listOf(WorkSpaceUserRole.Admin, WorkSpaceUserRole.Maintainer)
+            ).none { it.userid == user.id }
+        ) {
+            ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, "Access Denied")
+            return
+        }
+        wsCon.workspaceId = id
+        wsCon.modifyBy = Authenticator.getUser(context).id
+        val wk = ConnectionData().updateWorkspaceConnection(wsCon)
+        ConnectionCache.clearConnections(id)
+        ResponseHelper.sendResponse(
+            context, HttpResponseStatus.OK, mapOf(
+                "code" to 0,
+                "data" to wk
+            )
+        )
+    }
+
+    @WebEndPoint(
         path = "/api/workspace/:wkid/connection/:id/delete",
         methods = [HttpMethod.DELETE],
         authTypes = [AuthType.UserToken]
