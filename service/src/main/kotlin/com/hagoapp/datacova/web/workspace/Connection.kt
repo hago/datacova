@@ -25,7 +25,7 @@ import io.vertx.ext.web.RoutingContext
 class Connection {
 
     @WebEndPoint(
-        path = "/api/workspace/:id/connection",
+        path = "/api/workspace/:id/connections",
         methods = [HttpMethod.GET],
         authTypes = [AuthType.UserToken]
     )
@@ -155,5 +155,43 @@ class Connection {
         ConnectionData().deleteConnection(connectionId)
         ConnectionCache.clearConnections(workspaceId)
         ResponseHelper.sendResponse(context, HttpResponseStatus.OK, mapOf("code" to 0))
+    }
+
+    @WebEndPoint(
+        path = "/api/workspace/:wkid/connection/:id",
+        methods = [HttpMethod.GET],
+        authTypes = [AuthType.UserToken]
+    )
+    fun getConnection(context: RoutingContext) {
+        val workspaceId = context.pathParam("wkid").toInt()
+        val connectionId = context.pathParam("id").toInt()
+        val connection = ConnectionCache.getConnection(workspaceId, connectionId)
+        if ((connection == null) || (connection.workspaceId != workspaceId)) {
+            ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "Invalid request")
+            return
+        }
+        val user = Authenticator.getUser(context)
+        val roles = WorkspaceCache.getWorkspaceUserInRoles(workspaceId)
+        if (roles.none { it.userid == user.id }) {
+            ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, "Access Denied")
+            return
+        }
+        val writable = (WorkspaceCache.getWorkspace(workspaceId)?.ownerId == user.id) ||
+                roles.any {
+                    it.userid == user.id &&
+                            ((it.role == WorkSpaceUserRole.Admin) || (it.role == WorkSpaceUserRole.Maintainer))
+                }
+        ResponseHelper.sendResponse(
+            context, HttpResponseStatus.OK, mapOf(
+                "code" to 0,
+                "data" to mapOf(
+                    "connection" to connection,
+                    "permission" to mapOf(
+                        "update" to writable,
+                        "delete" to writable
+                    )
+                )
+            )
+        )
     }
 }
