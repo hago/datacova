@@ -38,7 +38,7 @@ class WorkspaceApiHelper {
   async getConnections (workspaceId) {
     let rsp = await axios({
       method: 'GET',
-      url: `${this.urlprefix}/api/workspace/${workspaceId}/connection`,
+      url: `${this.urlprefix}/api/workspace/${workspaceId}/connections`,
       withCredentials: true
     })
     return rsp
