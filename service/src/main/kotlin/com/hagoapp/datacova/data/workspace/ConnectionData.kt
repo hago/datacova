@@ -10,6 +10,7 @@ package com.hagoapp.datacova.data.workspace
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.config.DatabaseConfig
 import com.hagoapp.datacova.data.CoVaDatabase
+import com.hagoapp.datacova.entity.connection.ConnectionConfigFactory
 import com.hagoapp.datacova.entity.connection.ConnectionExtra
 import com.hagoapp.datacova.entity.connection.WorkspaceConnection
 import com.hagoapp.datacova.util.data.DatabaseFunctions
@@ -44,7 +45,7 @@ class ConnectionData(config: DatabaseConfig) : CoVaDatabase(config) {
             addTime = rs.getTimestamp("addtime").toInstant().toEpochMilli()
             modifyBy = DatabaseFunctions.getDBValue(rs, "modifyby")
             modifyTime = DatabaseFunctions.getDBValue<Timestamp>(rs, "modifytime")?.toInstant()?.toEpochMilli()
-            configuration = null
+            configuration = ConnectionConfigFactory.getConnectionConfig(rs.getString("configuration"))
         }
         return con;
     }
