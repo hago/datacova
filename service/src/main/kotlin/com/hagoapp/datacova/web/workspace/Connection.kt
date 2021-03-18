@@ -21,7 +21,6 @@ import com.hagoapp.datacova.web.authentication.Authenticator
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.RoutingContext
-import kotlin.coroutines.coroutineContext
 
 class Connection {
 
@@ -110,13 +109,24 @@ class Connection {
             ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "Invalid Connection")
             return
         }
+        val user = Authenticator.getUser(context)
+        if (WorkspaceCache.getWorkspaceUserInRoles(
+                id,
+                listOf(WorkSpaceUserRole.Admin, WorkSpaceUserRole.Maintainer)
+            ).any { it.userid == user.id }
+        ) {
+            ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, "Access Denied")
+            return
+        }
         wsCon.workspaceId = id
         wsCon.addBy = Authenticator.getUser(context).id
         val wk = ConnectionData().addWorkspaceConnection(wsCon)
         ConnectionCache.clearConnections(id)
-        ResponseHelper.sendResponse(context, HttpResponseStatus.OK, mapOf(
-            "code" to 0,
-            "data" to wk
-        ))
+        ResponseHelper.sendResponse(
+            context, HttpResponseStatus.OK, mapOf(
+                "code" to 0,
+                "data" to wk
+            )
+        )
     }
 }
