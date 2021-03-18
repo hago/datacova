@@ -49,9 +49,9 @@ class ConnectionData(config: DatabaseConfig) : CoVaDatabase(config) {
         return con;
     }
 
-    fun getWorkspaceConnection(workspaceId: Int): WorkspaceConnection? {
-        return connection.prepareStatement("select * from connection where wkid = ?").use { stmt ->
-            stmt.setInt(1, workspaceId)
+    fun getWorkspaceConnection(id: Int): WorkspaceConnection? {
+        return connection.prepareStatement("select * from connection where id = ?").use { stmt ->
+            stmt.setInt(1, id)
             stmt.executeQuery().use { rs ->
                 if (rs.next()) db2connection(rs) else null
             }
@@ -73,5 +73,12 @@ class ConnectionData(config: DatabaseConfig) : CoVaDatabase(config) {
             }
         }
         return getWorkspaceConnection(id)!!
+    }
+
+    fun deleteConnection(id: Int) {
+        connection.prepareStatement("delete from connection where id = ?").use { stmt ->
+            stmt.setInt(1, id)
+            stmt.execute()
+        }
     }
 }

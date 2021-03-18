@@ -113,7 +113,7 @@ class Connection {
         if (WorkspaceCache.getWorkspaceUserInRoles(
                 id,
                 listOf(WorkSpaceUserRole.Admin, WorkSpaceUserRole.Maintainer)
-            ).any { it.userid == user.id }
+            ).none { it.userid == user.id }
         ) {
             ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, "Access Denied")
             return
@@ -128,5 +128,32 @@ class Connection {
                 "data" to wk
             )
         )
+    }
+
+    @WebEndPoint(
+        path = "/api/workspace/:wkid/connection/:id/delete",
+        methods = [HttpMethod.DELETE],
+        authTypes = [AuthType.UserToken]
+    )
+    fun deleteConnection(context: RoutingContext) {
+        val workspaceId = context.pathParam("wkid").toInt()
+        val connectionId = context.pathParam("id").toInt()
+        val connection = ConnectionCache.getConnection(workspaceId, connectionId)
+        if ((connection == null) || (connection.workspaceId != workspaceId)) {
+            ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "Invalid request")
+            return
+        }
+        val user = Authenticator.getUser(context)
+        if (WorkspaceCache.getWorkspaceUserInRoles(
+                workspaceId,
+                listOf(WorkSpaceUserRole.Admin, WorkSpaceUserRole.Maintainer)
+            ).none { it.userid == user.id }
+        ) {
+            ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, "Access Denied")
+            return
+        }
+        ConnectionData().deleteConnection(connectionId)
+        ConnectionCache.clearConnections(workspaceId)
+        ResponseHelper.sendResponse(context, HttpResponseStatus.OK, mapOf("code" to 0))
     }
 }
