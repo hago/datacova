@@ -41,6 +41,14 @@ class ConnectionApiHelper {
     })
     return rsp
   }
+
+  async getConnectionTables (workspaceId, id) {
+    let rsp = await axios({
+      method: 'GET',
+      url: `${this.urlprefix}/api/workspace/${workspaceId}/connection/${id}/tables`
+    })
+    return rsp
+  }
 }
 
 export default ConnectionApiHelper

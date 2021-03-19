@@ -104,7 +104,7 @@ export default {
     loadTables: function () {
       this.$emit('errorOccurred')
       this.$emit('onLoadingStatusChange', true);
-      (new ConnectionApiHelper()).getAvailableTables(this.connection.configuration.dbType, this.connection.configuration)
+      (new ConnectionApiHelper()).getConnectionTables(this.workspaceId, this.connection.id)
         .then(rsp => {
           this.$emit('onLoadingStatusChange', false)
           this.tables = rsp.data.data

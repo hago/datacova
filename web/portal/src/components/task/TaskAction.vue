@@ -75,7 +75,7 @@ export default {
   data () {
     return {
       actionTypes: {
-        0: 'Databse Import',
+        0: 'Databse Ingest',
         1: 'Data Verify',
         2: 'Data Distribute'
       },
