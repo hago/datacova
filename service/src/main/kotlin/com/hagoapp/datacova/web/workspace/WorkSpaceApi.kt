@@ -6,6 +6,7 @@ import com.hagoapp.datacova.data.workspace.WorkspaceCache
 import com.hagoapp.datacova.data.workspace.WorkSpaceData
 import com.hagoapp.datacova.entity.workspace.WorkSpace
 import com.hagoapp.datacova.entity.workspace.WorkSpaceUserRole
+import com.hagoapp.datacova.util.WorkspaceUserRoleUtil
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import com.hagoapp.datacova.web.authentication.AuthType
@@ -98,10 +99,7 @@ class WorkSpaceApi {
         }
         val user = Authenticator.getUser(routeContext)
         val workspace = WorkspaceCache.getWorkspace(wk.id)
-        if ((workspace == null) || (workspace.ownerId != wk.ownerId) ||
-            WorkspaceCache.getWorkspaceUserInRoles(workspace.id, listOf(WorkSpaceUserRole.Admin))
-                .none { it.userid == user.id }
-        ) {
+        if ((workspace == null) || !WorkspaceUserRoleUtil.isAdmin(user, workspace)) {
             ResponseHelper.respondError(routeContext, HttpResponseStatus.NOT_FOUND, "WorkSpace ${wk.id} not found")
             return
         }
