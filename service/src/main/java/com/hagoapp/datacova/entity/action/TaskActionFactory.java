@@ -8,10 +8,11 @@
 package com.hagoapp.datacova.entity.action;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.hagoapp.datacova.Application;
 import com.hagoapp.datacova.CoVaException;
+import com.hagoapp.datacova.CoVaLogger;
 import com.hagoapp.datacova.MapSerializer;
+import org.apache.logging.log4j.core.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
@@ -24,27 +25,25 @@ public class TaskActionFactory {
 
     private static final Map<Integer, Class<? extends TaskAction>> typeActionMap = new HashMap<>();
 
+    private static final Logger logger = CoVaLogger.getLogger();
+
     static {
         Reflections r = new Reflections(Application.class.getPackageName(), new SubTypesScanner());
         Set<Class<? extends TaskAction>> actionClasses = r.getSubTypesOf(TaskAction.class);
         actionClasses.forEach(actionClass -> {
             try {
-                TaskAction sample = actionClass.getConstructor().newInstance();
-                typeActionMap.put(sample.getType(), actionClass);
+                TaskAction template = actionClass.getConstructor().newInstance();
+                var pre = typeActionMap.put(template.getType(), actionClass);
+                logger.info("TaskAction: {} registered as type {}", actionClass.getCanonicalName(), template.getType());
+                if (pre != null) {
+                    logger.error("TaskAction: {} registered as type {} was overrode!", pre.getCanonicalName(), template.getType());
+                }
             } catch (InstantiationException | IllegalAccessException |
-                    InvocationTargetException | NoSuchMethodException ignored) {
+                    InvocationTargetException | NoSuchMethodException e) {
                 // won't happen
+                logger.info("TaskAction: {} registered error: {}", actionClass.getCanonicalName(), e.getMessage());
             }
         });
-    }
-
-    private static Gson gson = null;
-
-    private synchronized static Gson getGson() {
-        if (gson == null) {
-            gson = new GsonBuilder().create();
-        }
-        return gson;
     }
 
     @NotNull
@@ -67,9 +66,7 @@ public class TaskActionFactory {
     private static TaskAction doGetTaskAction(String json, Map<String, Object> map) throws CoVaException {
         try {
             int type = Integer.parseInt(map.get("type").toString());
-            TaskAction ta = new Gson().fromJson(json, typeActionMap.get(type));
-            ta.load(map);
-            return ta;
+            return new Gson().fromJson(json, typeActionMap.get(type));
         } catch (Exception e) {
             throw new CoVaException("Task Action Error", e);
         }

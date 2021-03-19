@@ -8,14 +8,19 @@
 package com.hagoapp.datacova.entity.action.idle;
 
 import com.hagoapp.datacova.entity.action.TaskAction;
-import org.apache.poi.ss.formula.eval.NotImplementedException;
-
-import java.util.Map;
+import com.hagoapp.datacova.execution.executor.BaseTaskActionExecutor;
 
 public class TaskActionIdle extends TaskAction {
+
+    private static final int IDLE_ACTION_TYPE = -1;
     private Configuration configuration;
     private boolean result = true;
     private String failReason = "Idle Action Fail";
+
+    public TaskActionIdle() {
+        super();
+        type = IDLE_ACTION_TYPE;
+    }
 
     public Configuration getConfiguration() {
         return configuration;
@@ -42,7 +47,17 @@ public class TaskActionIdle extends TaskAction {
     }
 
     @Override
-    public void load(Map<String, Object> map) {
-        throw new NotImplementedException("");
+    public int getType() {
+        return IDLE_ACTION_TYPE;
+    }
+
+    @Override
+    public Class<? extends TaskAction> getActionClass() {
+        return TaskActionIdle.class;
+    }
+
+    @Override
+    public Class<? extends BaseTaskActionExecutor> getExecutorClass() {
+        return super.getExecutorClass();
     }
 }

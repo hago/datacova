@@ -7,12 +7,9 @@
 
 package com.hagoapp.datacova.entity.action;
 
-import com.hagoapp.datacova.MapSerializer;
+import com.hagoapp.datacova.execution.executor.BaseTaskActionExecutor;
 
-import java.io.IOException;
-import java.util.Map;
-
-public abstract class TaskAction {
+public class TaskAction {
     protected int type;
     private TaskActionExtra extra = new TaskActionExtra();
     private String name;
@@ -50,9 +47,11 @@ public abstract class TaskAction {
         this.description = description;
     }
 
-    public abstract void load(Map<String, Object> map);
+    public Class<? extends TaskAction> getActionClass() {
+        throw new UnsupportedOperationException("no implementation for TaskAction base class");
+    }
 
-    public void load(String s) throws IOException {
-        load(MapSerializer.deserializeMap(s));
+    public Class<? extends BaseTaskActionExecutor> getExecutorClass() {
+        throw new UnsupportedOperationException("no implementation for TaskAction base class");
     }
 }

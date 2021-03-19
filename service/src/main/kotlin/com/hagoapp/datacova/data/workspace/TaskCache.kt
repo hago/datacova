@@ -30,5 +30,10 @@ class TaskCache {
             )
             return l ?: listOf()
         }
+
+        @JvmStatic
+        fun clearWorkspaceTasks(workspaceId: Int) {
+            RedisCacheReader.clearData(TASK_LIST, workspaceId)
+        }
     }
 }

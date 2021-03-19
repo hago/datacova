@@ -8,10 +8,11 @@
 
 package com.hagoapp.datacova.entity.task;
 
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jr.ob.JSON;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import com.hagoapp.datacova.CoVaException;
 import com.hagoapp.datacova.JsonStringify;
 import com.hagoapp.datacova.entity.action.TaskAction;
@@ -20,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -132,10 +134,11 @@ public class Task implements JsonStringify {
     }
 
     @NotNull
-    public static List<TaskAction> actionsFromJson(String s) throws CoVaException {
-        TypeToken<ArrayList<Map<String, Object>>> token = new TypeToken<>() {
-        };
-        List<Map<String, Object>> actionsMap = gson.fromJson(s, token.getType());
+    public static List<TaskAction> actionsFromJson(String s) throws CoVaException, IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        JavaType elemType = mapper.getTypeFactory().constructMapType(HashMap.class, String.class, Object.class);
+        JavaType javaType = mapper.getTypeFactory().constructCollectionType(List.class, elemType);
+        List<Map<String, Object>> actionsMap = mapper.readValue(s, javaType);
         List<TaskAction> actions = new ArrayList<>();
         for (Map<String, Object> map : actionsMap) {
             actions.add(TaskActionFactory.getTaskAction(map));

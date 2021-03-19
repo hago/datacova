@@ -8,9 +8,14 @@
 package com.hagoapp.datacova.web.workspace
 
 import com.hagoapp.datacova.data.workspace.TaskCache
+import com.hagoapp.datacova.data.workspace.TaskData
+import com.hagoapp.datacova.data.workspace.WorkspaceCache
+import com.hagoapp.datacova.entity.task.Task
+import com.hagoapp.datacova.entity.workspace.WorkSpaceUserRole
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import com.hagoapp.datacova.web.authentication.AuthType
+import com.hagoapp.datacova.web.authentication.Authenticator
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.RoutingContext
@@ -30,5 +35,44 @@ class Tasks {
         }
         val l = TaskCache.listTasks(id)
         ResponseHelper.sendResponse(context, HttpResponseStatus.OK, mapOf("code" to 0, "data" to l))
+    }
+
+    @WebEndPoint(
+        path = "/api/workspace/:id/task/update",
+        methods = [HttpMethod.PUT],
+        authTypes = [AuthType.UserToken]
+    )
+    fun updateTask(context: RoutingContext) {
+        val workspace = WorkspaceCache.getWorkspace(context.pathParam("id").toInt())
+        val user = Authenticator.getUser(context)
+        if (workspace == null) {
+            ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "invalid workspace")
+            return
+        }
+        if ((workspace.ownerId != user.id) &&
+            WorkspaceCache.getWorkspaceUserInRoles(
+                workspace.id,
+                listOf(WorkSpaceUserRole.Admin, WorkSpaceUserRole.Maintainer)
+            ).none { it.userid == user.id }
+        ) {
+            ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, "access denied")
+            return
+        }
+        val rawTask = Task.fromJson(context.bodyAsString)
+        val task0 = TaskCache.listTasks(workspace.id).firstOrNull { it.id == rawTask.id }
+        val task = if (task0 == null) {
+            rawTask.addBy = user.id
+            TaskData().createTask(rawTask)
+        } else {
+            rawTask.modifyBy = user.id
+            TaskData().updateTask(rawTask)
+        }
+        TaskCache.clearWorkspaceTasks(workspace.id)
+        ResponseHelper.sendResponse(
+            context, HttpResponseStatus.OK, mapOf(
+                "code" to 0,
+                "data" to task
+            )
+        )
     }
 }

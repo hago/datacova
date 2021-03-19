@@ -8,14 +8,20 @@
 package com.hagoapp.datacova.entity.action.ingest;
 
 import com.hagoapp.datacova.entity.action.TaskAction;
-import org.apache.poi.ss.formula.eval.NotImplementedException;
-
-import java.util.Map;
+import com.hagoapp.datacova.execution.executor.BaseTaskActionExecutor;
 
 public class TaskActionIngest extends TaskAction {
+
+    private static final int INGEST_ACTION_TYPE = 0;
+
     private int connectionId;
     private String targetTable;
     private String targetSchema = "";
+
+    public TaskActionIngest() {
+        super();
+        type = INGEST_ACTION_TYPE;
+    }
 
     public int getConnectionId() {
         return connectionId;
@@ -42,7 +48,17 @@ public class TaskActionIngest extends TaskAction {
     }
 
     @Override
-    public void load(Map<String, Object> map) {
-        throw new NotImplementedException("");
+    public int getType() {
+        return INGEST_ACTION_TYPE;
+    }
+
+    @Override
+    public Class<? extends TaskAction> getActionClass() {
+        return TaskActionIngest.class;
+    }
+
+    @Override
+    public Class<? extends BaseTaskActionExecutor> getExecutorClass() {
+        return super.getExecutorClass();
     }
 }

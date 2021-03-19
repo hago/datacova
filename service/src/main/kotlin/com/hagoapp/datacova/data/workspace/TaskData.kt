@@ -27,10 +27,10 @@ class TaskData(config: DatabaseConfig) : CoVaDatabase(config) {
 
     constructor() : this(CoVaConfig.getConfig().database)
 
-    fun loadTask(id: Long): Task? {
+    fun loadTask(id: Int): Task? {
         val sql = "select * from task where id = ?"
         connection.prepareStatement(sql).use { stmt ->
-            stmt.setLong(1, id)
+            stmt.setInt(1, id)
             stmt.executeQuery().use { rs ->
                 return if (rs.next()) row2Task(rs) else null
             }
@@ -99,5 +99,27 @@ class TaskData(config: DatabaseConfig) : CoVaDatabase(config) {
             taskId = task.id
         }
         return te
+    }
+
+    fun createTask(task: Task): Task {
+        val sql = "insert into task (name, description, wkid, actions, extra, addby) " +
+                "values(?, ?, ?, ?, ?, ?) returning id"
+        val id = connection.prepareStatement(sql).use { stmt ->
+            stmt.setString(1, task.name)
+            stmt.setString(2, task.description)
+            stmt.setInt(3, task.workspaceId)
+            stmt.setObject(4, DatabaseFunctions.createPgObject("json", task.actions))
+            stmt.setObject(5, DatabaseFunctions.createPgObject("json", task.extra))
+            stmt.setLong(6, task.addBy)
+            stmt.executeQuery().use { rs ->
+                rs.next()
+                rs.getInt(1)
+            }
+        }
+        return loadTask(id)!!
+    }
+
+    fun updateTask(task: Task): Task {
+        return task;
     }
 }
