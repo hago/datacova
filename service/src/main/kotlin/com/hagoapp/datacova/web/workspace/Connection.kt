@@ -7,6 +7,7 @@
 
 package com.hagoapp.datacova.web.workspace
 
+import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.data.IDatabaseConnection
 import com.hagoapp.datacova.data.workspace.ConnectionCache
 import com.hagoapp.datacova.data.workspace.ConnectionData
@@ -23,6 +24,8 @@ import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.RoutingContext
 
 class Connection {
+
+    private val logger = CoVaLogger.getLogger()
 
     @WebEndPoint(
         path = "/api/workspace/:id/connections",
@@ -235,6 +238,33 @@ class Connection {
                     )
                 )
             )
+        )
+    }
+
+    @WebEndPoint(
+        path = "/api/workspace/:wkid/connection/:id/tables",
+        methods = [HttpMethod.GET],
+        authTypes = [AuthType.UserToken]
+    )
+    fun listConnectionTables(context: RoutingContext) {
+        val connection = ConnectionCache.getConnection(
+            context.pathParam("wkid").toInt(),
+            context.pathParam("id").toInt()
+        )
+        if (connection == null) {
+            ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "invalid connection")
+            return
+        }
+        val user = Authenticator.getUser(context)
+        if (WorkspaceCache.getWorkspaceUserInRoles(connection.workspaceId).none { it.userid == user.id }) {
+            ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, "connection access denied")
+            return
+        }
+        val db = IDatabaseConnection.getDatabaseConnection(connection.configuration)
+        ResponseHelper.sendResponse(
+            context,
+            HttpResponseStatus.OK,
+            mapOf("code" to 0, "data" to db.getAvailableTables(connection.configuration))
         )
     }
 }
