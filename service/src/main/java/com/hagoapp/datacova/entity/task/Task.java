@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Task implements JsonStringify {
-    private long id;
+    private int id;
     private String name;
     private String description = "";
     private int workspaceId;
@@ -39,11 +39,11 @@ public class Task implements JsonStringify {
 
     private static final Gson gson = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 

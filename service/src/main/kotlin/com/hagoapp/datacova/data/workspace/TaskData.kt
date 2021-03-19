@@ -40,7 +40,7 @@ class TaskData(config: DatabaseConfig) : CoVaDatabase(config) {
     private fun row2Task(rs: ResultSet): Task {
         val task = Task()
         with(task) {
-            id = rs.getLong("id")
+            id = rs.getInt("id")
             name = rs.getString("name")
             description = rs.getString("description")
             actions = Task.actionsFromJson(rs.getString("actions"))
@@ -121,5 +121,12 @@ class TaskData(config: DatabaseConfig) : CoVaDatabase(config) {
 
     fun updateTask(task: Task): Task {
         return task;
+    }
+
+    fun deleteTask(taskId: Int) {
+        connection.prepareStatement("delete from task where id = ?").use { stmt ->
+            stmt.setInt(1, taskId)
+            stmt.execute()
+        }
     }
 }

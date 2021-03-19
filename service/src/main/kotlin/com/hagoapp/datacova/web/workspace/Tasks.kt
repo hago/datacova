@@ -7,11 +7,10 @@
 
 package com.hagoapp.datacova.web.workspace
 
-import com.hagoapp.datacova.data.workspace.TaskCache
-import com.hagoapp.datacova.data.workspace.TaskData
-import com.hagoapp.datacova.data.workspace.WorkspaceCache
+import com.hagoapp.datacova.data.workspace.*
 import com.hagoapp.datacova.entity.task.Task
 import com.hagoapp.datacova.entity.workspace.WorkSpaceUserRole
+import com.hagoapp.datacova.util.WorkspaceUserRoleUtil
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import com.hagoapp.datacova.web.authentication.AuthType
@@ -74,5 +73,33 @@ class Tasks {
                 "data" to task
             )
         )
+    }
+
+    @WebEndPoint(
+        path = "/api/workspace/:wkid/task/:id",
+        methods = [HttpMethod.DELETE],
+        authTypes = [AuthType.UserToken]
+    )
+    fun deleteTask(context: RoutingContext) {
+        val workspaceId = context.pathParam("wkid").toInt()
+        val id = context.pathParam("id").toInt()
+        val workspace = WorkspaceCache.getWorkspace(workspaceId)
+        if (workspace == null) {
+            ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "invalid workspace")
+            return
+        }
+        val task = TaskCache.listTasks(workspaceId).firstOrNull { t -> t.id == id }
+        if ((task == null) || (task.workspaceId != workspaceId)) {
+            ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "invalid connection")
+            return
+        }
+        val user = Authenticator.getUser(context)
+        if (!WorkspaceUserRoleUtil.isAdmin(user, workspace) && !WorkspaceUserRoleUtil.isMaintainer(user, workspace)) {
+            ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, "access denied")
+            return
+        }
+        TaskData().deleteTask(id)
+        TaskCache.clearWorkspaceTasks(workspaceId)
+        ResponseHelper.sendResponse(context, HttpResponseStatus.OK, mapOf("code" to 0))
     }
 }
