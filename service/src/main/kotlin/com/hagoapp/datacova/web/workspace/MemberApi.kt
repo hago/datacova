@@ -12,6 +12,7 @@ import com.google.gson.reflect.TypeToken
 import com.hagoapp.datacova.data.workspace.WorkspaceCache
 import com.hagoapp.datacova.data.workspace.WorkSpaceData
 import com.hagoapp.datacova.entity.workspace.WorkSpaceUserRole
+import com.hagoapp.datacova.util.WorkspaceUserRoleUtil
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import com.hagoapp.datacova.web.authentication.AuthType
@@ -35,11 +36,7 @@ class MemberApi {
         }
         val user = Authenticator.getUser(routeContext)
         val wk = WorkspaceCache.getWorkspace(id)
-        if ((wk == null) || ((wk.ownerId != user.id)) && (WorkspaceCache.getWorkspaceUserInRoles(
-                id,
-                listOf(WorkSpaceUserRole.Admin)
-            ).isEmpty())
-        ) {
+        if ((wk == null) || !WorkspaceUserRoleUtil.isAdmin(user, wk)) {
             ResponseHelper.respondError(routeContext, HttpResponseStatus.FORBIDDEN, "denied")
             return
         }
@@ -65,11 +62,7 @@ class MemberApi {
         }
         val user = Authenticator.getUser(routeContext)
         val wk = WorkspaceCache.getWorkspace(id)
-        if ((wk == null) || ((wk.ownerId != user.id)) && (WorkspaceCache.getWorkspaceUserInRoles(
-                id,
-                listOf(WorkSpaceUserRole.Admin)
-            ).isEmpty())
-        ) {
+        if ((wk == null) || !WorkspaceUserRoleUtil.isAdmin(user, wk)) {
             ResponseHelper.respondError(routeContext, HttpResponseStatus.FORBIDDEN, "denied")
             return
         }
