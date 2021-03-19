@@ -9,7 +9,7 @@
         <li class="list-group-item bg-dark" v-for="task in tasks" v-bind:key="task.id">
           <span class="clickable" v-bind:title="task.description" v-on:click="editTask(task.id)">{{ task.name }}</span>
           <span class="clickable taskaction" style="float: right" v-on:click="deleteTask(task.id)"
-            title="delete" v-if="workspace.users.Admin.indexOf(loginStatus.user.userId) >= 0">
+            title="delete" v-if="isAdmin">
             <img src="@/assets/remove.png" class="" />
           </span>
           <span class="clickable taskaction" style="float: right; margin-right: 5px" v-on:click="runTask(task.id)"
@@ -41,6 +41,25 @@ export default {
   data () {
     return {
       tasks: []
+    }
+  },
+  computed: {
+    isAdmin: function () {
+      if (this.workspace.owner.id === this.loginStatus.user.id) {
+        return true
+      }
+      let ur = this.workspace.users.find(u => u.id === this.loginStatus.user.id)
+      if (ur === undefined) {
+        return false
+      }
+      return ur.roles.indexOf('0') >= 0
+    },
+    isMaintainer: function () {
+      let ur = this.workspace.users.find(u => u.id === this.loginStatus.user.id)
+      if (ur === undefined) {
+        return false
+      }
+      return ur.roles.indexOf('1') >= 0
     }
   },
   mounted: function () {

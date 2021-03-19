@@ -97,7 +97,7 @@ class WorkspaceApiHelper {
   async getTasks (workspaceId) {
     let rsp = await axios({
       method: 'GET',
-      url: `${this.urlprefix}/api/workspace/${workspaceId}/task`,
+      url: `${this.urlprefix}/api/workspace/${workspaceId}/tasks`,
       withCredentials: true
     })
     return rsp

@@ -23,7 +23,7 @@ import io.vertx.ext.web.RoutingContext
 class Tasks {
 
     @WebEndPoint(
-        path = "/api/workspace/:id/task",
+        path = "/api/workspace/:id/tasks",
         methods = [HttpMethod.GET],
         authTypes = [AuthType.UserToken]
     )
@@ -34,7 +34,7 @@ class Tasks {
             return
         }
         val l = TaskCache.listTasks(id)
-        ResponseHelper.sendResponse(context, HttpResponseStatus.OK, mapOf("code" to 0, "data" to l))
+        ResponseHelper.sendResponse(context, HttpResponseStatus.OK, mapOf("code" to 0, "data" to mapOf("tasks" to l)))
     }
 
     @WebEndPoint(
