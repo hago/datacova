@@ -32,5 +32,10 @@ class WorkspaceUserRoleUtil {
             return WorkspaceCache.getWorkspaceUserInRoles(workspace.id, listOf(WorkSpaceUserRole.Loader))
                 .any { it.userid == user.id }
         }
+
+        @JvmStatic
+        fun isUser(user: UserInfo, workspaceId: Int): Boolean {
+            return WorkspaceCache.getWorkspaceUserInRoles(workspaceId).any { it.userid == user.id }
+        }
     }
 }

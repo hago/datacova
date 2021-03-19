@@ -32,6 +32,11 @@ class Tasks {
             ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "invalid workspace")
             return
         }
+        val user = Authenticator.getUser(context)
+        if (!WorkspaceUserRoleUtil.isUser(user, id)) {
+            ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, "access denied")
+            return
+        }
         val l = TaskCache.listTasks(id)
         ResponseHelper.sendResponse(context, HttpResponseStatus.OK, mapOf("code" to 0, "data" to mapOf("tasks" to l)))
     }
@@ -48,12 +53,7 @@ class Tasks {
             ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "invalid workspace")
             return
         }
-        if ((workspace.ownerId != user.id) &&
-            WorkspaceCache.getWorkspaceUserInRoles(
-                workspace.id,
-                listOf(WorkSpaceUserRole.Admin, WorkSpaceUserRole.Maintainer)
-            ).none { it.userid == user.id }
-        ) {
+        if (!WorkspaceUserRoleUtil.isAdmin(user, workspace) && !WorkspaceUserRoleUtil.isMaintainer(user, workspace)) {
             ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, "access denied")
             return
         }
