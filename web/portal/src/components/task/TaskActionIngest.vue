@@ -43,7 +43,7 @@ import WorkspaceApiHelper from '@/apis/workspace.js'
 import ConnectionApiHelper from '@/apis/connection.js'
 
 export default {
-  name: 'TaskActionImport',
+  name: 'TaskActionIngest',
   props: {
     action: Object,
     workspaceId: Number

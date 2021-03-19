@@ -34,12 +34,12 @@
         <img src="../../assets/gear-loading.gif" v-show="loading" />
       </div>
     </div>
-    <TaskActionImport v-if="action.type == 0"
+    <TaskActionIngest v-if="action.type == 0"
       v-bind:action="action"
       v-bind:workspaceId="workspaceId"
       v-on:onLoadingStatusChange="updateLoadingStatus"
       v-on:errorOccurred="onErrorOccurred"
-      ></TaskActionImport>
+      ></TaskActionIngest>
     <TaskActionVerify v-if="action.type == 1"
       v-bind:action="action"
       v-bind:workspaceId="workspaceId"
@@ -56,14 +56,14 @@
 </template>
 
 <script>
-import TaskActionImport from './TaskActionImport'
+import TaskActionIngest from './TaskActionIngest'
 import TaskActionVerify from './TaskActionVerify'
 import TaskActionDistribute from './TaskActionDistribute'
 
 export default {
   name: 'TaskAction',
   components: {
-    TaskActionImport,
+    TaskActionIngest,
     TaskActionVerify,
     TaskActionDistribute
   },
