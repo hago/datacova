@@ -15,6 +15,7 @@ import com.hagoapp.datacova.data.workspace.WorkspaceCache
 import com.hagoapp.datacova.entity.connection.ConnectionConfigFactory
 import com.hagoapp.datacova.entity.connection.WorkspaceConnection
 import com.hagoapp.datacova.entity.workspace.WorkSpaceUserRole
+import com.hagoapp.datacova.util.WorkspaceUserRoleUtil
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import com.hagoapp.datacova.web.authentication.AuthType
@@ -45,19 +46,16 @@ class Connection {
         }
         val user = Authenticator.getUser(context)
         val l = ConnectionCache.getConnections(id)
-        val roles = WorkspaceCache.getWorkspaceUserInRoles(id).filter { it.userid == user.id }.map { it.role }
-        val isWorkspaceOwner = wk.ownerId == user.id
+        val access = WorkspaceUserRoleUtil(user.id, wk)
         val data = mapOf(
             "connections" to l,
-            "owner" to isWorkspaceOwner,
+            "owner" to access.isOwner(),
             "canDelete" to when {
-                isWorkspaceOwner -> l.map { it.id }
+                access.isOwner() -> l.map { it.id }
                 else -> l.filter { it.addBy == user.id }.map { it.id }
             },
             "canModify" to when {
-                isWorkspaceOwner || roles.any {
-                    (it == WorkSpaceUserRole.Admin) || (it == WorkSpaceUserRole.Maintainer)
-                } -> l.map { it.id }
+                access.isAdmin() || access.isMaintainer() -> l.map { it.id }
                 else -> listOf()
             }
         )
@@ -102,7 +100,8 @@ class Connection {
     )
     fun addConnection(context: RoutingContext) {
         val id = context.pathParam("id").toInt()
-        if (WorkspaceCache.getWorkspace(id) == null) {
+        val workspace = WorkspaceCache.getWorkspace(id)
+        if (workspace == null) {
             ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "Invalid workspace")
             return
         }
@@ -113,10 +112,11 @@ class Connection {
             return
         }
         val user = Authenticator.getUser(context)
-        if (WorkspaceCache.getWorkspaceUserInRoles(
-                id,
-                listOf(WorkSpaceUserRole.Admin, WorkSpaceUserRole.Maintainer)
-            ).none { it.userid == user.id }
+        if (!WorkspaceUserRoleUtil.isAnyRolesOf(
+                user,
+                workspace,
+                setOf(WorkSpaceUserRole.Admin, WorkSpaceUserRole.Maintainer)
+            )
         ) {
             ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, "Access Denied")
             return
@@ -156,10 +156,11 @@ class Connection {
             return
         }
         val user = Authenticator.getUser(context)
-        if ((workspace.ownerId != user.id) && WorkspaceCache.getWorkspaceUserInRoles(
-                id,
-                listOf(WorkSpaceUserRole.Admin, WorkSpaceUserRole.Maintainer)
-            ).none { it.userid == user.id }
+        if (!WorkspaceUserRoleUtil.isAnyRolesOf(
+                user,
+                workspace,
+                setOf(WorkSpaceUserRole.Admin, WorkSpaceUserRole.Maintainer)
+            )
         ) {
             ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, "Access Denied")
             return
@@ -185,15 +186,17 @@ class Connection {
         val workspaceId = context.pathParam("wkid").toInt()
         val connectionId = context.pathParam("id").toInt()
         val connection = ConnectionCache.getConnection(workspaceId, connectionId)
-        if ((connection == null) || (connection.workspaceId != workspaceId)) {
+        val workspace = WorkspaceCache.getWorkspace(workspaceId)
+        if ((connection == null) || (workspace == null) || (connection.workspaceId != workspaceId)) {
             ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "Invalid request")
             return
         }
         val user = Authenticator.getUser(context)
-        if (WorkspaceCache.getWorkspaceUserInRoles(
-                workspaceId,
-                listOf(WorkSpaceUserRole.Admin, WorkSpaceUserRole.Maintainer)
-            ).none { it.userid == user.id }
+        if (!WorkspaceUserRoleUtil.isAnyRolesOf(
+                user,
+                workspace,
+                setOf(WorkSpaceUserRole.Admin, WorkSpaceUserRole.Maintainer)
+            )
         ) {
             ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, "Access Denied")
             return
@@ -212,21 +215,18 @@ class Connection {
         val workspaceId = context.pathParam("wkid").toInt()
         val connectionId = context.pathParam("id").toInt()
         val connection = ConnectionCache.getConnection(workspaceId, connectionId)
-        if ((connection == null) || (connection.workspaceId != workspaceId)) {
+        val workspace = WorkspaceCache.getWorkspace(workspaceId)
+        if ((connection == null) || (workspace == null) || (connection.workspaceId != workspaceId)) {
             ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "Invalid request")
             return
         }
         val user = Authenticator.getUser(context)
-        val roles = WorkspaceCache.getWorkspaceUserInRoles(workspaceId)
-        if (roles.none { it.userid == user.id }) {
+        val access = WorkspaceUserRoleUtil(user.id, workspace)
+        if (!access.isUser()) {
             ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, "Access Denied")
             return
         }
-        val writable = (WorkspaceCache.getWorkspace(workspaceId)?.ownerId == user.id) ||
-                roles.any {
-                    it.userid == user.id &&
-                            ((it.role == WorkSpaceUserRole.Admin) || (it.role == WorkSpaceUserRole.Maintainer))
-                }
+        val writable = access.isAdmin() || access.isMaintainer()
         ResponseHelper.sendResponse(
             context, HttpResponseStatus.OK, mapOf(
                 "code" to 0,
@@ -256,7 +256,7 @@ class Connection {
             return
         }
         val user = Authenticator.getUser(context)
-        if (WorkspaceCache.getWorkspaceUserInRoles(connection.workspaceId).none { it.userid == user.id }) {
+        if (WorkspaceUserRoleUtil.isUser(user, context.pathParam("wkid").toInt())) {
             ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, "connection access denied")
             return
         }
