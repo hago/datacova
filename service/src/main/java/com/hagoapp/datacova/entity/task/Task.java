@@ -126,8 +126,8 @@ public class Task implements JsonStringify {
         Map<String, Object> map = JSON.std.mapFrom(s);
         List<Map<String, Object>> mapActions = (List<Map<String, Object>>) map.get("actions");
         List<TaskAction> actions = new ArrayList<>();
-        for (int i = 0; i < task.actions.size(); i++) {
-            actions.add(TaskActionFactory.getTaskAction(mapActions.get(i)));
+        for (Map<String, Object> mapAction : mapActions) {
+            actions.add(TaskActionFactory.getTaskAction(mapAction));
         }
         task.actions = actions;
         return task;
