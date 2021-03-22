@@ -10,7 +10,7 @@
     </div>
     <div class="form-group col-3">
       <label for="schema">Target Schema</label>
-      <select v-model="action.targetSchema" class="form-control" id="connection">
+      <select v-model="action.ingestOptions.targetSchema" class="form-control" id="connection">
         <option v-for="(schema, index) in schemas" v-bind:key="index" v-bind:value="schema">
           {{ schema }}
         </option>
@@ -25,13 +25,13 @@
         <img src="@/assets/choose.png" width="20px" title="Choose Existing Table" class="clickable"
           v-if="createTable" v-on:click="toggleCreateTable(false)"  />
       </span>
-      <select v-model="action.targetTable" class="form-control" id="selectTable" v-if="!createTable">
-        <option v-for="(table, index) in tablesInSchema" v-bind:key="index" v-bind:value="table.table">
-          {{ table.table }}
+      <select v-model="action.ingestOptions.targetTable" class="form-control" id="selectTable" v-if="!createTable">
+        <option v-for="(item, index) in tablesInSchema" v-bind:key="index" v-bind:value="item.tableName">
+          {{ item.tableName }}
         </option>
         <option disabled value=undefined>Choose Table</option>
       </select>
-      <input type="text" v-model="action.targetTable" class="form-control" id="inputTable"
+      <input type="text" v-model="action.ingestOptions.targetTable" class="form-control" id="inputTable"
         v-if="createTable" ref="inputTable" />
     </div>
   </div>
@@ -50,11 +50,6 @@ export default {
   },
   data () {
     return {
-      actionTypes: {
-        0: 'Databse Import',
-        1: 'Data Verify',
-        2: 'Data Distribute'
-      },
       connections: [],
       connection: {},
       tables: [],
