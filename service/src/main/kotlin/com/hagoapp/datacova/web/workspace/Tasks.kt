@@ -102,4 +102,30 @@ class Tasks {
         TaskCache.clearWorkspaceTasks(workspaceId)
         ResponseHelper.sendResponse(context, HttpResponseStatus.OK, mapOf("code" to 0))
     }
+
+    @WebEndPoint(
+        path = "/api/workspace/:wkid/task/:id",
+        methods = [HttpMethod.GET],
+        authTypes = [AuthType.UserToken]
+    )
+    fun getTask(context: RoutingContext) {
+        val workspaceId = context.pathParam("wkid").toInt()
+        val id = context.pathParam("id").toInt()
+        val workspace = WorkspaceCache.getWorkspace(workspaceId)
+        if (workspace == null) {
+            ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "invalid workspace")
+            return
+        }
+        val user = Authenticator.getUser(context)
+        if (!WorkspaceUserRoleUtil.isUser(user, workspaceId)) {
+            ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, "access denied")
+            return
+        }
+        val task = TaskCache.listTasks(workspaceId).firstOrNull { t -> t.id == id }
+        if ((task == null) || (task.workspaceId != workspaceId)) {
+            ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "invalid connection")
+            return
+        }
+        ResponseHelper.sendResponse(context, HttpResponseStatus.OK, mapOf("code" to 0, "data" to task))
+    }
 }
