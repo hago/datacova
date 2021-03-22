@@ -256,7 +256,7 @@ class Connection {
             return
         }
         val user = Authenticator.getUser(context)
-        if (WorkspaceUserRoleUtil.isUser(user, context.pathParam("wkid").toInt())) {
+        if (!WorkspaceUserRoleUtil.isUser(user, context.pathParam("wkid").toInt())) {
             ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, "connection access denied")
             return
         }
