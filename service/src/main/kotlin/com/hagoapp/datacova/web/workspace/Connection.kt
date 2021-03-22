@@ -8,11 +8,9 @@
 package com.hagoapp.datacova.web.workspace
 
 import com.hagoapp.datacova.CoVaLogger
-import com.hagoapp.datacova.data.IDatabaseConnection
 import com.hagoapp.datacova.data.workspace.ConnectionCache
 import com.hagoapp.datacova.data.workspace.ConnectionData
 import com.hagoapp.datacova.data.workspace.WorkspaceCache
-import com.hagoapp.datacova.entity.connection.ConnectionConfigFactory
 import com.hagoapp.datacova.entity.connection.WorkspaceConnection
 import com.hagoapp.datacova.entity.workspace.WorkSpaceUserRole
 import com.hagoapp.datacova.util.WorkspaceUserRoleUtil
@@ -20,6 +18,8 @@ import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import com.hagoapp.datacova.web.authentication.AuthType
 import com.hagoapp.datacova.web.authentication.Authenticator
+import com.hagoapp.f2t.database.DbConnectionFactory
+import com.hagoapp.f2t.database.config.DbConfigReader
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.RoutingContext
@@ -74,8 +74,8 @@ class Connection {
     )
     fun verifyConnection(context: RoutingContext) {
         val json = context.bodyAsString
-        val conf = ConnectionConfigFactory.getConnectionConfig(json)
-        val con = IDatabaseConnection.getDatabaseConnection(conf)
+        val conf = DbConfigReader.json2DbConfig(json)
+        val con = DbConnectionFactory.createDbConnection(conf)
         val result = con.canConnect(conf)
         if (result.first) {
             ResponseHelper.sendResponse(
@@ -260,7 +260,7 @@ class Connection {
             ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, "connection access denied")
             return
         }
-        val db = IDatabaseConnection.getDatabaseConnection(connection.configuration)
+        val db = DbConnectionFactory.createDbConnection(connection.configuration)
         ResponseHelper.sendResponse(
             context,
             HttpResponseStatus.OK,

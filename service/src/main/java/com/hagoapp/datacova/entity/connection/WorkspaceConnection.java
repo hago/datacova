@@ -8,9 +8,11 @@
 package com.hagoapp.datacova.entity.connection;
 
 import com.google.gson.Gson;
-import com.hagoapp.datacova.CoVaException;
 import com.hagoapp.datacova.JsonStringify;
 import com.hagoapp.datacova.MapSerializer;
+import com.hagoapp.f2t.F2TException;
+import com.hagoapp.f2t.database.config.DbConfig;
+import com.hagoapp.f2t.database.config.DbConfigReader;
 
 import java.io.IOException;
 import java.util.Map;
@@ -20,7 +22,7 @@ public class WorkspaceConnection implements JsonStringify {
     private String name;
     private String description;
     private int workspaceId;
-    private ConnectionConfig configuration;
+    private DbConfig configuration;
     private long addBy;
     private long addTime;
     private Long modifyBy;
@@ -58,11 +60,11 @@ public class WorkspaceConnection implements JsonStringify {
         this.workspaceId = workspaceId;
     }
 
-    public ConnectionConfig getConfiguration() {
+    public DbConfig getConfiguration() {
         return configuration;
     }
 
-    public void setConfiguration(ConnectionConfig configuration) {
+    public void setConfiguration(DbConfig configuration) {
         this.configuration = configuration;
     }
 
@@ -106,10 +108,10 @@ public class WorkspaceConnection implements JsonStringify {
             Object o = map.get("configuration");
             Map<String, Object> configMap = (Map<String, Object>) map.get("configuration");
             WorkspaceConnection w = new Gson().fromJson(json, WorkspaceConnection.class);
-            ConnectionConfig config = ConnectionConfigFactory.getConnectionConfig(configMap);
+            DbConfig config = DbConfigReader.json2DbConfig(MapSerializer.serializeMap(configMap));
             w.setConfiguration(config);
             return w;
-        } catch (IOException | CoVaException e) {
+        } catch (IOException | F2TException e) {
             return null;
         }
     }

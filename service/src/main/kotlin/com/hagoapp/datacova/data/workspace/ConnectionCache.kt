@@ -9,7 +9,6 @@ package com.hagoapp.datacova.data.workspace
 
 import com.google.gson.reflect.TypeToken
 import com.hagoapp.datacova.data.RedisCacheReader
-import com.hagoapp.datacova.entity.connection.ConnectionConfig
 import com.hagoapp.datacova.entity.connection.WorkspaceConnection
 
 class ConnectionCache {

@@ -16,11 +16,11 @@ import java.util.List;
 import java.util.Locale;
 
 public class TaskExtra implements JsonStringify {
-    private String tag = "";
-    private Locale locale = Locale.getDefault();
-    private final List<String> mailRecipients = new ArrayList<>();
-    private final List<String> mailCCRecipients = new ArrayList<>();
-    private final List<String> mailBCCRecipients = new ArrayList<>();
+    protected String tag = "";
+    protected Locale locale = Locale.getDefault();
+    protected final List<String> mailRecipients = new ArrayList<>();
+    protected final List<String> mailCCRecipients = new ArrayList<>();
+    protected final List<String> mailBCCRecipients = new ArrayList<>();
 
     public String getTag() {
         return tag;

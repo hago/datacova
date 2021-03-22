@@ -10,10 +10,9 @@ package com.hagoapp.datacova.data.workspace
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.config.DatabaseConfig
 import com.hagoapp.datacova.data.CoVaDatabase
-import com.hagoapp.datacova.entity.connection.ConnectionConfigFactory
-import com.hagoapp.datacova.entity.connection.ConnectionExtra
 import com.hagoapp.datacova.entity.connection.WorkspaceConnection
 import com.hagoapp.datacova.util.data.DatabaseFunctions
+import com.hagoapp.f2t.database.config.DbConfigReader
 import java.sql.ResultSet
 import java.sql.Timestamp
 
@@ -45,7 +44,7 @@ class ConnectionData(config: DatabaseConfig) : CoVaDatabase(config) {
             addTime = rs.getTimestamp("addtime").toInstant().toEpochMilli()
             modifyBy = DatabaseFunctions.getDBValue(rs, "modifyby")
             modifyTime = DatabaseFunctions.getDBValue<Timestamp>(rs, "modifytime")?.toInstant()?.toEpochMilli()
-            configuration = ConnectionConfigFactory.getConnectionConfig(rs.getString("configuration"))
+            configuration = DbConfigReader.json2DbConfig(rs.getString("configuration"))
         }
         return con;
     }
@@ -65,7 +64,10 @@ class ConnectionData(config: DatabaseConfig) : CoVaDatabase(config) {
         val id = connection.prepareStatement(sql).use { stmt ->
             stmt.setString(1, wkConnection.name)
             stmt.setString(2, wkConnection.description)
-            stmt.setObject(3, DatabaseFunctions.createPgObject("json", wkConnection.configuration.toJson()))
+            stmt.setObject(
+                3,
+                DatabaseFunctions.createPgObject("json", wkConnection.configuration.toJson())
+            )
             stmt.setInt(4, wkConnection.workspaceId)
             stmt.setLong(5, wkConnection.addBy)
             stmt.executeQuery().use { rs ->
@@ -89,7 +91,10 @@ class ConnectionData(config: DatabaseConfig) : CoVaDatabase(config) {
         connection.prepareStatement(sql).use { stmt ->
             stmt.setString(1, wkConnection.name)
             stmt.setString(2, wkConnection.description)
-            stmt.setObject(3, DatabaseFunctions.createPgObject("json", wkConnection.configuration.toJson()))
+            stmt.setObject(
+                3,
+                DatabaseFunctions.createPgObject("json", wkConnection.configuration.toJson())
+            )
             stmt.setInt(4, wkConnection.workspaceId)
             stmt.setLong(5, wkConnection.modifyBy)
             stmt.setInt(6, wkConnection.id)
