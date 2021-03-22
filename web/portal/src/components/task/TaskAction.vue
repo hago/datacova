@@ -83,7 +83,7 @@ export default {
     }
   },
   mounted: function () {
-    this.action.ingestOptions = {}
+    //
   },
   methods: {
     updateLoadingStatus: function (isLoading) {

@@ -57,6 +57,9 @@ export default {
     }
   },
   mounted: function () {
+    if (this.action.ingestOptions === undefined) {
+      this.action.ingestOptions = {}
+    }
     this.action.validator = function (action) {
       // console.log(action)
       if (action.connectionId === undefined) {
@@ -103,12 +106,12 @@ export default {
         .then(rsp => {
           this.$emit('onLoadingStatusChange', false)
           this.tables = rsp.data.data
-          if ((this.schemas.length > 0) && (this.action.targetSchema !== undefined) &&
-            (this.schemas.indexOf(this.action.targetSchema) < 0)) {
-            this.action.targetSchema = this.schemas[0]
+          if ((this.schemas.length > 0) && (this.action.ingestOptions.targetSchema !== undefined) &&
+            (this.schemas.indexOf(this.action.ingestOptions.targetSchema) < 0)) {
+            this.action.ingestOptions.targetSchema = this.schemas[0]
           }
-          if ((this.tablesInSchema.length > 0) && (this.action.targetTable !== undefined) &&
-            (this.tablesInSchema.filter(tbl => tbl.table === this.action.targetTable).length === 0)) {
+          if ((this.action.ingestOptions.targetTable !== undefined) &&
+            (this.tablesInSchema.filter(tbl => tbl.table === this.action.ingestOptions.targetTable).length === 0)) {
             this.createTable = true
           }
         }).catch(err => {
