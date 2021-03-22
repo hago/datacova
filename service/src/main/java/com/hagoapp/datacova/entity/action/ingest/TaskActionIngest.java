@@ -8,11 +8,9 @@
 package com.hagoapp.datacova.entity.action.ingest;
 
 import com.hagoapp.datacova.entity.action.TaskAction;
-import com.hagoapp.datacova.execution.executor.BaseTaskActionExecutor;
+import com.hagoapp.datacova.entity.action.TaskActionType;
 
 public class TaskActionIngest extends TaskAction {
-
-    private static final int INGEST_ACTION_TYPE = 0;
 
     private int connectionId;
     private String targetTable;
@@ -20,7 +18,7 @@ public class TaskActionIngest extends TaskAction {
 
     public TaskActionIngest() {
         super();
-        type = INGEST_ACTION_TYPE;
+        type = TaskActionType.DatabaseIngest;
     }
 
     public int getConnectionId() {
@@ -48,17 +46,7 @@ public class TaskActionIngest extends TaskAction {
     }
 
     @Override
-    public int getType() {
-        return INGEST_ACTION_TYPE;
-    }
-
-    @Override
-    public Class<? extends TaskAction> getActionClass() {
-        return TaskActionIngest.class;
-    }
-
-    @Override
-    public Class<? extends BaseTaskActionExecutor> getExecutorClass() {
-        return super.getExecutorClass();
+    public TaskActionType getType() {
+        return TaskActionType.DatabaseIngest;
     }
 }

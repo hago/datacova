@@ -8,18 +8,16 @@
 package com.hagoapp.datacova.entity.action.verification;
 
 import com.hagoapp.datacova.entity.action.TaskAction;
-import com.hagoapp.datacova.execution.executor.BaseTaskActionExecutor;
+import com.hagoapp.datacova.entity.action.TaskActionType;
 
 import java.util.List;
 
 public class TaskActionVerify extends TaskAction {
-
-    private static final int VERIFY_ACTION_TYPE = 2;
     private List<Configuration> configurations;
 
     public TaskActionVerify() {
         super();
-        type = VERIFY_ACTION_TYPE;
+        type = TaskActionType.Verify;
     }
 
     public List<Configuration> getConfigurations() {
@@ -31,17 +29,7 @@ public class TaskActionVerify extends TaskAction {
     }
 
     @Override
-    public int getType() {
-        return VERIFY_ACTION_TYPE;
-    }
-
-    @Override
-    public Class<? extends TaskAction> getActionClass() {
-        return TaskActionVerify.class;
-    }
-
-    @Override
-    public Class<? extends BaseTaskActionExecutor> getExecutorClass() {
-        return super.getExecutorClass();
+    public TaskActionType getType() {
+        return TaskActionType.Verify;
     }
 }

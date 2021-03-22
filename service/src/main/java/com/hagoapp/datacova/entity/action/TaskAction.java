@@ -7,10 +7,8 @@
 
 package com.hagoapp.datacova.entity.action;
 
-import com.hagoapp.datacova.execution.executor.BaseTaskActionExecutor;
-
 public class TaskAction {
-    protected int type;
+    protected TaskActionType type;
     private TaskActionExtra extra = new TaskActionExtra();
     private String name;
     private String description = "";
@@ -19,7 +17,7 @@ public class TaskAction {
         //
     }
 
-    public int getType() {
+    public TaskActionType getType() {
         return type;
     }
 
@@ -47,11 +45,4 @@ public class TaskAction {
         this.description = description;
     }
 
-    public Class<? extends TaskAction> getActionClass() {
-        throw new UnsupportedOperationException("no implementation for TaskAction base class");
-    }
-
-    public Class<? extends BaseTaskActionExecutor> getExecutorClass() {
-        throw new UnsupportedOperationException("no implementation for TaskAction base class");
-    }
 }

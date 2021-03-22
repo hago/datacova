@@ -23,7 +23,7 @@ import java.util.*;
 
 public class TaskActionFactory {
 
-    private static final Map<Integer, Class<? extends TaskAction>> typeActionMap = new HashMap<>();
+    private static final Map<TaskActionType, Class<? extends TaskAction>> typeActionMap = new HashMap<>();
 
     private static final Logger logger = CoVaLogger.getLogger();
 
