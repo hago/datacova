@@ -19,6 +19,7 @@ public class TaskActionIngest extends TaskAction {
     public TaskActionIngest() {
         super();
         type = TaskActionType.DatabaseIngest;
+        ingestOptions.setBatchColumnName("BatchId");
     }
 
     public int getConnectionId() {
