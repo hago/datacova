@@ -10,5 +10,6 @@ package com.hagoapp.datacova.entity.action;
 public enum TaskActionType {
     DatabaseIngest,
     Idle,
-    Verify
+    Verify,
+    Distribute
 }
