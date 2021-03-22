@@ -14,7 +14,7 @@ import com.hagoapp.f2t.F2TConfig;
 public class TaskActionIngest extends TaskAction {
 
     private int connectionId;
-    private F2TConfig file2TableConfig;
+    private F2TConfig ingestOptions;
 
     public TaskActionIngest() {
         super();
@@ -29,12 +29,12 @@ public class TaskActionIngest extends TaskAction {
         this.connectionId = connectionId;
     }
 
-    public F2TConfig getFile2TableConfig() {
-        return file2TableConfig;
+    public F2TConfig getIngestOptions() {
+        return ingestOptions;
     }
 
-    public void setFile2TableConfig(F2TConfig file2TableConfig) {
-        this.file2TableConfig = file2TableConfig;
+    public void setIngestOptions(F2TConfig ingestOptions) {
+        this.ingestOptions = ingestOptions;
     }
 
     @Override
