@@ -9,12 +9,12 @@ package com.hagoapp.datacova.entity.action.ingest;
 
 import com.hagoapp.datacova.entity.action.TaskAction;
 import com.hagoapp.datacova.entity.action.TaskActionType;
+import com.hagoapp.f2t.F2TConfig;
 
 public class TaskActionIngest extends TaskAction {
 
     private int connectionId;
-    private String targetTable;
-    private String targetSchema = "";
+    private F2TConfig file2TableConfig;
 
     public TaskActionIngest() {
         super();
@@ -29,20 +29,12 @@ public class TaskActionIngest extends TaskAction {
         this.connectionId = connectionId;
     }
 
-    public String getTargetTable() {
-        return targetTable;
+    public F2TConfig getFile2TableConfig() {
+        return file2TableConfig;
     }
 
-    public void setTargetTable(String targetTable) {
-        this.targetTable = targetTable;
-    }
-
-    public String getTargetSchema() {
-        return targetSchema;
-    }
-
-    public void setTargetSchema(String targetSchema) {
-        this.targetSchema = targetSchema;
+    public void setFile2TableConfig(F2TConfig file2TableConfig) {
+        this.file2TableConfig = file2TableConfig;
     }
 
     @Override
