@@ -16,30 +16,30 @@
       <select v-model="connection.configuration.dbType" class="form-control col-6" :disabled="!isNew"
         v-on:change="changeDbType()">
         <option disabled value="undefined">Data Connection Type</option>
-        <option v-for="(def) in databaseTypes" :key="def[1]" v-bind:value="def[1]">
-            {{ def[0] }}
+        <option v-for="(name, id) in databaseTypes" :key="id" v-bind:value="id">
+            {{ name }}
         </option>
       </select>
     </div>
-    <PostgreSQLConfig v-if="connection.configuration.dbType===0"
+    <PostgreSQLConfig v-if="connection.configuration.dbType==='PostgreSql'"
       v-bind:pgconfig="connection.configuration"
       v-bind:extra="connection.extra"
       v-on:onConnectionVerified="connectionVerified"
       v-on:onErrorUpdate="errorUpdate"
     ></PostgreSQLConfig>
-    <SQLServerConfig v-if="connection.configuration.dbType===1"
+    <SQLServerConfig v-if="connection.configuration.dbType==='MsSqlServer'"
       v-bind:msconfig="connection.configuration"
       v-bind:extra="connection.extra"
       v-on:onConnectionVerified="connectionVerified"
       v-on:onErrorUpdate="errorUpdate"
     ></SQLServerConfig>
-    <HiveConfig v-if="connection.configuration.dbType===2"
+    <HiveConfig v-if="connection.configuration.dbType==='Hive'"
       v-bind:hiveconfig="connection.configuration"
       v-bind:extra="connection.extra"
       v-on:onConnectionVerified="connectionVerified"
       v-on:onErrorUpdate="errorUpdate"
     ></HiveConfig>
-    <MariaDBConfig v-if="connection.configuration.dbType===3"
+    <MariaDBConfig v-if="connection.configuration.dbType==='MariaDb'"
       v-bind:mariadbconfig="connection.configuration"
       v-bind:extra="connection.extra"
       v-on:onConnectionVerified="connectionVerified"
@@ -84,10 +84,10 @@ export default {
   data () {
     return {
       databaseTypes: {
-        pgsql: ['PostgreSQL', 0],
-        mssql: ['SQL Server', 1],
-        hive: ['Hadoop Hive', 2],
-        mysql: ['MySQL / MariaDB', 3]
+        PostgreSql: 'PostgreSQL',
+        MsSqlServer: 'SQL Server',
+        Hive: 'Hadoop Hive',
+        MariaDb: 'MySQL / MariaDB'
       },
       isNew: true,
       connection: {
@@ -122,7 +122,7 @@ export default {
       (new WorkspaceApiHelper()).getConnection(this.$route.params.workspaceId, this.$route.params.id)
         .then(rsp => {
           this.connection = rsp.data.data.connection
-          this.readonly = !rsp.data.data.permissions.update
+          this.readonly = !rsp.data.data.permission.update
         })
         .catch(err => {
           this.errorMessage = err.response.data.error.message
