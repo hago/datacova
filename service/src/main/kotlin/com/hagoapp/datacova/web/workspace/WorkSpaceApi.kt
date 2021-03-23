@@ -69,6 +69,7 @@ class WorkSpaceApi {
         wk.ownerId = userInfo.id
         wk.addBy = userInfo.id
         val workSpace = WorkSpaceData().addWorkSpace(wk)
+        WorkspaceCache.clearMyWorkspaces(userInfo.id)
         if (workSpace == null) {
             ResponseHelper.respondError(routeContext, HttpResponseStatus.CONFLICT, "duplicated name")
         } else {

@@ -20,7 +20,7 @@ class WorkspaceCache {
     companion object {
         private const val WORKSPACE_INFO = "Workspace"
         private const val WORKSPACE_User_ROLE = "WorkspaceUserRoles"
-        private const val My_WORKSPACE_INFO = "MyWorkspace"
+        private const val MY_WORKSPACE_INFO = "MyWorkspace"
 
         @JvmStatic
         fun getWorkspace(id: Int): WorkSpace? {
@@ -55,7 +55,7 @@ class WorkspaceCache {
         fun getMyWorkSpaces(userId: Long): List<WorkSpace>? {
             val token = object : TypeToken<List<WorkSpace>>() {}
             return RedisCacheReader.readCachedData(
-                My_WORKSPACE_INFO, 3600,
+                MY_WORKSPACE_INFO, 3600,
                 object : RedisCacheReader.GenericLoader<List<WorkSpace>> {
                     override fun perform(vararg params: Any?): List<WorkSpace> {
                         return if (params.isEmpty()) listOf() else
@@ -68,6 +68,11 @@ class WorkspaceCache {
         @JvmStatic
         fun clearWorkspaceUser(id: Int) {
             RedisCacheReader.clearData(WORKSPACE_User_ROLE, id)
+        }
+
+        @JvmStatic
+        fun clearMyWorkspaces(userId: Long) {
+            RedisCacheReader.clearData(MY_WORKSPACE_INFO, userId)
         }
     }
 }

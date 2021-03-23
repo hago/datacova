@@ -17,7 +17,7 @@ class WorkSpaceData(connectionConfig: DatabaseConfig) : CoVaDatabase(connectionC
      * get all work spaces owned by user
      */
     fun getOwnedWorkSpaces(userId: Long): List<WorkSpace> {
-        val sql = "select * from workspace where ownerid = ?"
+        val sql = "select * from workspace where ownerid = ? order by modifytime desc, addtime desc"
         val workspaces = mutableListOf<WorkSpace>()
         connection.prepareStatement(sql).use { stmt ->
             stmt.setLong(1, userId)
@@ -87,13 +87,17 @@ class WorkSpaceData(connectionConfig: DatabaseConfig) : CoVaDatabase(connectionC
                 }
             }
         }
+        val sql =
+            "insert into workspace (name, description, ownerid, addby, modifyby, modifytime) " +
+                    "values (?, ?, ?, ?, ?, now()) returning id"
         val id = try {
-            connection.prepareStatement("insert into workspace (name, description, ownerid, addby) values (?,?,?,?) returning id")
+            connection.prepareStatement(sql)
                 .use { stmt ->
                     stmt.setString(1, workSpace.name)
                     stmt.setString(2, workSpace.description)
                     stmt.setLong(3, workSpace.ownerId)
                     stmt.setLong(4, workSpace.addBy)
+                    stmt.setLong(5, workSpace.addBy)
                     stmt.executeQuery().use { rs ->
                         rs.next()
                         rs.getInt(1)
