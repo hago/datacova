@@ -97,7 +97,7 @@ export default {
       if (action.connectionId === undefined) {
         return 'connection is required'
       }
-      if ((action.targetTable === undefined) || (action.targetTable.trim() === '')) {
+      if ((action.ingestOptions.targetTable === undefined) || (action.ingestOptions.targetTable.trim() === '')) {
         return 'target table is required'
       }
       return true
