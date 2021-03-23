@@ -12,6 +12,7 @@ import com.hagoapp.datacova.Application;
 import com.hagoapp.datacova.CoVaException;
 import com.hagoapp.datacova.CoVaLogger;
 import com.hagoapp.datacova.MapSerializer;
+import com.hagoapp.datacova.util.StackTraceWriter;
 import org.apache.logging.log4j.core.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
@@ -42,6 +43,7 @@ public class TaskActionFactory {
                     InvocationTargetException | NoSuchMethodException e) {
                 // won't happen
                 logger.info("TaskAction: {} registered error: {}", actionClass.getCanonicalName(), e.getMessage());
+                StackTraceWriter.write(e, logger);
             }
         });
     }
@@ -64,10 +66,12 @@ public class TaskActionFactory {
     }
 
     private static TaskAction doGetTaskAction(String json, Map<String, Object> map) throws CoVaException {
+        String actionName = map.get("type").toString();
         try {
-            TaskActionType type = TaskActionType.valueOf(map.get("type").toString());
+            TaskActionType type = TaskActionType.valueOf(actionName);
             return new Gson().fromJson(json, typeActionMap.get(type));
         } catch (Exception e) {
+            logger.error("Error for type: {}", actionName);
             throw new CoVaException("Task Action Error", e);
         }
     }
