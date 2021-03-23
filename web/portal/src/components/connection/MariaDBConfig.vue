@@ -13,7 +13,7 @@
       <div class="form-row">
         <div class="col">
           <label for="inputUser">User Name</label>
-          <input type="text" class="form-control" v-model="config.userName" id="inputUser" />
+          <input type="text" class="form-control" v-model="config.username" id="inputUser" />
         </div>
         <div class="col">
           <label for="inputPassword">Password</label>
@@ -23,7 +23,7 @@
       <div class="form-row">
         <div class="col-6">
           <label for="inputDatabase">Database</label>
-          <select class="form-control" v-model="config.dbName">
+          <select class="form-control" v-model="config.databaseName">
             <option disabled value=undefined v-if="databases.length == 0">No database found</option>
             <option v-for="database in databases" v-bind:key="database" v-bind:value="database">{{ database }}</option>
           </select>
@@ -48,7 +48,7 @@
 import ConnectionApiHelper from '../../apis/connection.js'
 
 export default {
-  name: 'PostgreSQLConfig',
+  name: 'MariaDBconfig',
   props: {
     mariadbconfig: Object,
     extra: Object
@@ -71,7 +71,7 @@ export default {
     verifyConnection: function () {
       this.loading = true
       this.verifyResult = undefined;
-      (new ConnectionApiHelper()).verifyConnection('mysql', this.config).then(rsp => {
+      (new ConnectionApiHelper()).verifyConnection(this.config).then(rsp => {
         this.loading = false
         if (rsp.status === 200) {
           if (rsp.data.data.result) {

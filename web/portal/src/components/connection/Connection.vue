@@ -110,7 +110,7 @@ export default {
   methods: {
     changeDbType: function () {
       this.verified = false
-      this.connection.configuration.dbName = undefined
+      this.connection.configuration.databaseName = undefined
     },
     connectionVerified: function (result) {
       this.verified = result
