@@ -21,7 +21,8 @@ class ConnectionData(config: DatabaseConfig) : CoVaDatabase(config) {
     constructor() : this(CoVaConfig.getConfig().database)
 
     fun getWorkspaceConnections(workspaceId: Int): List<WorkspaceConnection> {
-        connection.prepareStatement("select * from connection where wkid = ?").use { stmt ->
+        val sql = "select * from connection where wkid = ? order by modifytime desc, addtime desc"
+        connection.prepareStatement(sql).use { stmt ->
             stmt.setInt(1, workspaceId)
             stmt.executeQuery().use { rs ->
                 val ret = mutableListOf<WorkspaceConnection>()
@@ -59,8 +60,8 @@ class ConnectionData(config: DatabaseConfig) : CoVaDatabase(config) {
     }
 
     fun addWorkspaceConnection(wkConnection: WorkspaceConnection): WorkspaceConnection {
-        val sql = "insert into connection(name, description, configuration, wkid, addby)" +
-                "values(?, ?, ?, ?, ?) returning id"
+        val sql = "insert into connection(name, description, configuration, wkid, addby, modifyby, modifytime)" +
+                "values(?, ?, ?, ?, ?, ?, now()) returning id"
         val id = connection.prepareStatement(sql).use { stmt ->
             stmt.setString(1, wkConnection.name)
             stmt.setString(2, wkConnection.description)
@@ -70,6 +71,7 @@ class ConnectionData(config: DatabaseConfig) : CoVaDatabase(config) {
             )
             stmt.setInt(4, wkConnection.workspaceId)
             stmt.setLong(5, wkConnection.addBy)
+            stmt.setLong(6, wkConnection.addBy)
             stmt.executeQuery().use { rs ->
                 rs.next()
                 rs.getInt(1)

@@ -102,8 +102,8 @@ class TaskData(config: DatabaseConfig) : CoVaDatabase(config) {
     }
 
     fun createTask(task: Task): Task {
-        val sql = "insert into task (name, description, wkid, actions, extra, addby) " +
-                "values(?, ?, ?, ?, ?, ?) returning id"
+        val sql = "insert into task (name, description, wkid, actions, extra, addby, modifyby, modifytime) " +
+                "values(?, ?, ?, ?, ?, ?, ?, now()) returning id"
         val id = connection.prepareStatement(sql).use { stmt ->
             stmt.setString(1, task.name)
             stmt.setString(2, task.description)
@@ -111,6 +111,7 @@ class TaskData(config: DatabaseConfig) : CoVaDatabase(config) {
             stmt.setObject(4, DatabaseFunctions.createPgObject("json", task.actions))
             stmt.setObject(5, DatabaseFunctions.createPgObject("json", task.extra))
             stmt.setLong(6, task.addBy)
+            stmt.setLong(7, task.addBy)
             stmt.executeQuery().use { rs ->
                 rs.next()
                 rs.getInt(1)
