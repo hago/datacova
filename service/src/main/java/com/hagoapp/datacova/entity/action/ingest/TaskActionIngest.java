@@ -14,7 +14,7 @@ import com.hagoapp.f2t.F2TConfig;
 public class TaskActionIngest extends TaskAction {
 
     private int connectionId;
-    private F2TConfig ingestOptions;
+    private F2TConfig ingestOptions = new F2TConfig();
 
     public TaskActionIngest() {
         super();
