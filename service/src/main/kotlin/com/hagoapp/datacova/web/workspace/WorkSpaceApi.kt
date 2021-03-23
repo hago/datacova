@@ -105,6 +105,7 @@ class WorkSpaceApi {
         }
         wk.modifyBy = user.id
         val workspace0 = WorkSpaceData().updateWorkSpace(wk)
+        WorkspaceCache.clearMyWorkspaces(user.id)
         ResponseHelper.sendResponse(routeContext, HttpResponseStatus.OK, mapOf("code" to 0, "data" to workspace0))
     }
 }
