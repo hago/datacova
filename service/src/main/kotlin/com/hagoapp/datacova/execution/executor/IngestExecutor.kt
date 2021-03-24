@@ -8,11 +8,16 @@
 package com.hagoapp.datacova.execution.executor
 
 import com.hagoapp.datacova.entity.action.TaskAction
+import com.hagoapp.datacova.entity.action.TaskActionType
 import com.hagoapp.f2t.DataTable
 
-class ImportExecutor: BaseTaskActionExecutor() {
+class IngestExecutor : BaseTaskActionExecutor() {
     override fun execute(action: TaskAction, data: DataTable) {
         TODO("Not yet implemented")
+    }
+
+    override fun getActionType(): TaskActionType {
+        return TaskActionType.DatabaseIngest
     }
 
 }
