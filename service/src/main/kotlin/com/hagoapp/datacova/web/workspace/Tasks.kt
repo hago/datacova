@@ -7,14 +7,20 @@
 
 package com.hagoapp.datacova.web.workspace
 
+import com.hagoapp.datacova.config.CoVaConfig
+import com.hagoapp.datacova.data.execution.TaskExecutionData
 import com.hagoapp.datacova.data.workspace.*
+import com.hagoapp.datacova.entity.execution.ExecutionFileInfo
+import com.hagoapp.datacova.entity.execution.TaskExecution
 import com.hagoapp.datacova.entity.task.Task
 import com.hagoapp.datacova.entity.workspace.WorkSpaceUserRole
+import com.hagoapp.datacova.util.FileStoreUtils
 import com.hagoapp.datacova.util.WorkspaceUserRoleUtil
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import com.hagoapp.datacova.web.authentication.AuthType
 import com.hagoapp.datacova.web.authentication.Authenticator
+import com.hagoapp.f2t.datafile.FileInfo
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.RoutingContext
@@ -127,5 +133,55 @@ class Tasks {
             return
         }
         ResponseHelper.sendResponse(context, HttpResponseStatus.OK, mapOf("code" to 0, "data" to task))
+    }
+
+    @WebEndPoint(
+        path = "/api/workspace/:wkid/task/:id/run",
+        methods = [HttpMethod.POST],
+        authTypes = [AuthType.UserToken]
+    )
+    fun runTask(context: RoutingContext) {
+        val files = context.fileUploads()
+        if (files.isEmpty()) {
+            ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "no file found")
+            return
+        }
+        val workspaceId = context.pathParam("wkid").toInt()
+        val workSpace = WorkspaceCache.getWorkspace(workspaceId)
+        val user = Authenticator.getUser(context)
+        if ((workSpace == null) || WorkspaceUserRoleUtil.isUser(user, workspaceId)) {
+            ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, "access denied")
+            return
+        }
+        val taskId = context.pathParam("id").toInt()
+        val task = TaskCache.listTasks(workspaceId).firstOrNull { it.id == taskId }
+        if ((task == null)) {
+            ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "no such task")
+            return
+        }
+        val execList = TaskExecutionData().use { db ->
+            files.map { file ->
+                val eai = ExecutionFileInfo()
+                val target = FileStoreUtils.getFileStore().copyFileToStore(file.uploadedFileName())
+                with(eai) {
+                    originalName = file.fileName()
+                    size = file.size()
+                    dataFileInfo = FileInfo(target.absoluteFileName)
+                }
+                val execTask = TaskExecution()
+                with(execTask) {
+                    this.taskId = taskId
+                    this.addBy = user.id
+                    fileInfo = eai
+                }
+                db.createTaskExecution(execTask)
+            }
+        }
+        ResponseHelper.sendResponse(
+            context, HttpResponseStatus.OK, mapOf(
+                "code" to 0,
+                "data" to execList
+            )
+        )
     }
 }
