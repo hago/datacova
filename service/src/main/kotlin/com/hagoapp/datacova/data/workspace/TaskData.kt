@@ -75,32 +75,6 @@ class TaskData(config: DatabaseConfig) : CoVaDatabase(config) {
         }
     }
 
-    fun loadTaskExecution(id: Long): TaskExecution? {
-        connection.prepareStatement("select * from taskexecution where id = ?").use { stmt ->
-            stmt.setLong(1, id)
-            stmt.executeQuery().use { rs ->
-                return if (rs.next()) row2taskExecution(rs) else null
-            }
-        }
-    }
-
-    private fun row2taskExecution(rs: ResultSet): TaskExecution {
-        val te = TaskExecution()
-        with(te) {
-            id = rs.getLong("id")
-            addBy = rs.getString("addby")
-            addTime = rs.getTimestamp("addtime").toInstant().toEpochMilli()
-            startTime = DatabaseFunctions.getDBValue<Timestamp>(rs, "starttime")?.toInstant()?.toEpochMilli()
-            endTime = DatabaseFunctions.getDBValue<Timestamp>(rs, "endtime")?.toInstant()?.toEpochMilli()
-            status = ExecutionStatus.valueOf(rs.getInt("xstatus"))
-            detail = ExecutionDetail.fromString(rs.getString("detail"))
-            fileInfo = ExecutionFileInfo.getFileInfo(rs.getString("fileinfo"))
-            task = Task.fromJson(rs.getString("task"))
-            taskId = task.id
-        }
-        return te
-    }
-
     fun createTask(task: Task): Task {
         val sql = "insert into task (name, description, wkid, actions, extra, addby, modifyby, modifytime) " +
                 "values(?, ?, ?, ?, ?, ?, ?, now()) returning id"
