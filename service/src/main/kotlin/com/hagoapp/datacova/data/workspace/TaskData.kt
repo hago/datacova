@@ -47,7 +47,7 @@ class TaskData(config: DatabaseConfig) : CoVaDatabase(config) {
             extra = TaskExtra.fromJson(rs.getString("extra"))
             addBy = rs.getLong("addby")
             addTime = rs.getTimestamp("addtime").toInstant().toEpochMilli()
-            modifyBy = DatabaseFunctions.getDBValue<Timestamp>(rs, "modifyby")?.toInstant()?.toEpochMilli()
+            modifyBy = DatabaseFunctions.getDBValue<Long>(rs, "modifyby")
             modifyTime = DatabaseFunctions.getDBValue<Timestamp>(rs, "modifytime")?.toInstant()?.toEpochMilli()
             workspaceId = rs.getInt("wkid")
             actions = loadTaskAction(rs.getString("actions"))
