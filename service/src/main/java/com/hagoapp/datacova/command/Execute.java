@@ -11,7 +11,7 @@ package com.hagoapp.datacova.command;
 import com.hagoapp.datacova.CoVaException;
 import com.hagoapp.datacova.CoVaLogger;
 import com.hagoapp.datacova.config.CoVaConfig;
-import com.hagoapp.datacova.data.workspace.TaskData;
+import com.hagoapp.datacova.data.execution.TaskExecutionData;
 import com.hagoapp.datacova.entity.execution.ExecutionActionDetail;
 import com.hagoapp.datacova.entity.execution.ExecutionDetail;
 import com.hagoapp.datacova.entity.execution.TaskExecution;
@@ -25,7 +25,7 @@ import picocli.CommandLine;
 public class Execute extends CommandWithConfig implements TaskExecutionWatcher {
 
     @CommandLine.Option(names = {"-i", "--id"}, description = "id of task execution to be executed", required = true)
-    private long taskExecId;
+    private int taskExecId;
 
     private Logger logger;
 
@@ -33,8 +33,8 @@ public class Execute extends CommandWithConfig implements TaskExecutionWatcher {
     public Integer call() throws CoVaException {
         CoVaConfig.loadConfig(configFile);
         logger = CoVaLogger.getLogger();
-        try (TaskData taskData = new TaskData(CoVaConfig.getConfig().getDatabase())) {
-            TaskExecution taskExecution = taskData.loadTaskExecution(taskExecId);
+        try (TaskExecutionData db = new TaskExecutionData(CoVaConfig.getConfig().getDatabase())) {
+            TaskExecution taskExecution = db.getTaskExecution(taskExecId);
             if (taskExecution == null) {
                 logger.error("Task execution {} not found", taskExecId);
                 return -1;
