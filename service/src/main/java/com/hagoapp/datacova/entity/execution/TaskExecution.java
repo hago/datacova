@@ -16,16 +16,12 @@ public class TaskExecution implements JsonStringify {
     private ExecutionFileInfo fileInfo;
     private int taskId;
     private Task task;
-    private String addBy;
+    private long addBy;
     private long addTime;
     private Long startTime;
     private Long endTime;
     private ExecutionDetail detail;
     private ExecutionStatus status;
-
-    public Task getTask() {
-        return task;
-    }
 
     public ExecutionFileInfo getFileInfo() {
         return fileInfo;
@@ -51,15 +47,11 @@ public class TaskExecution implements JsonStringify {
         this.taskId = taskId;
     }
 
-    public void setTask(Task task) {
-        this.task = task;
-    }
-
-    public String getAddBy() {
+    public long getAddBy() {
         return addBy;
     }
 
-    public void setAddBy(String addBy) {
+    public void setAddBy(long addBy) {
         this.addBy = addBy;
     }
 
@@ -99,7 +91,16 @@ public class TaskExecution implements JsonStringify {
         return status;
     }
 
+    public Task getTask() {
+        return task;
+    }
+
+    public void setTask(Task task) {
+        this.task = task;
+    }
+
     public void setStatus(ExecutionStatus status) {
         this.status = status;
     }
+
 }
