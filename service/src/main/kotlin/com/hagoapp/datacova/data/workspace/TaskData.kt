@@ -47,7 +47,7 @@ class TaskData(config: DatabaseConfig) : CoVaDatabase(config) {
             extra = TaskExtra.fromJson(rs.getString("extra"))
             addBy = rs.getLong("addby")
             addTime = rs.getTimestamp("addtime").toInstant().toEpochMilli()
-            modifyBy = DatabaseFunctions.getDBValue<Timestamp>(rs, "modifyby")?.toInstant()?.toEpochMilli()
+            modifyBy = DatabaseFunctions.getDBValue(rs, "modifyby")
             modifyTime = DatabaseFunctions.getDBValue<Timestamp>(rs, "modifytime")?.toInstant()?.toEpochMilli()
             workspaceId = rs.getInt("wkid")
             actions = loadTaskAction(rs.getString("actions"))
@@ -121,7 +121,18 @@ class TaskData(config: DatabaseConfig) : CoVaDatabase(config) {
     }
 
     fun updateTask(task: Task): Task {
-        return task;
+        val sql = "update task set name = ?, description = ?, actions = ?, extra = ?, " +
+                "modifyby = ?, modifytime = now() where id = ?"
+        connection.prepareStatement(sql).use { stmt ->
+            stmt.setString(1, task.name)
+            stmt.setString(2, task.description)
+            stmt.setObject(3, DatabaseFunctions.createPgObject("json", task.actions))
+            stmt.setObject(4, DatabaseFunctions.createPgObject("json", task.extra))
+            stmt.setLong(5, task.modifyBy)
+            stmt.setInt(6, task.id)
+            stmt.execute()
+        }
+        return loadTask(task.id)!!
     }
 
     fun deleteTask(taskId: Int) {
