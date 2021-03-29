@@ -39,8 +39,8 @@
     <div class="form-row margin-left: 5px">
       <div class="form-group col-3">
         <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="addBatch" v-model="action.ingestOptions.addBatch">
-          <label class="form-check-label" for="addBatch">
+          <input class="form-check-input" type="checkbox" :id="'addBatch' + actionIndex" v-model="action.ingestOptions.addBatch">
+          <label class="form-check-label" :for="'addBatch' + actionIndex">
             Add batch column
           </label>
         </div>
@@ -51,16 +51,16 @@
       </div>
       <div class="form-group col-3">
         <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="clearTable" v-model="action.ingestOptions.clearTable">
-          <label class="form-check-label" for="clearTable">
+          <input class="form-check-input" type="checkbox" :id="'clearTable' + actionIndex" v-model="action.ingestOptions.clearTable">
+          <label class="form-check-label" :for="'clearTable' + actionIndex">
             Purge table
           </label>
         </div>
       </div>
       <div class="form-group col-3">
         <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="createTable" v-model="action.ingestOptions.createTableIfNeeded">
-          <label class="form-check-label" for="createTable">
+          <input class="form-check-input" type="checkbox" :id="'createTable' + actionIndex" v-model="action.ingestOptions.createTableIfNeeded">
+          <label class="form-check-label" :for="'createTable' + actionIndex">
             Create table automatically if not existed
           </label>
         </div>
@@ -78,7 +78,8 @@ export default {
   name: 'TaskActionIngest',
   props: {
     action: Object,
-    workspaceId: Number
+    workspaceId: Number,
+    actionIndex: Number
   },
   data () {
     return {

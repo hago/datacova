@@ -13,19 +13,19 @@
         </select>
       </div>
       <div class="form-group col-1">
-        <label for="rmv" class="disabled">Action</label>
+        <label for="rmv" class="disabled">Action {{ actionIndex }}</label>
         <button class="btn btn-info" v-on:click="removeAction()" id="rmv">Remove</button>
       </div>
     </div>
     <div class="form-row">
       <div class="form-group col-6">
-        <label for="condesp">Description</label>
-        <textarea class="form-control" id="condesp" v-model="action.description"></textarea>
+        <label :for="'condesp' + actionIndex">Description</label>
+        <textarea class="form-control" :id="'condesp' + actionIndex" v-model="action.description"></textarea>
       </div>
       <div class="form-group col-3">
         <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="continueNext" v-model="action.extra.continueNextWhenError">
-          <label class="form-check-label" for="continueNext">
+          <input class="form-check-input" type="checkbox" :id="'continueNext' + actionIndex" v-model="action.extra.continueNextWhenError">
+          <label class="form-check-label" :for="'continueNext' + actionIndex">
             Continue Next Action When Error Occurs
           </label>
         </div>
@@ -37,18 +37,21 @@
     <TaskActionIngest v-if="action.type == 'DatabaseIngest'"
       v-bind:action="action"
       v-bind:workspaceId="workspaceId"
+      v-bind:actionIndex="actionIndex"
       v-on:onLoadingStatusChange="updateLoadingStatus"
       v-on:errorOccurred="onErrorOccurred"
       ></TaskActionIngest>
     <TaskActionVerify v-if="action.type == 'Verify'"
       v-bind:action="action"
       v-bind:workspaceId="workspaceId"
+      v-bind:actionIndex="actionIndex"
       v-on:onLoadingStatusChange="updateLoadingStatus"
       v-on:errorOccurred="onErrorOccurred"
       ></TaskActionVerify>
     <TaskActionDistribute v-if="action.type == 'Distribute'"
       v-bind:action="action"
       v-bind:workspaceId="workspaceId"
+      v-bind:actionIndex="actionIndex"
       v-on:onLoadingStatusChange="updateLoadingStatus"
       v-on:errorOccurred="onErrorOccurred"
       ></TaskActionDistribute>
