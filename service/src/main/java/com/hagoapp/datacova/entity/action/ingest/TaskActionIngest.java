@@ -9,12 +9,11 @@ package com.hagoapp.datacova.entity.action.ingest;
 
 import com.hagoapp.datacova.entity.action.TaskAction;
 import com.hagoapp.datacova.entity.action.TaskActionType;
-import com.hagoapp.f2t.F2TConfig;
 
 public class TaskActionIngest extends TaskAction {
 
     private int connectionId;
-    private F2TConfig ingestOptions = new F2TConfig();
+    private IngestOptions ingestOptions = new IngestOptions();
 
     public TaskActionIngest() {
         super();
@@ -30,11 +29,11 @@ public class TaskActionIngest extends TaskAction {
         this.connectionId = connectionId;
     }
 
-    public F2TConfig getIngestOptions() {
+    public IngestOptions getIngestOptions() {
         return ingestOptions;
     }
 
-    public void setIngestOptions(F2TConfig ingestOptions) {
+    public void setIngestOptions(IngestOptions ingestOptions) {
         this.ingestOptions = ingestOptions;
     }
 
