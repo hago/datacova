@@ -28,7 +28,7 @@ public @interface WebEndPoint {
 
     String[] headers() default {};
 
-    boolean isBlocking() default false;
+    boolean isBlocking() default true;
 
     AuthType[] authTypes() default AuthType.Anonymous;
 }

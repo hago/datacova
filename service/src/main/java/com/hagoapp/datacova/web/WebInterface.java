@@ -30,7 +30,7 @@ public interface WebInterface {
     }
 
     default boolean isBlocking() {
-        return false;
+        return true;
     }
 
     Map<HttpMethod, Handler> requestHandlers();
