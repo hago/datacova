@@ -40,7 +40,7 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
         val dt: DataTable
         try {
             observers.forEach { it.onDataLoadStart(taskExec) }
-            val parser = FileParser(taskExec.fileInfo.dataFileInfo)
+            val parser = FileParser(taskExec.fileInfo)
             dt = parser.extractData()
             observers.forEach { it.onDataLoadComplete(taskExec, true) }
             detail.lineCount = dt.rows.size

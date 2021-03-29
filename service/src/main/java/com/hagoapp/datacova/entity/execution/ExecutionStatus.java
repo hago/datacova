@@ -27,13 +27,7 @@ public enum ExecutionStatus {
     private final int value;
 
     ExecutionStatus(int v) {
-        for (ExecutionStatus st : ExecutionStatus.values()) {
-            if (st.value == v) {
-                value = v;
-                return;
-            }
-        }
-        this.value = -1;
+        this.value = v;
     }
 
     public static ExecutionStatus valueOf(int v) throws InstantiationException {
@@ -45,7 +39,7 @@ public enum ExecutionStatus {
         }
     }
 
-    public int intValue() {
+    public int getValue() {
         return this.value;
     }
 }

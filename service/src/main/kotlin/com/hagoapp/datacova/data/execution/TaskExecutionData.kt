@@ -26,13 +26,13 @@ class TaskExecutionData(config: DatabaseConfig) : CoVaDatabase(config) {
     fun createTaskExecution(taskExec: TaskExecution): TaskExecution {
         val sql = "insert into taskexecution (fileinfo, taskid, addby, task) values(?,?,?,?) returning id"
         val id = connection.prepareStatement(sql).use { stmt ->
-            stmt.setObject(1, DatabaseFunctions.createPgObject("json", taskExec.fileInfo))
+            stmt.setObject(1, DatabaseFunctions.createPgObject("json", taskExec.fileInfo.toJson()))
             stmt.setInt(2, taskExec.taskId)
             stmt.setLong(3, taskExec.addBy)
-            stmt.setObject(4, DatabaseFunctions.createPgObject("json", taskExec.task))
+            stmt.setObject(4, DatabaseFunctions.createPgObject("json", taskExec.task?.toJson()))
             stmt.executeQuery().use { rs ->
                 rs.next()
-                rs.getInt(0)
+                rs.getInt(1)
             }
         }
         return getTaskExecution(id)!!
