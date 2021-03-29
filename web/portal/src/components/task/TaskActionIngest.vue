@@ -89,10 +89,12 @@ export default {
       createTable: false
     }
   },
-  mounted: function () {
+  created: function () {
     if (this.action.ingestOptions === undefined) {
       this.action.ingestOptions = {}
     }
+  },
+  mounted: function () {
     this.action.validator = function (action) {
       // console.log(action)
       if (action.connectionId === undefined) {

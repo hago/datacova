@@ -11,7 +11,7 @@
       <div class="col-3">Size: {{ file.size }}</div>
     </div>
     <div class="form-row" v-if="file !== undefined">
-      <div class="col">Last modified at: {{ file.lastModified }}</div>
+      <div class="col">Last modified at: {{ dateFormat(Date(file.lastModified), 'isoDateTime') }}</div>
     </div>
     <div class="form-row" v-if="file !== undefined">
       <div class="col">Type: {{ file.type }}</div>
@@ -27,6 +27,7 @@
 import router from '../../router'
 
 import WorkspaceApiHelper from '@/apis/workspace.js'
+const dateFormat = require('dateformat')
 
 export default {
   name: 'TaskFileUpload',
@@ -58,6 +59,9 @@ export default {
       if (confirm('Are you SURE to cancel uploading?')) {
         router.back()
       }
+    },
+    dateFormat: function (date, fmt) {
+      return dateFormat(date, fmt)
     },
     upload: function () {
       console.log(this.file)

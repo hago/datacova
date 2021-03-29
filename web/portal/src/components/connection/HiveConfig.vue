@@ -83,7 +83,7 @@
     <div class="form-row">
       <div class="col-6">
         <label for="inputDatabase">Database</label>
-          <select class="form-control" v-model="config.dbName">
+          <select class="form-control" v-model="config.databaseName">
             <option disabled value=undefined v-if="databases.length == 0">No database found</option>
             <option v-for="database in databases" v-bind:key="database" v-bind:value="database">{{ database }}</option>
           </select>
@@ -169,8 +169,8 @@ export default {
           if (rsp.data.data.result) {
             this.verifyResult = true
             this.databases = rsp.data.data.databases
-            if ((this.config.dbName === undefined) || (this.databases.indexOf(this.config.dbName) < 0)) {
-              this.config.dbName = this.databases.length > 0 ? this.databases[0] : undefined
+            if ((this.config.databaseName === undefined) || (this.databases.indexOf(this.config.databaseName) < 0)) {
+              this.config.databaseName = this.databases.length > 0 ? this.databases[0] : undefined
             }
             this.$emit('onErrorUpdate')
           } else {

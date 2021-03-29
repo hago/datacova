@@ -1,3 +1,4 @@
+
 <template>
     <form>
       <div class="form-row">
@@ -77,8 +78,8 @@ export default {
           if (rsp.data.data.result) {
             this.verifyResult = true
             this.databases = rsp.data.data.databases
-            if ((this.config.dbName === undefined) || (this.databases.indexOf(this.config.dbName) < 0)) {
-              this.config.dbName = this.databases.length > 0 ? this.databases[0] : undefined
+            if ((this.config.databaseName === undefined) || (this.databases.indexOf(this.config.databaseName) < 0)) {
+              this.config.databaseName = this.databases.length > 0 ? this.databases[0] : undefined
             }
             this.$emit('onErrorUpdate')
           } else {
