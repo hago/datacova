@@ -20,17 +20,32 @@
       <button class="btn btn-primary col-1" v-on:click="upload()">Upload</button>
       <button class="btn btn-info col-1" v-on:click="cancel()">Cancel</button>
     </div>
+    <CsvAttributes v-if="fileType === 'csv'">
+    </CsvAttributes>
+    <ExcelAttributes v-if="fileType === 'excel'">
+    </ExcelAttributes>
+    <UnsupportedFile v-if="(fileType !== undefined) && (['csv', 'excel'].indexOf(fileType) === -1)"
+      v-bind:fileType="fileType">
+    </UnsupportedFile>
   </div>
 </template>
 
 <script>
 import router from '../../router'
+import CsvAttributes from './upload/CsvAttributes'
+import ExcelAttributes from './upload/ExcelAttributes'
+import UnsupportedFile from './upload/UnsupportedFile'
 
 import WorkspaceApiHelper from '@/apis/workspace.js'
 const dateFormat = require('dateformat')
 
 export default {
   name: 'TaskFileUpload',
+  components: {
+    CsvAttributes,
+    ExcelAttributes,
+    UnsupportedFile
+  },
   data () {
     return {
       uploads: [{id: 1}],
@@ -46,6 +61,13 @@ export default {
   computed: {
     url: function () {
       return `/api/workspace/${this.workspaceId}/task/${this.taskId}/run`
+    },
+    fileType: function () {
+      if (this.file === undefined) {
+        return undefined
+      }
+      let parts = this.file.name.split('.')
+      return (parts.length === 1) ? undefined : parts[parts.length - 1].toLowerCase()
     }
   },
   methods: {
