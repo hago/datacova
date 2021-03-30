@@ -12,24 +12,18 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.hagoapp.datacova.JsonStringify;
 import com.hagoapp.f2t.datafile.FileInfo;
-import com.hagoapp.f2t.datafile.FileType;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.Map;
 
-public class ExecutionFileInfo extends FileInfo implements JsonStringify {
+public class ExecutionFileInfo implements JsonStringify {
 
     private String originalName;
     private long size;
-
-    public ExecutionFileInfo(@NotNull String initFilename) {
-        super(initFilename);
-    }
+    private FileInfo fileInfo;
 
     public void setOriginalName(String originalName) {
         this.originalName = originalName;
-        calcType();
     }
 
     public String getOriginalName() {
@@ -44,28 +38,12 @@ public class ExecutionFileInfo extends FileInfo implements JsonStringify {
         return size;
     }
 
-    @Override
-    protected void calcType() {
-        if (originalName == null) {
-            return;
-        }
-        var i = originalName.lastIndexOf('.');
-        if (i < 0) {
-            type = FileType.Unknown;
-        } else switch (originalName.substring(i).toLowerCase()) {
-            case ".csv":
-                type = FileType.CSV;
-                break;
-            case ".xls":
-                type = FileType.Excel;
-                break;
-            case ".xlsx":
-                type = FileType.ExcelOpenXML;
-                break;
-            default:
-                type = FileType.Unknown;
-        }
+    public FileInfo getFileInfo() {
+        return fileInfo;
+    }
 
+    public void setFileInfo(FileInfo fileInfo) {
+        this.fileInfo = fileInfo;
     }
 
     public static ExecutionFileInfo getFileInfo(String s) throws IOException {
