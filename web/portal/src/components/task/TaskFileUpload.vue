@@ -66,8 +66,17 @@ export default {
       if (this.file === undefined) {
         return undefined
       }
-      let parts = this.file.name.split('.')
-      return (parts.length === 1) ? undefined : parts[parts.length - 1].toLowerCase()
+      let parts = this.file.name.toLowerCase().split('.')
+      console.log(parts)
+      if (parts.length < 2) {
+        return undefined
+      } else if (parts[1] === 'csv') {
+        return 'csv'
+      } else if (['xls', 'xlsx'].indexOf(parts[1]) >= 0) {
+        return 'excel'
+      } else {
+        return parts[1]
+      }
     }
   },
   methods: {
