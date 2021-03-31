@@ -20,9 +20,11 @@
       <button class="btn btn-primary col-1" v-on:click="upload()">Upload</button>
       <button class="btn btn-info col-1" v-on:click="cancel()">Cancel</button>
     </div>
-    <CsvAttributes v-if="fileType === 'csv'">
+    <CsvAttributes v-if="fileType === 'csv'"
+      v-bind:extraInfo="extraInfo">
     </CsvAttributes>
-    <ExcelAttributes v-if="fileType === 'excel'">
+    <ExcelAttributes v-if="fileType === 'excel'"
+      v-bind:extraInfo="extraInfo">
     </ExcelAttributes>
     <UnsupportedFile v-if="(fileType !== undefined) && (['csv', 'excel'].indexOf(fileType) === -1)"
       v-bind:fileType="fileType">
@@ -52,7 +54,8 @@ export default {
       workspaceId: this.$route.params.workspaceId,
       taskId: this.$route.params.id,
       task: {},
-      file: undefined
+      file: undefined,
+      extraInfo: {}
     }
   },
   mounted: function () {
@@ -67,7 +70,6 @@ export default {
         return undefined
       }
       let parts = this.file.name.toLowerCase().split('.')
-      console.log(parts)
       if (parts.length < 2) {
         return undefined
       } else if (parts[1] === 'csv') {
