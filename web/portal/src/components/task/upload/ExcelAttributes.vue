@@ -34,11 +34,13 @@
 export default {
   name: 'ExcelAttributes',
   props: {
-    extraInfo: Object
+    extraInfo: Object,
+    file: Object
   },
   created: function () {
     this.extraInfo.sheetIndex = 0
     this.extraInfo.sheetName = null
+    this.extraInfo.type = file.name.indexOf('xlsx') > 0 ? 3 : 2
   },
   data () {
     return {

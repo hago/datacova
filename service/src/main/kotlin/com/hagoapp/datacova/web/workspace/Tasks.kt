@@ -18,6 +18,7 @@ import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import com.hagoapp.datacova.web.authentication.AuthType
 import com.hagoapp.datacova.web.authentication.Authenticator
+import com.hagoapp.f2t.datafile.FileInfo
 import com.hagoapp.f2t.datafile.FileInfoReader
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.core.http.HttpMethod
@@ -144,6 +145,7 @@ class Tasks {
             ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "no file found")
             return
         }
+        val file = context.fileUploads().first()
         val workspaceId = context.pathParam("wkid").toInt()
         val workSpace = WorkspaceCache.getWorkspace(workspaceId)
         val user = Authenticator.getUser(context)
@@ -157,29 +159,30 @@ class Tasks {
             ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "no such task")
             return
         }
-        val execList = TaskExecutionData().use { db ->
-            files.mapIndexed { i, file ->
-                val target = FileStoreUtils.getFileStore().copyFileToStore(file.uploadedFileName())
-                val eai = ExecutionFileInfo()
-                with(eai) {
-                    originalName = file.fileName()
-                    size = file.size()
-                    fileInfo = FileInfoReader.json2FileInfo("")
-                }
-                val execTask = TaskExecution()
-                with(execTask) {
-                    this.taskId = taskId
-                    this.addBy = user.id
-                    fileInfo = eai
-                    this.task = task
-                }
-                db.createTaskExecution(execTask)
+        val rawInfo = context.request().getParam("extra")
+        val exec = TaskExecutionData().use { db ->
+            val target = FileStoreUtils.getFileStore().copyFileToStore(file.uploadedFileName())
+            val eai = ExecutionFileInfo()
+            val fi = FileInfoReader.json2FileInfo(rawInfo)
+            fi.filename = target.absoluteFileName
+            with(eai) {
+                originalName = file.fileName()
+                size = file.size()
+                fileInfo = fi
             }
+            val execTask = TaskExecution()
+            with(execTask) {
+                this.taskId = taskId
+                this.addBy = user.id
+                fileInfo = eai
+                this.task = task
+            }
+            db.createTaskExecution(execTask)
         }
         ResponseHelper.sendResponse(
             context, HttpResponseStatus.OK, mapOf(
                 "code" to 0,
-                "data" to execList
+                "data" to exec
             )
         )
     }

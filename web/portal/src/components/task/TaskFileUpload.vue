@@ -24,6 +24,7 @@
       v-bind:extraInfo="extraInfo">
     </CsvAttributes>
     <ExcelAttributes v-if="fileType === 'excel'"
+      v-bind:file="file"
       v-bind:extraInfo="extraInfo">
     </ExcelAttributes>
     <UnsupportedFile v-if="(fileType !== undefined) && (['csv', 'excel'].indexOf(fileType) === -1)"
@@ -101,8 +102,7 @@ export default {
       if (this.file === undefined) {
         return
       }
-      let extra = {a: 1, b: 'c'};
-      (new WorkspaceApiHelper()).runTask(this.workspaceId, this.taskId, this.file, extra)
+      (new WorkspaceApiHelper()).runTask(this.workspaceId, this.taskId, this.file, this.extraInfo)
         .then(rsp => {
           console.log(rsp.data)
         })

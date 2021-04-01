@@ -27,6 +27,7 @@ export default {
     this.extraInfo.quote = null
     this.extraInfo.delimiter = null
     this.extraInfo.encoding = null
+    this.extraInfo.type = 1
   },
   data () {
     return {
