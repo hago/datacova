@@ -61,6 +61,7 @@ class TaskExecutionData(config: DatabaseConfig) : CoVaDatabase(config) {
             fileInfo = ExecutionFileInfo.getFileInfo(rs.getString("fileinfo"))
             detail = ExecutionDetail.fromString(rs.getString("detail"))
             task = Task.fromJson(rs.getString("task"))
+            id = rs.getInt("id")
         }
         return te
     }
