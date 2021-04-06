@@ -40,7 +40,7 @@ export default {
   created: function () {
     this.extraInfo.sheetIndex = 0
     this.extraInfo.sheetName = null
-    this.extraInfo.type = file.name.indexOf('xlsx') > 0 ? 3 : 2
+    this.extraInfo.type = this.file.name.indexOf('xlsx') > 0 ? 3 : 2
   },
   data () {
     return {
