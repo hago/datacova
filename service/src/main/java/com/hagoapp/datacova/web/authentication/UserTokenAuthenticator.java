@@ -4,7 +4,7 @@ import com.hagoapp.datacova.CoVaLogger;
 import com.hagoapp.datacova.user.UserInfo;
 import com.hagoapp.datacova.util.web.AuthUtils;
 import io.vertx.ext.web.RoutingContext;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
 
 public class UserTokenAuthenticator extends Authenticator {
 

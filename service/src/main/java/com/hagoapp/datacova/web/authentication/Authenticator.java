@@ -3,7 +3,7 @@ package com.hagoapp.datacova.web.authentication;
 import com.hagoapp.datacova.CoVaLogger;
 import com.hagoapp.datacova.user.UserInfo;
 import io.vertx.ext.web.RoutingContext;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;

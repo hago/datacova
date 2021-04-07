@@ -12,7 +12,7 @@ import com.hagoapp.datacova.Application;
 import com.hagoapp.datacova.CoVaLogger;
 import com.hagoapp.datacova.config.WebConfig;
 import com.hagoapp.datacova.web.WebManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
 import picocli.CommandLine;
 
 import java.time.LocalDateTime;

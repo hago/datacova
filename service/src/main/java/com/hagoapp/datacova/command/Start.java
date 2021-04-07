@@ -13,7 +13,7 @@ import com.hagoapp.datacova.CoVaLogger;
 import com.hagoapp.datacova.config.CoVaConfig;
 import com.hagoapp.datacova.execution.Service;
 import com.hagoapp.datacova.web.WebManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
 import picocli.CommandLine;
 
 import java.util.List;

@@ -17,8 +17,8 @@ import com.hagoapp.datacova.entity.execution.ExecutionDetail;
 import com.hagoapp.datacova.entity.execution.TaskExecution;
 import com.hagoapp.datacova.execution.TaskExecutionWatcher;
 import com.hagoapp.datacova.execution.Worker;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "exec", description = "execute a task")
@@ -27,12 +27,11 @@ public class Execute extends CommandWithConfig implements TaskExecutionWatcher {
     @CommandLine.Option(names = {"-i", "--id"}, description = "id of task execution to be executed", required = true)
     private int taskExecId;
 
-    private Logger logger;
+    private final Logger logger = CoVaLogger.getLogger();
 
     @Override
     public Integer call() throws CoVaException {
         CoVaConfig.loadConfig(configFile);
-        logger = CoVaLogger.getLogger();
         try (TaskExecutionData db = new TaskExecutionData(CoVaConfig.getConfig().getDatabase())) {
             TaskExecution taskExecution = db.getTaskExecution(taskExecId);
             if (taskExecution == null) {

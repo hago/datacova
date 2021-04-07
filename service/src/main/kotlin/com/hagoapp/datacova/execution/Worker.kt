@@ -121,7 +121,7 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
         try {
             logger.info("Execution ${te.id} of Task ${te.task.name}(${te.taskId}) ${if (result.isSucceeded) "succeeded" else "failed"}")
         } catch (ex: Throwable) {
-            logger.fatal("unexpected error in Execution Service call onComplete back: $ex")
+            logger.error("unexpected error in Execution Service call onComplete back: $ex")
             ex.printStackTrace()
         }
     }

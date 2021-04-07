@@ -12,7 +12,7 @@ import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.config.DatabaseConfig
-import org.apache.logging.log4j.Logger
+import org.slf4j.Logger
 import java.io.Closeable
 import java.sql.Connection
 import java.sql.DriverManager

@@ -13,10 +13,10 @@ import com.hagoapp.datacova.CoVaException;
 import com.hagoapp.datacova.CoVaLogger;
 import com.hagoapp.datacova.MapSerializer;
 import com.hagoapp.datacova.util.StackTraceWriter;
-import org.apache.logging.log4j.core.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
+import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
