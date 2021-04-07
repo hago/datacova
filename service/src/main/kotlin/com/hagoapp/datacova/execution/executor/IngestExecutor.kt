@@ -24,6 +24,10 @@ class IngestExecutor : BaseTaskActionExecutor() {
             ?: throw CoVaException()
         val d2t = D2TProcess(data, connection.configuration, action.ingestOptions)
         val result = d2t.run()
+        if (!result.isSucceeded) {
+            val ex = result.getErrors().values.first()
+            throw CoVaException("Ingestion failed: ${ex.message}", ex)
+        }
     }
 
     override fun getActionType(): TaskActionType {
