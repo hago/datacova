@@ -13,6 +13,7 @@ import com.hagoapp.datacova.entity.action.TaskAction
 import com.hagoapp.datacova.entity.execution.ExecutionActionDetail
 import com.hagoapp.datacova.entity.execution.ExecutionDetail
 import com.hagoapp.datacova.entity.execution.TaskExecution
+import com.hagoapp.datacova.util.StackTraceWriter
 import com.hagoapp.f2t.DataTable
 import com.hagoapp.f2t.FileParser
 
@@ -68,12 +69,18 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
                 currentActionDetail!!.isSucceeded = true
                 observers.forEach { it.onActionComplete(taskExec, i, currentActionDetail!!) }
             } catch (ex: Exception) {
-                ex.printStackTrace()
+                logger.error("Error occurs in action $i: ${action.name} of execution ${taskExec.id}: ${ex.message}")
+                StackTraceWriter.write(ex, logger)
                 currentActionDetail!!.isSucceeded = false
                 currentActionDetail!!.errors.add(ex)
                 observers.forEach { it.onActionComplete(taskExec, i, currentActionDetail!!) }
-                if (action.extra.continueNextWhenError) continue
-                else break
+                if (action.extra.continueNextWhenError) {
+                    logger.info("continue next action of execution ${taskExec.id}")
+                    continue
+                } else {
+                    logger.info("abort following actions of execution ${taskExec.id}")
+                    break
+                }
             }
         }
         detail.endTiming()
