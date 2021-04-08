@@ -14,24 +14,43 @@ import com.hagoapp.datacova.entity.action.TaskActionType
 import com.hagoapp.datacova.entity.action.ingest.TaskActionIngest
 import com.hagoapp.f2t.D2TProcess
 import com.hagoapp.f2t.DataTable
+import com.hagoapp.f2t.ProgressNotify
+import com.hagoapp.f2t.datafile.ParseResult
 
-class IngestExecutor : BaseTaskActionExecutor() {
+class IngestExecutor : BaseTaskActionExecutor(), ProgressNotify {
+    private lateinit var taskAction: TaskActionIngest
+    private lateinit var result: ParseResult
+
     override fun execute(action: TaskAction, data: DataTable) {
         if (action !is TaskActionIngest) {
             throw CoVaException()
         }
+        taskAction = action
         val connection = ConnectionData().getWorkspaceConnection(action.connectionId)
             ?: throw CoVaException()
         val d2t = D2TProcess(data, connection.configuration, action.ingestOptions)
-        val result = d2t.run()
-        if (!result.isSucceeded) {
-            val ex = result.getErrors().values.first()
-            throw CoVaException("Ingestion failed: ${ex.message}", ex)
-        }
+        d2t.progressNotifier = this
+        result = d2t.run()
     }
 
     override fun getActionType(): TaskActionType {
         return TaskActionType.DatabaseIngest
+    }
+
+    override fun onStart() {
+        watcher?.onProgressUpdate(taskAction, 0f)
+    }
+
+    override fun onComplete(p0: ParseResult) {
+        if (p0.isSucceeded) {
+            watcher?.onProgressUpdate(taskAction, 100f)
+        } else {
+            watcher?.onError(taskAction, Exception(p0.getErrors().values.first()))
+        }
+    }
+
+    override fun onProgress(p0: Float) {
+        watcher?.onProgressUpdate(taskAction, p0)
     }
 
 }
