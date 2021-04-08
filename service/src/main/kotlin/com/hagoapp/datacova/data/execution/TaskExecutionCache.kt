@@ -8,16 +8,28 @@
 
 package com.hagoapp.datacova.data.execution
 
+import com.hagoapp.datacova.data.RedisCacheReader
+import com.hagoapp.datacova.entity.execution.TaskExecution
+
 class TaskExecutionCache {
     companion object {
-        @JvmStatic
-        fun getTaskExecutions(workspaceId: Int) {
 
-        }
+        private const val TASK_EXECUTION = "TASK_EXECUTION"
 
         @JvmStatic
-        fun getExecutionOfTask(taskId: Int) {
-
+        fun getExecutionOfTask(taskId: Int): TaskExecution? {
+            return RedisCacheReader.readCachedData(
+                TASK_EXECUTION,
+                3600,
+                object : RedisCacheReader.GenericLoader<TaskExecution> {
+                    override fun perform(vararg params: Any?): TaskExecution? {
+                        val id = params[0].toString().toInt()
+                        return TaskExecutionData().getTaskExecution(id)
+                    }
+                },
+                TaskExecution::class.java,
+                taskId
+            )
         }
     }
 }
