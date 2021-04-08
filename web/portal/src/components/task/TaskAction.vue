@@ -34,21 +34,21 @@
         <img src="../../assets/gear-loading.gif" v-show="loading" />
       </div>
     </div>
-    <TaskActionIngest v-if="action.type == 'DatabaseIngest'"
+    <TaskActionIngest v-if="action.type == 1"
       v-bind:action="action"
       v-bind:workspaceId="workspaceId"
       v-bind:actionIndex="actionIndex"
       v-on:onLoadingStatusChange="updateLoadingStatus"
       v-on:errorOccurred="onErrorOccurred"
       ></TaskActionIngest>
-    <TaskActionVerify v-if="action.type == 'Verify'"
+    <TaskActionVerify v-if="action.type == 2"
       v-bind:action="action"
       v-bind:workspaceId="workspaceId"
       v-bind:actionIndex="actionIndex"
       v-on:onLoadingStatusChange="updateLoadingStatus"
       v-on:errorOccurred="onErrorOccurred"
       ></TaskActionVerify>
-    <TaskActionDistribute v-if="action.type == 'Distribute'"
+    <TaskActionDistribute v-if="action.type == 3"
       v-bind:action="action"
       v-bind:workspaceId="workspaceId"
       v-bind:actionIndex="actionIndex"
@@ -78,9 +78,9 @@ export default {
   data () {
     return {
       actionTypes: {
-        DatabaseIngest: 'Databse Ingest',
-        Verify: 'Data Verify',
-        Distribute: 'Data Distribute'
+        1: 'Databse Ingest',
+        2: 'Data Verify',
+        3: 'Data Distribute'
       },
       loading: false
     }
