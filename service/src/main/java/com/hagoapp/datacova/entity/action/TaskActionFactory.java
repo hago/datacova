@@ -24,7 +24,7 @@ import java.util.*;
 
 public class TaskActionFactory {
 
-    private static final Map<TaskActionType, Class<? extends TaskAction>> typeActionMap = new HashMap<>();
+    private static final Map<Integer, Class<? extends TaskAction>> typeActionMap = new HashMap<>();
 
     private static final Logger logger = CoVaLogger.getLogger();
 
@@ -37,7 +37,7 @@ public class TaskActionFactory {
                 var pre = typeActionMap.put(template.getType(), actionClass);
                 logger.info("TaskAction: {} registered as type {}", actionClass.getCanonicalName(), template.getType());
                 if (pre != null) {
-                    logger.error("TaskAction: {} registered as type {} was overrode!", pre.getCanonicalName(), template.getType());
+                    logger.error("TaskAction: {} registered as type {} was overridden!", pre.getCanonicalName(), template.getType());
                 }
             } catch (InstantiationException | IllegalAccessException |
                     InvocationTargetException | NoSuchMethodException e) {
@@ -66,12 +66,11 @@ public class TaskActionFactory {
     }
 
     private static TaskAction doGetTaskAction(String json, Map<String, Object> map) throws CoVaException {
-        String actionName = map.get("type").toString();
         try {
-            TaskActionType type = TaskActionType.valueOf(actionName);
+            int type = Integer.parseInt(map.get("type").toString());
             return new Gson().fromJson(json, typeActionMap.get(type));
         } catch (Exception e) {
-            logger.error("Error for type: {}", actionName);
+            logger.error("Error for type: {}", map.get("type"));
             throw new CoVaException("Task Action Error", e);
         }
     }

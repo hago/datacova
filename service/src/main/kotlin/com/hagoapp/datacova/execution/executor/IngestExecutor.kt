@@ -10,8 +10,8 @@ package com.hagoapp.datacova.execution.executor
 import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.data.workspace.ConnectionData
 import com.hagoapp.datacova.entity.action.TaskAction
-import com.hagoapp.datacova.entity.action.TaskActionType
 import com.hagoapp.datacova.entity.action.ingest.TaskActionIngest
+import com.hagoapp.datacova.entity.action.ingest.TaskActionIngest.TASK_ACTION_TYPE_INGEST
 import com.hagoapp.f2t.D2TProcess
 import com.hagoapp.f2t.DataTable
 import com.hagoapp.f2t.ProgressNotify
@@ -33,8 +33,8 @@ class IngestExecutor : BaseTaskActionExecutor(), ProgressNotify {
         result = d2t.run()
     }
 
-    override fun getActionType(): TaskActionType {
-        return TaskActionType.DatabaseIngest
+    override fun getActionType(): Int {
+        return TASK_ACTION_TYPE_INGEST
     }
 
     override fun onStart() {

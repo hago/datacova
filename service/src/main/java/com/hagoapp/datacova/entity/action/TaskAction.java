@@ -8,7 +8,7 @@
 package com.hagoapp.datacova.entity.action;
 
 public class TaskAction {
-    protected TaskActionType type;
+    protected int type;
     private TaskActionExtra extra = new TaskActionExtra();
     private String name;
     private String description = "";
@@ -17,7 +17,7 @@ public class TaskAction {
         //
     }
 
-    public TaskActionType getType() {
+    public int getType() {
         return type;
     }
 

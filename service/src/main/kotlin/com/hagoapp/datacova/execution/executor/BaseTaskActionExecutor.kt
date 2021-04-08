@@ -9,7 +9,6 @@
 package com.hagoapp.datacova.execution.executor
 
 import com.hagoapp.datacova.entity.action.TaskAction
-import com.hagoapp.datacova.entity.action.TaskActionType
 import com.hagoapp.datacova.execution.TaskExecutionActionWatcher
 import com.hagoapp.f2t.DataTable
 import java.util.*
@@ -29,5 +28,5 @@ abstract class BaseTaskActionExecutor {
 
     abstract fun execute(action: TaskAction, data: DataTable)
 
-    abstract fun getActionType(): TaskActionType
+    abstract fun getActionType(): Int
 }

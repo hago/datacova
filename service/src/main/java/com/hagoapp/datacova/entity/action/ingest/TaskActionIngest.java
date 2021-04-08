@@ -8,16 +8,17 @@
 package com.hagoapp.datacova.entity.action.ingest;
 
 import com.hagoapp.datacova.entity.action.TaskAction;
-import com.hagoapp.datacova.entity.action.TaskActionType;
 
 public class TaskActionIngest extends TaskAction {
+
+    public static final int TASK_ACTION_TYPE_INGEST = 1;
 
     private int connectionId;
     private IngestOptions ingestOptions = new IngestOptions();
 
     public TaskActionIngest() {
         super();
-        type = TaskActionType.DatabaseIngest;
+        type = TASK_ACTION_TYPE_INGEST;
         ingestOptions.setBatchColumnName("BatchId");
     }
 
@@ -38,7 +39,7 @@ public class TaskActionIngest extends TaskAction {
     }
 
     @Override
-    public TaskActionType getType() {
-        return TaskActionType.DatabaseIngest;
+    public int getType() {
+        return TASK_ACTION_TYPE_INGEST;
     }
 }

@@ -8,17 +8,17 @@
 package com.hagoapp.datacova.entity.action.idle;
 
 import com.hagoapp.datacova.entity.action.TaskAction;
-import com.hagoapp.datacova.entity.action.TaskActionType;
 
 public class TaskActionIdle extends TaskAction {
 
+    public static final int TASK_ACTION_TYPE_IDLE = 0;
     private Configuration configuration;
     private boolean result = true;
     private String failReason = "Idle Action Fail";
 
     public TaskActionIdle() {
         super();
-        type = TaskActionType.Idle;
+        type = TASK_ACTION_TYPE_IDLE;
     }
 
     public Configuration getConfiguration() {
@@ -46,7 +46,7 @@ public class TaskActionIdle extends TaskAction {
     }
 
     @Override
-    public TaskActionType getType() {
-        return TaskActionType.Idle;
+    public int getType() {
+        return TASK_ACTION_TYPE_IDLE;
     }
 }
