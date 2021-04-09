@@ -145,6 +145,17 @@ class WorkspaceApiHelper {
     return rsp
   }
 
+  async parseExcel (file) {
+    let form = new FormData()
+    form.append('file', file, file.name)
+    let rsp = await axios({
+      method: 'POST',
+      url: `${this.urlprefix}/api/excel/parse`,
+      data: form
+    })
+    return rsp
+  }
+
   async loadTaskExecutions (start = 0, size = 10) {
     let rsp = await axios({
       method: 'GET',

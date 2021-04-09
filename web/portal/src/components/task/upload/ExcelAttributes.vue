@@ -26,16 +26,21 @@
       <div class="form-group col-3">
         <input type="text" v-model="extraInfo.sheetName" class="form-control" :disabled="useIndex"/>
       </div>
+      <div class="form-group">
+        <button class="btn btn-primary form-control" v-on:click="parse()">Parse</button>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import WorkspaceApiHelper from '@/apis/workspace.js'
+
 export default {
   name: 'ExcelAttributes',
   props: {
     extraInfo: Object,
-    file: Object
+    file: File
   },
   created: function () {
     this.extraInfo.sheetIndex = 0
@@ -54,6 +59,11 @@ export default {
     },
     checkName () {
       this.useIndex = !this.useName
+    },
+    parse () {
+      (new WorkspaceApiHelper()).parseExcel(this.file).then(rsp => {
+        console.log(rsp.data)
+      })
     }
   }
 }
