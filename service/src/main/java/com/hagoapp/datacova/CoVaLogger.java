@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CoVaLogger {
-    private static Logger logger = LoggerFactory.getLogger(CoVaLogger.class.getPackageName());
+    private static final Logger logger = LoggerFactory.getLogger(CoVaLogger.class.getPackageName());
 
     public static synchronized Logger getLogger() {
         return logger;
