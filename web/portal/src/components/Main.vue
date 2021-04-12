@@ -65,12 +65,12 @@
         </b-tab>
       </b-tabs>
     </div>
-    <!-- <div class="centerpanel">
+    <div class="centerpanel">
       <TaskExecutionList v-if="workspaceIndex >= 0"
         v-bind:workspace="workspaces[workspaceIndex]"
         v-bind:loginStatus="loginStatus"
         ></TaskExecutionList>
-    </div> -->
+    </div>
   </div>
 </template>
 
