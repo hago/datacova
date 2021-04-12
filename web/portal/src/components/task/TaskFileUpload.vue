@@ -38,8 +38,11 @@ import router from '../../router'
 import CsvAttributes from './upload/CsvAttributes'
 import ExcelAttributes from './upload/ExcelAttributes'
 import UnsupportedFile from './upload/UnsupportedFile'
-
+import Vue from 'vue'
+import Toasted from 'vue-toasted'
 import WorkspaceApiHelper from '@/apis/workspace.js'
+
+Vue.use(Toasted)
 const dateFormat = require('dateformat')
 
 export default {
@@ -105,6 +108,14 @@ export default {
       (new WorkspaceApiHelper()).runTask(this.workspaceId, this.taskId, this.file, this.extraInfo)
         .then(rsp => {
           console.log(rsp.data)
+          Vue.toasted.show('file uploaded, execution is queued.', {
+            position: 'bottom-center',
+            duration: 1000,
+            type: 'success',
+            onComplete: function () {
+              history.back()
+            }
+          })
         })
     }
   }
