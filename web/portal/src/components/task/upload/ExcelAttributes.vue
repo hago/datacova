@@ -21,10 +21,15 @@
     </div>
     <div class="form-row">
       <div class="form-group col-3">
-        <input type="number" v-model="extraInfo.sheetIndex" class="form-control" :disabled="useName" min="0" />
+        <input type="number" v-model="extraInfo.sheetIndex" class="form-control" :disabled="useName" min="0" :max="maxSheetIndex" />
       </div>
-      <div class="form-group col-3">
+      <div class="form-group col-3" v-if="!parsed">
         <input type="text" v-model="extraInfo.sheetName" class="form-control" :disabled="useIndex"/>
+      </div>
+      <div class="form-group col-3" v-if="parsed">
+        <select v-model="extraInfo.sheetName" class="form-control" :disabled="useIndex">
+          <option v-for="sheet in info" v-bind:key="sheet.name" v-bind:id="sheet.name">{{ sheet.name }}</option>
+        </select>
       </div>
       <div class="form-group">
         <button class="btn btn-primary form-control" v-on:click="parse()">Parse</button>
@@ -47,10 +52,18 @@ export default {
     this.extraInfo.sheetName = null
     this.extraInfo.type = this.file.name.indexOf('xlsx') > 0 ? 3 : 2
   },
+  computed: {
+    sheetNames: function () {
+      return this.info.map(sheet => sheet.name)
+    }
+  },
   data () {
     return {
       useIndex: true,
-      useName: false
+      useName: false,
+      info: [],
+      maxSheetIndex: false,
+      parsed: false
     }
   },
   methods: {
@@ -62,7 +75,10 @@ export default {
     },
     parse () {
       (new WorkspaceApiHelper()).parseExcel(this.file).then(rsp => {
-        console.log(rsp.data)
+        // console.log(rsp.data)
+        this.maxSheetIndex = rsp.data.data.sheets.length - 1
+        this.info = rsp.data.data.sheets
+        this.parsed = true
       })
     }
   }

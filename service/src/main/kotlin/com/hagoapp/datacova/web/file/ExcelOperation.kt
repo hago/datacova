@@ -33,13 +33,12 @@ class ExcelOperation {
             return
         }
         val file = context.fileUploads().first()
-        ExcelDataFileReader().use { reader ->
-            reader.open(FileInfoExcel())
-            val info = ExcelDataFileParser(file.uploadedFileName()).getInfo()
-            ResponseHelper.sendResponse(context, HttpResponseStatus.OK, mapOf(
+        val info = ExcelDataFileParser(file.uploadedFileName()).getInfo()
+        ResponseHelper.sendResponse(
+            context, HttpResponseStatus.OK, mapOf(
                 "code" to 0,
                 "data" to info
-            ))
-        }
+            )
+        )
     }
 }
