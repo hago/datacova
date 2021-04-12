@@ -156,10 +156,10 @@ class WorkspaceApiHelper {
     return rsp
   }
 
-  async loadTaskExecutions (start = 0, size = 10) {
+  async loadTaskExecutions (workspaceId, start = 0, size = 10) {
     let rsp = await axios({
       method: 'GET',
-      url: `${this.urlprefix}/api/execution/list/${start}/${size}`
+      url: `${this.urlprefix}/api/workspace/${workspaceId}/executions/${start}/${size}`
     })
     return rsp
   }

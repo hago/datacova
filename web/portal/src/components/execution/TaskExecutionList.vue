@@ -12,7 +12,7 @@
       <div class="form-row" v-for="exe in executions" v-bind:key="exe.id">
         <div class="col-4">{{ exe.task.name }}</div>
         <div class="col-4">{{ fmtTime(exe.addTime) }}</div>
-        <div class="col-3">{{ exe.addBy }}</div>
+        <div class="col-3">{{ exe.addByUser.name }}</div>
         <div class="col-1" style="float: right">
           <img src="@/assets/oops.png" class="icon" v-if="exe.status == '-1'" title="Failed" />
           <img src="@/assets/queuing.png" class="icon" v-if="exe.status == '0'" title="Queueing" />
@@ -27,6 +27,7 @@
 <script>
 import Vue from 'vue'
 import WorkspaceApiHelper from '@/apis/workspace.js'
+import UserApiHelper from '@/apis/userapi.js'
 import Toasted from 'vue-toasted'
 const dateFormat = require('dateformat')
 
@@ -44,17 +45,24 @@ export default {
     }
   },
   mounted: function () {
-    this.loadExecutions(this.workspace.id)
+    this.loadExecutions(this.workspace.workspace.id)
   },
   watch: {
     workspace: function (newWorkspace) {
-      this.loadExecutions(newWorkspace.id)
+      this.loadExecutions(newWorkspace.workspace.id)
     }
   },
   methods: {
     loadExecutions: function (workspaceId) {
-      (new WorkspaceApiHelper()).loadTaskExecutions().then(rsp => {
-        this.executions = rsp.data.data.executions
+      (new WorkspaceApiHelper()).loadTaskExecutions(workspaceId).then(rsp => {
+        let executionList = rsp.data.data.executions;
+        (new UserApiHelper()).batchGetUser(executionList.map(e => e.addBy)).then(rsp => {
+          let users = rsp.data.data
+          this.executions = executionList.map(e => {
+            e.addByUser = users.find(u => u.id === e.addBy)
+            return e
+          })
+        })
       }).catch(err => {
         this.$toasted.show(err.response.data.error.message, {
           position: 'bottom-center',
