@@ -83,6 +83,13 @@ class RedisCacheReader<T> private constructor() {
             val reader = builder.create()
             return reader.clearData(*params)
         }
+
+        @JvmStatic
+        fun createCacheKey(identity: String, vararg params: Any?): String {
+            val paramIdentity = params.filterNotNull().joinToString("|") { it.toString() }
+            return "$identity||$paramIdentity"
+        }
+
     }
 
     private var redis: JedisManager? = null
@@ -197,11 +204,13 @@ class RedisCacheReader<T> private constructor() {
     }
 
     private fun createKey(vararg params: Any?): String {
-        val paramIdentity = params.filterNotNull().joinToString("|") { it.toString() }
         return when {
-            cacheName != null -> "$cacheName||$paramIdentity"
-            loadFunction::class.java.canonicalName != null -> "${loadFunction::class.java.canonicalName}||$paramIdentity"
-            else -> "||$paramIdentity"
+            cacheName != null -> createCacheKey(cacheName!!, *params)
+            loadFunction::class.java.canonicalName != null -> createCacheKey(
+                loadFunction::class.java.canonicalName,
+                *params
+            )
+            else -> createCacheKey("", *params)
         }
     }
 
