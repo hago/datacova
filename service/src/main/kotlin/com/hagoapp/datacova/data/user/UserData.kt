@@ -115,7 +115,6 @@ class UserData(config: DatabaseConfig) : CoVaDatabase(config) {
         }
         val ret = idList.map { null }.toMutableList<UserInfo?>()
         val sql = "select * from users where id in (${idList.joinToString(", ") { "?" }})"
-        println(sql)
         connection.prepareStatement(sql).use { stmt ->
             idList.forEachIndexed { index, id -> stmt.setLong(index + 1, id) }
             stmt.executeQuery().use { rs ->

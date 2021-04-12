@@ -40,11 +40,9 @@ class UserCache {
                     }
                 }, UserInfo::class.java, id)
             }.toMutableList()
-            println(list)
             val nullUsers = list.mapIndexed { i, info ->
                 if (info == null) Pair(idList[i], i) else null
             }.filterNotNull().toMap()
-            println(nullUsers)
             JedisManager(CoVaConfig.getConfig().redis).use {
                 val jedis = it.jedis
                 val gson = Gson()
