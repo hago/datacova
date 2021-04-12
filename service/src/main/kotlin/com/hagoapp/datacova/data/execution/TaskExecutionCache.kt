@@ -9,7 +9,9 @@
 package com.hagoapp.datacova.data.execution
 
 import com.google.gson.reflect.TypeToken
+import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.RedisCacheReader
+import com.hagoapp.datacova.data.redis.JedisManager
 import com.hagoapp.datacova.entity.execution.TaskExecution
 
 class TaskExecutionCache {
@@ -62,6 +64,14 @@ class TaskExecutionCache {
                 token.type,
                 workspaceId, start, size
             ) ?: listOf()
+        }
+
+        @JvmStatic
+        fun clearWorkspaceTaskExecutions(workspaceId: Int) {
+            JedisManager(CoVaConfig.getConfig().redis).use {
+                val jedis = it.jedis
+                jedis.del(*jedis.keys("$TASK_EXECUTION_LIST_OF_WORKSPACE||$workspaceId*").toTypedArray())
+            }
         }
     }
 }
