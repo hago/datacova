@@ -8,13 +8,16 @@
 
 package com.hagoapp.datacova.data.execution
 
+import com.google.gson.reflect.TypeToken
 import com.hagoapp.datacova.data.RedisCacheReader
 import com.hagoapp.datacova.entity.execution.TaskExecution
 
 class TaskExecutionCache {
     companion object {
 
+        const val TASK_EXECUTION_DEFAULT_PAGE_SIZE = 10
         private const val TASK_EXECUTION = "TASK_EXECUTION"
+        private const val TASK_EXECUTION_LIST_OF_WORKSPACE = "TASK_EXECUTION_LIST_OF_WORKSPACE"
 
         @JvmStatic
         fun getExecutionOfTask(taskId: Int): TaskExecution? {
@@ -30,6 +33,35 @@ class TaskExecutionCache {
                 TaskExecution::class.java,
                 taskId
             )
+        }
+
+        @JvmStatic
+        fun getExecutionsOfWorkspace(workspaceId: Int): List<TaskExecution> {
+            return getExecutionsOfWorkspace(workspaceId, TASK_EXECUTION_DEFAULT_PAGE_SIZE)
+        }
+
+        @JvmStatic
+        fun getExecutionsOfWorkspace(workspaceId: Int, size: Int): List<TaskExecution> {
+            return getExecutionsOfWorkspace(workspaceId, 0, size)
+        }
+
+        @JvmStatic
+        fun getExecutionsOfWorkspace(workspaceId: Int, start: Int, size: Int): List<TaskExecution> {
+            val token = object : TypeToken<List<TaskExecution>>() {}
+            return RedisCacheReader.readCachedData(
+                TASK_EXECUTION_LIST_OF_WORKSPACE,
+                3600,
+                object : RedisCacheReader.GenericLoader<List<TaskExecution>> {
+                    override fun perform(vararg params: Any?): List<TaskExecution> {
+                        val id = params[0].toString().toInt()
+                        val offset = params[1].toString().toInt()
+                        val limit = params[2].toString().toInt()
+                        return TaskExecutionData().getTaskExecutionsOfWorkspace(id, offset, limit)
+                    }
+                },
+                token.type,
+                workspaceId, start, size
+            ) ?: listOf()
         }
     }
 }

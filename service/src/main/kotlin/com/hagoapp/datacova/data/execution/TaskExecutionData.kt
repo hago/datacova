@@ -65,4 +65,20 @@ class TaskExecutionData(config: DatabaseConfig) : CoVaDatabase(config) {
         }
         return te
     }
+
+    fun getTaskExecutionsOfWorkspace(workspaceId: Int, start: Int, size: Int): List<TaskExecution> {
+        val sql = "select * from taskexecution where task->>'workspaceId'=? order by id desc offset ? limit ?"
+        connection.prepareStatement(sql).use { stmt ->
+            stmt.setString(1, workspaceId.toString())
+            stmt.setInt(2, start)
+            stmt.setInt(3, size)
+            val executions = mutableListOf<TaskExecution>()
+            stmt.executeQuery().use { rs ->
+                while (rs.next()) {
+                    executions.add(row2TaskExecution(rs))
+                }
+            }
+            return executions
+        }
+    }
 }
