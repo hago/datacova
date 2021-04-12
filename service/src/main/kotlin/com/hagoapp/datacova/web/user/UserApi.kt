@@ -7,6 +7,9 @@
 
 package com.hagoapp.datacova.web.user
 
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import com.hagoapp.datacova.data.user.UserCache
 import com.hagoapp.datacova.data.user.UserData
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.annotation.WebEndPoint
@@ -26,5 +29,17 @@ class UserApi {
         val word = context.bodyAsString
         val users = UserData().searchUser(word)
         ResponseHelper.sendResponse(context, HttpResponseStatus.OK, mapOf("code" to 0, "data" to users))
+    }
+
+    @WebEndPoint(
+        path = "/api/user/batch",
+        methods = [HttpMethod.POST],
+        authTypes = [AuthType.UserToken]
+    )
+    fun batchGetUserInfo(context: RoutingContext) {
+        val token = object : TypeToken<List<Long>>() {}
+        val userIdList = Gson().fromJson<List<Long>>(context.bodyAsString, token.type)
+        val userInfoList = UserCache.batchGetUser(userIdList)
+        ResponseHelper.sendResponse(context, HttpResponseStatus.OK, mapOf("code" to 0, "data" to userInfoList))
     }
 }
