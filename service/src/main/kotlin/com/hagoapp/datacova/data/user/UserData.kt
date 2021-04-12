@@ -108,4 +108,24 @@ class UserData(config: DatabaseConfig) : CoVaDatabase(config) {
             return users
         }
     }
+
+    fun batchGetUser(idList: Set<Long>): List<UserInfo?> {
+        if (idList.isEmpty()) {
+            return listOf()
+        }
+        val ret = idList.map { null }.toMutableList<UserInfo?>()
+        val sql = "select * from users where id in (${idList.joinToString(", ") { "?" }})"
+        println(sql)
+        connection.prepareStatement(sql).use { stmt ->
+            idList.forEachIndexed { index, id -> stmt.setLong(index + 1, id) }
+            stmt.executeQuery().use { rs ->
+                while (rs.next()) {
+                    val userInfo = row2User(rs)
+                    val index = idList.indexOf(userInfo.id)
+                    ret[index] = userInfo
+                }
+            }
+        }
+        return ret
+    }
 }
