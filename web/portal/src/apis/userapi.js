@@ -47,6 +47,16 @@ class UserApiHelper {
     })
     return rsp
   }
+
+  async batchGetUser (idList) {
+    let deduplicated = idList.filter((e, i, arr) => arr.indexOf(e) === i)
+    let rsp = await axios({
+      method: 'POST',
+      url: `${this.urlprefix}/api/user/batch`,
+      data: deduplicated
+    })
+    return rsp
+  }
 }
 
 export default UserApiHelper
