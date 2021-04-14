@@ -28,6 +28,15 @@ public class WebConfig {
     private String uploadTempDirectory = "./";
     private long uploadSizeLimit = -1;
     private boolean outputStackTrace = true;
+    private List<WebSocketConfig> webSockets;
+
+    public List<WebSocketConfig> getWebSockets() {
+        return webSockets;
+    }
+
+    public void setWebSockets(List<WebSocketConfig> webSockets) {
+        this.webSockets = webSockets;
+    }
 
     public boolean isOutputStackTrace() {
         return outputStackTrace;
