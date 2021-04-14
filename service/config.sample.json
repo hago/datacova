@@ -8,12 +8,19 @@
       "192.168.0.0/24",
       "10.*.*.*"
     ],
-    "privilegedIpAddresses": ["127.0.0.1"],
+    "privilegedIpAddresses": [
+      "127.0.0.1"
+    ],
     "tempDirectory": "/tmp",
     "uploadTempDirectory": "/tmp",
     "uploadSizeLimit": -1,
     "outputStackTrace": true
   },
+  "webSocket": [
+    {
+      "route": "/event"
+    }
+  ],
   "database": {
     "host": "127.0.0.1",
     "port": 5432,
