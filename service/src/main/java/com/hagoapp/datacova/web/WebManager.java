@@ -8,15 +8,19 @@
 
 package com.hagoapp.datacova.web;
 
+import com.google.gson.Gson;
 import com.hagoapp.datacova.CoVaException;
 import com.hagoapp.datacova.CoVaLogger;
 import com.hagoapp.datacova.config.WebConfig;
+import com.hagoapp.datacova.config.WebSocketConfig;
+import com.hagoapp.datacova.user.UserInfo;
 import com.hagoapp.datacova.util.StackTraceWriter;
 import com.hagoapp.datacova.util.http.ResponseHelper;
 import com.hagoapp.datacova.web.annotation.WebEndPoint;
 import com.hagoapp.datacova.web.authentication.AuthType;
 import com.hagoapp.datacova.web.authentication.Authenticator;
 import com.hagoapp.datacova.web.authentication.AuthenticatorFactory;
+import com.hagoapp.datacova.web.websocket.*;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
@@ -34,6 +38,7 @@ import org.reflections.scanners.MethodAnnotationsScanner;
 import org.reflections.scanners.SubTypesScanner;
 import org.slf4j.Logger;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -72,6 +77,9 @@ public class WebManager {
             webServer = vertx.createHttpServer(webOptions);
             Router router = findRouter(vertx, packageNames);
             webServer.requestHandler(router);
+            if (config.getWebSockets() != null) {
+                setupWebSocket(config.getWebSockets(), packageNames, router);
+            }
             webServer.listen(config.getPort(), config.getBindIp());
         }
     }
@@ -133,6 +141,42 @@ public class WebManager {
             createRouteHandlers(router, handler);
         }
         return router;
+    }
+
+    private void setupWebSocket(List<WebSocketConfig> webSockets, List<String> packageNames, Router router) {
+        final List<String> acceptablePaths = webSockets.stream()
+                .map(config -> config.getRoute().toLowerCase()).collect(Collectors.toList());
+        webServer.webSocketHandler(event -> {
+            String path = event.path().toLowerCase();
+            if (!acceptablePaths.contains(path)) {
+                event.reject(HttpResponseStatus.NOT_FOUND.code());
+                return;
+            }
+            UserInfo userInfo = Auth.authenticate(event);
+            if (userInfo == null) {
+                event.reject(HttpResponseStatus.FORBIDDEN.code());
+                return;
+            }
+            WebSocketManager wsm = WebSocketManager.getManager();
+            wsm.addUserSession(userInfo, event);
+            event.textMessageHandler(msg -> {
+                MessageHandlerFactory factory = null;
+                try {
+                    factory = new MessageHandlerFactory(msg);
+                    var handler = factory.createMessageHandler();
+                    var message = new Gson().fromJson(msg, ClientMessage.class);
+                    if ((handler == null) || (message == null)) {
+                        throw new IOException(String.format("Message can't be recognized: %s", msg));
+                    } else {
+                        var response = handler.handleMessage(event, message);
+                        event.writeTextMessage(new Gson().toJson(response));
+                    }
+                } catch (Exception e) {
+                    event.writeTextMessage(new ErrorResponseMessage(e.getMessage()).toJson());
+                }
+            });
+            event.closeHandler(ignore -> wsm.removeSession(event));
+        });
     }
 
     private void createRouteHandlers(Router router, WebHandler handler) {
