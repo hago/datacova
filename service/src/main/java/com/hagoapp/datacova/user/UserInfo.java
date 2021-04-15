@@ -159,6 +159,7 @@ public class UserInfo implements JsonStringify {
     @Override
     public String toString() {
         return "UserInfo{" +
+                "id='" + id + '\'' +
                 "userId='" + userId + '\'' +
                 ", provider='" + provider + '\'' +
                 ", userType=" + userType +
