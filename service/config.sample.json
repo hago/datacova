@@ -14,13 +14,13 @@
     "tempDirectory": "/tmp",
     "uploadTempDirectory": "/tmp",
     "uploadSizeLimit": -1,
-    "outputStackTrace": true
+    "outputStackTrace": true,
+    "webSockets": [
+      {
+        "route": "/api/event"
+      }
+    ]
   },
-  "webSocket": [
-    {
-      "route": "/event"
-    }
-  ],
   "database": {
     "host": "127.0.0.1",
     "port": 5432,
