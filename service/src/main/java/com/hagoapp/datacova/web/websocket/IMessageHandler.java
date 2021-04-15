@@ -8,11 +8,14 @@
 package com.hagoapp.datacova.web.websocket;
 
 import io.vertx.core.http.ServerWebSocket;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public interface IMessageHandler {
     List<Integer> getHandledMessageTypes();
-    ServerMessage handleMessage(ServerWebSocket serverWebSocket, ClientMessage message);
+
+    ServerMessage handleMessage(@NotNull ServerWebSocket serverWebSocket, @NotNull ClientMessage message);
+
     Class<? extends ClientMessage> getMessageType(int type);
 }

@@ -36,6 +36,7 @@ public class MessageHandlerFactory {
                 template.getHandledMessageTypes().forEach(type -> {
                     handlerMap.put(type, constructor);
                     typeMap.put(type, template.getMessageType(type));
+                    logger.info("Class {} found to deal with web socket message {}", clz.getCanonicalName(), type);
                 });
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException
                     | NoSuchMethodException e) {
@@ -54,7 +55,7 @@ public class MessageHandlerFactory {
         if (type == null) {
             throw new IOException("no type defined");
         }
-        typeValue = Integer.valueOf(type.toString());
+        typeValue = Integer.parseInt(type.toString());
     }
 
     public IMessageHandler createMessageHandler() {
