@@ -149,11 +149,13 @@ public class WebManager {
         webServer.webSocketHandler(event -> {
             String path = event.path().toLowerCase();
             if (!acceptablePaths.contains(path)) {
+                logger.error("access attempt to unknown path {} is rejected", event.path());
                 event.reject(HttpResponseStatus.NOT_FOUND.code());
                 return;
             }
             UserInfo userInfo = Auth.authenticate(event);
             if (userInfo == null) {
+                logger.error("Unauthorized access attempt to path {} is rejected", event.path());
                 event.reject(HttpResponseStatus.FORBIDDEN.code());
                 return;
             }
