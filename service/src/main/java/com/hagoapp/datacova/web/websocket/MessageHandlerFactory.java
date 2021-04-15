@@ -35,8 +35,11 @@ public class MessageHandlerFactory {
                 var template = clz.getConstructor().newInstance();
                 template.getHandledMessageTypes().forEach(type -> {
                     handlerMap.put(type, constructor);
-                    typeMap.put(type, template.getMessageType(type));
-                    logger.info("Class {} found to deal with web socket message {}", clz.getCanonicalName(), type);
+                    if (typeMap.putIfAbsent(type, template.getMessageType(type)) != null) {
+                        logger.error("Class {} found to deal with conflicted web socket message {}", clz.getCanonicalName(), type);
+                    } else {
+                        logger.info("Class {} found to deal with web socket message {}", clz.getCanonicalName(), type);
+                    }
                 });
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException
                     | NoSuchMethodException e) {
