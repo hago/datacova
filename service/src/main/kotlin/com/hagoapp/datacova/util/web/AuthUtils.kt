@@ -22,9 +22,9 @@ import java.lang.Exception
 
 class AuthUtils {
     companion object {
-        private const val LOGIN_COOKIE = "MfIry5adA8UYJEYb"
-        private const val IMPERSONATOR_COOKIE = "5fVDH0qFaHbrcJv5"
-        private const val TOKEN_AUTH_NAME = "name"
+        const val LOGIN_COOKIE = "MfIry5adA8UYJEYb"
+        const val IMPERSONATOR_COOKIE = "5fVDH0qFaHbrcJv5"
+        const val TOKEN_AUTH_NAME = "name"
         private const val IMPERSONATE_TOKEN_HEADER_NAME = "TmzSOsex"
         private val gson = GsonBuilder().serializeNulls().create()
 
@@ -100,13 +100,18 @@ class AuthUtils {
                 return cookie.value
             }
             val header = context.request().getHeader(HttpHeaders.AUTHORIZATION)
-            if (header != null) {
-                val parts = header.split(" ").map { it.trim() }
-                if ((parts.size == 2) && (parts[0].compareTo(TOKEN_AUTH_NAME) == 0)) {
-                    return parts[1];
+            return parseAuthTokenHeader(header)
+        }
+
+        fun parseAuthTokenHeader(header: String?): String? {
+            return when (header) {
+                null -> null
+                else -> {
+                    val parts = header.split(" ").map { it.trim() }
+                    if ((parts.size == 2) && (parts[0].compareTo(TOKEN_AUTH_NAME) == 0)) parts[1];
+                    else null
                 }
             }
-            return null;
         }
 
         fun getImpersonateUser(context: RoutingContext): UserInfo? {
