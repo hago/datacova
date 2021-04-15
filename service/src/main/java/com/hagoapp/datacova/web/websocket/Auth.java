@@ -34,6 +34,9 @@ public class Auth {
     private static String authenticateCookie(ServerWebSocket serverWebSocket) {
         var headers = serverWebSocket.headers();
         var cookieStr = headers.get(HttpHeaderNames.COOKIE);
+        if (cookieStr == null) {
+            return null;
+        }
         List<HttpCookie> cookies = HttpCookie.parse(cookieStr);
         var authCookie = cookies.stream()
                 .filter(cookie -> cookie.getName().equals(LOGIN_COOKIE)).findFirst();
