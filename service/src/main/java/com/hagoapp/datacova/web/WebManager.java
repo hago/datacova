@@ -78,7 +78,7 @@ public class WebManager {
             Router router = findRouter(vertx, packageNames);
             webServer.requestHandler(router);
             if (config.getWebSockets() != null) {
-                setupWebSocket(config.getWebSockets(), packageNames, router);
+                setupWebSocket(config.getWebSockets());
             }
             webServer.listen(config.getPort(), config.getBindIp());
         }
@@ -143,7 +143,7 @@ public class WebManager {
         return router;
     }
 
-    private void setupWebSocket(List<WebSocketConfig> webSockets, List<String> packageNames, Router router) {
+    private void setupWebSocket(List<WebSocketConfig> webSockets) {
         final List<String> acceptablePaths = webSockets.stream()
                 .map(config -> config.getRoute().toLowerCase()).collect(Collectors.toList());
         webServer.webSocketHandler(event -> {
@@ -273,12 +273,10 @@ public class WebManager {
 
     private void createCrossOriginRouteHandlers(Router router, WebHandler handler) {
         if (webConfig.isAllowCrossOriginResourceSharing()) {
-            //logger.debug("CORS sources: {}", webConfig.getCrossOriginSources());
-            webConfig.getCrossOriginSources().forEach(origin -> {
-                List<String> headers = getAllowedHeaders(handler);
-                createRoute(router, handler).handler(
-                        createCrossOriginHandler(List.of(handler.getMethod()), headers, origin));
-            });
+            String pattern = String.join("|", webConfig.getCrossOriginSources());
+            List<String> headers = getAllowedHeaders(handler);
+            createRoute(router, handler)
+                    .handler(createCrossOriginHandler(List.of(handler.getMethod()), headers, pattern));
         }
     }
 
@@ -294,7 +292,7 @@ public class WebManager {
         Set<HttpMethod> allowedMethods = new HashSet<>();
         allowedMethods.add(HttpMethod.OPTIONS);
         allowedMethods.addAll(methods);
-        //logger.debug("CORS allow: {} {}", allowedMethods, headers);
+        logger.info("CORS allow: {} {} {}", allowedMethods, allowHeaders, pattern);
         return CorsHandler.create(pattern).allowedMethods(allowedMethods).allowedHeaders(allowHeaders)
                 .allowCredentials(true);
     }
