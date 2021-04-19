@@ -13,10 +13,15 @@ import com.google.gson.JsonSyntaxException;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.vertx.ext.web.RoutingContext;
 
+import java.net.HttpCookie;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class RequestHelper {
 
@@ -63,5 +68,20 @@ public class RequestHelper {
                 return null;
             }
         }
+    }
+
+    public static List<HttpCookie> parseCookie(RoutingContext context) {
+        String cookieString = context.request().getHeader(HttpHeaderNames.COOKIE);
+        return parseCookie(cookieString);
+    }
+
+    public static List<HttpCookie> parseCookie(String cookieString) {
+        if (cookieString == null) {
+            return List.of();
+        }
+        return Arrays.stream(cookieString.split(";")).map(element -> {
+            var parts = element.split("=");
+            return parts.length == 2 ? new HttpCookie(parts[0], parts[1]) : null;
+        }).filter(Objects::nonNull).collect(Collectors.toList());
     }
 }
