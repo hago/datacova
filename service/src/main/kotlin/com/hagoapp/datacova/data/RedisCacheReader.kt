@@ -86,6 +86,9 @@ class RedisCacheReader<T> private constructor() {
 
         @JvmStatic
         fun createCacheKey(identity: String, vararg params: Any?): String {
+            if (params.isEmpty()) {
+                return identity
+            }
             val paramIdentity = params.filterNotNull().joinToString("|") { it.toString() }
             return "$identity||$paramIdentity"
         }
@@ -170,7 +173,7 @@ class RedisCacheReader<T> private constructor() {
     private fun doRedisOps(jedisManager: JedisManager, vararg params: Any?): T? {
         jedisManager.jedis.use { jedis ->
             actualKey = key ?: createKey(*params)
-            //println("read key $actualKey")
+            println("read key $actualKey")
             return if (skipCache) {
                 doDataLoadAndUpdateRedis(jedis, actualKey, *params)
             } else {
