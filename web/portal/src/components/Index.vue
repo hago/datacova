@@ -1,6 +1,6 @@
 <template>
   <div style="height: 100%; width: 100%;">
-    <img src="@/assets/gear-loading.gif"/>
+    <img src="@/assets/gear-loading.gif" v-if="loginStatus.user === undefined"/>
   </div>
 </template>
 

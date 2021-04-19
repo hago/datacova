@@ -8,8 +8,13 @@
         <span class="title_red">Va</span><span>lidation</span>
       </div>
       <div class="user">
-        <a v-if="this.loginStatus.user !== undefined" href="javascript:void(0);" v-on:click="logout()">{{this.loginStatus.user.name}}</a>
-        <span v-if="this.loginStatus.user === undefined">Anonymous</span>
+        <a v-if="logged" href="javascript:void(0);" v-on:click="logout()">{{this.loginStatus.user.name}}</a>
+        <span v-if="!logged">Anonymous</span>
+      </div>
+      <div class="notification" title="Notifications">
+        <a href="" v-if="logged">
+          <img src="@/assets/notify.png" />
+        </a>
       </div>
     </div>
     <router-view v-bind:loginStatus="loginStatus" />
@@ -24,6 +29,11 @@ import User from '@/apis/user.js'
 
 export default {
   name: 'DataCoVa',
+  computed: {
+    logged: function () {
+      return this.loginStatus.user !== undefined
+    }
+  },
   data () {
     return {
       loginStatus: {},
@@ -71,6 +81,15 @@ export default {
   margin: 5px;
   float: right;
   font-size: 20px
+}
+.notification {
+  margin: 5px;
+  float: right;
+  font-size: 18px
+}
+.notification img {
+  width: 20px;
+  height: 20px;
 }
 .title_red {
   color: red;
