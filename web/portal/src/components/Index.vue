@@ -1,6 +1,6 @@
 <template>
   <div style="height: 100%; width: 100%;">
-    <img src="@/assets/gear-loading.gif" v-if="loginStatus.user === undefined"/>
+    <img src="@/assets/gear-loading.gif" v-if="loginStatus.user === undefined" class="loading"/>
   </div>
 </template>
 
@@ -16,7 +16,7 @@ export default {
     }
   },
   mounted: function () {
-    (new User()).checkLogin(false, this.logged)
+    (new User()).checkLogin(true, this.logged)
   },
   props: {
     loginStatus: Object
@@ -37,5 +37,7 @@ export default {
 .loading {
     display: block;
     margin: auto auto auto auto;
+    width: 150px;
+    height: 150px;
 }
 </style>
