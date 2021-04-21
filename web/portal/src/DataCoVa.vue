@@ -41,7 +41,7 @@ export default {
   },
   created: function () {
     this.$root.$on('onLoginEvent', this.onLogin);
-    (new User()).checkLogin(false, this.onLogin, this.gotoLogin)
+    (new User()).checkLogin(false, this.onLogin, this.gotoIndex)
   },
   methods: {
     logout: function () {
@@ -50,9 +50,9 @@ export default {
         router.push('/').catch(err => console.log(`redirect err: ${err}`))
       })
     },
-    gotoLogin: function () {
-      console.log('CoVa not logged, refdirect')
-      router.push('/login').catch(err => console.log(`redirect err: ${err}`))
+    gotoIndex: function () {
+      console.log('CoVa not logged, refdirect to index')
+      router.push('/index').catch(err => console.log(`redirect err: ${err}`))
     },
     onLogin: function (user) {
       console.log('onLogin called')

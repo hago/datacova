@@ -28,6 +28,12 @@ export default new Router({
       props: true
     },
     {
+      path: '/index',
+      name: 'Index',
+      component: Index,
+      props: true
+    },
+    {
       path: '/main',
       name: 'Main',
       component: Main,
