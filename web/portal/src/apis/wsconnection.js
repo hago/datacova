@@ -13,8 +13,8 @@ class WSConnection {
       console.log(`websocket message: ${event}`)
     }
     ws.onerror = function (event) {
+      console.log('websocket error: ')
       console.log(event)
-      console.log(`websocket error: ${JSON.stringify(event)}`)
     }
   }
 }
