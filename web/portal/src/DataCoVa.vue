@@ -47,18 +47,18 @@ export default {
     logout: function () {
       (new User()).logout().then(rsp => {
         this.loginStatus = {}
-        router.push('/')
+        router.push('/').catch(err => console.log(`redirect err: ${err}`))
       })
     },
     gotoLogin: function () {
       console.log('CoVa not logged, refdirect')
-      router.push('/login')
+      router.push('/login').catch(err => console.log(`redirect err: ${err}`))
     },
     onLogin: function (user) {
       console.log('onLogin called')
       console.log('CoVa logged')
       this.loginStatus = Object.assign({}, user)
-      router.push('/main')
+      router.push('/main').catch(err => console.log(`redirect err: ${err}`))
     }
   }
 }
