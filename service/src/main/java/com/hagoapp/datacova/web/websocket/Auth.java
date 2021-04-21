@@ -7,12 +7,15 @@
 
 package com.hagoapp.datacova.web.websocket;
 
+import com.hagoapp.datacova.CoVaLogger;
 import com.hagoapp.datacova.data.RedisCacheReader;
 import com.hagoapp.datacova.user.UserInfo;
+import com.hagoapp.datacova.util.http.RequestHelper;
 import com.hagoapp.datacova.util.web.AuthUtils;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.ServerWebSocket;
+import org.slf4j.Logger;
 
 import java.net.HttpCookie;
 import java.util.List;
@@ -20,6 +23,9 @@ import java.util.List;
 import static com.hagoapp.datacova.util.web.AuthUtils.LOGIN_COOKIE;
 
 public class Auth {
+
+    private final static Logger logger = CoVaLogger.getLogger();
+
     public static UserInfo authenticate(ServerWebSocket serverWebSocket) {
         var token = authenticateCookie(serverWebSocket);
         if (token == null) {
@@ -28,16 +34,19 @@ public class Auth {
         if (token == null) {
             return null;
         }
-        return RedisCacheReader.readCachedData(token, 1, params -> null, UserInfo.class);
+        //logger.debug("web socket token: {}", token);
+        return RedisCacheReader.readDataInCacheOnly(token, UserInfo.class);
     }
 
     private static String authenticateCookie(ServerWebSocket serverWebSocket) {
         var headers = serverWebSocket.headers();
         var cookieStr = headers.get(HttpHeaderNames.COOKIE);
+        // logger.debug("web socket cookie: {}", cookieStr);
         if (cookieStr == null) {
             return null;
         }
-        List<HttpCookie> cookies = HttpCookie.parse(cookieStr);
+        List<HttpCookie> cookies = RequestHelper.parseCookie(cookieStr);
+        // cookies.forEach(cookie -> logger.debug("cookie {}", cookie.getName()));
         var authCookie = cookies.stream()
                 .filter(cookie -> cookie.getName().equals(LOGIN_COOKIE)).findFirst();
         if (authCookie.isEmpty()) {

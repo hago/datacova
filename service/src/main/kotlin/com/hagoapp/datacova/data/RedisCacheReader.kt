@@ -40,6 +40,20 @@ class RedisCacheReader<T> private constructor() {
         }
 
         @JvmStatic
+        fun <T> readDataInCacheOnly(
+            cacheName: String,
+            type: Type,
+            vararg params: Any?
+        ): T? {
+            val builder = Builder<T>()
+                .shouldSkipCache(skipCache)
+                .withCacheName(cacheName)
+                .withType(type)
+            val reader = builder.create()
+            return reader.readData(*params)
+        }
+
+        @JvmStatic
         fun <T> readDataAndUpdateCache(
             cacheName: String,
             dataLifetime: Int,
@@ -99,7 +113,7 @@ class RedisCacheReader<T> private constructor() {
     private var dataLifeTime: Int = 0
     private var key: String? = null
     private var type: Type = String::class.java
-    private lateinit var loadFunction: GenericLoader<T>
+    private var loadFunction: GenericLoader<T>? = null
     private var skipCache: Boolean = false
     private var cacheName: String? = null
     private lateinit var actualKey: String
@@ -133,7 +147,7 @@ class RedisCacheReader<T> private constructor() {
             return this
         }
 
-        fun withLoadFunction(function: GenericLoader<T>): Builder<T> {
+        fun withLoadFunction(function: GenericLoader<T>?): Builder<T> {
             reader.loadFunction = function
             return this
         }
@@ -158,9 +172,6 @@ class RedisCacheReader<T> private constructor() {
     }
 
     fun readData(vararg params: Any?): T? {
-        if (!this::loadFunction.isInitialized) {
-            throw Exception("Data loading function is not defined")
-        }
         if (redis != null) {
             return doRedisOps(redis!!, *params)
         } else {
@@ -173,22 +184,26 @@ class RedisCacheReader<T> private constructor() {
     private fun doRedisOps(jedisManager: JedisManager, vararg params: Any?): T? {
         jedisManager.jedis.use { jedis ->
             actualKey = key ?: createKey(*params)
-            println("read key $actualKey")
-            return if (skipCache) {
-                doDataLoadAndUpdateRedis(jedis, actualKey, *params)
-            } else {
-                val jsonStr = jedis.get(actualKey)
-                if (jsonStr == null) {
-                    doDataLoadAndUpdateRedis(jedis, actualKey, *params)
-                } else {
-                    Gson().fromJson(jsonStr, type)
+            return when {
+                loadFunction == null -> {
+                    val jsonStr = jedis.get(actualKey)
+                    if (jsonStr == null) null else Gson().fromJson<T>(jsonStr, type)
+                }
+                skipCache -> doDataLoadAndUpdateRedis(jedis, actualKey, *params)
+                else -> {
+                    val jsonStr = jedis.get(actualKey)
+                    if (jsonStr == null) {
+                        doDataLoadAndUpdateRedis(jedis, actualKey, *params)
+                    } else {
+                        Gson().fromJson<T>(jsonStr, type)
+                    }
                 }
             }
         }
     }
 
     private fun doDataLoadAndUpdateRedis(jedis: Jedis, key: String, vararg params: Any?): T? {
-        val data = loadFunction.perform(*params) ?: return null
+        val data = loadFunction?.perform(*params) ?: return null
         return try {
             val jsonStr = createGson().toJson(data)
             when {
@@ -209,9 +224,8 @@ class RedisCacheReader<T> private constructor() {
     private fun createKey(vararg params: Any?): String {
         return when {
             cacheName != null -> createCacheKey(cacheName!!, *params)
-            loadFunction::class.java.canonicalName != null -> createCacheKey(
-                loadFunction::class.java.canonicalName,
-                *params
+            (loadFunction != null) && (loadFunction!!::class.java.canonicalName != null) -> createCacheKey(
+                loadFunction!!::class.java.canonicalName, *params
             )
             else -> createCacheKey("", *params)
         }
