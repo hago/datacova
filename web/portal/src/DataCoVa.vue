@@ -23,7 +23,7 @@
 
 <script>
 import 'bootstrap/dist/css/bootstrap.css'
-// import WSConnection from '@/apis/wsconnection.js'
+import WSConnection from '@/apis/wsconnection.js'
 import router from '@/router'
 import User from '@/apis/user.js'
 
@@ -58,6 +58,8 @@ export default {
       console.log('onLogin called')
       console.log('CoVa logged')
       this.loginStatus = Object.assign({}, user)
+      let ws = new WSConnection()
+      ws.open()
       router.push('/main').catch(err => console.log(`redirect err: ${err}`))
     }
   }
