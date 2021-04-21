@@ -5,30 +5,14 @@
 </template>
 
 <script>
-import router from '@/router'
-import Vue from 'vue'
-import User from '@/apis/user.js'
-
 export default {
   name: 'Index',
   data () {
     return {
     }
   },
-  mounted: function () {
-    (new User()).checkLogin(true, this.logged)
-  },
   props: {
     loginStatus: Object
-  },
-  methods: {
-    logged: function (user) {
-      for (let k in user) {
-        Vue.set(this.loginStatus, k, user[k])
-      }
-      this.name = user.user.name
-      router.push('/main')
-    }
   }
 }
 </script>

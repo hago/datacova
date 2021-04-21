@@ -57,7 +57,6 @@
 <script>
 import UserAPIHelper from '../apis/userapi.js'
 import User from '../apis/user.js'
-import router from '../router'
 
 export default {
   name: 'Login',
@@ -99,10 +98,10 @@ export default {
         return
       }
       logincall.then(rsp => {
+        console.log('login successfully')
         this.errorMessage = '';
         (new User()).setLogin(rsp.data.data)
-        this.loginStatus = Object.assign(this.loginStatus, rsp.data.data)
-        router.push(this.return === undefined ? '/' : this.return)
+        this.$root.$emit('onLoginEvent', rsp.data.data)
       }).catch(err => {
         console.log(err)
         this.errorMessage = err.response.data.error.message

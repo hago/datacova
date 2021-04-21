@@ -19,12 +19,14 @@ class User {
     this.getCurrentUser().then(userobj => {
       console.log('checkLogin logged')
       this.user = userobj
+      console.log(onlogged)
       if (onlogged !== undefined) {
-        onlogged(this.user)
+        onlogged(userobj)
       }
     }).catch(err => {
       console.log(`checkLogin not logged: ${err}`)
-      if (this.onnotlogged !== undefined) {
+      if (onnotlogged !== undefined) {
+        console.log('checkLogin onnnotlogged')
         onnotlogged(err)
       }
       if (jump) {
@@ -47,7 +49,7 @@ class User {
             User.instance.setLogin(rsp.data.data)
             resolve(rsp.data.data)
           }).catch(err => {
-            reject(new Error(err))
+            reject(err)
           })
         }
       }

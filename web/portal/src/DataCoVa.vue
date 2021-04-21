@@ -23,8 +23,8 @@
 
 <script>
 import 'bootstrap/dist/css/bootstrap.css'
+// import WSConnection from '@/apis/wsconnection.js'
 import router from '@/router'
-import Vue from 'vue'
 import User from '@/apis/user.js'
 
 export default {
@@ -36,27 +36,29 @@ export default {
   },
   data () {
     return {
-      loginStatus: {},
-      name: null
+      loginStatus: {}
     }
   },
   created: function () {
-    (new User()).checkLogin(true, this.init)
+    this.$root.$on('onLoginEvent', this.onLogin);
+    (new User()).checkLogin(false, this.onLogin, this.gotoLogin)
   },
   methods: {
-    init: function (user) {
-      for (let k in user) {
-        Vue.set(this.loginStatus, k, user[k])
-      }
-      this.name = user.user.displayName
-      router.push('/main')
-    },
     logout: function () {
       (new User()).logout().then(rsp => {
-        Vue.set(this, 'loginStatus', {})
-        this.name = null
+        this.loginStatus = {}
         router.push('/')
       })
+    },
+    gotoLogin: function () {
+      console.log('CoVa not logged, refdirect')
+      router.push('/login')
+    },
+    onLogin: function (user) {
+      console.log('onLogin called')
+      console.log('CoVa logged')
+      this.loginStatus = Object.assign({}, user)
+      router.push('/main')
     }
   }
 }
