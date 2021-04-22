@@ -7,35 +7,62 @@
 
 package com.hagoapp.datacova.entity.action.verification;
 
-import com.google.gson.GsonBuilder;
+import com.hagoapp.datacova.JsonStringify;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-public class Configuration {
-    public int type;
-    public List<String> fields;
-    public boolean nullable = false;
-    public boolean ignoreFieldCase = false;
-
-    public int FieldsCountLimit = 1;
+public class Configuration implements JsonStringify {
+    protected int type;
+    private List<String> fields = new ArrayList<>();
+    private boolean nullable = false;
+    private boolean ignoreFieldCase = false;
+    private int FieldsCountLimit = 1;
 
     public boolean isNullable() {
         return nullable;
     }
 
+    public int getType() {
+        return type;
+    }
+
+    public List<String> getFields() {
+        return fields;
+    }
+
+    public boolean isIgnoreFieldCase() {
+        return ignoreFieldCase;
+    }
+
+    public int getFieldsCountLimit() {
+        return FieldsCountLimit;
+    }
+
+    public void setNullable(boolean nullable) {
+        this.nullable = nullable;
+    }
+
+    public void setIgnoreFieldCase(boolean ignoreFieldCase) {
+        this.ignoreFieldCase = ignoreFieldCase;
+    }
+
+    public void setFieldsCountLimit(int fieldsCountLimit) {
+        FieldsCountLimit = fieldsCountLimit;
+    }
+
     public String toString() {
-        return new GsonBuilder().create().toJson(this);
+        return this.toJson();
     }
 
     public boolean isValid() {
-        if ((fields == null) || (fields.size() == 0)) {
+        if (fields.size() == 0) {
             return false;
         }
-        List<String> distinct = ignoreFieldCase ?
-                fields.stream().map(s -> s.toLowerCase()).distinct().collect(Collectors.toList())
-                : fields.stream().distinct().collect(Collectors.toList());
-        if (distinct.size() != fields.size()) {
+        long distinctSize = ignoreFieldCase ?
+                fields.stream().map(String::toLowerCase).distinct().count()
+                : fields.stream().distinct().count();
+        if (distinctSize != fields.size()) {
             return false;
         }
         if (FieldsCountLimit > 0) {
