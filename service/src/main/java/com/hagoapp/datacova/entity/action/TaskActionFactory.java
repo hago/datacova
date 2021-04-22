@@ -70,8 +70,8 @@ public class TaskActionFactory {
             int type = Integer.parseInt(map.get("type").toString());
             return new Gson().fromJson(json, typeActionMap.get(type));
         } catch (Exception e) {
-            logger.error("Error for type: {}", map.get("type"));
-            throw new CoVaException("Task Action Error", e);
+            logger.error("Error for task action type: {}", map.get("type"));
+            throw new CoVaException(String.format("Task Action Error: %s", e.getMessage()), e);
         }
     }
 }
