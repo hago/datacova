@@ -7,6 +7,12 @@
 
 package com.hagoapp.datacova.entity.action;
 
+import com.hagoapp.datacova.CoVaException;
+import com.hagoapp.datacova.MapSerializer;
+
+import java.io.IOException;
+import java.util.Map;
+
 public class TaskAction {
     protected int type;
     private TaskActionExtra extra = new TaskActionExtra();
@@ -45,4 +51,11 @@ public class TaskAction {
         this.description = description;
     }
 
+    public void loadActualContent(String json) throws IOException, CoVaException {
+        loadActualContent(MapSerializer.deserializeMap(json));
+    }
+
+    public void loadActualContent(Map<String, Object> content) throws CoVaException {
+        //
+    }
 }
