@@ -47,26 +47,26 @@
           <label for="verifyType" class="form-label">Verify Type</label>
           <select class="form-control" id="verifyType" v-model="configuration.type">
             <option value="undefined" disabled>Verification Types</option>
-            <option v-for="(desp, name) in verifyTypes" v-bind:key="name" v-bind:value="name">{{ desp }}</option>
+            <option v-for="(id, name) in verifyTypes" v-bind:key="id" v-bind:value="id">{{ name }}</option>
           </select>
         </div>
       </div>
-      <NumberRangeVerifier v-if="configuration.type == 'NumberRange'"
+      <NumberRangeVerifier v-if="configuration.type == 2"
         v-bind:config="configuration"
         ></NumberRangeVerifier>
-      <TimeRangeVerifier v-if="configuration.type == 'TimeRange'"
+      <TimeRangeVerifier v-if="configuration.type == 4"
         v-bind:config="configuration"
         ></TimeRangeVerifier>
-      <RelativeTimeRangeVerifier v-if="configuration.type == 'RelativeTimeRange'"
+      <RelativeTimeRangeVerifier v-if="configuration.type == 6"
         v-bind:config="configuration"
         ></RelativeTimeRangeVerifier>
-      <OptionsVerifier v-if="configuration.type == 'Options'"
+      <OptionsVerifier v-if="configuration.type == 3"
         v-bind:config="configuration"
         ></OptionsVerifier>
-      <LuaScriptVerifier v-if="configuration.type == 'LuaScript'"
+      <LuaScriptVerifier v-if="configuration.type == 5"
         v-bind:config="configuration"
         ></LuaScriptVerifier>
-      <RegexVerifier v-if="configuration.type == 'Regex'"
+      <RegexVerifier v-if="configuration.type == 1"
         v-bind:config="configuration"
         ></RegexVerifier>
     </div>
@@ -99,12 +99,12 @@ export default {
   data () {
     return {
       verifyTypes: {
-        Regex: 'Text pattern verification with Regular Expression',
-        NumberRange: 'Number Range Verification',
-        Options: 'Optional Values Verification',
-        TimeRange: 'Time Range Verification',
-        LuaScript: 'Customized Verification in Coding',
-        RelativeTimeRange: 'Time Range Verification Relative to A Point'
+        'Text pattern verification with Regular Expression': 1,
+        'Number Range Verification': 2,
+        'Optional Values Verification': 3,
+        'Time Range Verification': 4,
+        'Customized Verification in Coding': 5,
+        'Time Range Verification Relative to A Point': 6
       }
     }
   },
