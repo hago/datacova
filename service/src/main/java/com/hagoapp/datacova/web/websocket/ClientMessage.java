@@ -7,6 +7,9 @@
 
 package com.hagoapp.datacova.web.websocket;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+
 public class ClientMessage {
     protected int messageType;
     protected int id;
@@ -25,5 +28,13 @@ public class ClientMessage {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public static ClientMessage fromJson(String text) {
+        try {
+            return new Gson().fromJson(text, ClientMessage.class);
+        } catch (JsonSyntaxException e) {
+            return null;
+        }
     }
 }

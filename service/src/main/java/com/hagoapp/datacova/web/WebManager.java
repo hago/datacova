@@ -8,7 +8,6 @@
 
 package com.hagoapp.datacova.web;
 
-import com.google.gson.Gson;
 import com.hagoapp.datacova.CoVaException;
 import com.hagoapp.datacova.CoVaLogger;
 import com.hagoapp.datacova.config.WebConfig;
@@ -167,12 +166,12 @@ public class WebManager {
                 try {
                     factory = new MessageHandlerFactory(msg);
                     var handler = factory.createMessageHandler();
-                    var message = new Gson().fromJson(msg, ClientMessage.class);
+                    var message = ClientMessage.fromJson(msg);
                     if ((handler == null) || (message == null)) {
                         throw new IOException(String.format("Message can't be recognized: %s", msg));
                     } else {
                         var response = handler.handleMessage(event, message);
-                        event.writeTextMessage(new Gson().toJson(response));
+                        event.writeTextMessage(response.toJson());
                     }
                 } catch (Exception e) {
                     event.writeTextMessage(new ErrorResponseMessage(e.getMessage()).toJson());
