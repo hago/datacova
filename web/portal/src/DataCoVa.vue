@@ -12,7 +12,7 @@
         <span v-if="!logged">Anonymous</span>
       </div>
       <div class="notification" title="Notifications">
-        <a href="" v-if="logged">
+        <a href="javascript:void(0);" v-if="logged">
           <img src="@/assets/notify.png" />
         </a>
       </div>
