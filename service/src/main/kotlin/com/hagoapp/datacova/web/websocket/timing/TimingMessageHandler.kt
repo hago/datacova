@@ -23,7 +23,7 @@ class TimingMessageHandler : IMessageHandler {
         return TimingServerMessage();
     }
 
-    override fun getMessageType(type: Int): Class<out ClientMessage> {
+    override fun getMessageClass(type: Int): Class<out ClientMessage> {
         return when (type) {
             TIMING_CLIENT_MESSAGE_TYPE -> TimingClientMessage::class.java
             else -> throw UnsupportedOperationException("Not an timing message $type")

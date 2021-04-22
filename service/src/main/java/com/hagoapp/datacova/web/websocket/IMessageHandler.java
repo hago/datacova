@@ -17,5 +17,5 @@ public interface IMessageHandler {
 
     ServerMessage handleMessage(@NotNull ServerWebSocket serverWebSocket, @NotNull ClientMessage message);
 
-    Class<? extends ClientMessage> getMessageType(int type);
+    Class<? extends ClientMessage> getMessageClass(int type);
 }

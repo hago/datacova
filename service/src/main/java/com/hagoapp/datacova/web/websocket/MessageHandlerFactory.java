@@ -35,7 +35,7 @@ public class MessageHandlerFactory {
                 var template = clz.getConstructor().newInstance();
                 template.getHandledMessageTypes().forEach(type -> {
                     handlerMap.put(type, constructor);
-                    if (typeMap.putIfAbsent(type, template.getMessageType(type)) != null) {
+                    if (typeMap.putIfAbsent(type, template.getMessageClass(type)) != null) {
                         logger.error("Class {} found to deal with conflicted web socket message {}", clz.getCanonicalName(), type);
                     } else {
                         logger.info("Class {} found to deal with web socket message {}", clz.getCanonicalName(), type);
