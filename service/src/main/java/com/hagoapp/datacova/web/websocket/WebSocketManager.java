@@ -13,6 +13,7 @@ import io.vertx.core.http.ServerWebSocket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
 
 public class WebSocketManager {
 
@@ -69,6 +70,26 @@ public class WebSocketManager {
                     return existing;
                 }
             });
+        }
+    }
+
+    public void broadcastMessage(ServerMessage message) {
+        String text = message.toJson();
+        socketMap.forEach((key, value) -> key.writeTextMessage(text));
+    }
+
+    public void broadcastMessage(ServerMessage message, Predicate<UserInfo> predicate) {
+        String text = message.toJson();
+        userMap.keySet().stream().filter(predicate).forEach(user ->
+                userMap.get(user).forEach(socket -> socket.writeTextMessage(text))
+        );
+    }
+
+    public void sendUserMessage(ServerMessage message, UserInfo user) {
+        var sockets = userMap.get(user);
+        if (sockets != null) {
+            String text = message.toJson();
+            sockets.forEach(socket -> socket.writeTextMessage(text));
         }
     }
 }
