@@ -10,7 +10,8 @@ class WSConnection {
     // console.log(`${this.urlprefix}/api/event`)
     let ws = new WebSocket(`${this.urlprefix}/api/event`)
     ws.onmessage = function (event) {
-      console.log(`websocket message: ${event}`)
+      console.log('websocket message:')
+      console.log(event.data)
     }
     ws.onerror = function (event) {
       console.log('websocket error: ')
