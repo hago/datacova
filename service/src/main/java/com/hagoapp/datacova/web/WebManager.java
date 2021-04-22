@@ -21,6 +21,7 @@ import com.hagoapp.datacova.web.authentication.AuthType;
 import com.hagoapp.datacova.web.authentication.Authenticator;
 import com.hagoapp.datacova.web.authentication.AuthenticatorFactory;
 import com.hagoapp.datacova.web.websocket.*;
+import com.hagoapp.datacova.web.websocket.connect.ConnectServerMessage;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
@@ -178,6 +179,7 @@ public class WebManager {
                 }
             });
             event.closeHandler(ignore -> wsm.removeSession(event));
+            event.writeTextMessage(new ConnectServerMessage().toJson());
         });
     }
 
