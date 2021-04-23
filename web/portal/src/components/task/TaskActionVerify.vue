@@ -6,7 +6,7 @@
         <span style="float: right; margin-right: 10px" class="clickable" v-on:click="addConfig()">+ Add Verificator</span>
       </h5>
     </div>
-    <div v-for="(configuration, index) in action.configurations" v-bind:key="index" style="border: 1px dotted yellow; margin: 3px">
+    <div v-for="(configuration, index) in action.configurations" :index="index" :key="configuration.key" style="border: 1px dotted yellow; margin: 3px">
       <div class="col">
         <img src='@/assets/recycling_bin.png' class="clickable rmvbtn" v-on:click="removeConfig(index)"/>
         <h5>
@@ -117,6 +117,10 @@ export default {
   created: function () {
     if (this.action.configurations === undefined) {
       Vue.set(this.action, 'configurations', [])
+    } else {
+      this.action.configurations.forEach(element => {
+        element.key = Math.random()
+      })
     }
   },
   mounted: function () {
@@ -167,7 +171,8 @@ export default {
       this.action.configurations.splice(0, 0, {
         fields: [''],
         nullable: false,
-        ignoreFieldCase: false
+        ignoreFieldCase: false,
+        key: Math.random()
       })
     },
     removeConfig: function (i) {
