@@ -27,16 +27,16 @@
       <div class="form-row">
         <div class="col-3 form-group">
           <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="nullable" v-model="configuration.nullable">
-            <label class="form-check-label" for="nullable">
+            <input class="form-check-input" type="checkbox" :id="'nullable'+index" v-model="configuration.nullable">
+            <label class="form-check-label" :for="'nullable'+index">
               Nullable
             </label>
           </div>
         </div>
         <div class="col-3 form-group">
           <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="ignorefieldcase" v-model="configuration.ignoreFieldCase">
-            <label class="form-check-label" for="ignorefieldcase">
+            <input class="form-check-input" type="checkbox" :id="'ignorefieldcase'+index" v-model="configuration.ignoreFieldCase">
+            <label class="form-check-label" :for="'ignorefieldcase'+index">
               Ignore Case of Fields
             </label>
           </div>
@@ -53,21 +53,27 @@
       </div>
       <NumberRangeVerifier v-if="configuration.type == 2"
         v-bind:config="configuration"
+        v-bind:index="index"
         ></NumberRangeVerifier>
       <TimeRangeVerifier v-if="configuration.type == 4"
         v-bind:config="configuration"
+        v-bind:index="index"
         ></TimeRangeVerifier>
       <RelativeTimeRangeVerifier v-if="configuration.type == 6"
         v-bind:config="configuration"
+        v-bind:index="index"
         ></RelativeTimeRangeVerifier>
       <OptionsVerifier v-if="configuration.type == 3"
         v-bind:config="configuration"
+        v-bind:index="index"
         ></OptionsVerifier>
       <LuaScriptVerifier v-if="configuration.type == 5"
         v-bind:config="configuration"
+        v-bind:index="index"
         ></LuaScriptVerifier>
       <RegexVerifier v-if="configuration.type == 1"
         v-bind:config="configuration"
+        v-bind:index="index"
         ></RegexVerifier>
     </div>
   </div>
@@ -158,14 +164,17 @@ export default {
       }
     },
     addConfig: function () {
-      this.action.configurations.push({
+      let confList = [{
         fields: [''],
         nullable: false,
         ignoreFieldCase: false
-      })
+      }]
+      this.action.configurations = confList.concat(this.action.configurations)
     },
     removeConfig: function (i) {
-      this.action.configurations.splice(i, 1)
+      console.log(this.action.configurations.slice(0, i - 1).lenngth)
+      console.log(this.action.configurations.slice(i + 1).lenngth)
+      this.action.configurations = this.action.configurations.slice(0, i - 1).concat(this.action.configurations.slice(i + 1))
     }
   }
 }
