@@ -164,17 +164,15 @@ export default {
       }
     },
     addConfig: function () {
-      let confList = [{
+      this.action.configurations.splice(0, 0, {
         fields: [''],
         nullable: false,
         ignoreFieldCase: false
-      }]
-      this.action.configurations = confList.concat(this.action.configurations)
+      })
     },
     removeConfig: function (i) {
-      console.log(this.action.configurations.slice(0, i - 1).lenngth)
-      console.log(this.action.configurations.slice(i + 1).lenngth)
-      this.action.configurations = this.action.configurations.slice(0, i - 1).concat(this.action.configurations.slice(i + 1))
+      console.log(`remove ${i}`)
+      this.action.configurations.splice(i, 1)
     }
   }
 }
