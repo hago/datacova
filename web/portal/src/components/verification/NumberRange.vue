@@ -64,7 +64,7 @@ export default {
       }
     }
   },
-  mounted: function () {
+  created: function () {
     this.config.validator = function (configuration) {
       let ub = (configuration.upperBound === undefined) || (configuration.upperBound === null) ? null : configuration.upperBound
       let lb = (configuration.lowerBound === undefined) || (configuration.lowerBound === null) ? null : configuration.lowerBound
