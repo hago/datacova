@@ -39,8 +39,6 @@ public class TaskActionVerify extends TaskAction {
     @Override
     @SuppressWarnings("unchecked")
     public void loadActualContent(Map<String, Object> content) throws CoVaException {
-        System.out.println("loadActualContent");
-        System.out.println(content);
         List<Map<String, Object>> list = (List<Map<String, Object>>) content.get("configurations");
         configurations = list.stream().map(ConfigurationFactory::createConfiguration).collect(Collectors.toList());
         for (var conf : configurations) {
