@@ -39,7 +39,7 @@
         </div>
       </div>
       <div class="col-4">
-        <input class="form-control" type="text"  v-if="maxCheck" v-model="config.upperBound.value"/>
+        <input class="form-control" type="text" v-if="maxCheck" v-model="config.upperBound.value"/>
       </div>
     </div>
   </div>
@@ -56,23 +56,15 @@ export default {
   },
   data () {
     return {
-      minCheck: false,
-      maxCheck: false,
+      minCheck: (this.config.lowerBound !== undefined) && (this.config.lowerBound !== null),
+      maxCheck: (this.config.upperBound !== undefined) && (this.config.upperBound !== null),
       default: {
-        min: { value: 0, inclusive: false },
-        max: { value: 0, inclusive: false }
+        min: (this.config.lowerBound !== undefined) && (this.config.lowerBound !== null) ? this.config.lowerBound : { value: 0, inclusive: false },
+        max: (this.config.upperBound !== undefined) && (this.config.upperBound !== null) ? this.config.upperBound : { value: 0, inclusive: false }
       }
     }
   },
   mounted: function () {
-    if ((this.config.lowerBound !== undefined) && (this.config.lowerBound !== null)) {
-      this.minCheck = true
-      this.default.min = this.config.lowerBound
-    }
-    if ((this.config.upperBound !== undefined) && (this.config.upperBound !== null)) {
-      this.maxCheck = true
-      this.default.max = this.config.upperBound
-    }
     this.config.validator = function (configuration) {
       let ub = (configuration.upperBound === undefined) || (configuration.upperBound === null) ? null : configuration.upperBound
       let lb = (configuration.lowerBound === undefined) || (configuration.lowerBound === null) ? null : configuration.lowerBound
