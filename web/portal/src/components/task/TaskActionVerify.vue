@@ -3,7 +3,7 @@
     <div class="col">
       <h5>
         <i>Verification Configurations</i>
-        <span style="float: right; margin-right: 10px" class="clickable" v-on:click="addConfig()">+ Add Verificator</span>
+        <button class="btn btn-primary" v-on:click="addConfig()">+ Add Verificator</button>
       </h5>
     </div>
     <div v-for="(configuration, index) in action.configurations" :index="index" :key="configuration.key" style="border: 1px dotted yellow; margin: 3px">
