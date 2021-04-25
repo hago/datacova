@@ -1,7 +1,20 @@
 <template>
   <div >
     <div style="margin: 0px 5px 10px 5px">
-      <textarea class="col" v-model="config.snippet" rows="8" v-on:change="codesChange()"></textarea>
+      <textarea class="col" v-model="config.snippet" rows="8" v-on:change="codesChange()" placeholder="example:
+arg = ...
+arg.name + 1 == 2
+
+explanation:
+1. The code is in Lua language.
+2. The first line of code should be external argument declaration.
+  2.1 Values of fields will be passed into as a table while evaluating.
+  2.2 Inside snippet, field can be referenced by name.
+3. The last line should return a value. It will be treated as value of whole snippet.
+  3.1 It should be 'return ...' statement.
+  3.2 The value should be a boolean.
+  3.3 Any other type of value will lead to fail result of verification.
+      "></textarea>
     </div>
     <div class="form-row">
       <div class="col-3 input-group" v-for="(field, j) in config.fields" v-bind:key="j">
@@ -23,7 +36,8 @@ Vue.use(Toasted)
 export default {
   name: 'LuaScriptVerifier',
   props: {
-    config: Object
+    config: Object,
+    index: Number
   },
   mounted: function () {
     this.config.validator = function (configuration) {
@@ -41,7 +55,7 @@ export default {
   },
   methods: {
     evaluate: function () {
-      if (this.config.snippet.trim === '') {
+      if (this.config.snippet.trim() === '') {
         this.$toasted.show('code block is empty', {
           position: 'bottom-center',
           duration: 1000,
