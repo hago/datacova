@@ -3,16 +3,16 @@
     <div class="form-row">
       <div class="col-6 form-group">
         <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="mincheck" v-bind:checked="minCheck" v-on:click="toggleMin()">
-          <label class="form-check-label" for="mincheck">
+          <input class="form-check-input" type="checkbox" :id="`mincheck_${index}`" v-bind:checked="minCheck" v-on:click="toggleMin()">
+          <label class="form-check-label" :for="`mincheck_${index}`">
             Minimum Value
           </label>
         </div>
       </div>
       <div class="col-6 form-group">
         <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="maxcheck" v-bind:checked="maxCheck" v-on:click="toggleMax()">
-          <label class="form-check-label" for="maxcheck">
+          <input class="form-check-input" type="checkbox" :id="`maxcheck_${index}`" v-bind:checked="maxCheck" v-on:click="toggleMax()">
+          <label class="form-check-label" :for="`maxcheck_${index}`">
             Maximum Value
           </label>
         </div>
@@ -21,8 +21,8 @@
     <div class="form-row">
       <div class="col-2 form-group">
         <div class="form-check" v-if="minCheck">
-          <input class="form-check-input" type="checkbox" id="mininclusive" v-model="config.lowerBound.inclusive">
-          <label class="form-check-label" for="mininclusive">
+          <input class="form-check-input" type="checkbox" :id="`mininclusive_${index}`" v-model="config.lowerBound.inclusive">
+          <label class="form-check-label" :for="`mininclusive_${index}`">
             Inclusive
           </label>
         </div>
@@ -32,8 +32,8 @@
       </div>
       <div class="col-2 form-group">
         <div class="form-check" v-if="maxCheck">
-          <input class="form-check-input" type="checkbox" id="maxinclusive" v-model="config.upperBound.inclusive">
-          <label class="form-check-label" for="maxinclusive">
+          <input class="form-check-input" type="checkbox" :id="`maxinclusive_${index}`" v-model="config.upperBound.inclusive">
+          <label class="form-check-label" :for="`maxinclusive_${index}`">
             Inclusive
           </label>
         </div>
@@ -56,15 +56,22 @@ export default {
     datetime
   },
   props: {
-    config: Object
+    config: Object,
+    index: Number
   },
   data () {
     return {
-      minCheck: false,
-      maxCheck: false,
+      minCheck: (this.config.lowerBound !== undefined) && (this.config.lowerBound !== null),
+      maxCheck: (this.config.upperBound !== undefined) && (this.config.upperBound !== null),
       default: {
-        min: { value: Date.now(), inclusive: false },
-        max: { value: Date.now(), inclusive: false }
+        min: {
+          value: (this.config.lowerBound !== undefined) && (this.config.lowerBound !== null) ? this.config.lowerBound : Date.now(),
+          inclusive: false
+        },
+        max: {
+          value: (this.config.upperBound !== undefined) && (this.config.upperBound !== null) ? this.config.upperBound : Date.now(),
+          inclusive: false
+        }
       },
       lowerDateTime: dateFormat(Date.now(), 'yyyy/mm/dd HH:MM:ss'),
       upperDateTime: dateFormat(Date.now(), 'yyyy/mm/dd HH:MM:ss')
@@ -82,15 +89,7 @@ export default {
       }
     }
   },
-  mounted: function () {
-    if ((this.config.lowerBound !== undefined) && (this.config.lowerBound !== null)) {
-      this.minCheck = true
-      this.default.min = this.config.lowerBound
-    }
-    if ((this.config.upperBound !== undefined) && (this.config.upperBound !== null)) {
-      this.maxCheck = true
-      this.default.max = this.config.upperBound
-    }
+  created: function () {
     this.config.validator = function (configuration) {
       let ub = (configuration.upperBound === undefined) || (configuration.upperBound === null) ? null : configuration.upperBound
       let lb = (configuration.lowerBound === undefined) || (configuration.lowerBound === null) ? null : configuration.lowerBound
