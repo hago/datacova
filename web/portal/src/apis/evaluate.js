@@ -16,11 +16,12 @@ class EvaluateApiHelper {
   }
 
   async evaluateLua (code, fieldValues) {
+    let converted = code.replace('\r', '\\r').replace('\n', '\\n')
     let rsp = await axios({
       url: `${this.urlprefix}/api/lua/evaluate`,
       method: 'POST',
       data: {
-        code: code,
+        code: converted,
         fieldValues: fieldValues
       }
     })
