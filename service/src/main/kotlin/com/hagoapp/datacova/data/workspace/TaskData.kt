@@ -59,7 +59,8 @@ class TaskData(config: DatabaseConfig) : CoVaDatabase(config) {
     }
 
     fun getTasks(workspaceId: Int): List<Task> {
-        connection.prepareStatement("select * from task where wkid = ?").use { stmt ->
+        val sql = "select * from task where wkid = ? order by modifytime desc, addtime desc"
+        connection.prepareStatement(sql).use { stmt ->
             stmt.setInt(1, workspaceId)
             val tasks = mutableListOf<Task>()
             stmt.executeQuery().use { rs ->
