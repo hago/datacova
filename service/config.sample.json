@@ -55,5 +55,13 @@
   },
   "task": {
     "fileStoreRoot": ""
+  },
+  "mail": {
+    "host": "127.0.0.1",
+    "port": 25,
+    "user": "USER_NAME",
+    "password": "PASSWORD",
+    "from": "SENDER_IDENTITY",
+    "ssl": false
   }
 }

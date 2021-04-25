@@ -53,6 +53,15 @@ public class CoVaConfig implements JsonStringify {
     private LoggingConfig logging;
     private RedisConfig redis;
     private TaskExecutionConfig task;
+    private MailConfig mail;
+
+    public MailConfig getMail() {
+        return mail;
+    }
+
+    public void setMail(MailConfig mail) {
+        this.mail = mail;
+    }
 
     public TaskExecutionConfig getTask() {
         return task;
