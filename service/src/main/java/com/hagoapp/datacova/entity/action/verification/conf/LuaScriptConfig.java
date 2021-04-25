@@ -29,6 +29,7 @@ public class LuaScriptConfig extends Configuration {
         if (snippet == null) {
             return false;
         }
+        snippet = snippet.replace("\\r", "\r").replace("\\n", "\n");
         return super.isValid();
     }
 
