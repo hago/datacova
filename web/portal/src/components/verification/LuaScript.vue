@@ -1,7 +1,7 @@
 <template>
   <div >
     <div style="margin: 0px 5px 10px 5px">
-      <textarea class="col" v-model="config.snippet" rows="8" v-on:change="codesChange()" placeholder="example:
+      <textarea class="col" v-model="snippet" rows="8" v-on:change="codesChange()" placeholder="example:
 arg = ...
 arg.name + 1 == 2
 
@@ -50,7 +50,13 @@ export default {
   data () {
     return {
       params: Object.assign(this.config.fields.map(_ => '')),
-      evaluateResult: undefined
+      evaluateResult: undefined,
+      snippet: this.config.snippet === undefined ? '' : this.config.snippet.replace('\\r', '\r').replace('\\n', '\n')
+    }
+  },
+  watch: {
+    snippet: function (newValue) {
+      this.config.snippet = newValue.replace('\r', '\\r').replace('\n', '\\n')
     }
   },
   methods: {
