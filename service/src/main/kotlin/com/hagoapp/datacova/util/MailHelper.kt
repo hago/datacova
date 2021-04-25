@@ -9,15 +9,15 @@ package com.hagoapp.datacova.util
 
 import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.config.CoVaConfig
+import com.hagoapp.datacova.config.MailConfig
 import java.util.*
 import javax.activation.DataHandler
 import javax.activation.FileDataSource
 import javax.mail.*
 import javax.mail.internet.*
 
-class MailHelper() {
+class MailHelper(val config: MailConfig) {
 
-    private val config = CoVaConfig.getConfig().mail
     private val logger = CoVaLogger.getLogger()
 
     private val recipients = mutableListOf<InternetAddress>()
@@ -32,6 +32,8 @@ class MailHelper() {
         get() {
             return recipients.isEmpty() && recipientsCC.isEmpty() && recipientsBCC.isEmpty()
         }
+
+    constructor() : this(CoVaConfig.getConfig().mail)
 
     fun addRecipient(address: InternetAddress): MailHelper {
         recipients.add(address)
