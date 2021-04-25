@@ -2,14 +2,14 @@
   <div>
     <div class="form-group">
       <div class="form-check form-check-inline">
-        <input class="form-check-input" type="checkbox" id="ignoreCase" v-model="config.ignoreCase">
-        <label class="form-check-label" for="ignoreCase">
+        <input class="form-check-input" type="checkbox" :id="`ignoreCase_${index}`" v-model="config.ignoreCase">
+        <label class="form-check-label" :for="`ignoreCase_${index}`">
           Ignore Case
         </label>
       </div>
       <div class="form-check form-check-inline">
-        <input class="form-check-input" type="checkbox" id="dotAll" v-model="config.dotAll">
-        <label class="form-check-label" for="dotAll">
+        <input class="form-check-input" type="checkbox" :id="`dotAll_${index}`" v-model="config.dotAll">
+        <label class="form-check-label" :for="`dotAll_${index}`">
           Dot(.) match all
         </label>
       </div>
@@ -31,7 +31,8 @@ Vue.use(Toasted)
 export default {
   name: 'RegexVerifier',
   props: {
-    config: Object
+    config: Object,
+    index: Number
   },
   mounted: function () {
     this.config.validator = function (configuration) {
