@@ -1,18 +1,18 @@
 <template>
   <div>
     <div class="col">
-      <h5>Option List<span style="float: right" class="clickable" v-on:click="addOption()">+</span></h5>
+      <h5>Option List  <button class="btn btn-info" v-on:click="addOption()">&nbsp;+&nbsp;</button></h5>
     </div>
     <div class="form-group">
       <div class="form-check form-check-inline">
-        <input class="form-check-input" type="checkbox" id="ignoreCase" v-model="config.ignoreCase">
-        <label class="form-check-label" for="ignoreCase">
+        <input class="form-check-input" type="checkbox" :id="`ignoreCase_${index}`" v-model="config.ignoreCase">
+        <label class="form-check-label" :for="`ignoreCase_${index}`">
           Ignore Option Case
         </label>
       </div>
       <div class="form-check form-check-inline">
-        <input class="form-check-input" type="checkbox" id="allowEmpty" v-model="config.allowEmpty">
-        <label class="form-check-label" for="allowEmpty">
+        <input class="form-check-input" type="checkbox" :id="`allowEmpty_${index}`" v-model="config.allowEmpty">
+        <label class="form-check-label" :for="`allowEmpty_${index}`">
           Allow Empty Value
         </label>
       </div>
@@ -34,7 +34,8 @@
 export default {
   name: 'OptionsVerifier',
   props: {
-    config: Object
+    config: Object,
+    index: Number
   },
   data () {
     return {
