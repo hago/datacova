@@ -12,17 +12,10 @@ import com.hagoapp.datacova.config.MailConfig
 import com.hagoapp.datacova.config.TestConfig
 import com.hagoapp.datacova.config.TestMailConfig
 import com.hagoapp.datacova.util.MailHelper
-import org.junit.jupiter.api.BeforeAll
+import com.hagoapp.datacova.util.text.TextUtils
 import org.junit.jupiter.api.Test
 import java.io.File
 import javax.mail.internet.InternetAddress
-
-/*
- * Copyright (c) 2021.
- * This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at https://mozilla.org/MPL/2.0/.
- */
 
 class MailTest {
 
@@ -30,21 +23,24 @@ class MailTest {
         private const val DEFAULT_CONFIG_FILE = "config.json"
         private const val DEFAULT_TEST_CONFIG_FILE = "testconfig.json"
         private const val CONFIG_FILE_PROPERTY = "ccova.config"
+        private const val TEST_CONFIG_FILE_PROPERTY = "ccova.testconfig"
     }
 
-    private lateinit var configFile: String
-    private lateinit var config: MailConfig
-    private lateinit var testConfig: TestMailConfig
+    private val configFile: String = System.getProperty(CONFIG_FILE_PROPERTY) ?: DEFAULT_CONFIG_FILE
+    private val config: MailConfig
+    private val testConfig: TestMailConfig
+    private val testConfigFile: String = System.getProperty(TEST_CONFIG_FILE_PROPERTY) ?: DEFAULT_TEST_CONFIG_FILE
 
-    @BeforeAll
-    private fun init() {
-        configFile = System.getProperty(CONFIG_FILE_PROPERTY) ?: DEFAULT_CONFIG_FILE
+    init {
         if (!File(configFile).exists()) {
             throw CoVaException("$configFile not existed")
         }
         CoVaConfig.loadConfig(configFile)
         config = CoVaConfig.getConfig().mail
-        testConfig = TestConfig.load(DEFAULT_TEST_CONFIG_FILE).mail
+        if (!File(testConfigFile).exists()) {
+            throw CoVaException("$testConfigFile not existed")
+        }
+        testConfig = TestConfig.load(testConfigFile).mail
     }
 
     @Test
@@ -54,6 +50,12 @@ class MailTest {
         mail.addRecipientCCList(testConfig.cc.map { InternetAddress(it) })
         mail.addRecipientBCCList(testConfig.bcc.map { InternetAddress(it) })
         mail.setTitle(testConfig.title)
+        if (TextUtils.isHtml(testConfig.body)) {
+            mail.setHtmlContent(testConfig.body)
+        } else {
+            mail.setTextContent(testConfig.body)
+        }
+        mail.addAttachment(testConfigFile)
         mail.sendMail()
     }
 }

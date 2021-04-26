@@ -1,7 +1,7 @@
 {
   "mail": {
-    "title": "",
-    "body": "",
+    "title": "发送邮件测试",
+    "body": "<html>\n\t\t<head>\n\t\t\t<title>send mail test</title>\n\t\t\t<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n\t\t</head>\n\t\t<body>\n\t\t\t<h1>这是一封测试邮件。</h1>\n\t\t\t<h1>This is a test mail.</h1>\n\t\t\t<h1>El es un correo electrónico.</h1>\n\t\t\t<h1>これはテスト電子メール</h1>\n\t\t\t<p>Paragraph</p>\n\t\t\t<ul>\n\t\t\t\t<li>item1</li>\n\t\t\t\t<li>item2</li>\n\t\t\t</ul>\n\t\t</body>\n    </html>",
     "to": [],
     "cc": [],
     "bcc": []
