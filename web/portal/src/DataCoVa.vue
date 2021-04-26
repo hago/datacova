@@ -9,7 +9,7 @@
       </div>
       <div class="user">
         <a v-if="logged" href="javascript:void(0);" v-on:click="logout()">{{this.loginStatus.user.name}}</a>
-        <span v-if="!logged">Anonymous</span>
+        <button class="btn btn-primary login" v-on:click="gotoLogin()" v-if="!logged">Login</button>
       </div>
       <div class="notification" title="Notifications">
         <a href="javascript:void(0);" v-if="logged">
@@ -61,6 +61,9 @@ export default {
       let ws = new WSConnection()
       ws.open()
       router.push('/main').catch(err => console.log(`redirect err: ${err}`))
+    },
+    gotoLogin: function () {
+      router.push('/login').catch()
     }
   }
 }
@@ -97,5 +100,8 @@ export default {
 }
 .title_red {
   color: red;
+}
+.login {
+  margin: 10px;
 }
 </style>
