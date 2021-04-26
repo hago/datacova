@@ -3,25 +3,25 @@
     <div class="form-row">
       <div class="form-inline col-10">
         <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="inclusive" v-model="boundary.inclusive">
-          <label class="form-check-label" for="inclusive">
+          <input class="form-check-input" type="checkbox" :id="`inclusive_${index}`" v-model="boundary.inclusive">
+          <label class="form-check-label" :for="`inclusive_${index}`">
             Inclusive
           </label>
         </div>
         <div class="input-group col-2 mb-2 mr-sm-2">
-          <input class="form-control" type="text" pattern="\d+" v-model="monthDiff" />
+          <input class="form-control" type="number" v-model="monthDiff" />
           <div class="input-group-append">
             <div class="input-group-text">Month{{ monthDiff > 1 ? 's' : '' }}</div>
           </div>
         </div>
         <div class="input-group col-2 mb-2 mr-sm-2">
-          <input class="form-control" type="text" pattern="\d+" v-model="dayDiff" />
+          <input class="form-control" type="number" v-model="dayDiff" />
           <div class="input-group-append">
             <div class="input-group-text">Day{{ dayDiff > 1 ? 's' : '' }}</div>
           </div>
         </div>
         <div class="input-group col-2 mb-2 mr-sm-2">
-          <input class="form-control" type="text" pattern="\d+" v-model="hourDiff" />
+          <input class="form-control" type="number" v-model="hourDiff" />
           <div class="input-group-append">
             <div class="input-group-text">Hour{{ hourDiff > 1 ? 's' : '' }}</div>
           </div>
@@ -44,7 +44,8 @@
 export default {
   name: 'RelativeTimeBoundary',
   props: {
-    boundary: Object
+    boundary: Object,
+    index: Number
   },
   data () {
     return {
@@ -73,7 +74,7 @@ export default {
       hourDiff: 0
     }
   },
-  mounted: function () {
+  created: function () {
     if (this.boundary.timeDiff !== undefined) {
       this.monthDiff = this.boundary.timeDiff.month
       this.hourDiff = this.boundary.timeDiff.hour

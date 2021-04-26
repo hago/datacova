@@ -3,8 +3,8 @@
     <div class="form-row">
       <div class="col-6 form-group">
         <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="mincheck" v-bind:checked="minCheck" v-on:click="toggleMin()">
-          <label class="form-check-label" for="mincheck">
+          <input class="form-check-input" type="checkbox" :id="`mincheck_${index}`" v-bind:checked="minCheck" v-on:click="toggleMin()">
+          <label class="form-check-label" :for="`mincheck_${index}`">
             Minimum Date
           </label>
         </div>
@@ -12,12 +12,13 @@
     </div>
     <RelativeTimeBoundary v-if="minCheck"
       v-bind:boundary="config.lowerBound"
+      v-bind:index="index"
       ></RelativeTimeBoundary>
     <div class="form-row">
       <div class="col-6 form-group">
         <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="maxCheck" v-bind:checked="maxCheck" v-on:click="toggleMax()">
-          <label class="form-check-label" for="maxCheck">
+          <input class="form-check-input" type="checkbox" :id="`maxCheck_${index}`" v-bind:checked="maxCheck" v-on:click="toggleMax()">
+          <label class="form-check-label" :for="`maxCheck_${index}`">
             Maximum Date
           </label>
         </div>
@@ -25,6 +26,7 @@
     </div>
     <RelativeTimeBoundary v-if="maxCheck"
       v-bind:boundary="config.upperBound"
+      v-bind:index="index"
       ></RelativeTimeBoundary>
   </div>
 </template>
@@ -42,7 +44,8 @@ export default {
     RelativeTimeBoundary
   },
   props: {
-    config: Object
+    config: Object,
+    index: Number
   },
   data () {
     return {
@@ -52,12 +55,20 @@ export default {
         min: {
           inclusive: false,
           reference: 'Now',
-          timeDiff: {}
+          timeDiff: {
+            month: 0,
+            day: 0,
+            hour: 0
+          }
         },
         max: {
           inclusive: false,
           reference: 'Now',
-          timeDiff: {}
+          timeDiff: {
+            month: 0,
+            day: 0,
+            hour: 0
+          }
         }
       },
       lowerDateTime: dateFormat(Date.now(), 'yyyy/mm/dd HH:MM:ss'),
