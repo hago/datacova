@@ -79,10 +79,6 @@ public class RelativeTimeRangeConfig extends Configuration {
                     return DateUtils.beginOfZonedYear(aTime);
                 case EndOfThisYear:
                     return DateUtils.endOfZonedYear(aTime);
-                case BeginOfThisFinancialYear:
-                    return DateUtils.beginOfZonedFinancialYear(aTime);
-                case EndOfThisFinancialYear:
-                    return DateUtils.endOfZonedFinancialYear(aTime);
                 default:
                     return null;
             }

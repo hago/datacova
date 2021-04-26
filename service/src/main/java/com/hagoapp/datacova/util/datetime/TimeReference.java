@@ -19,7 +19,5 @@ public enum TimeReference {
     BeginOfThisQuarter,
     EndOfThisQuarter,
     BeginOfThisYear,
-    EndOfThisYear,
-    BeginOfThisFinancialYear,
-    EndOfThisFinancialYear
+    EndOfThisYear
 }

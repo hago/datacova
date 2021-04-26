@@ -122,37 +122,6 @@ public class DateUtils {
         return need;
     }
 
-    @NotNull
-    public static ZonedDateTime beginOfZonedFinancialYear(ZonedDateTime someTime) {
-        ZonedDateTime need;
-        if (someTime.getMonthValue() >= 4) {
-            need = ZonedDateTime.of(someTime.getYear(), 4, 1,
-                    0, 0, 0, 0, someTime.getZone());
-        } else {
-            need = ZonedDateTime.of(someTime.getYear() - 1, 4, 1,
-                    0, 0, 0, 0, someTime.getZone());
-        }
-        return need;
-    }
-
-    @NotNull
-    public static ZonedDateTime endOfZonedFinancialYear(ZonedDateTime someTime) {
-        return beginOfZonedFinancialYear(someTime).plusYears(1).minusNanos(1);
-    }
-
-    @NotNull
-    public static LocalDateTime beginOfLocalFinancialYear(LocalDateTime someTime) {
-        LocalDateTime need;
-        if (someTime.getMonthValue() >= 4) {
-            need = LocalDateTime.of(someTime.getYear(), 4, 1,
-                    0, 0, 0, 0);
-        } else {
-            need = LocalDateTime.of(someTime.getYear() - 1, 4, 1,
-                    0, 0, 0, 0);
-        }
-        return need;
-    }
-
     public static long yearMonthOffsetToMilliSecond(@NotNull LocalDateTime base, int monthOffset) {
         return yearMonthOffsetToMilliSecond(base, monthOffset, 0);
     }

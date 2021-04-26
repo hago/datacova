@@ -60,9 +60,7 @@ export default {
         BeginOfThisQuarter: 'Begin of Running Quarter',
         EndOfThisQuarter: 'End of Running Quarter',
         BeginOfThisYear: 'Begin of Running Quarter',
-        EndOfThisYear: 'End of Running Year',
-        BeginOfThisFinancialYear: 'Begin of Running Financial Year',
-        EndOfThisFinancialYear: 'End of Running Financial Year'
+        EndOfThisYear: 'End of Running Year'
       },
       directions: {
         before: -1,
