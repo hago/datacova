@@ -21,11 +21,11 @@ import java.util.List;
 import java.util.Map;
 
 public class ExecutionDetail implements JsonStringify {
-    private boolean succeeded;
+    private boolean succeeded = false;
     private long startTime = -1;
     private long endTime = -1;
-    private Map<Integer, ExecutionActionDetail> actionMap = new HashMap<>();
-    private List<Exception> errors = new ArrayList<>();
+    private final Map<Integer, ExecutionActionDetail> actionMap = new HashMap<>();
+    private final List<Exception> errors = new ArrayList<>();
     private int lineCount = -1;
 
     public boolean isSucceeded() {
