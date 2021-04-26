@@ -109,7 +109,7 @@ export default {
         'Number Range Verification': 2,
         'Optional Values Verification': 3,
         'Time Range Verification': 4,
-        'Customized Verification in Coding': 5,
+        'Verification with Lua': 5,
         'Time Range Verification Relative to A Point': 6
       }
     }
