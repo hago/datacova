@@ -43,7 +43,7 @@ class IngestExecutor : BaseTaskActionExecutor(), ProgressNotify {
 
     override fun onComplete(p0: ParseResult) {
         if (p0.isSucceeded) {
-            watcher?.onProgressUpdate(taskAction, 100f)
+            watcher?.onProgressUpdate(taskAction, 1f)
         } else {
             watcher?.onError(taskAction, Exception(p0.getErrors().values.first()))
         }
