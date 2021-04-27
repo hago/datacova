@@ -163,6 +163,14 @@ class WorkspaceApiHelper {
     })
     return rsp
   }
+
+  async loadTaskExecution (id) {
+    let rsp = await axios({
+      method: 'GET',
+      url: `${this.urlprefix}/api/execution/${id}`
+    })
+    return rsp
+  }
 }
 
 export default WorkspaceApiHelper

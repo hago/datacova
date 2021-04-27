@@ -10,7 +10,7 @@
       </div>
       <div class="form-row" v-if="executions.length === 0">No Task Executions</div>
       <div class="form-row" v-for="exe in executions" v-bind:key="exe.id">
-        <div class="col-4">{{ exe.task.name }}</div>
+        <div class="col-4 clickable" v-on:click="showDetail(exe)">{{ exe.task.name }}</div>
         <div class="col-4">{{ fmtTime(exe.addTime) }}</div>
         <div class="col-3">{{ exe.addByUser.name }}</div>
         <div class="col-1" style="float: right">
@@ -26,6 +26,7 @@
 
 <script>
 import Vue from 'vue'
+import Router from '../../router'
 import WorkspaceApiHelper from '@/apis/workspace.js'
 import UserApiHelper from '@/apis/userapi.js'
 import Toasted from 'vue-toasted'
@@ -87,6 +88,10 @@ export default {
     },
     fmtTime: function (timeStamp) {
       return dateFormat(new Date(timeStamp), 'yyyy/mm/dd HH:MM:ss')
+    },
+    showDetail: function (execution) {
+      sessionStorage.setItem(`execution_${execution.id}`, JSON.stringify(execution))
+      Router.push(`/execution/${execution.id}`)
     }
   }
 }

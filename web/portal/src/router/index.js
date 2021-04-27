@@ -14,6 +14,7 @@ import WorkspaceMember from '@/components/user/WorkspaceMember'
 import User from '@/components/user/User'
 import Task from '@/components/task/Task'
 import TaskFileUpload from '@/components/task/TaskFileUpload'
+import TaskExecution from '@/components/execution/TaskExecution'
 
 Vue.use(Vuex)
 Vue.use(Router)
@@ -73,6 +74,12 @@ export default new Router({
       path: '/task/:workspaceId/:id/upload',
       name: 'TaskFileUpload',
       component: TaskFileUpload,
+      props: true
+    },
+    {
+      path: '/execution/:id',
+      name: 'TaskExecution',
+      component: TaskExecution,
       props: true
     }
   ],
