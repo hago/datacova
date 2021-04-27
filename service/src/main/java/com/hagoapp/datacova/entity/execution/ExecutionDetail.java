@@ -15,22 +15,27 @@ import com.hagoapp.datacova.JsonStringify;
 import com.hagoapp.datacova.entity.action.TaskAction;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ExecutionDetail implements JsonStringify {
-    private boolean succeeded = false;
     private long startTime = -1;
     private long endTime = -1;
-    private final Map<Integer, ExecutionActionDetail> actionMap = new HashMap<>();
-    private final List<Exception> errors = new ArrayList<>();
+    private final Map<Integer, ExecutionActionDetail> actionDetailMap = new HashMap<>();
+    private Exception dataLoadingError;
     private int lineCount = -1;
+    private final TaskExecution execution;
+
+    public ExecutionDetail(TaskExecution execution) {
+        this.execution = execution;
+    }
+
+    public TaskExecution getExecution() {
+        return execution;
+    }
 
     public boolean isSucceeded() {
-        succeeded = this.errors.isEmpty() && this.actionMap.values().stream().allMatch(ExecutionActionDetail::isSucceeded);
-        return succeeded;
+        return (dataLoadingError == null) && this.actionDetailMap.values().stream().allMatch(ExecutionActionDetail::isSucceeded);
     }
 
     public static ExecutionDetail fromString(String s) {
@@ -55,24 +60,24 @@ public class ExecutionDetail implements JsonStringify {
 
     public ExecutionActionDetail addActionDetail(int actionIndex, TaskAction action) {
         ExecutionActionDetail ead = new ExecutionActionDetail(action);
-        actionMap.put(actionIndex, ead);
+        actionDetailMap.put(actionIndex, ead);
         return ead;
     }
 
-    public void addError(Exception error) {
-        errors.add(error);
-    }
-
-    public List<Exception> getErrors() {
-        return errors;
-    }
-
     public ExecutionActionDetail getActionDetail(int actionIndex) {
-        return actionMap.getOrDefault(actionIndex, null);
+        return actionDetailMap.getOrDefault(actionIndex, null);
     }
 
-    public Map<Integer, ExecutionActionDetail> getActionMap() {
-        return actionMap;
+    public Map<Integer, ExecutionActionDetail> getActionDetailMap() {
+        return actionDetailMap;
+    }
+
+    public Exception getDataLoadingError() {
+        return dataLoadingError;
+    }
+
+    public void setDataLoadingError(Exception dataLoadingError) {
+        this.dataLoadingError = dataLoadingError;
     }
 
     public int getLineCount() {
@@ -92,8 +97,14 @@ public class ExecutionDetail implements JsonStringify {
     }
 
     @Override
-    public String toJson() {
-        isSucceeded();
-        return JsonStringify.super.toJson();
+    public String toString() {
+        return "ExecutionDetail{" +
+                "startTime=" + startTime +
+                ", endTime=" + endTime +
+                ", actionDetailMap=" + actionDetailMap +
+                ", dataLoadingError=" + dataLoadingError +
+                ", lineCount=" + lineCount +
+                ", execution=" + execution +
+                '}';
     }
 }

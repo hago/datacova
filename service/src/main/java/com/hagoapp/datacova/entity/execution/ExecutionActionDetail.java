@@ -11,54 +11,37 @@ package com.hagoapp.datacova.entity.execution;
 import com.hagoapp.datacova.JsonStringify;
 import com.hagoapp.datacova.entity.action.TaskAction;
 
-import java.util.ArrayList;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class ExecutionActionDetail implements JsonStringify {
-    private boolean succeeded;
-    private List<Throwable> errors = new ArrayList<>();
-    private List<String> messages = new ArrayList<>();
-    private Map<Integer, List<String>> dataMessages = new HashMap<>();
+    private final Map<Integer, List<String>> dataMessages = new HashMap<>();
+    private Exception error;
     private TaskAction action;
-    private long startTime;
+    private final long startTime = Instant.now().toEpochMilli();
     private Long endTime;
+
+
+    public boolean isSucceeded() {
+        return error == null;
+    }
 
     public ExecutionActionDetail(TaskAction action) {
         this.action = action;
     }
 
-    public boolean isSucceeded() {
-        return succeeded;
+    public Exception getError() {
+        return error;
     }
 
-    public void setSucceeded(boolean succeeded) {
-        this.succeeded = succeeded;
-    }
-
-    public List<Throwable> getErrors() {
-        return errors;
-    }
-
-    public void setErrors(List<Throwable> errors) {
-        this.errors = errors;
-    }
-
-    public List<String> getMessages() {
-        return messages;
-    }
-
-    public void setMessages(List<String> messages) {
-        this.messages = messages;
+    public void setError(Exception error) {
+        this.error = error;
     }
 
     public Map<Integer, List<String>> getDataMessages() {
         return dataMessages;
-    }
-
-    public void setDataMessages(Map<Integer, List<String>> dataMessages) {
-        this.dataMessages = dataMessages;
     }
 
     public TaskAction getAction() {
@@ -73,16 +56,22 @@ public class ExecutionActionDetail implements JsonStringify {
         return startTime;
     }
 
-    public void setStartTime(long startTime) {
-        this.startTime = startTime;
-    }
-
     public Long getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(Long endTime) {
-        this.endTime = endTime;
+    public void close() {
+        this.endTime = Instant.now().toEpochMilli();
     }
 
+    @Override
+    public String toString() {
+        return "ExecutionActionDetail{" +
+                "dataMessages=" + dataMessages +
+                ", error=" + error +
+                ", action=" + action +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                '}';
+    }
 }

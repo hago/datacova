@@ -9,6 +9,7 @@
 package com.hagoapp.datacova.execution
 
 import com.hagoapp.datacova.CoVaLogger
+import com.hagoapp.datacova.data.execution.TaskExecutionData
 import com.hagoapp.datacova.entity.action.TaskAction
 import com.hagoapp.datacova.entity.execution.ExecutionActionDetail
 import com.hagoapp.datacova.entity.execution.ExecutionDetail
@@ -16,13 +17,14 @@ import com.hagoapp.datacova.entity.execution.TaskExecution
 import com.hagoapp.datacova.util.StackTraceWriter
 import com.hagoapp.f2t.DataTable
 import com.hagoapp.f2t.FileParser
+import java.util.function.BiFunction
 
 class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExecutionWatcher {
 
     private val logger = CoVaLogger.getLogger()
     private val taskExec = taskExecution
     private val observers = mutableListOf<TaskExecutionWatcher>()
-    private val detail = ExecutionDetail()
+    private val detail = ExecutionDetail(taskExecution)
     private var currentActionDetail: ExecutionActionDetail? = null
     private var currentActionIndex: Int = 0
 
@@ -51,8 +53,8 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
             logger.error(msg)
             observers.forEach { it.onError(taskExec, ex) }
             observers.forEach { it.onDataLoadComplete(taskExec, false) }
+            detail.dataLoadingError = ex
             detail.endTiming()
-            detail.addError(ex)
             observers.forEach { it.onComplete(taskExec, detail) }
             return
         }
@@ -66,13 +68,12 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
                 executor.locale = taskExec.task.extra.locale
                 executor.watcher = this
                 executor.execute(action, dt)
-                currentActionDetail!!.isSucceeded = true
                 observers.forEach { it.onActionComplete(taskExec, i, currentActionDetail!!) }
             } catch (ex: Exception) {
                 logger.error("Error occurs in action $i: ${action.name} of execution ${taskExec.id}: ${ex.message}")
                 StackTraceWriter.write(ex, logger)
-                currentActionDetail!!.isSucceeded = false
-                currentActionDetail!!.errors.add(ex)
+                currentActionDetail!!.error = ex;
+                currentActionDetail!!.close();
                 observers.forEach { it.onActionComplete(taskExec, i, currentActionDetail!!) }
                 if (action.extra.continueNextWhenError) {
                     logger.info("continue next action of execution ${taskExec.id}")
@@ -91,19 +92,18 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
      * begin of TaskExecutionActionWatcher
      **/
     override fun onError(action: TaskAction, error: Exception): Boolean {
-        currentActionDetail!!.errors.add(error)
-        return true
+        currentActionDetail!!.error = error
+        return false
     }
 
     override fun onMessage(action: TaskAction, msg: String) {
-        currentActionDetail!!.messages.add(msg)
+        // currentActionDetail!!.
     }
 
     override fun onDataMessage(action: TaskAction, lineNo: Int, msg: String) {
-        if (!currentActionDetail!!.dataMessages.containsKey(lineNo)) {
-            currentActionDetail!!.dataMessages[lineNo] = mutableListOf()
+        currentActionDetail!!.dataMessages.compute(lineNo) { _, existed ->
+            existed?.plus(msg) ?: mutableListOf(msg)
         }
-        currentActionDetail!!.dataMessages.getValue(lineNo).add(msg)
     }
 
     override fun onProgressUpdate(action: TaskAction, progress: Float) {
@@ -119,10 +119,11 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
 
     override fun onComplete(te: TaskExecution, result: ExecutionDetail) {
         try {
+            TaskExecutionData().completeTaskExecution(result)
             logger.info("Execution ${te.id} of Task ${te.task.name}(${te.taskId}) ${if (result.isSucceeded) "succeeded" else "failed"}")
         } catch (ex: Throwable) {
             logger.error("unexpected error in Execution Service call onComplete back: $ex")
-            ex.printStackTrace()
+            StackTraceWriter.write(ex, logger)
         }
     }
 
