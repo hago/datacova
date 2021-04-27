@@ -19,12 +19,13 @@ class TaskExecutionCache {
 
         const val TASK_EXECUTION_DEFAULT_PAGE_SIZE = 10
         private const val TASK_EXECUTION = "TASK_EXECUTION"
+        private const val TASK_EXECUTION_OF_TASK = "TASK_EXECUTION_OF_TASK"
         private const val TASK_EXECUTION_LIST_OF_WORKSPACE = "TASK_EXECUTION_LIST_OF_WORKSPACE"
 
         @JvmStatic
         fun getExecutionOfTask(taskId: Int): TaskExecution? {
             return RedisCacheReader.readCachedData(
-                TASK_EXECUTION,
+                TASK_EXECUTION_OF_TASK,
                 3600,
                 object : RedisCacheReader.GenericLoader<TaskExecution> {
                     override fun perform(vararg params: Any?): TaskExecution? {
@@ -72,6 +73,22 @@ class TaskExecutionCache {
                 val jedis = it.jedis
                 jedis.del(*jedis.keys("$TASK_EXECUTION_LIST_OF_WORKSPACE||$workspaceId*").toTypedArray())
             }
+        }
+
+        @JvmStatic
+        fun getTaskExecution(id: Int): TaskExecution? {
+            return RedisCacheReader.readCachedData(
+                TASK_EXECUTION,
+                3600,
+                object : RedisCacheReader.GenericLoader<TaskExecution> {
+                    override fun perform(vararg params: Any?): TaskExecution? {
+                        val execId = params[0].toString().toInt()
+                        return TaskExecutionData().getTaskExecution(execId)
+                    }
+                },
+                TaskExecution::class.java,
+                id
+            )
         }
     }
 }

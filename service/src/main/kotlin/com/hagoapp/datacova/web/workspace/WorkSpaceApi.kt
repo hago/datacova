@@ -159,4 +159,29 @@ class WorkSpaceApi {
             )
         )
     }
+
+    @WebEndPoint(
+        path = "/api/execution/:id",
+        methods = [HttpMethod.GET],
+        authTypes = [AuthType.UserToken]
+    )
+    fun getTaskExecution(context: RoutingContext) {
+        val id = context.pathParam("id").toIntOrNull()
+        if (id == null) {
+            ResponseHelper.respondError(context, HttpResponseStatus.NOT_FOUND, "Not existed")
+            return
+        }
+        val execution = TaskExecutionCache.getTaskExecution(id)
+        if (execution == null) {
+            ResponseHelper.respondError(context, HttpResponseStatus.NOT_FOUND, "Not existed")
+            return
+        } else {
+            ResponseHelper.sendResponse(
+                context, HttpResponseStatus.OK, mapOf(
+                    "code" to 0,
+                    "data" to execution
+                )
+            )
+        }
+    }
 }
