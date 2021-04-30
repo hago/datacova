@@ -63,5 +63,8 @@
     "password": "PASSWORD",
     "from": "SENDER_IDENTITY",
     "ssl": false
+  },
+  "templates": {
+    "exec_report": "EXECUTION_REPORT_TEMPLATE"
   }
 }
