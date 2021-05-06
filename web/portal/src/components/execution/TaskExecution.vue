@@ -1,13 +1,41 @@
 <template>
-  <div>
+  <div style="margin: 15px">
+    <h2 v-if="succeeded">Status of Execution {{ execution.id }}: <span class="succeeded">Succeeded</span></h2>
+    <h2 v-if="!succeeded">Status of Execution {{ execution.id }}: <span class="failed">Failed</span></h2>
+    <div v-for="(actiondetail, index) in detail.actionDetailMap" v-bind:key="index">
+      <h4>
+        <div class="row">
+          <div class="col actiontitle">Action {{ index }} - {{ actiondetail.action.name }}: </div>
+          <div class="col succeeded" v-if="actiondetail.error === null">Succeeded</div>
+          <div class="col failed" v-if="actiondetail.error !== null">Failed</div>
+        </div>
+      </h4>
+      <TaskExecutionIngest v-if="actiondetail.action.type === 1"
+        v-bind:detail="detail"
+        v-bind:actiondetail="actiondetail"
+      ></TaskExecutionIngest>
+    </div>
   </div>
 </template>
 
 <script>
 import WorkspaceApiHelper from '@/apis/workspace.js'
+import TaskExecutionIngest from '@/components/execution/TaskExecutionIngest.vue'
 
 export default {
   name: 'TaskExecution',
+  components: {
+    TaskExecutionIngest
+  },
+  computed: {
+    detail: function () {
+      return this.execution.detail
+    },
+    succeeded: function () {
+      return (this.execution.detail.dataLoadingError === null) &&
+      (Object.values(this.execution.detail.actionDetailMap).filter(it => it.error === null).length === 0)
+    }
+  },
   data: function () {
     return {
       id: this.$route.params.id,
@@ -35,5 +63,14 @@ export default {
 }
 .head {
   font-weight: bold;
+}
+.succeeded {
+  color: green;
+}
+.failed {
+  color: red;
+}
+.actiontitle {
+  color: brown;
 }
 </style>

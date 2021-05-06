@@ -18,7 +18,6 @@ import com.hagoapp.datacova.execution.executor.report.Reporter
 import com.hagoapp.datacova.util.StackTraceWriter
 import com.hagoapp.f2t.DataTable
 import com.hagoapp.f2t.FileParser
-import java.util.function.BiFunction
 
 class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExecutionWatcher {
 
@@ -69,12 +68,13 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
                 executor.locale = taskExec.task.extra.locale
                 executor.watcher = this
                 executor.execute(action, dt)
+                currentActionDetail!!.end()
                 observers.forEach { it.onActionComplete(taskExec, i, currentActionDetail!!) }
             } catch (ex: Exception) {
                 logger.error("Error occurs in action $i: ${action.name} of execution ${taskExec.id}: ${ex.message}")
                 StackTraceWriter.write(ex, logger)
                 currentActionDetail!!.error = ex;
-                currentActionDetail!!.close();
+                currentActionDetail!!.end();
                 observers.forEach { it.onActionComplete(taskExec, i, currentActionDetail!!) }
                 if (action.extra.continueNextWhenError) {
                     logger.info("continue next action of execution ${taskExec.id}")
