@@ -23,7 +23,6 @@ public class ExecutionActionDetail implements JsonStringify {
     private final long startTime = Instant.now().toEpochMilli();
     private Long endTime;
 
-
     public boolean isSucceeded() {
         return error == null;
     }
@@ -60,7 +59,7 @@ public class ExecutionActionDetail implements JsonStringify {
         return endTime;
     }
 
-    public void close() {
+    public void end() {
         this.endTime = Instant.now().toEpochMilli();
     }
 
