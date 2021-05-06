@@ -10,6 +10,7 @@ package com.hagoapp.datacova.web.auth
 
 import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.user.UserInfo
+import com.hagoapp.datacova.user.UserPrivacyFilter
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.util.web.AuthUtils
 import com.hagoapp.datacova.web.WebInterface
@@ -42,7 +43,7 @@ class Check : WebInterface {
             context, HttpResponseStatus.OK, mapOf(
                 "code" to 0,
                 "data" to mapOf(
-                    "user" to user,
+                    "user" to UserPrivacyFilter.maskUserInfo(user),
                     "token" to AuthUtils.getCurrentToken(context)
                 )
             )

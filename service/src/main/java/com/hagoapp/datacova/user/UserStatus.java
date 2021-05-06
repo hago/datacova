@@ -10,6 +10,8 @@ package com.hagoapp.datacova.user;
 import com.google.gson.annotations.SerializedName;
 
 public enum UserStatus {
+    @SerializedName("-1")
+    Unknown(-1),
     @SerializedName("0")
     Normal(0),
     @SerializedName("1")
@@ -24,7 +26,7 @@ public enum UserStatus {
     }
 
     public static UserStatus parseInt(int i) {
-        for (UserStatus u: UserStatus.values()) {
+        for (UserStatus u : UserStatus.values()) {
             if (i == u.value) {
                 return u;
             }
