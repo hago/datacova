@@ -11,6 +11,21 @@ package com.hagoapp.datacova.user;
 import com.hagoapp.datacova.JsonStringify;
 
 public class UserInfo implements JsonStringify {
+
+    public static final int HIDE_USERINFO_DEFAULT = 0;
+    public static final int HIDE_USERINFO_ID = 0x1;
+    public static final int HIDE_USERINFO_NAME = 0x2;
+    public static final int HIDE_USERINFO_DESCRIPTION = 0x4;
+    public static final int HIDE_USERINFO_ADD_BY = 0x8;
+    public static final int HIDE_USERINFO_ADD_TIME = 0x10;
+    public static final int HIDE_USERINFO_MODIFY_BY = 0x20;
+    public static final int HIDE_USERINFO_MODIFY_TIME = 0x40;
+    public static final int HIDE_USERINFO_STATUS = 0x80;
+    public static final int HIDE_USERINFO_THUMBNAIL = 0x100;
+    public static final String DEFAULT_STRING_MASK = "********";
+    public static final long DEFAULT_LONG_MASK = 0L;
+    public static final UserStatus DEFAULT_USER_STATUS_MASK = UserStatus.Unknown;
+
     private long id;
     private String userId;
     private String pwdHash;
@@ -164,5 +179,45 @@ public class UserInfo implements JsonStringify {
                 ", provider='" + provider + '\'' +
                 ", userType=" + userType +
                 '}';
+    }
+
+    public UserInfo maskUserInfo() {
+        return maskUserInfo(HIDE_USERINFO_DEFAULT);
+    }
+
+    public UserInfo maskUserInfo(int mask) {
+        return maskUserInfo(mask, DEFAULT_STRING_MASK);
+    }
+
+    public UserInfo maskUserInfo(int mask, String maskString) {
+        this.pwdHash = maskString;
+        if ((mask & HIDE_USERINFO_ID) != 0) {
+            this.id = DEFAULT_LONG_MASK;
+        }
+        if ((mask & HIDE_USERINFO_ADD_BY) != 0) {
+            this.addBy = DEFAULT_LONG_MASK;
+        }
+        if ((mask & HIDE_USERINFO_ADD_TIME) != 0) {
+            this.addTime = DEFAULT_LONG_MASK;
+        }
+        if ((mask & HIDE_USERINFO_DESCRIPTION) != 0) {
+            this.description = maskString;
+        }
+        if ((mask & HIDE_USERINFO_NAME) != 0) {
+            this.name = maskString;
+        }
+        if ((mask & HIDE_USERINFO_MODIFY_BY) != 0) {
+            this.modifyBy = DEFAULT_LONG_MASK;
+        }
+        if ((mask & HIDE_USERINFO_MODIFY_TIME) != 0) {
+            this.modifyTime = DEFAULT_LONG_MASK;
+        }
+        if ((mask & HIDE_USERINFO_STATUS) != 0) {
+            this.status = DEFAULT_USER_STATUS_MASK;
+        }
+        if ((mask & HIDE_USERINFO_THUMBNAIL) != 0) {
+            this.thumbnail = null;
+        }
+        return this;
     }
 }

@@ -18,7 +18,6 @@ import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.RoutingContext
 import com.hagoapp.datacova.user.UserAuthFactory
 import com.hagoapp.datacova.user.UserAuthProvider
-import com.hagoapp.datacova.user.UserPrivacyFilter
 
 class Login : WebInterface {
 
@@ -65,7 +64,7 @@ class Login : WebInterface {
             ResponseHelper.sendResponse(
                 routeContext, HttpResponseStatus.OK, mapOf(
                     "code" to 0,
-                    "data" to mapOf("user" to UserPrivacyFilter.maskUserInfo(user), "token" to token)
+                    "data" to mapOf("user" to user.maskUserInfo(), "token" to token)
                 )
             )
         }
