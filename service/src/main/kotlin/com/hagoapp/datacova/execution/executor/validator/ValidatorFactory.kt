@@ -42,7 +42,7 @@ class ValidatorFactory {
 
         fun createValidator(config: Configuration): Validator {
             val clz = validatorMap[config.type] ?: throw CoVaException("Validator for type ${config.type} not found")
-            return clz.newInstance().withConfig(config)
+            return clz.newInstance()
         }
     }
 }

@@ -16,21 +16,32 @@ import com.hagoapp.f2t.ProgressNotify
 import com.hagoapp.f2t.datafile.ParseResult
 
 class VerifyExecutor : BaseTaskActionExecutor(), ProgressNotify {
+    private lateinit var taskAction: TaskActionVerify
+
     override fun execute(action: TaskAction, data: DataTable) {
         if (action !is TaskActionVerify) {
             val ex = CoVaException("Not an TaskActionVerify: ${action.name}")
             watcher?.onError(action, ex)
             throw ex
         }
-        val validators = action.configurations.map { conf -> ValidatorFactory.createValidator(conf) }
+        taskAction = action
+        val validators = action.configurations.map { conf ->
+            ValidatorFactory.createValidator(conf).withColumnDefinition(data.columnDefinition).withConfig(conf)
+        }
+        val size = data.rows.size.toFloat()
         data.rows.forEachIndexed { index, row ->
             validators.forEach { validator ->
                 try {
-                    validator.verify(row)
+                    validator.verify(row).forEach { f ->
+                        val message = "Validation on field $f failed by rule ${validator.abstract}"
+                        watcher?.onDataMessage(action, index, message)
+                    }
                 } catch (e: Exception) {
-                    TODO()
+                    val message = ""
+                    watcher?.onDataMessage(action, index, message)
                 }
             }
+            this.onProgress(index.toFloat() / size)
         }
     }
 
@@ -39,14 +50,14 @@ class VerifyExecutor : BaseTaskActionExecutor(), ProgressNotify {
     }
 
     override fun onStart() {
-        TODO("Not yet implemented")
+        watcher?.onProgressUpdate(taskAction, 0f)
     }
 
     override fun onComplete(p0: ParseResult?) {
-        TODO("Not yet implemented")
+        watcher?.onProgressUpdate(taskAction, 1f)
     }
 
     override fun onProgress(p0: Float) {
-        TODO("Not yet implemented")
+        watcher?.onProgressUpdate(taskAction, p0)
     }
 }
