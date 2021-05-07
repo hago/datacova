@@ -115,7 +115,13 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
      * begin of TaskExecutionWatcher
      **/
     override fun onStart(te: TaskExecution) {
-        logger.info("Execution ${te.id} of Task ${te.task.name}(${te.taskId}) started")
+        try {
+            TaskExecutionData().startTaskExecution(te)
+            logger.info("Execution ${te.id} of Task ${te.task.name}(${te.taskId}) started")
+        } catch (ex: Exception) {
+            logger.error("unexpected error in Execution Service call onStart back: $ex")
+            StackTraceWriter.write(ex, logger)
+        }
     }
 
     override fun onComplete(te: TaskExecution, result: ExecutionDetail) {

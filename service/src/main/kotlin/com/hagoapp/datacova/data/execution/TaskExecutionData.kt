@@ -91,4 +91,12 @@ class TaskExecutionData(config: DatabaseConfig) : CoVaDatabase(config) {
             stmt.execute()
         }
     }
+
+    fun startTaskExecution(te: TaskExecution) {
+        val sql = "update taskexecution set xstatus = 1 where id = ?"
+        connection.prepareStatement(sql).use { stmt ->
+            stmt.setInt(3, te.id)
+            stmt.execute()
+        }
+    }
 }
