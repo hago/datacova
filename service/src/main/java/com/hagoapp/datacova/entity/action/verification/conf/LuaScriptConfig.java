@@ -11,7 +11,7 @@ package com.hagoapp.datacova.entity.action.verification.conf;
 import com.hagoapp.datacova.entity.action.verification.Configuration;
 
 public class LuaScriptConfig extends Configuration {
-    private static final int LUA_SCRIPT_CONFIGURATION_TYPE = 5;
+    public static final int LUA_SCRIPT_CONFIGURATION_TYPE = 5;
     private String snippet;
 
     public String getSnippet() {

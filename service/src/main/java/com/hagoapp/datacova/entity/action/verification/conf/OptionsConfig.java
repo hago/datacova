@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OptionsConfig extends Configuration {
-    private static final int OPTIONS_CONFIG_TYPE = 3;
+    public static final int OPTIONS_CONFIG_TYPE = 3;
     private final List<String> options = new ArrayList<>();
     private boolean ignoreCase = false;
     private boolean allowEmpty = false;

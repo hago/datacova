@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 public class RegexConfig extends Configuration {
-    private static final int REGEX_CONFIGURATION_TYPE = 1;
+    public static final int REGEX_CONFIGURATION_TYPE = 1;
     private String pattern;
     private boolean ignoreCase = true;
     private boolean dotAll = false;

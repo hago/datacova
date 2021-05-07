@@ -18,7 +18,7 @@ import java.util.TimeZone;
 
 public class RelativeTimeRangeConfig extends Configuration {
 
-    private static final int RELATIVE_TIME_RANGE_CONFIGURATION_TYPE = 6;
+    public static final int RELATIVE_TIME_RANGE_CONFIGURATION_TYPE = 6;
 
     public static class RelativeBoundary extends TimeRangeConfig.Boundary {
         private TimeReference reference = TimeReference.Now;

@@ -37,7 +37,7 @@ public class TimeRangeConfig extends Configuration {
         }
     }
 
-    private static final int TIME_RANGE_CONFIGURATION_TYPE = 4;
+    public static final int TIME_RANGE_CONFIGURATION_TYPE = 4;
     private Boundary upperBound;
     private Boundary lowerBound;
 
