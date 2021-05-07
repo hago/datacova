@@ -1,24 +1,33 @@
 <template>
   <div style="margin: 15px">
-    <h2 v-if="succeeded">Status of Execution {{ execution.id }}: <span class="succeeded">Succeeded</span></h2>
-    <h2 v-if="!succeeded">Status of Execution {{ execution.id }}: <span class="failed">Failed</span></h2>
-    <div v-for="(actiondetail, index) in detail.actionDetailMap" v-bind:key="index">
-      <h4>
-        <div class="row">
-          <div class="col actiontitle">Action {{ index }} - {{ actiondetail.action.name }}: </div>
-          <div class="col succeeded" v-if="actiondetail.error === null">Succeeded</div>
-          <div class="col failed" v-if="actiondetail.error !== null">Failed</div>
-        </div>
-      </h4>
-      <TaskExecutionIngest v-if="actiondetail.action.type === 1"
-        v-bind:detail="detail"
-        v-bind:actiondetail="actiondetail"
-      ></TaskExecutionIngest>
-    </div>
+    <h2>
+      <span>
+        The execution with id {{ execution.id }} of task
+        <a href="javascript:void(0);" v-on:click="gotoTask()">{{ execution.task.name }} is </a>
+      </span>
+      <span class="succeeded" v-if="succeeded">succeeded</span>
+      <span class="failed" v-if="!succeeded">failed</span>
+    </h2>
+    <ul>
+      <li v-for="(actiondetail, index) in detail.actionDetailMap" v-bind:key="index">
+        <h4>
+          <div class="row">
+            <div class="col actiontitle">Action {{ index }} - {{ actiondetail.action.name }}: </div>
+            <div class="col succeeded" v-if="actiondetail.error === null">Succeeded</div>
+            <div class="col failed" v-if="actiondetail.error !== null">Failed</div>
+          </div>
+        </h4>
+        <TaskExecutionIngest v-if="actiondetail.action.type === 1"
+          v-bind:detail="detail"
+          v-bind:actiondetail="actiondetail"
+        ></TaskExecutionIngest>
+      </li>
+    </ul>
   </div>
 </template>
 
 <script>
+import Router from '../../router'
 import WorkspaceApiHelper from '@/apis/workspace.js'
 import TaskExecutionIngest from '@/components/execution/TaskExecutionIngest.vue'
 
@@ -53,6 +62,17 @@ export default {
         console.log(err)
       })
     }
+  },
+  methods: {
+    gotoTask: function () {
+      Router.push({
+        name: 'Task',
+        params: {
+          id: this.execution.task.id,
+          workspaceId: this.execution.task.workspaceId
+        }
+      })
+    }
   }
 }
 </script>
@@ -71,6 +91,6 @@ export default {
   color: red;
 }
 .actiontitle {
-  color: brown;
+  color: blue;
 }
 </style>
