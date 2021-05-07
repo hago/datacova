@@ -18,8 +18,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Configuration of DataCoVa.
@@ -56,7 +54,7 @@ public class CoVaConfig implements JsonStringify {
     private RedisConfig redis;
     private TaskExecutionConfig task;
     private MailConfig mail;
-    private final Map<String, String> templates = new HashMap<>();
+    private TemplateConfig template;
 
     public MailConfig getMail() {
         return mail;
@@ -106,7 +104,11 @@ public class CoVaConfig implements JsonStringify {
         this.redis = redis;
     }
 
-    public Map<String, String> getTemplates() {
-        return templates;
+    public TemplateConfig getTemplate() {
+        return template;
+    }
+
+    public void setTemplate(TemplateConfig template) {
+        this.template = template;
     }
 }
