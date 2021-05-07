@@ -1,76 +1,41 @@
 <template>
-  <div style="margin: 15px">
-    <h2>
-      <span>
-        The execution with id {{ execution.id }} of task
-        <a href="javascript:void(0);" v-on:click="gotoTask()">{{ execution.task.name }} is </a>
-      </span>
-      <span class="succeeded" v-if="succeeded">succeeded</span>
-      <span class="failed" v-if="!succeeded">failed</span>
-    </h2>
-    <ul>
-      <li v-for="(actiondetail, index) in detail.actionDetailMap" v-bind:key="index">
-        <h4>
-          <div class="row">
-            <div class="col actiontitle">Action {{ index }} - {{ actiondetail.action.name }}: </div>
-            <div class="col succeeded" v-if="actiondetail.error === null">Succeeded</div>
-            <div class="col failed" v-if="actiondetail.error !== null">Failed</div>
-          </div>
-        </h4>
-        <TaskExecutionIngest v-if="actiondetail.action.type === 1"
-          v-bind:detail="detail"
-          v-bind:actiondetail="actiondetail"
-        ></TaskExecutionIngest>
-      </li>
-    </ul>
+  <div>
+    <TaskExecutionCompleted v-bind:execution="execution" v-if="(execution !== null) && ([2, -1].indexOf(status) >= 0)"
+      ></TaskExecutionCompleted>
+    <TaskExecutionNotCompleted v-bind:execution="execution" v-if="(execution !== null) && ([0, 1].indexOf(status) >= 0)"
+      ></TaskExecutionNotCompleted>
   </div>
 </template>
 
 <script>
-import Router from '../../router'
 import WorkspaceApiHelper from '@/apis/workspace.js'
-import TaskExecutionIngest from '@/components/execution/TaskExecutionIngest.vue'
+import TaskExecutionCompleted from '@/components/execution/TaskExecutionCompleted.vue'
+import TaskExecutionNotCompleted from '@/components/execution/TaskExecutionNotCompleted.vue'
 
 export default {
   name: 'TaskExecution',
   components: {
-    TaskExecutionIngest
-  },
-  computed: {
-    detail: function () {
-      return this.execution.detail
-    },
-    succeeded: function () {
-      return (this.execution.detail.dataLoadingError === null) &&
-      (Object.values(this.execution.detail.actionDetailMap).filter(it => it.error === null).length === 0)
-    }
+    TaskExecutionCompleted,
+    TaskExecutionNotCompleted
   },
   data: function () {
     return {
       id: this.$route.params.id,
-      execution: null
+      execution: null,
+      status: NaN
     }
   },
   created: function () {
     let str = sessionStorage.getItem(`execution_${this.id}`)
     if (str !== null) {
       this.execution = JSON.parse(str)
+      this.status = parseInt(this.execution.status)
     } else {
       (new WorkspaceApiHelper()).loadTaskExecution(this.id).then(rsp => {
         this.execution = rsp.data.data
+        this.status = parseInt(this.execution.status)
       }).catch(err => {
         console.log(err)
-      })
-    }
-  },
-  methods: {
-    gotoTask: function () {
-      Router.push({
-        name: 'Task',
-        params: {
-          id: this.execution.task.id,
-          workspaceId: this.execution.task.workspaceId
-        }
       })
     }
   }
@@ -78,19 +43,4 @@ export default {
 </script>
 
 <style scoped>
-.icon {
-  width: 20px
-}
-.head {
-  font-weight: bold;
-}
-.succeeded {
-  color: green;
-}
-.failed {
-  color: red;
-}
-.actiontitle {
-  color: blue;
-}
 </style>
