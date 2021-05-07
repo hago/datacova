@@ -36,7 +36,6 @@ function formatDuration (millisec) {
   if (milli > 0) {
     s += milli + ' millisecond' + (milli > 1 ? 's ' : ' ')
   }
-  console.log(s)
   return s
 }
 
