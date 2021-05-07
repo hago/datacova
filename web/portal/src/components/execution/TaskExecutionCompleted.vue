@@ -21,6 +21,10 @@
           v-bind:detail="detail"
           v-bind:actiondetail="actiondetail"
         ></TaskExecutionIngest>
+        <TaskExecutionVerify v-if="actiondetail.action.type === 2"
+          v-bind:detail="detail"
+          v-bind:actiondetail="actiondetail"
+        ></TaskExecutionVerify>
       </li>
     </ul>
   </div>
@@ -30,11 +34,13 @@
 import Router from '../../router'
 import WorkspaceApiHelper from '@/apis/workspace.js'
 import TaskExecutionIngest from '@/components/execution/TaskExecutionIngest.vue'
+import TaskExecutionVerify from '@/components/execution/TaskExecutionVerify.vue'
 
 export default {
   name: 'TaskExecutionCompleted',
   components: {
-    TaskExecutionIngest
+    TaskExecutionIngest,
+    TaskExecutionVerify
   },
   props: {
     execution: Object
@@ -45,7 +51,7 @@ export default {
     },
     succeeded: function () {
       return (this.execution.detail.dataLoadingError === null) &&
-      (Object.values(this.execution.detail.actionDetailMap).filter(it => it.error === null).length === 0)
+      (Object.values(this.execution.detail.actionDetailMap).filter(it => it.error !== null).length === 0)
     }
   },
   data: function () {
