@@ -10,10 +10,16 @@ package com.hagoapp.datacova.execution;
 import com.hagoapp.datacova.entity.action.verification.Configuration;
 import com.hagoapp.f2t.DataRow;
 
-public interface Validator {
-    Validator init(Configuration configuration);
+public abstract class Validator {
 
-    int getSupportedVerificationType();
+    protected Configuration config;
 
-    void verify(DataRow row);
+    public Validator withConfig(Configuration configuration) {
+        this.config = configuration;
+        return this;
+    }
+
+    public abstract int getSupportedVerificationType();
+
+    public abstract void verify(DataRow row);
 }
