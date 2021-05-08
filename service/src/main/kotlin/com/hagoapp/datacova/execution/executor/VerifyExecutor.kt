@@ -10,6 +10,7 @@ package com.hagoapp.datacova.execution.executor
 import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.entity.action.TaskAction
 import com.hagoapp.datacova.entity.action.verification.TaskActionVerify
+import com.hagoapp.datacova.entity.task.Task
 import com.hagoapp.datacova.execution.executor.validator.ValidatorFactory
 import com.hagoapp.f2t.DataTable
 import com.hagoapp.f2t.ProgressNotify
@@ -18,7 +19,7 @@ import com.hagoapp.f2t.datafile.ParseResult
 class VerifyExecutor : BaseTaskActionExecutor(), ProgressNotify {
     private lateinit var taskAction: TaskActionVerify
 
-    override fun execute(action: TaskAction, data: DataTable) {
+    override fun execute(task: Task, action: TaskAction, data: DataTable) {
         if (action !is TaskActionVerify) {
             val ex = CoVaException("Not an TaskActionVerify: ${action.name}")
             watcher?.onError(action, ex)
@@ -26,14 +27,14 @@ class VerifyExecutor : BaseTaskActionExecutor(), ProgressNotify {
         }
         taskAction = action
         val validators = action.configurations.map { conf ->
-            ValidatorFactory.createValidator(conf).withColumnDefinition(data.columnDefinition).withConfig(conf)
+            ValidatorFactory.createValidator(conf).withColumnDefinition(data.columnDefinition).setConfig(conf)
         }
         val size = data.rows.size.toFloat()
         data.rows.forEachIndexed { index, row ->
             validators.forEach { validator ->
                 try {
                     validator.verify(row).forEach { f ->
-                        val message = "Validation on field $f failed by rule ${validator.abstract}"
+                        val message = "Validation on field $f failed by rule ${validator.config.describe()}"
                         watcher?.onDataMessage(action, index, message)
                     }
                 } catch (e: Exception) {

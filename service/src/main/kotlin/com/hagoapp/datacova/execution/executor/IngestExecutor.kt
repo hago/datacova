@@ -12,6 +12,7 @@ import com.hagoapp.datacova.data.workspace.ConnectionData
 import com.hagoapp.datacova.entity.action.TaskAction
 import com.hagoapp.datacova.entity.action.ingest.TaskActionIngest
 import com.hagoapp.datacova.entity.action.ingest.TaskActionIngest.TASK_ACTION_TYPE_INGEST
+import com.hagoapp.datacova.entity.task.Task
 import com.hagoapp.f2t.D2TProcess
 import com.hagoapp.f2t.DataTable
 import com.hagoapp.f2t.ProgressNotify
@@ -21,7 +22,7 @@ class IngestExecutor : BaseTaskActionExecutor(), ProgressNotify {
     private lateinit var taskAction: TaskActionIngest
     private lateinit var result: ParseResult
 
-    override fun execute(action: TaskAction, data: DataTable) {
+    override fun execute(task: Task, action: TaskAction, data: DataTable) {
         if (action !is TaskActionIngest) {
             throw CoVaException()
         }

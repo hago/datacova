@@ -67,7 +67,7 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
                 val executor = TaskActionExecutorFactory.createTaskActionExecutor(action)
                 executor.locale = taskExec.task.extra.locale
                 executor.watcher = this
-                executor.execute(action, dt)
+                executor.execute(taskExec.task, action, dt)
                 currentActionDetail!!.end()
                 observers.forEach { it.onActionComplete(taskExec, i, currentActionDetail!!) }
             } catch (ex: Exception) {

@@ -34,10 +34,14 @@ public abstract class Validator {
         Map<String, DataCell> loadField(DataRow row);
     }
 
-    public Validator withConfig(Configuration configuration) {
+    public Validator setConfig(Configuration configuration) {
         this.config = configuration;
         init();
         return this;
+    }
+
+    public Configuration getConfig() {
+        return config;
     }
 
     public Validator withColumnDefinition(List<ColumnDefinition> columns) {
@@ -76,6 +80,4 @@ public abstract class Validator {
      * @return The list of fields which failed.
      */
     public abstract List<String> verify(@NotNull DataRow row);
-
-    public abstract String getAbstract();
 }
