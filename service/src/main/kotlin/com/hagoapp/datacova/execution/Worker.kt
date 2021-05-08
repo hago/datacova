@@ -71,6 +71,10 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
                 executor.execute(taskExec.task, action, dt)
                 currentActionDetail!!.end()
                 observers.forEach { it.onActionComplete(taskExec, i, currentActionDetail!!) }
+                if ((i < taskExec.task.actions.size - 1) && !executor.mayContinueWhenDone()) {
+                    logger.info("action $i: ${action.name} completed, and it prevents following actions to proceed")
+                    break
+                }
             } catch (ex: Exception) {
                 logger.error("Error occurs in action $i: ${action.name} of execution ${taskExec.id}: ${ex.message}")
                 StackTraceWriter.write(ex, logger)

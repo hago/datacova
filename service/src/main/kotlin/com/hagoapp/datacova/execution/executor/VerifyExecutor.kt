@@ -19,6 +19,7 @@ import com.hagoapp.f2t.datafile.ParseResult
 
 class VerifyExecutor : BaseTaskActionExecutor(), ProgressNotify {
     private lateinit var taskAction: TaskActionVerify
+    private var verificationFailed = false
 
     override fun execute(task: Task, action: TaskAction, data: DataTable) {
         if (action !is TaskActionVerify) {
@@ -49,7 +50,12 @@ class VerifyExecutor : BaseTaskActionExecutor(), ProgressNotify {
         }
     }
 
+    override fun mayContinueWhenDone(): Boolean {
+        return !verificationFailed
+    }
+
     private fun createDataMessage(fieldName: String, theValue: Any?, description: String): DataMessage {
+        verificationFailed = true
         val message = DataMessage()
         with(message) {
             field = fieldName

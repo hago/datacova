@@ -30,4 +30,8 @@ abstract class BaseTaskActionExecutor {
     abstract fun execute(task: Task, action: TaskAction, data: DataTable)
 
     abstract fun getActionType(): Int
+
+    open fun mayContinueWhenDone(): Boolean {
+        return true
+    }
 }
