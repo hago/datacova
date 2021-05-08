@@ -9,7 +9,7 @@
       <div class="row" v-if="hasDataMessage">
         <h4 class="col">Following data failed to pass verification</h4>
       </div>
-      <div class="row" v-if="hasDataMessage">
+      <div class="row title" v-if="hasDataMessage">
         <div class="col-1">Line</div>
         <div class="col-2">Field</div>
         <div class="col-4">Value</div>
@@ -18,7 +18,7 @@
       <div class="row" v-for="(message, i) in flatDataMessages" v-bind:key="i">
         <div class="col-1">{{ message.line }}</div>
         <div class="col-2">{{ message.field }}</div>
-        <div class="col-4">{{ message.value }}</div>
+        <div class="col-4 error">{{ message.value }}</div>
         <div class="col-5">{{ message.descriptionExpected }}</div>
       </div>
     </div>
@@ -97,5 +97,8 @@ export default {
 }
 .error {
   color: red;
+}
+.title {
+  color: green
 }
 </style>
