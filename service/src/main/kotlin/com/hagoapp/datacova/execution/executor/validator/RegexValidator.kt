@@ -18,7 +18,7 @@ class RegexValidator : Validator() {
 
     private lateinit var verifyFunc: (String?) -> Boolean
 
-    override fun withConfig(configuration: Configuration?): Validator {
+    override fun setConfig(configuration: Configuration?): Validator {
         if (configuration !is RegexConfig) {
             throw CoVaException("Not a valid regex validator config")
         }
@@ -37,7 +37,7 @@ class RegexValidator : Validator() {
                 else -> pattern.matcher(text).matches()
             }
         }
-        return super.withConfig(configuration)
+        return super.setConfig(configuration)
     }
 
     override fun getSupportedVerificationType(): Int {
@@ -48,9 +48,5 @@ class RegexValidator : Validator() {
         return fieldLoader.loadField(row).filter { item ->
             !verifyFunc(item.value.data?.toString())
         }.map { it.key }
-    }
-
-    override fun getAbstract(): String {
-        TODO("Not yet implemented")
     }
 }
