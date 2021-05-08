@@ -11,6 +11,7 @@ import com.hagoapp.datacova.JsonStringify;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class Configuration implements JsonStringify {
     protected int type;
@@ -69,5 +70,13 @@ public class Configuration implements JsonStringify {
             fields = fields.subList(0, FieldsCountLimit);
         }
         return true;
+    }
+
+    public String describe() {
+        return describe(Locale.getDefault());
+    }
+
+    public String describe(Locale locale) {
+        throw new UnsupportedOperationException("describe operation is not supported in base class of verification classes.");
     }
 }
