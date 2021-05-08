@@ -8,10 +8,14 @@
 
 package com.hagoapp.datacova.entity.action.verification.conf;
 
+import com.hagoapp.datacova.CoVaException;
 import com.hagoapp.datacova.entity.action.verification.Configuration;
+import com.hagoapp.datacova.util.text.TextResourceManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
 
 public class OptionsConfig extends Configuration {
     public static final int OPTIONS_CONFIG_TYPE = 3;
@@ -29,6 +33,10 @@ public class OptionsConfig extends Configuration {
 
     public boolean isAllowEmpty() {
         return allowEmpty;
+    }
+
+    public boolean isIgnoreCase() {
+        return ignoreCase;
     }
 
     public void setIgnoreCase(boolean ignoreCase) {
@@ -59,5 +67,22 @@ public class OptionsConfig extends Configuration {
                 options.stream().map(String::toLowerCase).distinct().count() :
                 options.stream().distinct().count();
         return uniqueSize == options.size() && super.isValid();
+    }
+
+    @Override
+    public String describe(Locale locale) throws CoVaException {
+        String format = TextResourceManager.getManager().getString(locale, "/validators/options");
+        if (format == null) {
+            throw new CoVaException("Description for OptionsConfig class not found");
+        }
+        List<String> fields = getFields();
+        if (fields.size() == 0) {
+            throw new CoVaException("No fields defined in OptionsConfig class");
+        }
+        var fieldStr = fields.stream().map(f -> String.format("\"%s\"", f))
+                .collect(Collectors.joining(", "));
+        var optionStr = options.stream().map(f -> String.format("\"%s\"", f))
+                .collect(Collectors.joining(", "));
+        return String.format(format, fieldStr, optionStr);
     }
 }
