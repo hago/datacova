@@ -19,9 +19,14 @@ class RegexValidator : Validator() {
     private lateinit var verifyFunc: (String?) -> Boolean
 
     override fun setConfig(configuration: Configuration?): Validator {
-        if (configuration !is RegexConfig) {
+        return super.setConfig(configuration)
+    }
+
+    override fun prepare() {
+        if (config !is RegexConfig) {
             throw CoVaException("Not a valid regex validator config")
         }
+        val configuration = config!! as RegexConfig
         var flag = 0
         if (configuration.isDotAll) {
             flag += Pattern.DOTALL
@@ -37,7 +42,6 @@ class RegexValidator : Validator() {
                 else -> pattern.matcher(text).matches()
             }
         }
-        return super.setConfig(configuration)
     }
 
     override fun getSupportedVerificationType(): Int {

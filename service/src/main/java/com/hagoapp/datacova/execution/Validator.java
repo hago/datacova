@@ -27,6 +27,7 @@ public abstract class Validator {
                 entry -> cells.get(entry.getValue())
         ));
     };
+    private boolean initialized = false;
 
     public interface FieldLoader {
         Map<String, DataCell> loadField(DataRow row);
@@ -51,6 +52,9 @@ public abstract class Validator {
     }
 
     protected void init() {
+        if (initialized) {
+            return;
+        }
         if ((config == null) || fieldIndexer.isEmpty()) {
             return;
         }
@@ -68,7 +72,11 @@ public abstract class Validator {
                 }
             });
         }
+        prepare();
+        initialized = true;
     }
+
+    protected abstract void prepare();
 
     public abstract int getSupportedVerificationType();
 
