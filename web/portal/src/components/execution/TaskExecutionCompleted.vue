@@ -32,7 +32,6 @@
 
 <script>
 import Router from '../../router'
-import WorkspaceApiHelper from '@/apis/workspace.js'
 import TaskExecutionIngest from '@/components/execution/TaskExecutionIngest.vue'
 import TaskExecutionVerify from '@/components/execution/TaskExecutionVerify.vue'
 
@@ -56,18 +55,6 @@ export default {
   },
   data: function () {
     return {}
-  },
-  created: function () {
-    let str = sessionStorage.getItem(`execution_${this.id}`)
-    if (str !== null) {
-      this.execution = JSON.parse(str)
-    } else {
-      (new WorkspaceApiHelper()).loadTaskExecution(this.id).then(rsp => {
-        this.execution = rsp.data.data
-      }).catch(err => {
-        console.log(err)
-      })
-    }
   },
   methods: {
     gotoTask: function () {
