@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ExecutionActionDetail implements JsonStringify {
-    private final Map<Integer, List<String>> dataMessages = new HashMap<>();
+    private final Map<Integer, List<DataMessage>> dataMessages = new HashMap<>();
     private Exception error;
     private TaskAction action;
     private final long startTime = Instant.now().toEpochMilli();
@@ -39,7 +39,7 @@ public class ExecutionActionDetail implements JsonStringify {
         this.error = error;
     }
 
-    public Map<Integer, List<String>> getDataMessages() {
+    public Map<Integer, List<DataMessage>> getDataMessages() {
         return dataMessages;
     }
 

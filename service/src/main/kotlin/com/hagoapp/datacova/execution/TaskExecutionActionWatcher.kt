@@ -9,6 +9,7 @@
 package com.hagoapp.datacova.execution
 
 import com.hagoapp.datacova.entity.action.TaskAction
+import com.hagoapp.datacova.entity.execution.DataMessage
 
 interface TaskExecutionActionWatcher {
     /**
@@ -17,6 +18,6 @@ interface TaskExecutionActionWatcher {
      */
     fun onError(action: TaskAction, error: Exception): Boolean
     fun onMessage(action: TaskAction, msg: String)
-    fun onDataMessage(action: TaskAction, lineNo: Int, msg: String)
+    fun onDataMessage(action: TaskAction, lineNo: Int, msg: DataMessage)
     fun onProgressUpdate(action: TaskAction, progress: Float)
 }

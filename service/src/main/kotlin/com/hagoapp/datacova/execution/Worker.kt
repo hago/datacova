@@ -11,6 +11,7 @@ package com.hagoapp.datacova.execution
 import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.data.execution.TaskExecutionData
 import com.hagoapp.datacova.entity.action.TaskAction
+import com.hagoapp.datacova.entity.execution.DataMessage
 import com.hagoapp.datacova.entity.execution.ExecutionActionDetail
 import com.hagoapp.datacova.entity.execution.ExecutionDetail
 import com.hagoapp.datacova.entity.execution.TaskExecution
@@ -101,7 +102,7 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
         // currentActionDetail!!.
     }
 
-    override fun onDataMessage(action: TaskAction, lineNo: Int, msg: String) {
+    override fun onDataMessage(action: TaskAction, lineNo: Int, msg: DataMessage) {
         currentActionDetail!!.dataMessages.compute(lineNo) { _, existed ->
             existed?.plus(msg) ?: mutableListOf(msg)
         }
