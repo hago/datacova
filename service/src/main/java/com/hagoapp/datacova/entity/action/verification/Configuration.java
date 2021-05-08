@@ -77,6 +77,6 @@ public class Configuration implements JsonStringify {
     }
 
     public String describe(Locale locale) {
-        throw new UnsupportedOperationException("describe operation is not supported in base class of verification classes.");
+        throw new UnsupportedOperationException("describe operation is not supported in base class of verification classes, override it in your descendant classes.");
     }
 }
