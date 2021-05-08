@@ -7,6 +7,7 @@
 
 package com.hagoapp.datacova.entity.action.verification;
 
+import com.hagoapp.datacova.CoVaException;
 import com.hagoapp.datacova.JsonStringify;
 
 import java.util.ArrayList;
@@ -72,11 +73,11 @@ public class Configuration implements JsonStringify {
         return true;
     }
 
-    public String describe() {
+    public String describe() throws CoVaException {
         return describe(Locale.getDefault());
     }
 
-    public String describe(Locale locale) {
+    public String describe(Locale locale) throws CoVaException {
         throw new UnsupportedOperationException("describe operation is not supported in base class of verification classes, override it in your descendant classes.");
     }
 }

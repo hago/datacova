@@ -8,8 +8,11 @@
 
 package com.hagoapp.datacova.entity.action.verification.conf;
 
+import com.hagoapp.datacova.CoVaException;
 import com.hagoapp.datacova.entity.action.verification.Configuration;
+import com.hagoapp.datacova.util.text.TextResourceManager;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -74,7 +77,12 @@ public class RegexConfig extends Configuration {
     }
 
     @Override
-    public String describe(Locale locale) {
-        return String.format("match %s", pattern);
+    public String describe(Locale locale) throws CoVaException {
+        String format = TextResourceManager.getManager().getString(locale, "/validators/regex");
+        if (format == null) {
+            throw new CoVaException("Description for RegexConfig class not found");
+        }
+        List<String> fields = getFields();
+        return String.format(format, fields.size() > 0 ? fields.get(0) : "", pattern);
     }
 }
