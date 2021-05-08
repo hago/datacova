@@ -10,6 +10,7 @@ package com.hagoapp.datacova.execution.executor
 import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.entity.action.TaskAction
 import com.hagoapp.datacova.entity.action.verification.TaskActionVerify
+import com.hagoapp.datacova.entity.execution.DataMessage
 import com.hagoapp.datacova.entity.task.Task
 import com.hagoapp.datacova.execution.executor.validator.ValidatorFactory
 import com.hagoapp.f2t.DataTable
@@ -26,24 +27,36 @@ class VerifyExecutor : BaseTaskActionExecutor(), ProgressNotify {
             throw ex
         }
         taskAction = action
+        val descriptions = mutableListOf<String>()
         val validators = action.configurations.map { conf ->
+            descriptions.add(conf.describe(task.extra.locale))
             ValidatorFactory.createValidator(conf).withColumnDefinition(data.columnDefinition).setConfig(conf)
         }
         val size = data.rows.size.toFloat()
         data.rows.forEachIndexed { index, row ->
-            validators.forEach { validator ->
+            validators.forEachIndexed { j, validator ->
                 try {
-                    validator.verify(row).forEach { f ->
-                        val message = "Validation on field $f failed by rule ${validator.config.describe()}"
+                    validator.verify(row).forEach {
+                        val message = createDataMessage(it.key, it.value, descriptions[j])
                         watcher?.onDataMessage(action, index, message)
                     }
                 } catch (e: Exception) {
-                    val message = ""
+                    val message = createDataMessage(e.toString(), null, descriptions[j])
                     watcher?.onDataMessage(action, index, message)
                 }
             }
             this.onProgress(index.toFloat() / size)
         }
+    }
+
+    private fun createDataMessage(fieldName: String, theValue: Any?, description: String): DataMessage {
+        val message = DataMessage()
+        with(message) {
+            field = fieldName
+            value = theValue
+            descriptionExpected = description
+        }
+        return message
     }
 
     override fun getActionType(): Int {

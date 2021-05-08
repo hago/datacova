@@ -10,6 +10,7 @@ package com.hagoapp.datacova.entity.action.verification.conf;
 
 import com.hagoapp.datacova.entity.action.verification.Configuration;
 
+import java.util.Locale;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -70,5 +71,10 @@ public class RegexConfig extends Configuration {
         } catch (PatternSyntaxException ex) {
             return false;
         }
+    }
+
+    @Override
+    public String describe(Locale locale) {
+        return String.format("match %s", pattern);
     }
 }

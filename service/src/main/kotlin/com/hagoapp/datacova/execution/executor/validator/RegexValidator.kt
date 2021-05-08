@@ -44,9 +44,9 @@ class RegexValidator : Validator() {
         return RegexConfig.REGEX_CONFIGURATION_TYPE
     }
 
-    override fun verify(row: DataRow): List<String> {
+    override fun verify(row: DataRow): Map<String, Any?> {
         return fieldLoader.loadField(row).filter { item ->
             !verifyFunc(item.value.data?.toString())
-        }.map { it.key }
+        }.map { Pair(it.key, it.value.data) }.toMap()
     }
 }

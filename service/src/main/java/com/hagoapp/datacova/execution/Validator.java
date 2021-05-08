@@ -13,9 +13,7 @@ import com.hagoapp.f2t.DataCell;
 import com.hagoapp.f2t.DataRow;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public abstract class Validator {
@@ -56,14 +54,15 @@ public abstract class Validator {
         if ((config == null) || fieldIndexer.isEmpty()) {
             return;
         }
+        var keys = new ArrayList<>(fieldIndexer.keySet());
         if (config.isIgnoreFieldCase()) {
-            fieldIndexer.keySet().forEach(field -> {
+            keys.forEach(field -> {
                 if (config.getFields().stream().noneMatch(f -> f.compareToIgnoreCase(field) == 0)) {
                     fieldIndexer.remove(field);
                 }
             });
         } else {
-            fieldIndexer.keySet().forEach(field -> {
+            keys.forEach(field -> {
                 if (!config.getFields().contains(field)) {
                     fieldIndexer.remove(field);
                 }
@@ -77,7 +76,7 @@ public abstract class Validator {
      * Run validation on a row and return failed fields.
      *
      * @param row data row
-     * @return The list of fields which failed.
+     * @return A map contains all fields in this row which failed the verification, field name as key, field value as value
      */
-    public abstract List<String> verify(@NotNull DataRow row);
+    public abstract Map<String, Object> verify(@NotNull DataRow row);
 }
