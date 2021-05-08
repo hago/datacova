@@ -23,7 +23,7 @@ class ValidatorFactory {
         private val logger = CoVaLogger.getLogger()
 
         init {
-            val r = Reflections(Application::class.java.canonicalName, SubTypesScanner())
+            val r = Reflections(Application::class.java.packageName, SubTypesScanner())
             r.getSubTypesOf(Validator::class.java).forEach { clz ->
                 try {
                     val constructor = clz.getConstructor()
