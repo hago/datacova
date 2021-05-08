@@ -31,6 +31,11 @@ abstract class BaseTaskActionExecutor {
 
     abstract fun getActionType(): Int
 
+    /**
+     * This method is called to determine whether follow-up executors should continue or abort. The scenario is that
+     * some verification executor failed some test on data but there's no error, any follow-up ingest or distribute
+     * actions should not proceed because the data is not good enough to go.
+     */
     open fun mayContinueWhenDone(): Boolean {
         return true
     }
