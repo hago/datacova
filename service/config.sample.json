@@ -65,6 +65,9 @@
     "ssl": false
   },
   "templates": {
-    "exec_report": "EXECUTION_REPORT_TEMPLATE"
+    "directory": "./templates",
+    "aliases": {
+      "execution_report": "execution/report"
+    }
   }
 }
