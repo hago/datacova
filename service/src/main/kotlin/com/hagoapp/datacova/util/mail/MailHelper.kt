@@ -3,9 +3,10 @@
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
  */
 
-package com.hagoapp.datacova.util
+package com.hagoapp.datacova.util.mail
 
 import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.config.CoVaConfig
@@ -95,8 +96,8 @@ class MailHelper(val config: MailConfig) {
         val session = getSession()
         val msg = MimeMessage(session)
         if (config.from != null) {
-            val fromAddresses = InternetAddress.parse(config.from)
-            msg.setFrom(fromAddresses[0])
+            val fromAddresses = parseFrom(config.from)
+            msg.setFrom(fromAddresses)
         }
         msg.setSubject(title, encoding)
         msg.addRecipients(Message.RecipientType.TO, recipients.toTypedArray())
@@ -118,6 +119,10 @@ class MailHelper(val config: MailConfig) {
         if (config.user == null) Transport.send(msg) else Transport.send(msg, config.user, config.password)
     }
 
+    private fun parseFrom(input: String): InternetAddress {
+        return FromAddress.parse(input).toInternetAddress()
+    }
+
     private fun getSession(): Session {
         val propMap = mutableMapOf(
             "mail.smtp.host" to config.host,
@@ -133,4 +138,5 @@ class MailHelper(val config: MailConfig) {
         props.putAll(propMap.toList().filter { it.second != null }.toMap())
         return Session.getInstance(props)
     }
+
 }
