@@ -1,8 +1,8 @@
 Values of fields ["<fields; separator="\", \"">"] should be a time,
 <if (lowerBound)>
-later than <if (lowerBound.inclusive)>or equals <endif><lowerBound.value>
+later than <if (lowerBound.inclusive)>or equals <endif><lowerTime>
 <endif>
 <if (upperBound)>
 <if (lowerBound)> and <endif>
-earlier than <if (upperBound.inclusive)>or equals <endif><upperBound.value>
+earlier than <if (upperBound.inclusive)>or equals <endif><upperTime>
 <endif>

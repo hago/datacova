@@ -14,6 +14,7 @@ import com.hagoapp.datacova.util.text.TextResourceManager;
 import org.stringtemplate.v4.ST;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -137,6 +138,15 @@ public class TimeRangeConfig extends Configuration {
         st.add("fields", fields);
         st.add("lowerBound", lowerBound);
         st.add("upperBound", upperBound);
+        st.add("lowerTime", getEpochMilliString(locale, lowerBound.value));
+        st.add("upperTime", getEpochMilliString(locale, upperBound.value));
         return st.render();
+    }
+
+    private String getEpochMilliString(Locale locale, Long milli) {
+        if (milli == null) {
+            return null;
+        }
+        return ZonedDateTime.ofInstant(Instant.ofEpochMilli(milli), ZoneId.of("UTC")).toString();
     }
 }
