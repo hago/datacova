@@ -8,12 +8,17 @@
 
 package com.hagoapp.datacova.entity.action.verification.conf;
 
+import com.hagoapp.datacova.CoVaException;
 import com.hagoapp.datacova.entity.action.verification.Configuration;
+import com.hagoapp.datacova.util.text.TextResourceManager;
+import org.stringtemplate.v4.ST;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Locale;
 
 public class TimeRangeConfig extends Configuration {
     public static class Boundary {
@@ -116,5 +121,22 @@ public class TimeRangeConfig extends Configuration {
             }
         }
         return super.isValid();
+    }
+
+    @Override
+    protected String createDescription(Locale locale) throws CoVaException {
+        String format = TextResourceManager.getManager().getString(locale, "/validators/time_range");
+        if (format == null) {
+            throw new CoVaException("Description for TimeRangeConfig class not found");
+        }
+        List<String> fields = getFields();
+        if (fields.size() == 0) {
+            throw new CoVaException("No fields defined in TimeRangeConfig class");
+        }
+        ST st = new ST(format);
+        st.add("fields", fields);
+        st.add("lowerBound", lowerBound);
+        st.add("upperBound", upperBound);
+        return st.render();
     }
 }

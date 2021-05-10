@@ -1,0 +1,8 @@
+字段["<fields; separator="\", \"">"] 应该是时间格式
+<if (lowerBound)>
+晚于<if (lowerBound.inclusive)>或者等于<endif><lowerBound.value>
+<endif>
+<if (upperBound)>
+<if (lowerBound)>并且<endif>
+早于<if (upperBound.inclusive)>或者等于<endif><upperBound.value>
+<endif>
