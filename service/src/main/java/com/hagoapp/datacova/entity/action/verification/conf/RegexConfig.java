@@ -77,7 +77,7 @@ public class RegexConfig extends Configuration {
     }
 
     @Override
-    public String describe(Locale locale) throws CoVaException {
+    protected String createDescription(Locale locale) throws CoVaException {
         String format = TextResourceManager.getManager().getString(locale, "/validators/regex");
         if (format == null) {
             throw new CoVaException("Description for RegexConfig class not found");

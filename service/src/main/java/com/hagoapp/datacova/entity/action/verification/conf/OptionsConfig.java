@@ -70,7 +70,7 @@ public class OptionsConfig extends Configuration {
     }
 
     @Override
-    public String describe(Locale locale) throws CoVaException {
+    protected String createDescription(Locale locale) throws CoVaException {
         String format = TextResourceManager.getManager().getString(locale, "/validators/options");
         if (format == null) {
             throw new CoVaException("Description for OptionsConfig class not found");

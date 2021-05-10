@@ -9,7 +9,6 @@ package com.hagoapp.datacova.entity.action.verification.conf;
 
 import com.hagoapp.datacova.CoVaException;
 import com.hagoapp.datacova.entity.action.verification.Configuration;
-import com.hagoapp.datacova.util.text.TemplateManager;
 import com.hagoapp.datacova.util.text.TextResourceManager;
 import org.stringtemplate.v4.ST;
 
@@ -63,23 +62,20 @@ public class NumberRangeConfig extends Configuration {
     private String description = null;
 
     @Override
-    public String describe(Locale locale) throws CoVaException {
-        if (description == null) {
-            String format = TextResourceManager.getManager().getString(locale, "/validators/number_range");
-            if (format == null) {
-                throw new CoVaException("Description for NumberRangeConfig class not found");
-            }
-            List<String> fields = getFields();
-            if (fields.size() == 0) {
-                throw new CoVaException("No fields defined in NumberRangeConfig class");
-            }
-            ST st = new ST(format);
-            st.add("fields", fields);
-            st.add("lowerBound", lowerBound);
-            st.add("upperBound", upperBound);
-            description = st.render();
+    protected String createDescription(Locale locale) throws CoVaException {
+        String format = TextResourceManager.getManager().getString(locale, "/validators/number_range");
+        if (format == null) {
+            throw new CoVaException("Description for NumberRangeConfig class not found");
         }
-        return description;
+        List<String> fields = getFields();
+        if (fields.size() == 0) {
+            throw new CoVaException("No fields defined in NumberRangeConfig class");
+        }
+        ST st = new ST(format);
+        st.add("fields", fields);
+        st.add("lowerBound", lowerBound);
+        st.add("upperBound", upperBound);
+        return st.render();
     }
 }
 

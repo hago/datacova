@@ -10,9 +10,7 @@ package com.hagoapp.datacova.entity.action.verification;
 import com.hagoapp.datacova.CoVaException;
 import com.hagoapp.datacova.JsonStringify;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 public class Configuration implements JsonStringify {
     protected int type;
@@ -20,6 +18,7 @@ public class Configuration implements JsonStringify {
     private boolean nullable = false;
     private boolean ignoreFieldCase = false;
     private int FieldsCountLimit = 1;
+    private final Map<Locale, String> descriptions = new HashMap<>();
 
     public boolean isNullable() {
         return nullable;
@@ -73,11 +72,21 @@ public class Configuration implements JsonStringify {
         return true;
     }
 
-    public String describe() throws CoVaException {
+    public final String describe() throws CoVaException {
         return describe(Locale.getDefault());
     }
 
-    public String describe(Locale locale) throws CoVaException {
+    public final String describe(Locale locale) throws CoVaException {
+        String description = descriptions.get(locale);
+        if (description != null) {
+            return description;
+        }
+        description = createDescription(locale);
+        descriptions.put(locale, description);
+        return description;
+    }
+
+    protected String createDescription(Locale locale) throws CoVaException {
         throw new UnsupportedOperationException("describe operation is not supported in base class of verification classes, override it in your descendant classes.");
     }
 }
