@@ -11,7 +11,6 @@ import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.entity.action.verification.conf.NumberRangeConfig
 import com.hagoapp.datacova.execution.Validator
 import com.hagoapp.f2t.DataRow
-import java.util.*
 
 class NumberRangeValidator : Validator() {
     private lateinit var verifyFunc: (Double?) -> Boolean
