@@ -1,7 +1,7 @@
 <template>
   <div style="border: 2px solid">
     <div class="container-fluid">
-      <h5>Task Execution Status</h5>
+      <h5>Execution status of tasks</h5>
       <div class="form-row head" style="margin-bottom: 15px">
         <div class="col-4">Name of Task</div>
         <div class="col-3">Started At</div>
