@@ -1,0 +1,8 @@
+字段["<fields; separator="\", \"">"] 应该
+<if (lowerBound)>
+大于<if (lowerBound.inclusive)>或者等于<endif><lowerBound.value>
+<endif>
+<if (upperBound)>
+<if (lowerBound)>并且<endif>
+小于<if (upperBound.inclusive)>或者等于<endif><upperBound.value>
+<endif>

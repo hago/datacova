@@ -1,0 +1,8 @@
+Values of fields ["<fields; separator="\", \"">"] should be
+<if (lowerBound)>
+greater than <if (lowerBound.inclusive)>or equals <endif><lowerBound.value>
+<endif>
+<if (upperBound)>
+<if (lowerBound)> and <endif>
+less than <if (upperBound.inclusive)>or equals <endif><upperBound.value>
+<endif>
