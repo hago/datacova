@@ -19,7 +19,7 @@
       </div>
     </div>
     <div class="form-row">
-      <div class="col-2 form-group">
+      <div class="col-1 form-group">
         <div class="form-check" v-if="minCheck">
           <input class="form-check-input" type="checkbox" :id="`mininclusive_${index}`" v-model="config.lowerBound.inclusive">
           <label class="form-check-label" :for="`mininclusive_${index}`">
@@ -27,10 +27,15 @@
           </label>
         </div>
       </div>
-      <div class="col-4">
+      <div class="col-3">
         <datetime format="YYYY/MM/DD H:i:s" v-if="minCheck" v-model="lowerDateTime"></datetime>
       </div>
-      <div class="col-2 form-group">
+      <div class="col-2">
+        <select class="form-control" v-if="minCheck" v-model="lowertzname">
+          <option v-for="timezone in timezones" v-bind:key="timezone.name" v-bind:value="timezone.name">{{ timezone.name }}</option>
+        </select>
+      </div>
+      <div class="col-1 form-group">
         <div class="form-check" v-if="maxCheck">
           <input class="form-check-input" type="checkbox" :id="`maxinclusive_${index}`" v-model="config.upperBound.inclusive">
           <label class="form-check-label" :for="`maxinclusive_${index}`">
@@ -38,8 +43,13 @@
           </label>
         </div>
       </div>
-      <div class="col-4">
+      <div class="col-3">
         <datetime format="YYYY/MM/DD H:i:s" v-if="maxCheck" v-model="upperDateTime"></datetime>
+      </div>
+      <div class="col-2">
+        <select class="form-control" v-if="maxCheck" v-model="uppertzname">
+          <option v-for="timezone in timezones" v-bind:key="timezone.name" v-bind:value="timezone.name">{{ timezone.name }}</option>
+        </select>
       </div>
     </div>
   </div>
@@ -48,6 +58,7 @@
 <script>
 import Vue from 'vue'
 import datetime from 'vuejs-datetimepicker'
+import {loadtimezones, getLocalTimeOffset} from '@/apis/timezone.js'
 const dateFormat = require('dateformat')
 
 export default {
@@ -73,6 +84,9 @@ export default {
           inclusive: false
         }
       },
+      timezones: [],
+      lowertzname: '',
+      uppertzname: '',
       lowerDateTime: dateFormat(Date.now(), 'yyyy/mm/dd HH:MM:ss'),
       upperDateTime: dateFormat(Date.now(), 'yyyy/mm/dd HH:MM:ss')
     }
@@ -87,9 +101,21 @@ export default {
       if (this.maxCheck) {
         this.config.upperBound.value = Date.parse(newValue)
       }
+    },
+    lowertzname: function (newValue, oldValue) {
+      //
+    },
+    uppertzname: function (newValue, oldValue) {
+      //
     }
   },
   created: function () {
+    loadtimezones().then(data => {
+      this.timezones = data
+      let lo = getLocalTimeOffset()
+      this.uppertzname = data.find(tz => tz.offset === lo).name
+      this.lowertzname = data.find(tz => tz.offset === lo).name
+    })
     this.config.validator = function (configuration) {
       let ub = (configuration.upperBound === undefined) || (configuration.upperBound === null) ? null : configuration.upperBound
       let lb = (configuration.lowerBound === undefined) || (configuration.lowerBound === null) ? null : configuration.lowerBound
@@ -115,10 +141,12 @@ export default {
       }
       return true
     }
-    if (this.config.lowerBound !== undefined) {
+    if ((this.config.lowerBound !== undefined) && (this.config.lowerBound !== null)) {
+      this.lowerDT = new Date(this.config.lowerBound.value)
       this.lowerDateTime = dateFormat(this.config.lowerBound.value, 'yyyy/mm/dd HH:MM:ss')
     }
-    if (this.config.upperBound !== undefined) {
+    if ((this.config.upperBound !== undefined) && (this.config.upperBound !== null)) {
+      this.upperDT = new Date(this.config.upperBound.value)
       this.upperDateTime = dateFormat(this.config.upperBound.value, 'yyyy/mm/dd HH:MM:ss')
     }
   },
@@ -142,6 +170,9 @@ export default {
         this.default.min = this.config.lowerBound
         Vue.set(this.config, 'lowerBound', null)
       }
+    },
+    calculateTime: function (timestr, offset) {
+      return Date.parse(timestr) + offset
     }
   }
 }
