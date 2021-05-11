@@ -25,8 +25,8 @@ class TimeZone {
         authTypes = [AuthType.UserToken]
     )
     fun getTimeZones(context: RoutingContext) {
-        val lang = context.acceptableLanguages().firstOrNull()?.value() ?: Locale.getDefault().language
-        val locale = Locale(lang)
+        val localeStr = context.acceptableLanguages().firstOrNull()?.value()
+        val locale = if (localeStr == null) Locale.getDefault() else createLocale(localeStr)
         val zones = localizedTimeZones(locale)
         ResponseHelper.sendResponse(context, HttpResponseStatus.OK, zones)
     }
@@ -38,10 +38,14 @@ class TimeZone {
     )
     fun getTimeZonesLocale(context: RoutingContext) {
         val localeStr = context.pathParam("locale")
-        val parts = localeStr.split("_")
-        val locale = Locale(parts[0], if (parts.size > 1) parts[1] else "s")
+        val locale = createLocale(localeStr)
         val zones = localizedTimeZones(locale)
         ResponseHelper.sendResponse(context, HttpResponseStatus.OK, zones)
+    }
+
+    private fun createLocale(input: String): Locale {
+        val parts = input.split("_", "-")
+        return Locale(parts[0], if (parts.size > 1) parts[1] else "s")
     }
 
     private fun localizedTimeZones(locale: Locale): Map<String, Int> {
