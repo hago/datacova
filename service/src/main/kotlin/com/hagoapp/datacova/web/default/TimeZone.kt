@@ -28,7 +28,12 @@ class TimeZone {
         val localeStr = context.acceptableLanguages().firstOrNull()?.value()
         val locale = if (localeStr == null) Locale.getDefault() else createLocale(localeStr)
         val zones = localizedTimeZones(locale)
-        ResponseHelper.sendResponse(context, HttpResponseStatus.OK, zones)
+        ResponseHelper.sendResponse(
+            context, HttpResponseStatus.OK, mapOf(
+                "code" to 0,
+                "data" to zones
+            )
+        )
     }
 
     @WebEndPoint(
@@ -40,7 +45,12 @@ class TimeZone {
         val localeStr = context.pathParam("locale")
         val locale = createLocale(localeStr)
         val zones = localizedTimeZones(locale)
-        ResponseHelper.sendResponse(context, HttpResponseStatus.OK, zones)
+        ResponseHelper.sendResponse(
+            context, HttpResponseStatus.OK, mapOf(
+                "code" to 0,
+                "data" to zones
+            )
+        )
     }
 
     private fun createLocale(input: String): Locale {
