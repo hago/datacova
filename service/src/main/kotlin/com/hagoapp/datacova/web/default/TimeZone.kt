@@ -15,8 +15,6 @@ import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.RoutingContext
 import java.time.Instant
 import java.time.ZoneId
-import java.time.format.TextStyle
-import java.util.*
 
 class TimeZone {
     @WebEndPoint(
@@ -25,9 +23,7 @@ class TimeZone {
         authTypes = [AuthType.UserToken]
     )
     fun getTimeZones(context: RoutingContext) {
-        val localeStr = context.acceptableLanguages().firstOrNull()?.value()
-        val locale = if (localeStr == null) Locale.getDefault() else createLocale(localeStr)
-        val zones = localizedTimeZones(locale)
+        val zones = localizedTimeZones()
         ResponseHelper.sendResponse(
             context, HttpResponseStatus.OK, mapOf(
                 "code" to 0,
@@ -36,37 +32,37 @@ class TimeZone {
         )
     }
 
-    @WebEndPoint(
-        path = "/api/default/timezones/:locale",
-        methods = [HttpMethod.GET],
-        authTypes = [AuthType.UserToken]
-    )
-    fun getTimeZonesLocale(context: RoutingContext) {
-        val localeStr = context.pathParam("locale")
-        val locale = createLocale(localeStr)
-        val zones = localizedTimeZones(locale)
-        ResponseHelper.sendResponse(
-            context, HttpResponseStatus.OK, mapOf(
-                "code" to 0,
-                "data" to zones
-            )
-        )
-    }
-
-    private fun createLocale(input: String): Locale {
-        val parts = input.split("_", "-")
-        return Locale(parts[0], if (parts.size > 1) parts[1] else "s")
-    }
-
-    private fun localizedTimeZones(locale: Locale): Map<String, Int> {
+    private fun localizedTimeZones(): List<TimeZoneOffset> {
         val i = Instant.now()
-        return ZoneId.getAvailableZoneIds().map { ZoneId.of(it) }
-            .sortedBy { it.rules.getOffset(i).totalSeconds }
-            .associate {
-                Pair(
-                    it.getDisplayName(TextStyle.FULL_STANDALONE, locale),
-                    it.rules.getOffset(i).totalSeconds
-                )
-            }
+        return ZoneId.getAvailableZoneIds().map {
+            val z = ZoneId.of(it)
+            TimeZoneOffset(
+                z.toString(),
+                z.rules.getOffset(i).totalSeconds
+            )
+        }.toSet().sortedBy { it.offset }
+    }
+
+    data class TimeZoneOffset(
+        val name: String,
+        val offset: Int
+    ) {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+
+            other as TimeZoneOffset
+
+            if (name != other.name) return false
+            if (offset != other.offset) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = name.hashCode()
+            result = 31 * result + offset
+            return result
+        }
     }
 }
