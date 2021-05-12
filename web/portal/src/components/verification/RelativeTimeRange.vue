@@ -110,10 +110,10 @@ export default {
       }
       return true
     }
-    if (this.config.lowerBound !== undefined) {
+    if ((this.config.lowerBound !== undefined) && (this.config.lowerBound !== null)) {
       this.lowerDateTime = dateFormat(this.config.lowerBound.value, 'yyyy/mm/dd HH:MM:ss')
     }
-    if (this.config.upperBound !== undefined) {
+    if ((this.config.upperBound !== undefined) && (this.config.upperBound !== null)) {
       this.upperDateTime = dateFormat(this.config.upperBound.value, 'yyyy/mm/dd HH:MM:ss')
     }
   },
