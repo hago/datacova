@@ -59,7 +59,7 @@ export default {
         EndOfThisWeek: 'End of Running Week',
         BeginOfThisQuarter: 'Begin of Running Quarter',
         EndOfThisQuarter: 'End of Running Quarter',
-        BeginOfThisYear: 'Begin of Running Quarter',
+        BeginOfThisYear: 'Begin of Running Year',
         EndOfThisYear: 'End of Running Year'
       },
       directions: {
