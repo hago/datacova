@@ -14,11 +14,13 @@ import com.hagoapp.datacova.execution.Validator
 import com.hagoapp.f2t.DataRow
 import com.hagoapp.f2t.util.JDBCTypeUtils
 import java.sql.JDBCType
+import java.time.Instant
+import java.time.ZoneId
 import java.time.ZonedDateTime
 
 class TimeRangeValidator : Validator() {
 
-    private lateinit var verifyFunc: (Long?) -> Boolean
+    private lateinit var verifyFunc: (Long?) -> Pair<Boolean, String?>
 
     override fun prepare() {
         if (config !is TimeRangeConfig) {
@@ -28,20 +30,29 @@ class TimeRangeValidator : Validator() {
         verifyFunc = when {
             conf.lowerBound != null && conf.upperBound != null -> { num ->
                 when (num) {
-                    null -> conf.isNullable
-                    else -> isLessThan(conf.lowerBound.value, num, conf.lowerBound.isInclusive) &&
-                            isLessThan(num, conf.upperBound.value, conf.upperBound.isInclusive)
+                    null -> Pair(conf.isNullable, null)
+                    else -> Pair(
+                        isLessThan(conf.lowerBound.value, num, conf.lowerBound.isInclusive) &&
+                                isLessThan(num, conf.upperBound.value, conf.upperBound.isInclusive),
+                        ZonedDateTime.ofInstant(Instant.ofEpochMilli(num), ZoneId.systemDefault()).toString()
+                    )
                 }
             }
             conf.lowerBound != null -> { num ->
-                if (num == null) conf.isNullable
-                else isLessThan(conf.lowerBound.value, num, conf.lowerBound.isInclusive)
+                if (num == null) Pair(conf.isNullable, null)
+                else Pair(
+                    isLessThan(conf.lowerBound.value, num, conf.lowerBound.isInclusive),
+                    ZonedDateTime.ofInstant(Instant.ofEpochMilli(num), ZoneId.systemDefault()).toString()
+                )
             }
             conf.upperBound != null -> { num ->
-                if (num == null) conf.isNullable
-                else isLessThan(num, conf.upperBound.value, conf.upperBound.isInclusive)
+                if (num == null) Pair(conf.isNullable, null)
+                else Pair(
+                    isLessThan(num, conf.upperBound.value, conf.upperBound.isInclusive),
+                    ZonedDateTime.ofInstant(Instant.ofEpochMilli(num), ZoneId.systemDefault()).toString()
+                )
             }
-            else -> { _ -> false }
+            else -> { _ -> Pair(false, null) }
         }
     }
 
@@ -58,14 +69,15 @@ class TimeRangeValidator : Validator() {
     }
 
     override fun verify(row: DataRow): Map<String, Any?> {
-        return fieldLoader.loadField(row).filter { item ->
+        return fieldLoader.loadField(row).map { item ->
             val v: Long? = when (item.value.data) {
                 null -> null
                 is ZonedDateTime -> (item.value.data as ZonedDateTime).toInstant().toEpochMilli()
                 else -> (JDBCTypeUtils.toTypedValue(item.value.data, JDBCType.TIMESTAMP_WITH_TIMEZONE)
                         as ZonedDateTime?)?.toInstant()?.toEpochMilli()
             }
-            !verifyFunc(v)
-        }.map { Pair(it.key, it.value.data) }.toMap()
+            val r = verifyFunc(v)
+            Triple(item.key, r.first, r.second)
+        }.filter { !it.second }.associate { Pair(it.first, it.third) }
     }
 }
