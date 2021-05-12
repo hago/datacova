@@ -138,8 +138,8 @@ public class TimeRangeConfig extends Configuration {
         st.add("fields", fields);
         st.add("lowerBound", lowerBound);
         st.add("upperBound", upperBound);
-        st.add("lowerTime", getEpochMilliString(locale, lowerBound.value));
-        st.add("upperTime", getEpochMilliString(locale, upperBound.value));
+        st.add("lowerTime", getEpochMilliString(locale, lowerBound == null ? null : lowerBound.value));
+        st.add("upperTime", getEpochMilliString(locale, upperBound == null ? null : upperBound.value));
         return st.render();
     }
 
@@ -147,6 +147,6 @@ public class TimeRangeConfig extends Configuration {
         if (milli == null) {
             return null;
         }
-        return ZonedDateTime.ofInstant(Instant.ofEpochMilli(milli), ZoneId.of("UTC")).toString();
+        return ZonedDateTime.ofInstant(Instant.ofEpochMilli(milli), ZoneId.systemDefault()).toString();
     }
 }
