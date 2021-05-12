@@ -31,9 +31,9 @@
         <datetime format="YYYY/MM/DD H:i:s" v-if="minCheck" v-model="lowerDateTime"></datetime>
       </div>
       <div class="col-2">
-        <select class="form-control" v-if="minCheck" v-model="lowertzname">
+        <!--<select class="form-control" v-if="minCheck" v-model="lowertzname">
           <option v-for="timezone in timezones" v-bind:key="timezone.name" v-bind:value="timezone.name">{{ timezone.name }}</option>
-        </select>
+        </select>-->
       </div>
       <div class="col-1 form-group">
         <div class="form-check" v-if="maxCheck">
@@ -47,9 +47,9 @@
         <datetime format="YYYY/MM/DD H:i:s" v-if="maxCheck" v-model="upperDateTime"></datetime>
       </div>
       <div class="col-2">
-        <select class="form-control" v-if="maxCheck" v-model="uppertzname">
+        <!--<select class="form-control" v-if="maxCheck" v-model="uppertzname">
           <option v-for="timezone in timezones" v-bind:key="timezone.name" v-bind:value="timezone.name">{{ timezone.name }}</option>
-        </select>
+        </select>-->
       </div>
     </div>
   </div>
@@ -76,11 +76,11 @@ export default {
       maxCheck: (this.config.upperBound !== undefined) && (this.config.upperBound !== null),
       default: {
         min: {
-          value: (this.config.lowerBound !== undefined) && (this.config.lowerBound !== null) ? this.config.lowerBound : Date.now(),
+          value: (this.config.lowerBound !== undefined) && (this.config.lowerBound !== null) ? this.config.lowerBound.value : Date.now(),
           inclusive: false
         },
         max: {
-          value: (this.config.upperBound !== undefined) && (this.config.upperBound !== null) ? this.config.upperBound : Date.now(),
+          value: (this.config.upperBound !== undefined) && (this.config.upperBound !== null) ? this.config.upperBound.value : Date.now(),
           inclusive: false
         }
       },
@@ -88,34 +88,23 @@ export default {
       lowertzname: '',
       uppertzname: '',
       lowerDateTime: dateFormat(Date.now(), 'yyyy/mm/dd HH:MM:ss'),
-      upperDateTime: dateFormat(Date.now(), 'yyyy/mm/dd HH:MM:ss')
+      upperDateTime: dateFormat(Date.now(), 'yyyy/mm/dd HH:MM:ss'),
+      localtzoffset: getLocalTimeOffset()
     }
   },
   watch: {
     lowerDateTime: function (newValue, oldValue) {
       if (this.minCheck) {
-        this.config.lowerBound.value = Date.parse(newValue)
+        this.config.lowerBound.value = Date.parse(newValue).valueOf()
       }
     },
     upperDateTime: function (newValue, oldValue) {
       if (this.maxCheck) {
-        this.config.upperBound.value = Date.parse(newValue)
+        this.config.upperBound.value = Date.parse(newValue).valueOf()
       }
-    },
-    lowertzname: function (newValue, oldValue) {
-      //
-    },
-    uppertzname: function (newValue, oldValue) {
-      //
     }
   },
   created: function () {
-    loadtimezones().then(data => {
-      this.timezones = data
-      let lo = getLocalTimeOffset()
-      this.uppertzname = data.find(tz => tz.offset === lo).name
-      this.lowertzname = data.find(tz => tz.offset === lo).name
-    })
     this.config.validator = function (configuration) {
       let ub = (configuration.upperBound === undefined) || (configuration.upperBound === null) ? null : configuration.upperBound
       let lb = (configuration.lowerBound === undefined) || (configuration.lowerBound === null) ? null : configuration.lowerBound
@@ -142,13 +131,18 @@ export default {
       return true
     }
     if ((this.config.lowerBound !== undefined) && (this.config.lowerBound !== null)) {
-      this.lowerDT = new Date(this.config.lowerBound.value)
       this.lowerDateTime = dateFormat(this.config.lowerBound.value, 'yyyy/mm/dd HH:MM:ss')
     }
     if ((this.config.upperBound !== undefined) && (this.config.upperBound !== null)) {
       this.upperDT = new Date(this.config.upperBound.value)
       this.upperDateTime = dateFormat(this.config.upperBound.value, 'yyyy/mm/dd HH:MM:ss')
     }
+    loadtimezones().then(data => {
+      this.timezones = data
+      let lo = getLocalTimeOffset()
+      this.uppertzname = data.find(tz => tz.offset === lo).name
+      this.lowertzname = data.find(tz => tz.offset === lo).name
+    })
   },
   methods: {
     toggleMax: function () {
@@ -172,7 +166,7 @@ export default {
       }
     },
     calculateTime: function (timestr, offset) {
-      return Date.parse(timestr) + offset
+      return Date.parse(timestr).valueOf() + offset
     }
   }
 }
