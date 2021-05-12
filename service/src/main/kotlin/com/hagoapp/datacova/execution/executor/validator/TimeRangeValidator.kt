@@ -25,7 +25,7 @@ class TimeRangeValidator : Validator() {
 
     override fun prepare() {
         if (config !is TimeRangeConfig) {
-            throw CoVaException("Not a valid number range config")
+            throw CoVaException("Not a valid time range config")
         }
         conf = (config as TimeRangeConfig)
         verifyFunc = when {
