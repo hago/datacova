@@ -12,6 +12,8 @@
 </template>
 
 <script>
+import Router from '../../router'
+
 export default {
   name: 'TaskExecutionNotCompleted',
   props: {
@@ -19,6 +21,17 @@ export default {
   },
   data: function () {
     return {}
+  },
+  methods: {
+    gotoTask: function () {
+      Router.push({
+        name: 'Task',
+        params: {
+          id: this.execution.task.id,
+          workspaceId: this.execution.task.workspaceId
+        }
+      })
+    }
   }
 }
 </script>
