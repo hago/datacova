@@ -21,39 +21,46 @@ import java.time.ZonedDateTime
 class TimeRangeValidator : Validator() {
 
     private lateinit var verifyFunc: (Long?) -> Pair<Boolean, String?>
+    private lateinit var conf: TimeRangeConfig
 
     override fun prepare() {
         if (config !is TimeRangeConfig) {
             throw CoVaException("Not a valid number range config")
         }
-        val conf = (config as TimeRangeConfig)
+        conf = (config as TimeRangeConfig)
         verifyFunc = when {
-            conf.lowerBound != null && conf.upperBound != null -> { num ->
-                when (num) {
-                    null -> Pair(conf.isNullable, null)
-                    else -> Pair(
-                        isLessThan(conf.lowerBound.value, num, conf.lowerBound.isInclusive) &&
-                                isLessThan(num, conf.upperBound.value, conf.upperBound.isInclusive),
-                        ZonedDateTime.ofInstant(Instant.ofEpochMilli(num), ZoneId.systemDefault()).toString()
-                    )
-                }
-            }
-            conf.lowerBound != null -> { num ->
-                if (num == null) Pair(conf.isNullable, null)
-                else Pair(
-                    isLessThan(conf.lowerBound.value, num, conf.lowerBound.isInclusive),
-                    ZonedDateTime.ofInstant(Instant.ofEpochMilli(num), ZoneId.systemDefault()).toString()
-                )
-            }
-            conf.upperBound != null -> { num ->
-                if (num == null) Pair(conf.isNullable, null)
-                else Pair(
-                    isLessThan(num, conf.upperBound.value, conf.upperBound.isInclusive),
-                    ZonedDateTime.ofInstant(Instant.ofEpochMilli(num), ZoneId.systemDefault()).toString()
-                )
-            }
+            conf.lowerBound != null && conf.upperBound != null -> verifyBoth
+            conf.lowerBound != null -> verifyLower
+            conf.upperBound != null -> verifyUpper
             else -> { _ -> Pair(false, null) }
         }
+    }
+
+    private val verifyBoth = { num: Long? ->
+        when (num) {
+            null -> Pair(conf.isNullable, null)
+            else -> Pair(
+                isLessThan(conf.lowerBound.value, num, conf.lowerBound.isInclusive) &&
+                        isLessThan(num, conf.upperBound.value, conf.upperBound.isInclusive),
+                ZonedDateTime.ofInstant(Instant.ofEpochMilli(num), ZoneId.systemDefault()).toString()
+            )
+        }
+    }
+
+    private val verifyLower = { num: Long? ->
+        if (num == null) Pair(conf.isNullable, null)
+        else Pair(
+            isLessThan(conf.lowerBound.value, num, conf.lowerBound.isInclusive),
+            ZonedDateTime.ofInstant(Instant.ofEpochMilli(num), ZoneId.systemDefault()).toString()
+        )
+    }
+
+    private val verifyUpper = { num: Long? ->
+        if (num == null) Pair(conf.isNullable, null)
+        else Pair(
+            isLessThan(num, conf.upperBound.value, conf.upperBound.isInclusive),
+            ZonedDateTime.ofInstant(Instant.ofEpochMilli(num), ZoneId.systemDefault()).toString()
+        )
     }
 
     private fun isLessThan(a: Long, b: Long, equable: Boolean): Boolean {
