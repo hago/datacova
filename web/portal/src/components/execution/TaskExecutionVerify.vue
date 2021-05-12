@@ -72,7 +72,7 @@ export default {
       let flat = []
       let keys = Object.keys(this.actiondetail.dataMessages).sort((a, b) => a - b)
       keys.forEach(line => {
-        console.log(line)
+        // console.log(line)
         let lineList = this.actiondetail.dataMessages[line]
         lineList.forEach(message => {
           flat.push(Object.assign({}, message, {line: line}))
