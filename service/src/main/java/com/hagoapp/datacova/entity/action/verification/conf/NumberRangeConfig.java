@@ -59,8 +59,6 @@ public class NumberRangeConfig extends Configuration {
         return super.isValid();
     }
 
-    private String description = null;
-
     @Override
     protected String createDescription(Locale locale) throws CoVaException {
         String format = TextResourceManager.getManager().getString(locale, "/validators/number_range");
