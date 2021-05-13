@@ -71,7 +71,10 @@ class TaskExecutionCache {
         fun clearWorkspaceTaskExecutions(workspaceId: Int) {
             JedisManager(CoVaConfig.getConfig().redis).use {
                 val jedis = it.jedis
-                jedis.del(*jedis.keys("$TASK_EXECUTION_LIST_OF_WORKSPACE||$workspaceId*").toTypedArray())
+                val keys = jedis.keys("$TASK_EXECUTION_LIST_OF_WORKSPACE||$workspaceId*")
+                if (keys.isNotEmpty()) {
+                    jedis.del(*keys.toTypedArray())
+                }
             }
         }
 
