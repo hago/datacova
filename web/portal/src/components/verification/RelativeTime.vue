@@ -9,19 +9,25 @@
           </label>
         </div>
         <div class="input-group col-2 mb-2 mr-sm-2">
-          <input class="form-control" type="number" v-model="monthDiff" />
+          <input class="form-control" type="number" v-model="yearDiff" min="0" />
+          <div class="input-group-append">
+            <div class="input-group-text">Year{{ yearDiff > 1 ? 's' : '' }}</div>
+          </div>
+        </div>
+        <div class="input-group col-2 mb-2 mr-sm-2">
+          <input class="form-control" type="number" v-model="monthDiff" min="0" />
           <div class="input-group-append">
             <div class="input-group-text">Month{{ monthDiff > 1 ? 's' : '' }}</div>
           </div>
         </div>
         <div class="input-group col-2 mb-2 mr-sm-2">
-          <input class="form-control" type="number" v-model="dayDiff" />
+          <input class="form-control" type="number" v-model="dayDiff" min="0" />
           <div class="input-group-append">
             <div class="input-group-text">Day{{ dayDiff > 1 ? 's' : '' }}</div>
           </div>
         </div>
         <div class="input-group col-2 mb-2 mr-sm-2">
-          <input class="form-control" type="number" v-model="hourDiff" />
+          <input class="form-control" type="number" v-model="hourDiff" min="0" />
           <div class="input-group-append">
             <div class="input-group-text">Hour{{ hourDiff > 1 ? 's' : '' }}</div>
           </div>
@@ -69,7 +75,8 @@ export default {
       direction: 1,
       monthDiff: 0,
       dayDiff: 0,
-      hourDiff: 0
+      hourDiff: 0,
+      yearDiff: 0
     }
   },
   created: function () {
@@ -77,9 +84,14 @@ export default {
       this.monthDiff = this.boundary.timeDiff.month
       this.hourDiff = this.boundary.timeDiff.hour
       this.dayDiff = this.boundary.timeDiff.day
+      this.yearDiff = this.boundary.timeDiff.year
+      this.direction = this.boundary.timeDiff.direction
     }
   },
   watch: {
+    yearDiff: function (newValue) {
+      this.boundary.timeDiff.year = newValue
+    },
     monthDiff: function (newValue) {
       this.boundary.timeDiff.month = newValue
     },
@@ -88,6 +100,9 @@ export default {
     },
     hourDiff: function (newValue) {
       this.boundary.timeDiff.hour = newValue
+    },
+    direction: function (newValue) {
+      this.boundary.timeDiff.direction = newValue
     }
   },
   methods: {
