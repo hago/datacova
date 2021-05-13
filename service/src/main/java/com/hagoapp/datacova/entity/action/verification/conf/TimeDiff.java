@@ -15,7 +15,8 @@ public class TimeDiff {
     private int year = 0;
     private int month = 0;
     private int day = 0;
-    private int hour;
+    private int hour = 0;
+    private int direction = 1;
 
     public int getYear() {
         return year;
@@ -49,8 +50,17 @@ public class TimeDiff {
         this.hour = hour;
     }
 
+    public int getDirection() {
+        return direction;
+    }
+
+    public void setDirection(int direction) {
+        this.direction = direction <= 0 ? -1 : 1;
+    }
+
     public ZonedDateTime apply(ZonedDateTime aTime) {
-        return aTime.plusYears(year).plusMonths(month).plusDays(day).plusHours(hour);
+        return aTime.plusYears((long) year * direction).plusMonths((long) month * direction)
+                .plusDays((long) day * direction).plusHours((long) hour * direction);
     }
 
     public static TimeDiff Zero = new TimeDiff();
