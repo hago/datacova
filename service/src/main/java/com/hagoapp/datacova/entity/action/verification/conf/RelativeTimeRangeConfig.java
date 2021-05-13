@@ -8,12 +8,19 @@
 
 package com.hagoapp.datacova.entity.action.verification.conf;
 
+import com.hagoapp.datacova.CoVaException;
 import com.hagoapp.datacova.entity.action.verification.Configuration;
 import com.hagoapp.datacova.util.datetime.DateUtils;
 import com.hagoapp.datacova.util.datetime.TimeReference;
+import com.hagoapp.datacova.util.text.TextResourceManager;
+import org.stringtemplate.v4.ST;
 
 import java.time.Instant;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 
 public class RelativeTimeRangeConfig extends Configuration {
@@ -121,5 +128,58 @@ public class RelativeTimeRangeConfig extends Configuration {
 
     public void setUpperBound(RelativeBoundary upperBound) {
         this.upperBound = upperBound;
+    }
+
+    @Override
+    protected String createDescription(Locale locale) throws CoVaException {
+        locale = Locale.US;
+        String format = TextResourceManager.getManager().getString(locale, "/validators/relative_time_range");
+        if (format == null) {
+            throw new CoVaException("Description for TimeRangeConfig class not found");
+        }
+        List<String> fields = getFields();
+        if (fields.size() == 0) {
+            throw new CoVaException("No fields defined in TimeRangeConfig class");
+        }
+        ST st = new ST(format);
+        st.add("fields", fields);
+        st.add("lowerBound", lowerBound);
+        st.add("upperBound", upperBound);
+        if (lowerBound != null) {
+            lowerBound.calculateValue();
+            st.add(String.format("isLower%s", lowerBound.reference.name()), true);
+            st.add("isLowerBefore", lowerBound.timeDiff.getDirection() == -1);
+        }
+        if (upperBound != null) {
+            upperBound.calculateValue();
+            st.add(String.format("isUpper%s", upperBound.reference.name()), true);
+            st.add("isUpperBefore", upperBound.timeDiff.getDirection() == -1);
+        }
+        st.add("lowerTime", getEpochMilliString(locale, lowerBound == null ? null : lowerBound.getValue()));
+        st.add("upperTime", getEpochMilliString(locale, upperBound == null ? null : upperBound.getValue()));
+        createTimeDiffFlags("Lower", lowerBound).forEach(st::add);
+        createTimeDiffFlags("Upper", upperBound).forEach(st::add);
+        return st.render();
+    }
+
+    private Map<String, Object> createTimeDiffFlags(String prefix, RelativeBoundary boundary) {
+        return (boundary == null) ? Map.of() :
+                Map.of(
+                        String.format("is%sYear", prefix), boundary.timeDiff.getYear() > 0,
+                        String.format("is%sYearPlural", prefix), boundary.timeDiff.getYear() > 1,
+                        String.format("is%sMonth", prefix), boundary.timeDiff.getMonth() > 0,
+                        String.format("is%sMonthPlural", prefix), boundary.timeDiff.getMonth() > 1,
+                        String.format("is%sDay", prefix), boundary.timeDiff.getDay() > 0,
+                        String.format("is%sDayPlural", prefix), boundary.timeDiff.getDay() > 1,
+                        String.format("is%sHour", prefix), boundary.timeDiff.getHour() > 0,
+                        String.format("is%sHourPlural", prefix), boundary.timeDiff.getHour() > 1
+                );
+    }
+
+    private String getEpochMilliString(Locale locale, Long milli) {
+        if (milli == null) {
+            return null;
+        }
+        return ZonedDateTime.ofInstant(Instant.ofEpochMilli(milli), ZoneId.systemDefault()).toString();
     }
 }

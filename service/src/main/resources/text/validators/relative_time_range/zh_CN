@@ -1,0 +1,42 @@
+字段["<fields; separator="\", \"">"] 应该是时间格式
+<if (lowerBound)>
+晚于<if (lowerBound.inclusive)>或者等于<endif>
+<if (isLowerNow)>运行当时
+<elseif (isLowerBeginOfToday)>运行当天起始时刻
+<elseif (isLowerEndOfToday)>运行当天结束时刻
+<elseif (isLowerBeginOfThisMonth)>运行当月起始时刻
+<elseif (isLowerEndOfThisMonth)>运行当月结束时刻
+<elseif (isLowerBeginOfThisWeek)>运行当周起始时刻
+<elseif (isLowerEndOfThisWeek)>运行当周结束时刻
+<elseif (isLowerBeginOfThisQuarter)>运行当季起始时刻
+<elseif (isLowerEndOfThisQuarter)>运行当季结束时刻
+<elseif (isLowerBeginOfThisYear)>运行当年起始时刻
+<elseif (isLowerEndOfThisYear)>运行当年结束时刻
+<endif>的
+<if (isLowerYear)><lowerBound.timeDiff.year>年<endif>
+<if (isLowerMonth)><lowerBound.timeDiff.month>月<endif>
+<if (isLowerDay)><lowerBound.timeDiff.day>天<endif>
+<if (isLowerHour)><lowerBound.timeDiff.hour>小时<endif>
+<if (isLowerBefore)>之前<else>之后<endif>这个时刻, 对于本次执行具体日期为<lowerTime>
+<endif>
+<if (upperBound)>
+<if (lowerBound)>并且<endif>
+早于<if (upperBound.inclusive)>或者等于<endif>
+<if (isUpperNow)>运行当时
+<elseif (isUpperBeginOfToday)>运行当天起始时刻
+<elseif (isUpperEndOfToday)>运行当天结束时刻
+<elseif (isUpperBeginOfThisMonth)>运行当月起始时刻
+<elseif (isUpperEndOfThisMonth)>运行当月结束时刻
+<elseif (isUpperBeginOfThisWeek)>运行当周起始时刻
+<elseif (isUpperEndOfThisWeek)>运行当周结束时刻
+<elseif (isUpperBeginOfThisQuarter)>运行当季起始时刻
+<elseif (isUpperEndOfThisQuarter)>运行当季结束时刻
+<elseif (isUpperBeginOfThisYear)>运行当年起始时刻
+<elseif (isUpperEndOfThisYear)>运行当年结束时刻
+<endif>的
+<if (isUpperYear)><upperBound.timeDiff.year>年<endif>
+<if (isUpperMonth)><upperBound.timeDiff.month>月<endif>
+<if (isUpperDay)><upperBound.timeDiff.day>天<endif>
+<if (isUpperHour)><upperBound.timeDiff.hour>小时<endif>
+<if (isUpperBefore)>之前<else>之后<endif>这个时刻, 对于本次执行具体日期为<upperTime>
+<endif>
