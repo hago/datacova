@@ -132,7 +132,6 @@ public class RelativeTimeRangeConfig extends Configuration {
 
     @Override
     protected String createDescription(Locale locale) throws CoVaException {
-        locale = Locale.US;
         String format = TextResourceManager.getManager().getString(locale, "/validators/relative_time_range");
         if (format == null) {
             throw new CoVaException("Description for TimeRangeConfig class not found");
