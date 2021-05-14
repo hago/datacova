@@ -36,7 +36,8 @@ export default {
   },
   data () {
     return {
-      loginStatus: {}
+      loginStatus: {},
+      currentpath: this.$route.path
     }
   },
   created: function () {
@@ -60,7 +61,8 @@ export default {
       this.loginStatus = Object.assign({}, user)
       let ws = new WSConnection()
       ws.open()
-      router.push('/main').catch(err => console.log(`redirect err: ${err}`))
+      let dest = (this.currentpath === undefined) || (this.currentpath === '/') ? '/main' : this.currentpath
+      router.push(dest).catch(err => console.log(`redirect err: ${err}`))
     },
     gotoLogin: function () {
       router.push('/login').catch()
