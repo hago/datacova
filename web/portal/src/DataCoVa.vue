@@ -9,7 +9,7 @@
       </div>
       <div class="user">
         <a v-if="logged" href="javascript:void(0);" v-on:click="logout()">{{this.loginStatus.user.name}}</a>
-        <button class="btn btn-primary login" v-on:click="gotoLogin()" v-if="!logged">Login</button>
+        <button class="btn btn-primary login" v-on:click="gotoLogin()" v-if="!logged">Login / Register</button>
       </div>
       <div class="notification" title="Notifications">
         <a href="javascript:void(0);" v-if="logged">
