@@ -19,7 +19,7 @@ import TaskExecution from '@/components/execution/TaskExecution'
 Vue.use(Vuex)
 Vue.use(Router)
 
-export default new Router({
+const route = new Router({
   mode: 'history',
   routes: [
     {
@@ -86,3 +86,5 @@ export default new Router({
   linkActiveClass: 'nav-link',
   linkExactActiveClass: 'active'
 })
+
+export default route
