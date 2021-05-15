@@ -2,7 +2,7 @@
   <div>
     <div class="loginarea">
       <div class="form-group row">
-        <select class="" v-model="loginChoice">
+        <select class="form-control" v-model="loginChoice">
           <option v-if="loginMethods.length === 0" value="-1">Login Disabled</option>
           <option v-for="(method, index) in loginMethods" v-bind:value="index" v-bind:key="index">
             {{ method }}
@@ -43,13 +43,21 @@
         </div>
       </div>
       <div class="row">
-        <img v-bind:src="captchaUrl"/>
+        <img v-bind:src="captchaUrl" class="captcha"/>
         <button class="btn btn-info" v-on:click="refreshCaptcha()">Refresh</button>
       </div>
       <div class="row">
         <span class="badge badge-danger veryfyMessage">{{ errorMessage }}</span>
       </div>
-      <button class="btn btn-primary" v-on:click="login()">Login</button>
+      <div class="row">
+        <div class="col-6">
+          <button class="btn btn-info" v-on:click="register()">Register</button>
+        </div>
+        <div class="col-6 text-right">
+          <span style="color:green">Alerady registered?</span>
+          <button class="btn btn-primary" v-on:click="login()">Log in</button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -116,6 +124,9 @@ export default {
     },
     refreshCaptcha () {
       this.captchaUrl = `${process.env.SERVICE_BASE_URL === undefined ? '' : process.env.SERVICE_BASE_URL}/api/auth/captcha?${Math.random()}`
+    },
+    register () {
+      //
     }
   }
 }
@@ -129,5 +140,8 @@ export default {
 }
 .row {
   margin-top: 5px
+}
+.captcha {
+  color: red
 }
 </style>
