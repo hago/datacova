@@ -1,13 +1,16 @@
 <template>
   <div>
     <div class="loginarea">
-      <div class="form-group row">
-        <select class="form-control" v-model="loginChoice">
-          <option v-if="loginMethods.length === 0" value="-1">Login Disabled</option>
-          <option v-for="(method, index) in loginMethods" v-bind:value="index" v-bind:key="index">
-            {{ method }}
-          </option>
-        </select>
+      <div class="form-group row channel">
+        <label for="channel" class="col-form-label col-4">Channel</label>
+        <div class="col-6">
+          <select class="form-control" v-model="loginChoice" id="channel">
+            <option v-if="loginMethods.length === 0" value="-1">Login Disabled</option>
+            <option v-for="(method, index) in loginMethods" v-bind:value="index" v-bind:key="index">
+              {{ method }}
+            </option>
+          </select>
+        </div>
       </div>
       <div class="form-group row">
         <label for="username" class="col-form-label col-4">User</label>
@@ -144,5 +147,9 @@ export default {
 }
 .captcha {
   color: red
+}
+.channel {
+  font-style: italic;
+  color: aqua;
 }
 </style>
