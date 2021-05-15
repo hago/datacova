@@ -78,6 +78,8 @@ class UserData(config: DatabaseConfig) : CoVaDatabase(config) {
             pwdHash = rs.getString("pwdhash")
             userType = UserType.parseInt(rs.getInt("usertype"))
             provider = rs.getString("usertype")
+            email = rs.getString("email")
+            mobile = rs.getString("mobile")
         }
         return user
     }

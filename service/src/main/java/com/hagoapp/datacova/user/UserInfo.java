@@ -22,6 +22,8 @@ public class UserInfo implements JsonStringify {
     public static final int HIDE_USERINFO_MODIFY_TIME = 0x40;
     public static final int HIDE_USERINFO_STATUS = 0x80;
     public static final int HIDE_USERINFO_THUMBNAIL = 0x100;
+    public static final int HIDE_USERINFO_EMAIL = 0x200;
+    public static final int HIDE_USERINFO_MOBILE = 0x400;
     public static final String DEFAULT_STRING_MASK = "********";
     public static final long DEFAULT_LONG_MASK = 0L;
     public static final UserStatus DEFAULT_USER_STATUS_MASK = UserStatus.Unknown;
@@ -39,6 +41,8 @@ public class UserInfo implements JsonStringify {
     private byte[] thumbnail;
     private UserStatus status;
     private UserType userType;
+    private String mobile;
+    private String email;
 
     public UserInfo() {
 
@@ -153,6 +157,22 @@ public class UserInfo implements JsonStringify {
         this.userType = userType;
     }
 
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -182,7 +202,7 @@ public class UserInfo implements JsonStringify {
     }
 
     public UserInfo maskUserInfo() {
-        return maskUserInfo(HIDE_USERINFO_DEFAULT);
+        return maskUserInfo(HIDE_USERINFO_DEFAULT + HIDE_USERINFO_MOBILE + HIDE_USERINFO_EMAIL);
     }
 
     public UserInfo maskUserInfo(int mask) {
@@ -217,6 +237,12 @@ public class UserInfo implements JsonStringify {
         }
         if ((mask & HIDE_USERINFO_THUMBNAIL) != 0) {
             this.thumbnail = null;
+        }
+        if ((mask & HIDE_USERINFO_EMAIL) != 0) {
+            this.email = maskString;
+        }
+        if ((mask & HIDE_USERINFO_MOBILE) != 0) {
+            this.mobile = maskString;
         }
         return this;
     }
