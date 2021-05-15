@@ -41,7 +41,9 @@ create table if not exists workspacelog (
 
 create table if not exists users (
     id serial,
-    userid varchar(100) not null unique,
+    userid varchar(100) not null,
+    email varchar(100) not null,
+    mobile varchar(100) not null,
     name varchar(200) not null,
     pwdhash text not null,
     description text not null default '',
@@ -52,27 +54,31 @@ create table if not exists users (
     thumbnail bytea null,
     eustatus int not null default 0, /* 0 - normal 1 - deleted 2 - password reset*/
     usertype int not null default 0, /* 0 - local db 1 - ldap */
+    unique(usertype, email),
+    unique(usertype, mobile),
+    unique(usertype, userid),
     primary key(id)
 );
 
 /* create test user with password 123456 */
-insert into users (userid, name, pwdhash, addby, modifyby, modifytime)
-values ('Admin', 'System Administrator', '4e7dde2c5adfd4189fd0962ed9e7e821ef43b1d6', 0, 0, now()) returning id;
-insert into users (userid, name, pwdhash, addby, modifyby, modifytime)
+insert into users (userid, name, pwdhash, addby, modifyby, modifytime, email, mobile)
+values ('Admin', 'System Administrator', '4e7dde2c5adfd4189fd0962ed9e7e821ef43b1d6', 0, 0, now(), 'admin@datacova.com', '12345')
+returning id;
+insert into users (userid, name, pwdhash, addby, modifyby, modifytime, email, mobile)
 select
-'test', 'CoVa Test', '4e7dde2c5adfd4189fd0962ed9e7e821ef43b1d6', id, id, now()
+'test', 'CoVa Test', '4e7dde2c5adfd4189fd0962ed9e7e821ef43b1d6', id, id, now(), 'test@datacova.com', '12345'
 from users where userid = 'Admin';
-insert into users (userid, name, pwdhash, addby, modifyby, modifytime)
+insert into users (userid, name, pwdhash, addby, modifyby, modifytime, email, mobile)
 select
-'uadmin', 'Role Admin Test', '4e7dde2c5adfd4189fd0962ed9e7e821ef43b1d6', id, id, now()
+'uadmin', 'Role Admin Test', '4e7dde2c5adfd4189fd0962ed9e7e821ef43b1d6', id, id, now(), 'uadmin@datacova.com', '12345'
 from users where userid = 'Admin';
-insert into users (userid, name, pwdhash, addby, modifyby, modifytime)
+insert into users (userid, name, pwdhash, addby, modifyby, modifytime, email, mobile)
 select
-'umaintain', 'Role Maintainer Test', '4e7dde2c5adfd4189fd0962ed9e7e821ef43b1d6', id, id, now()
+'umaintain', 'Role Maintainer Test', '4e7dde2c5adfd4189fd0962ed9e7e821ef43b1d6', id, id, now(), 'umaintain@datacova.com', '12345'
 from users where userid = 'Admin';
-insert into users (userid, name, pwdhash, addby, modifyby, modifytime)
+insert into users (userid, name, pwdhash, addby, modifyby, modifytime, email, mobile)
 select
-'uuser', 'Role User Test', '4e7dde2c5adfd4189fd0962ed9e7e821ef43b1d6', id, id, now()
+'uuser', 'Role User Test', '4e7dde2c5adfd4189fd0962ed9e7e821ef43b1d6', id, id, now(), 'uuser@datacova.com', '12345'
 from users where userid = 'Admin';
 
 /*
