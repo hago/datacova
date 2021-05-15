@@ -65,6 +65,7 @@
 <script>
 import UserAPIHelper from '../apis/userapi.js'
 import User from '../apis/user.js'
+import router from '@/router'
 
 export default {
   name: 'Login',
@@ -126,7 +127,7 @@ export default {
       this.captchaUrl = `${process.env.SERVICE_BASE_URL === undefined ? '' : process.env.SERVICE_BASE_URL}/api/auth/captcha?${Math.random()}`
     },
     register () {
-      //
+      router.push('/register').catch(err => console.log(err))
     }
   }
 }

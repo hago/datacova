@@ -15,6 +15,7 @@ import User from '@/components/user/User'
 import Task from '@/components/task/Task'
 import TaskFileUpload from '@/components/task/TaskFileUpload'
 import TaskExecution from '@/components/execution/TaskExecution'
+import Register from '@/components/Register.vue'
 
 Vue.use(Vuex)
 Vue.use(Router)
@@ -80,6 +81,12 @@ const route = new Router({
       path: '/execution/:id',
       name: 'TaskExecution',
       component: TaskExecution,
+      props: true
+    },
+    {
+      path: '/register',
+      name: 'Register',
+      component: Register,
       props: true
     }
   ],
