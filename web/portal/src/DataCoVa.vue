@@ -9,7 +9,7 @@
       </div>
       <div class="user">
         <a v-if="logged" href="javascript:void(0);" v-on:click="logout()">{{this.loginStatus.user.name}}</a>
-        <button class="btn btn-primary login" v-on:click="gotoLogin()" v-if="!logged">Login / Register</button>
+        <button class="btn btn-primary login" v-on:click="gotoLoginRegister()" v-if="!logged">Login / Register</button>
       </div>
       <div class="notification" title="Notifications">
         <a href="javascript:void(0);" v-if="logged">
@@ -41,8 +41,8 @@ export default {
     }
   },
   created: function () {
-    this.$root.$on('onLoginEvent', this.onLogin);
-    (new User()).checkLogin(false, this.onLogin, this.gotoIndex)
+    this.$root.$on('onLoginEvent', this.onLogged)
+    this.$root.$on('onNeedLogin', this.onNeedLogin)
   },
   methods: {
     logout: function () {
@@ -51,12 +51,12 @@ export default {
         router.push('/').catch(err => console.log(`redirect err: ${err}`))
       })
     },
-    gotoIndex: function () {
+    onNotLogged: function () {
       console.log('CoVa not logged, refdirect to index')
-      router.push('/index').catch(err => console.log(`redirect err: ${err}`))
+      this.gotoLoginRegister()
     },
-    onLogin: function (user) {
-      console.log('onLogin called')
+    onLogged: function (user) {
+      console.log('onLogged called')
       console.log('CoVa logged')
       this.loginStatus = Object.assign({}, user)
       let ws = new WSConnection()
@@ -64,8 +64,16 @@ export default {
       let dest = (this.currentpath === undefined) || (this.currentpath === '/') ? '/main' : this.currentpath
       router.push(dest).catch(err => console.log(`redirect err: ${err}`))
     },
-    gotoLogin: function () {
-      router.push('/login').catch()
+    gotoLoginRegister: function () {
+      router.push({name: 'Login', params: {return: this.currentpath}}).catch(err => console.log(`redirect err: ${err}`))
+    },
+    onNeedLogin: function (callback) {
+      (new User()).checkLogin(false, user => {
+        this.onLogged(user)
+        if (callback !== undefined) {
+          callback(user)
+        }
+      }, this.onNotLogged)
     }
   }
 }

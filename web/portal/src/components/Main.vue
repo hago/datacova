@@ -111,9 +111,11 @@ export default {
       }
     }
   },
-  mounted: function () {
-    console.log(this.loginStatus)
-    this.loadWorkspaces()
+  created: function () {
+    this.$root.$emit('onNeedLogin', user => {
+      console.log(this.loginStatus)
+      this.loadWorkspaces()
+    })
   },
   computed: {
     myRoles: function () {
