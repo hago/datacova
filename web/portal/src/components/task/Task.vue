@@ -129,8 +129,10 @@ export default {
       }
     }
   },
-  mounted: function () {
-    this.loadTask()
+  created: function () {
+    this.$root.$emit('onNeedLogin', user => {
+      this.loadTask()
+    })
   },
   methods: {
     loadTask: function () {

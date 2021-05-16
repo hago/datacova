@@ -26,18 +26,20 @@ export default {
     }
   },
   created: function () {
-    let str = sessionStorage.getItem(`execution_${this.id}`)
-    if (str !== null) {
-      this.execution = JSON.parse(str)
-      this.status = parseInt(this.execution.status)
-    } else {
-      (new WorkspaceApiHelper()).loadTaskExecution(this.id).then(rsp => {
-        this.execution = rsp.data.data
+    this.$root.$emit('onNeedLogin', user => {
+      let str = sessionStorage.getItem(`execution_${this.id}`)
+      if (str !== null) {
+        this.execution = JSON.parse(str)
         this.status = parseInt(this.execution.status)
-      }).catch(err => {
-        console.log(err)
-      })
-    }
+      } else {
+        (new WorkspaceApiHelper()).loadTaskExecution(this.id).then(rsp => {
+          this.execution = rsp.data.data
+          this.status = parseInt(this.execution.status)
+        }).catch(err => {
+          console.log(err)
+        })
+      }
+    })
   }
 }
 </script>

@@ -62,8 +62,8 @@ export default {
       extraInfo: {}
     }
   },
-  mounted: function () {
-    //
+  created: function () {
+    this.$root.$emit('onNeedLogin', user => {})
   },
   computed: {
     url: function () {

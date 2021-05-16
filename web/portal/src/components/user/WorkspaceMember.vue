@@ -73,9 +73,11 @@ export default {
       readonly: true
     }
   },
-  mounted: function () {
-    this.readonly = (this.loginStatus.user.id !== this.workspace.owner.id) &&
-      (this.workspace.users.find(it => this.loginStatus.user.id === it.user.id && it.roles.indexOf('0') >= 0) !== undefined)
+  created: function () {
+    this.$root.$emit('onNeedLogin', user => {
+      this.readonly = (this.loginStatus.user.id !== this.workspace.owner.id) &&
+        (this.workspace.users.find(it => this.loginStatus.user.id === it.user.id && it.roles.indexOf('0') >= 0) !== undefined)
+    })
   },
   methods: {
     addUser: function (index) {

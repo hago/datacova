@@ -101,11 +101,13 @@ export default {
       errorMessage: null
     }
   },
-  mounted: function () {
-    if (this.$route.params.id > 0) {
-      this.isNew = false
-      this.loadConnection()
-    }
+  created: function () {
+    this.$root.$emit('onNeedLogin', user => {
+      if (this.$route.params.id > 0) {
+        this.isNew = false
+        this.loadConnection()
+      }
+    })
   },
   methods: {
     changeDbType: function () {
