@@ -4,6 +4,9 @@
       <div class="col-6">
         <h1>What is Data<span class="brand">CoVa</span></h1>
       </div>
+      <div class="col-6 text-right" v-if="logged">
+        <button class="btn btn-info" v-on:click="enter()">Enter my space</button>
+      </div>
     </div>
     <div class="row">
       <div class="col-1"></div>
@@ -30,17 +33,29 @@
 
 <script>
 import 'bootstrap/dist/css/bootstrap.css'
+import router from '@/router'
+import User from '@/apis/user.js'
 
 export default {
   name: 'Index',
   data () {
     return {
+      logged: false
     }
   },
   props: {
     loginStatus: Object
   },
+  created: function () {
+    (new User()).checkLogin(false, user => {
+      this.logged = true
+    })
+  },
   methods: {
+    enter: function () {
+      console.log('enter')
+      router.push('/main').catch(err => console.log(err))
+    }
   }
 }
 </script>

@@ -41,8 +41,11 @@ export default {
     }
   },
   created: function () {
-    this.$root.$on('onLoginEvent', this.onLogged)
-    this.$root.$on('onNeedLogin', this.onNeedLogin)
+    // this.$root.$on('onLoginEvent', this.onLogged)
+    this.$root.$on('onNeedLogin', this.onNeedLogin);
+    (new User()).checkLogin(false, user => {
+      this.loginStatus = Object.assign({}, user)
+    })
   },
   methods: {
     logout: function () {
@@ -61,8 +64,6 @@ export default {
       this.loginStatus = Object.assign({}, user)
       let ws = new WSConnection()
       ws.open()
-      let dest = (this.currentpath === undefined) || (this.currentpath === '/') ? '/main' : this.currentpath
-      router.push(dest).catch(err => console.log(`redirect err: ${err}`))
     },
     gotoLoginRegister: function () {
       router.push({name: 'Login', params: {return: this.currentpath}}).catch(err => console.log(`redirect err: ${err}`))
