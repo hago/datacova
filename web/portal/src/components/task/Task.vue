@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid">
+  <div class="container-fluid" v-title data-title="Task">
     <div class="form-row">
       <div class="form-group col-6">
         <label for="conname">Name</label>

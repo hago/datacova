@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-title data-title="Login">
     <div class="loginarea">
       <div class="form-group row channel">
         <label for="channel" class="col-form-label col-4">Channel</label>

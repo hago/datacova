@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" v-title data-title="Upload file to execute a task">
     <h3 class="col-8">
       <span>Upload file for Task {{ taskId }}</span>
     </h3>

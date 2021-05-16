@@ -1,5 +1,5 @@
 <template>
-  <div style="margin-left: 5px">
+  <div style="margin-left: 5px" v-title data-title="Member Management">
     <div>
       <h4>pick users to add them as
         <b><i>{{ type === 0 ? 'Administrator' : (type === 1 ? 'Maintainer' : 'Loader') }}</i></b> of workspace

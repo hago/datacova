@@ -5,6 +5,11 @@ import DataCoVa from './DataCoVa'
 import router from './router'
 
 Vue.config.productionTip = false
+Vue.directive('title', {
+  inserted: function (el, binding) {
+    document.title = el.dataset.title
+  }
+})
 
 /* eslint-disable no-new */
 new Vue({

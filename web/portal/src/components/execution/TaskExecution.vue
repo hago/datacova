@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-title data-title="Status of execution">
     <TaskExecutionCompleted v-bind:execution="execution" v-if="(execution !== null) && ([2, -1].indexOf(status) >= 0)"
       ></TaskExecutionCompleted>
     <TaskExecutionNotCompleted v-bind:execution="execution" v-if="(execution !== null) && ([0, 1].indexOf(status) >= 0)"

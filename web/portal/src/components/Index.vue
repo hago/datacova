@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-title data-title="Introduction">
     <div class="row">
       <div class="col-6">
         <h1>What is Data<span class="brand">CoVa</span></h1>
