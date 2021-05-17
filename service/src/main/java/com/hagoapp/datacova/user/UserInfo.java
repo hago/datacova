@@ -38,7 +38,7 @@ public class UserInfo implements JsonStringify {
     private long addTime;
     private Long modifyBy;
     private Long modifyTime;
-    private byte[] thumbnail;
+    private String thumbnail;
     private UserStatus status;
     private UserType userType;
     private String mobile;
@@ -133,11 +133,11 @@ public class UserInfo implements JsonStringify {
         this.modifyTime = modifyTime;
     }
 
-    public byte[] getThumbnail() {
+    public String getThumbnail() {
         return thumbnail;
     }
 
-    public void setThumbnail(byte[] thumbnail) {
+    public void setThumbnail(String thumbnail) {
         this.thumbnail = thumbnail;
     }
 
