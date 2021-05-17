@@ -19,6 +19,7 @@ import com.hagoapp.datacova.util.data.DatabaseFunctions
 import java.sql.ResultSet
 import java.sql.Timestamp
 import java.time.Instant
+import java.util.*
 
 class UserData(config: DatabaseConfig) : CoVaDatabase(config) {
 
@@ -73,7 +74,7 @@ class UserData(config: DatabaseConfig) : CoVaDatabase(config) {
             addTime = DatabaseFunctions.getDBValue<Timestamp>(rs, "addtime")!!.toInstant().toEpochMilli()
             modifyBy = DatabaseFunctions.getDBValue(rs, "modifyby")
             modifyTime = DatabaseFunctions.getDBValue<Timestamp>(rs, "modifytime")?.toInstant()?.toEpochMilli()
-            thumbnail = DatabaseFunctions.getDBValue<ByteArray>(rs, "thumbnail")
+            thumbnail = createThumbnail(DatabaseFunctions.getDBValue<ByteArray>(rs, "thumbnail"))
             status = UserStatus.parseInt(rs.getInt("eustatus"))
             pwdHash = rs.getString("pwdhash")
             userType = UserType.parseInt(rs.getInt("usertype"))
@@ -82,6 +83,11 @@ class UserData(config: DatabaseConfig) : CoVaDatabase(config) {
             mobile = rs.getString("mobile")
         }
         return user
+    }
+
+    private fun createThumbnail(buffer: ByteArray?): String? {
+        return if (buffer == null) null
+        else Base64.getEncoder().encodeToString(buffer)
     }
 
     private data class BasicUser(
@@ -128,5 +134,59 @@ class UserData(config: DatabaseConfig) : CoVaDatabase(config) {
             }
         }
         return ret
+    }
+
+    fun registerUser(user: UserInfo): UserInfo {
+        val sql =
+            """insert into users (userid, pwdhash, email, mobile, addby, modifyby, modifytime, usertype, thumbnail)
+            value (?, ?, ?, ?, -1, -1, now(), 0, ?) returning id
+        """.trimMargin()
+        val id = connection.prepareStatement(sql).use { stmt ->
+            stmt.setString(1, user.userId)
+            stmt.setString(2, user.pwdHash)
+            stmt.setString(3, user.email)
+            stmt.setString(4, user.mobile)
+            stmt.setObject(5, DatabaseFunctions.createPgObject("bytea", createThumbnail(user.thumbnail)))
+            stmt.executeQuery().use { rs ->
+                rs.next()
+                rs.getLong("id")
+            }
+        }
+        return findUser(id)!!
+    }
+
+    private fun createThumbnail(thumbnail: String?): ByteArray? {
+        return if (thumbnail == null) null
+        else Base64.getDecoder().decode(thumbnail)
+    }
+
+    fun isUserIdExisted(userId: String): Boolean {
+        val sql = "select id from users where usertype = 0 and userId = ?"
+        return connection.prepareStatement(sql).use { stmt ->
+            stmt.setString(1, userId)
+            stmt.executeQuery().use { rs ->
+                rs.next()
+            }
+        }
+    }
+
+    fun isEmailExisted(email: String): Boolean {
+        val sql = "select id from users where usertype = 0 and email = ?"
+        return connection.prepareStatement(sql).use { stmt ->
+            stmt.setString(1, email)
+            stmt.executeQuery().use { rs ->
+                rs.next()
+            }
+        }
+    }
+
+    fun isMobileExisted(mobile: String): Boolean {
+        val sql = "select id from users where usertype = 0 and mobile = ?"
+        return connection.prepareStatement(sql).use { stmt ->
+            stmt.setString(1, mobile)
+            stmt.executeQuery().use { rs ->
+                rs.next()
+            }
+        }
     }
 }
