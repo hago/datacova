@@ -57,6 +57,41 @@ class UserApiHelper {
     })
     return rsp
   }
+
+  async checkRegisterUserId (type, userid) {
+    let rsp = await axios({
+      method: 'GET',
+      url: `${this.urlprefix}/api/register/check/${type}/userid/${userid}`
+    })
+    return rsp
+  }
+
+  async checkRegisterEmail (type, email) {
+    let encoded = encodeURIComponent(email)
+    let rsp = await axios({
+      method: 'GET',
+      url: `${this.urlprefix}/api/register/check/${type}/email/${encoded}`
+    })
+    return rsp
+  }
+
+  async checkRegisterMobile (type, mobile) {
+    let encoded = encodeURIComponent(mobile)
+    let rsp = await axios({
+      method: 'GET',
+      url: `${this.urlprefix}/api/register/check/${type}/mobile/${encoded}`
+    })
+    return rsp
+  }
+
+  async register (user, captcha) {
+    let rsp = await axios({
+      method: 'PUT',
+      url: `${this.urlprefix}/api/register/${captcha}`,
+      data: user
+    })
+    return rsp
+  }
 }
 
 export default UserApiHelper
