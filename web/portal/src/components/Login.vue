@@ -77,7 +77,7 @@ export default {
       user: '',
       password: '',
       captcha: '',
-      captchaUrl: `${process.env.SERVICE_BASE_URL === undefined ? '' : process.env.SERVICE_BASE_URL}/api/auth/captcha`,
+      captchaUrl: `${process.env.SERVICE_BASE_URL === undefined ? '' : process.env.SERVICE_BASE_URL}/api/auth/captcha?${Math.random()}`,
       errorMessage: '',
       loginMethods: [
         'Regular(username, password and captcha)'
