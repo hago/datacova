@@ -3,13 +3,27 @@
     <h2 class="title text-center">Register new user</h2>
     <div class="loginarea">
       <div class="form-group row">
-        <label for="username" class="col-form-label col-3">User ID</label>
+        <label for="userid" class="col-form-label col-3">User ID</label>
         <div class="col-8">
           <input
             type="text"
             placeholder="user id"
-            id="username"
+            id="userid"
             v-model="user.userId"
+            class="form-control" />
+        </div>
+        <div class="col-1" v-if="useridcheck !== null">
+          <img class="checkflag" :src="useridcheck ? fieldok : fieldfail" />
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="username" class="col-form-label col-3">User Name</label>
+        <div class="col-8">
+          <input
+            type="text"
+            placeholder="user name"
+            id="username"
+            v-model="user.name"
             class="form-control" />
         </div>
         <div class="col-1" v-if="useridcheck !== null">
@@ -175,16 +189,21 @@ export default {
         .catch(_ => { this.mobilecheck = false })
     },
     register: function () {
-      if (this.password2 !== this.userid.pwdHash) {
+      if (this.password2 !== this.user.pwdHash) {
         this.errorMessage = 'password not match'
         return
       }
-      if (!this.checkempty(this.user.userid) || !this.checkempty(this.user.email) ||
+      let x = this.validatepassword(this.password2)
+      if (x !== true) {
+        this.errorMessage = x
+        return
+      }
+      if (!this.checkempty(this.user.userId) || !this.checkempty(this.user.email) || !this.checkempty(this.user.name) ||
         !this.checkempty(this.user.pwdHash) || !this.checkempty(this.user.mobile)) {
         this.errorMessage = 'Information is not complete'
         return
       }
-      if (this.avatarfile === null) {
+      if (this.thumbnail === null) {
         this.errorMessage = 'Avatar is not set'
         return
       }
@@ -192,7 +211,7 @@ export default {
         this.succeeded = true
         this.errorMessage = ''
       }).catch(err => {
-        this.errorMessage = err.response.data.message
+        this.errorMessage = err.response.error.message
       })
     },
     checkempty: function (input) {
@@ -204,6 +223,9 @@ export default {
     setpic (type, content) {
       this.user.thumbnail = window.btoa(content)
       document.getElementById('avatar').src = `data:${type};base64,${this.user.thumbnail}`
+    },
+    validatepassword (pwd) {
+      return true
     }
   }
 }
