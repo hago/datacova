@@ -8,7 +8,11 @@
         <span class="title_red">Va</span><span>lidation</span>
       </div>
       <div class="user">
-        <a v-if="logged" href="javascript:void(0);" v-on:click="logout()">{{this.loginStatus.user.name}}</a>
+        <a v-if="logged" href="javascript:void(0);" v-on:click="logout()">
+          <span>{{this.loginStatus.user.name}}</span>
+          <img class="avatar" src="@/assets/avatar.png" v-if="!haspic" />
+          <img class="avatar" :src='useravatar' id='useravatar' v-if="haspic" />
+        </a>
         <button class="btn btn-primary login" v-on:click="gotoLoginRegister()" v-if="!logged">Login / Register</button>
       </div>
       <div class="notification" title="Notifications">
@@ -32,12 +36,25 @@ export default {
   computed: {
     logged: function () {
       return this.loginStatus.user !== undefined
+    },
+    haspic: function () {
+      return (this.loginStatus.user !== undefined) && (this.loginStatus.user.thumbnail !== null)
+    }
+  },
+  watch: {
+    loginStatus: function (newValue) {
+      if ((newValue.user === undefined) || (newValue.user.thumbnail === null)) {
+        return
+      }
+      let b64pic = newValue.user.thumbnail
+      this.useravatar = `data:image/jpg;base64,${b64pic}`
     }
   },
   data () {
     return {
       loginStatus: {},
-      currentpath: this.$route.path
+      currentpath: this.$route.path,
+      useravatar: '@/assets/avatar.png'
     }
   },
   created: function () {
@@ -114,5 +131,9 @@ export default {
 }
 .login {
   margin: 10px;
+}
+.avatar {
+  width: 50px;
+  height: 40px;
 }
 </style>
