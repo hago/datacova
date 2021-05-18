@@ -145,7 +145,7 @@ class UserData(config: DatabaseConfig) : CoVaDatabase(config) {
             stmt.setString(3, user.email)
             stmt.setString(4, user.mobile)
             stmt.setString(5, user.name)
-            stmt.setObject(6, DatabaseFunctions.createPgObject("bytea", createThumbnail(user.thumbnail)))
+            stmt.setBytes(6, createThumbnail(user.thumbnail))
             stmt.executeQuery().use { rs ->
                 rs.next()
                 rs.getLong("id")
