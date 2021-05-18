@@ -50,4 +50,24 @@ class UserApi {
             mapOf("code" to 0, "data" to userInfoList)
         )
     }
+
+    @WebEndPoint(
+        path = "/api/user/(\\d+)",
+        isPathRegex = true,
+        methods = [HttpMethod.GET],
+        authTypes = [AuthType.UserToken]
+    )
+    fun getUser(context: RoutingContext) {
+        val id = context.pathParam("param0").toLong()
+        val user = UserCache.getUser(id)
+        if (user == null) {
+            ResponseHelper.respondError(context, HttpResponseStatus.NOT_FOUND, "user not found")
+        } else {
+            ResponseHelper.sendResponse(
+                context,
+                HttpResponseStatus.OK,
+                mapOf("code" to 0, "data" to user)
+            )
+        }
+    }
 }
