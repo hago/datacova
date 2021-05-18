@@ -141,7 +141,9 @@ export default {
         (new WorkspaceApiHelper()).getMyWorkspaces().then(rsp => {
           this.workspaces = rsp.data.data
           this.workspaceIndex = this.workspaces.length > 0 ? 0 : -1
-          this.loadConnections()
+          if ((this.workspacesIndex > 0) && (this.workspaces.length > this.workspaceIndex)) {
+            this.loadConnections()
+          }
         })
       }
     },
@@ -152,6 +154,7 @@ export default {
       Vue.set(this.conninfo, 'connections', connections)
     },
     loadConnections: function () {
+      console.log(this.workspacesIndex)
       if ((this.workspacesIndex < 0) || (this.workspaces.length <= this.workspaceIndex)) {
         console.log('exit')
         return
