@@ -19,7 +19,6 @@ import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import com.hagoapp.datacova.web.authentication.AuthType
 import com.hagoapp.datacova.web.authentication.Authenticator
-import com.hagoapp.f2t.datafile.FileInfo
 import com.hagoapp.f2t.datafile.FileInfoReader
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.core.http.HttpMethod
@@ -161,11 +160,12 @@ class Tasks {
             return
         }
         val rawInfo = context.request().getParam("extra")
+        val filestore = FileStoreUtils.getUploadedFileStore()
         val exec = TaskExecutionData().use { db ->
-            val target = FileStoreUtils.getUploadedFileStore().copyFileToStore(file.uploadedFileName())
+            val target = filestore.copyFileToStore(file.uploadedFileName())
             val eai = ExecutionFileInfo()
             val fi = FileInfoReader.json2FileInfo(rawInfo)
-            fi.filename = target.absoluteFileName
+            fi.filename = filestore.getRelativeFileName(target.absoluteFileName)
             with(eai) {
                 originalName = file.fileName()
                 size = file.size()

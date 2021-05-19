@@ -8,6 +8,7 @@
 
 package com.hagoapp.datacova.util
 
+import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.config.CoVaConfig
 import java.io.File
 import java.nio.charset.Charset
@@ -29,7 +30,7 @@ class FileStoreUtils private constructor() {
                 if (existed != null) existed
                 else {
                     val f = FileStoreUtils()
-                    f.rootPath = k
+                    f.rootPath = File(k).path
                     f
                 }
             }
@@ -51,7 +52,6 @@ class FileStoreUtils private constructor() {
         val relativeFileName: String
     )
 
-    private var initialized = false
     private lateinit var rootPath: String
 
     /**
@@ -80,5 +80,13 @@ class FileStoreUtils private constructor() {
 
     fun getFullFileName(partialFileName: String): String {
         return Utils.joinPath(rootPath, partialFileName)
+    }
+
+    fun getRelativeFileName(fullName: String): String {
+        if (!fullName.startsWith(rootPath, true)) {
+            throw CoVaException("$fullName not in $rootPath")
+        }
+        val partial = fullName.substring(rootPath.length)
+        return if (partial.startsWith("/")) partial.substring(1) else partial
     }
 }

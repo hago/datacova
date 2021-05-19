@@ -16,6 +16,7 @@ import com.hagoapp.datacova.entity.execution.ExecutionActionDetail
 import com.hagoapp.datacova.entity.execution.ExecutionDetail
 import com.hagoapp.datacova.entity.execution.TaskExecution
 import com.hagoapp.datacova.execution.executor.report.Reporter
+import com.hagoapp.datacova.util.FileStoreUtils
 import com.hagoapp.datacova.util.StackTraceWriter
 import com.hagoapp.f2t.DataTable
 import com.hagoapp.f2t.FileParser
@@ -44,6 +45,8 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
         val dt: DataTable
         try {
             observers.forEach { it.onDataLoadStart(taskExec) }
+            taskExec.fileInfo.fileInfo.filename =
+                FileStoreUtils.getUploadedFileStore().getFullFileName(taskExec.fileInfo.fileInfo.filename!!)
             val parser = FileParser(taskExec.fileInfo.fileInfo)
             dt = parser.extractData()
             observers.forEach { it.onDataLoadComplete(taskExec, true) }
