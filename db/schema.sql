@@ -51,7 +51,7 @@ create table if not exists users (
     addtime timestamp WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     modifyby bigint null,
     modifytime TIMESTAMP WITH TIME ZONE null,
-    thumbnail bytea null,
+    thumbnail varchar(255) null,
     eustatus int not null default 0, /* 0 - normal 1 - deleted 2 - password reset*/
     usertype int not null default 0, /* 0 - local db 1 - ldap */
     unique(usertype, email),
