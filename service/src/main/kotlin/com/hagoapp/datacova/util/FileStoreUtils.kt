@@ -17,7 +17,6 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
-import java.util.function.BiFunction
 import kotlin.random.Random
 
 class FileStoreUtils private constructor() {
@@ -25,7 +24,7 @@ class FileStoreUtils private constructor() {
     companion object {
         private val instances = mutableMapOf<String, FileStoreUtils>()
 
-        fun getFileStore(root: String): FileStoreUtils {
+        private fun getFileStore(root: String): FileStoreUtils {
             val instance = instances.compute(root) { k: String, existed: FileStoreUtils? ->
                 if (existed != null) existed
                 else {
