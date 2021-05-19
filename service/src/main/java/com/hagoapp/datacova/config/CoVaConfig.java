@@ -52,9 +52,21 @@ public class CoVaConfig implements JsonStringify {
     private DatabaseConfig database;
     private LoggingConfig logging;
     private RedisConfig redis;
-    private TaskExecutionConfig task;
     private MailConfig mail;
     private TemplateConfig template;
+    private FileStorageConfig fileStorage;
+
+    public static void setConfig(CoVaConfig config) {
+        CoVaConfig.config = config;
+    }
+
+    public FileStorageConfig getFileStorage() {
+        return fileStorage;
+    }
+
+    public void setFileStorage(FileStorageConfig fileStorage) {
+        this.fileStorage = fileStorage;
+    }
 
     public MailConfig getMail() {
         return mail;
@@ -62,14 +74,6 @@ public class CoVaConfig implements JsonStringify {
 
     public void setMail(MailConfig mail) {
         this.mail = mail;
-    }
-
-    public TaskExecutionConfig getTask() {
-        return task;
-    }
-
-    public void setTask(TaskExecutionConfig task) {
-        this.task = task;
     }
 
     public WebConfig getWeb() {

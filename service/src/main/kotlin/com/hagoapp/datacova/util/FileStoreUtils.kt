@@ -17,20 +17,32 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+import java.util.function.BiFunction
 import kotlin.random.Random
 
 class FileStoreUtils private constructor() {
 
     companion object {
-        private val instance: FileStoreUtils = FileStoreUtils()
+        private val instances = mutableMapOf<String, FileStoreUtils>()
 
-        fun getFileStore(): FileStoreUtils {
-            if (!instance.initialized) {
-                instance.initialized = true
-                val cfg = CoVaConfig.getConfig()
-                instance.rootPath = cfg.task.fileStoreRoot
+        fun getFileStore(root: String): FileStoreUtils {
+            val instance = instances.compute(root) { k: String, existed: FileStoreUtils? ->
+                if (existed != null) existed
+                else {
+                    val f = FileStoreUtils()
+                    f.rootPath = k
+                    f
+                }
             }
-            return instance
+            return instance!!
+        }
+
+        fun getUploadedFileStore(): FileStoreUtils {
+            return getFileStore(CoVaConfig.getConfig().fileStorage.uploadDirectory)
+        }
+
+        fun getThumbnailFileStore(): FileStoreUtils {
+            return getFileStore(CoVaConfig.getConfig().fileStorage.thumbnailDirectory)
         }
     }
 

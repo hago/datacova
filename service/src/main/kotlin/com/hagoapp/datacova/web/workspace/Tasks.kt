@@ -162,7 +162,7 @@ class Tasks {
         }
         val rawInfo = context.request().getParam("extra")
         val exec = TaskExecutionData().use { db ->
-            val target = FileStoreUtils.getFileStore().copyFileToStore(file.uploadedFileName())
+            val target = FileStoreUtils.getUploadedFileStore().copyFileToStore(file.uploadedFileName())
             val eai = ExecutionFileInfo()
             val fi = FileInfoReader.json2FileInfo(rawInfo)
             fi.filename = target.absoluteFileName

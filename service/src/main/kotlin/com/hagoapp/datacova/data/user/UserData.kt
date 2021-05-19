@@ -19,7 +19,6 @@ import com.hagoapp.datacova.util.data.DatabaseFunctions
 import java.sql.ResultSet
 import java.sql.Timestamp
 import java.time.Instant
-import java.util.*
 
 class UserData(config: DatabaseConfig) : CoVaDatabase(config) {
 
@@ -74,7 +73,7 @@ class UserData(config: DatabaseConfig) : CoVaDatabase(config) {
             addTime = DatabaseFunctions.getDBValue<Timestamp>(rs, "addtime")!!.toInstant().toEpochMilli()
             modifyBy = DatabaseFunctions.getDBValue(rs, "modifyby")
             modifyTime = DatabaseFunctions.getDBValue<Timestamp>(rs, "modifytime")?.toInstant()?.toEpochMilli()
-            thumbnail = createThumbnail(DatabaseFunctions.getDBValue<ByteArray>(rs, "thumbnail"))
+            thumbnail = DatabaseFunctions.getDBValue(rs, "thumbnail")
             status = UserStatus.parseInt(rs.getInt("eustatus"))
             pwdHash = rs.getString("pwdhash")
             userType = UserType.parseInt(rs.getInt("usertype"))
@@ -85,19 +84,10 @@ class UserData(config: DatabaseConfig) : CoVaDatabase(config) {
         return user
     }
 
-    private fun createThumbnail(buffer: ByteArray?): String? {
-        return if (buffer == null) null
-        else Base64.getEncoder().encodeToString(buffer)
-    }
-
     private data class BasicUser(
         val name: String,
         val description: String
     )
-
-    private fun loadBasicUser() {
-
-    }
 
     fun searchUser(word: String, limit: Int = 10): List<UserInfo> {
         val sql = "select * from users where userid ilike ? or name ilike ? or description ilike ? limit ?"
@@ -145,18 +135,13 @@ class UserData(config: DatabaseConfig) : CoVaDatabase(config) {
             stmt.setString(3, user.email)
             stmt.setString(4, user.mobile)
             stmt.setString(5, user.name)
-            stmt.setBytes(6, createThumbnail(user.thumbnail))
+            stmt.setString(6, user.thumbnail)
             stmt.executeQuery().use { rs ->
                 rs.next()
                 rs.getLong("id")
             }
         }
         return findUser(id)!!
-    }
-
-    private fun createThumbnail(thumbnail: String?): ByteArray? {
-        return if (thumbnail == null) null
-        else Base64.getDecoder().decode(thumbnail)
     }
 
     fun isUserIdExisted(userId: String): Boolean {
