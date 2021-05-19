@@ -10,6 +10,8 @@ package com.hagoapp.datacova.web.user
 import com.google.gson.Gson
 import com.hagoapp.datacova.data.user.UserData
 import com.hagoapp.datacova.user.UserInfo
+import com.hagoapp.datacova.util.FileStoreUtils
+import com.hagoapp.datacova.util.Utils
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.util.web.CaptchaUtils
 import com.hagoapp.datacova.web.annotation.WebEndPoint
@@ -17,6 +19,8 @@ import com.hagoapp.datacova.web.authentication.AuthType
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.RoutingContext
+import java.io.ByteArrayInputStream
+import java.util.*
 
 class Register {
 
@@ -47,6 +51,7 @@ class Register {
             return
         }
         user.pwdHash = UserData.computePwdHash(user.pwdHash)
+        user.thumbnail = saveThumbnail(user.id.toString(), user.thumbnail)
         val u = dal.registerUser(user)
         ResponseHelper.sendResponse(
             context, HttpResponseStatus.OK, mapOf(
@@ -54,5 +59,14 @@ class Register {
                 "data" to u
             )
         )
+    }
+
+    private fun saveThumbnail(thumbName: String, b64stringThumb: String): String {
+        val buffer = Base64.getDecoder().decode(b64stringThumb)
+        val fs = FileStoreUtils.getThumbnailFileStore()
+        val hash = Utils.md5Digest(thumbName)
+        val targetName = "${hash.substring(0, 3)}/${hash.substring(3, 6)}/$hash"
+        ByteArrayInputStream(buffer).use { fs.saveFileToStore(targetName, it) }
+        return targetName
     }
 }

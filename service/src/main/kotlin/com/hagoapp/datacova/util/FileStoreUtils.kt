@@ -11,6 +11,8 @@ package com.hagoapp.datacova.util
 import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.config.CoVaConfig
 import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
 import java.nio.charset.Charset
 import java.nio.file.Files
 import java.security.MessageDigest
@@ -88,5 +90,20 @@ class FileStoreUtils private constructor() {
         }
         val partial = fullName.substring(rootPath.length)
         return if (partial.startsWith("/")) partial.substring(1) else partial
+    }
+
+    fun saveFileToStore(partialFileName: String, stream: InputStream) {
+        val target = File(rootPath, partialFileName).path
+        FileOutputStream(target).use { fo ->
+            val size = 1024 * 1024
+            val buffer = ByteArray(size)
+            while (true) {
+                val i = stream.read(buffer, 0, size)
+                if (i < 0) {
+                    break
+                }
+                fo.write(buffer, 0, i)
+            }
+        }
     }
 }
