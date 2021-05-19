@@ -53,9 +53,6 @@
     "database": 0,
     "password": null
   },
-  "task": {
-    "fileStoreRoot": ""
-  },
   "mail": {
     "host": "127.0.0.1",
     "port": 25,
@@ -69,5 +66,9 @@
     "aliases": {
       "execution_report": "execution/report"
     }
+  },
+  "fileStorage": {
+    "uploadDirectory": "",
+    "thumbnailDirectory": ""
   }
 }
