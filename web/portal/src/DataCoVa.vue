@@ -68,6 +68,7 @@ export default {
     logout: function () {
       (new User()).logout().then(rsp => {
         this.loginStatus = {}
+        this.$root.$emit('onLogout')
         router.push({path: '/', params: {loginStatus: this.loginStatus}})
           .catch(err => console.log(`redirect err: ${err}`))
       })

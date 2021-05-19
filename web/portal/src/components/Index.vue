@@ -47,6 +47,7 @@ export default {
     loginStatus: Object
   },
   created: function () {
+    this.$root.$on('onLogout', this.onLogout);
     (new User()).checkLogin(false, user => {
       this.logged = true
     })
@@ -55,6 +56,9 @@ export default {
     enter: function () {
       console.log('enter')
       router.push('/main').catch(err => console.log(err))
+    },
+    onLogout: function () {
+      this.logged = false
     }
   }
 }
