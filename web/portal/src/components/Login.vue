@@ -113,6 +113,7 @@ export default {
         console.log('login successfully')
         this.errorMessage = '';
         (new User()).setLogin(rsp.data.data)
+        this.$root.$emit('onLogin', rsp.data.data)
         let dest = (this.return !== undefined) && (this.return !== null) && (this.return.trim() !== '')
           ? this.return : '/main'
         router.push(dest).catch()

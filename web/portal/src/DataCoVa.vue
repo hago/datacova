@@ -58,7 +58,7 @@ export default {
     }
   },
   created: function () {
-    // this.$root.$on('onLoginEvent', this.onLogged)
+    this.$root.$on('onLogin', this.onLogged)
     this.$root.$on('onNeedLogin', this.onNeedLogin);
     (new User()).checkLogin(false, user => {
       this.loginStatus = Object.assign({}, user)
@@ -68,7 +68,8 @@ export default {
     logout: function () {
       (new User()).logout().then(rsp => {
         this.loginStatus = {}
-        router.push('/').catch(err => console.log(`redirect err: ${err}`))
+        router.push({path: '/', params: {loginStatus: this.loginStatus}})
+          .catch(err => console.log(`redirect err: ${err}`))
       })
     },
     onNotLogged: function () {
