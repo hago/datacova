@@ -8,11 +8,16 @@
 package com.hagoapp.datacova.web.user
 
 import com.google.gson.Gson
+import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.user.UserData
 import com.hagoapp.datacova.user.UserInfo
 import com.hagoapp.datacova.util.FileStoreUtils
 import com.hagoapp.datacova.util.Utils
+import com.hagoapp.datacova.util.http.RequestHelper
 import com.hagoapp.datacova.util.http.ResponseHelper
+import com.hagoapp.datacova.util.mail.MailHelper
+import com.hagoapp.datacova.util.text.TemplateManager
+import com.hagoapp.datacova.util.text.TextResourceManager
 import com.hagoapp.datacova.util.web.CaptchaUtils
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import com.hagoapp.datacova.web.authentication.AuthType
@@ -20,7 +25,9 @@ import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.RoutingContext
 import java.io.ByteArrayInputStream
+import java.io.StringWriter
 import java.util.*
+import javax.mail.internet.InternetAddress
 
 class Register {
 
@@ -68,5 +75,23 @@ class Register {
         val targetName = "${hash.substring(0, 3)}/${hash.substring(3, 6)}/$hash"
         ByteArrayInputStream(buffer).use { fs.saveFileToStore(targetName, it) }
         return targetName
+    }
+
+    private fun sendActivation(context: RoutingContext, user: UserInfo, locale: Locale) {
+        val resourceName = "user/register/activation"
+        val tm = TextResourceManager.getManager()
+        val manager = TemplateManager.getResourceTemplateManager()
+        val template = manager.getTemplate(resourceName, locale)
+        val sw = StringWriter()
+        template!!.process(mapOf(
+            "user" to user,
+            "homepage" to RequestHelper.getBaseUrl(context),
+            "activateurl" to String.format("%s/user/activate", RequestHelper.getBaseUrl(context))
+        ), sw)
+        val m = MailHelper(CoVaConfig.getConfig().mail)
+        m.addRecipient(InternetAddress(user.email))
+        m.setTitle(tm.getString(locale, resourceName)!!)
+        m.setHtmlContent(sw.toString())
+        //m.sendMail()
     }
 }
