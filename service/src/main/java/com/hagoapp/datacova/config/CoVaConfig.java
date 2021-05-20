@@ -24,8 +24,16 @@ import java.nio.charset.StandardCharsets;
  */
 public class CoVaConfig implements JsonStringify {
     private static CoVaConfig config;
+    private static final String DEFAULT_CONFIG = "config.json";
 
     public synchronized static CoVaConfig getConfig() {
+        if (config == null) {
+            try {
+                loadConfig(DEFAULT_CONFIG);
+            } catch (CoVaException e) {
+                System.err.println(e.getMessage());
+            }
+        }
         return config;
     }
 
