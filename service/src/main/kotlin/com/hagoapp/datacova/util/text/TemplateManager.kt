@@ -66,27 +66,27 @@ class TemplateManager private constructor() {
 
     private fun createPossibleTemplateFileNames(name: String, locale: Locale?): List<String> {
         val l = mutableListOf(
-            "$name/${if (locale == null) "main" else "___${locale.displayName}"}.tpl",
-            "$name/${if (locale == null) "default" else "___${locale.displayName}"}.tpl",
-            "$name/main.tpl",
-            "$name/default.tpl",
-            "$name/${Locale.getDefault().displayName}.tpl",
-            "$name${if (locale == null) "" else "___${locale.displayName}"}.tpl",
-            "$name.tpl",
-            "${name}___${Locale.getDefault().displayName}.tpl",
+            "$name/${if (locale == null) "main" else "___${locale}"}.ftl",
+            "$name/${if (locale == null) "default" else "___${locale}"}.ftl",
+            "$name/main.ftl",
+            "$name/default.ftl",
+            "$name/${Locale.getDefault()}.ftl",
+            "$name${if (locale == null) "" else "___${locale}"}.ftl",
+            "$name.ftl",
+            "${name}___${Locale.getDefault()}.ftl",
         )
         if (conf.aliases.containsKey(name)) {
             val name0 = conf.aliases.getValue(name)
             l.addAll(
                 listOf(
-                    "$name0/${if (locale == null) "main" else "___${locale.displayName}"}.tpl",
-                    "$name0/${if (locale == null) "default" else "___${locale.displayName}"}.tpl",
-                    "$name0/main.tpl",
-                    "$name0/default.tpl",
-                    "$name0/${Locale.getDefault().displayName}.tpl",
-                    "$name0${if (locale == null) "" else "___${locale.displayName}"}.tpl",
-                    "$name0.tpl",
-                    "${name0}___${Locale.getDefault().displayName}.tpl",
+                    "$name0/${if (locale == null) "main" else "___${locale}"}.ftl",
+                    "$name0/${if (locale == null) "default" else "___${locale}"}.ftl",
+                    "$name0/main.ftl",
+                    "$name0/default.ftl",
+                    "$name0/${Locale.getDefault()}.ftl",
+                    "$name0${if (locale == null) "" else "___${locale}"}.ftl",
+                    "$name0.ftl",
+                    "${name0}___${Locale.getDefault()}.ftl",
                 )
             )
         }
