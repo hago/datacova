@@ -23,13 +23,19 @@ class TemplateTest {
         val template = manager.getTemplate("user/register/activation", Locale.getDefault())
         Assertions.assertNotNull(template)
         val user = UserInfo()
-        with (user) {
+        with(user) {
             userId = "test"
             name = "TestUser"
             email = "user@test.com"
         }
         val sw = StringWriter()
-        template!!.process(user, sw)
+        template!!.process(
+            mapOf(
+                "user" to user,
+                "homepage" to "https://abc.com",
+                "activateurl" to "https://def.com"
+            ), sw
+        )
         println(sw.toString())
     }
 
@@ -40,13 +46,19 @@ class TemplateTest {
         val template = manager.getTemplate("user/register/activation", Locale.getDefault())
         Assertions.assertNotNull(template)
         val user = UserInfo()
-        with (user) {
+        with(user) {
             userId = "test"
             name = "TestUser"
             email = "user@test.com"
         }
         val sw = StringWriter()
-        template!!.process(user, sw)
+        template!!.process(
+            mapOf(
+                "user" to user,
+                "homepage" to "https://abc.com",
+                "activateurl" to "https://def.com"
+            ), sw
+        )
         println(sw.toString())
     }
 }
