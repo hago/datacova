@@ -10,11 +10,14 @@ package com.hagoapp.datacova.util
 
 import java.io.File
 import java.math.BigInteger
+import java.nio.file.FileSystems
+import java.nio.file.Files
 import java.security.MessageDigest
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.random.Random
+
 
 class Utils {
     companion object {
@@ -103,5 +106,17 @@ class Utils {
             val name: String,
             val ext: String
         )
+
+        @JvmStatic
+        fun getSystemTemporaryDirectory(): String {
+            val t1 = System.getProperty("java.io.tmpdir")
+            if (t1 != null) {
+                return t1
+            }
+            val temp = Files.createTempFile("", ".tmp")
+            val absolutePath: String = temp.toString()
+            val separator = FileSystems.getDefault().separator
+            return absolutePath.substring(0, absolutePath.lastIndexOf(separator))
+        }
     }
 }
