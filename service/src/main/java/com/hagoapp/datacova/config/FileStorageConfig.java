@@ -7,9 +7,12 @@
 
 package com.hagoapp.datacova.config;
 
+import com.hagoapp.datacova.util.Utils;
+
 public class FileStorageConfig {
     private String uploadDirectory;
     private String thumbnailDirectory;
+    private String tempDirectory;
 
     public String getUploadDirectory() {
         return uploadDirectory;
@@ -26,4 +29,14 @@ public class FileStorageConfig {
     public void setThumbnailDirectory(String thumbnailDirectory) {
         this.thumbnailDirectory = thumbnailDirectory;
     }
+
+    public String getTempDirectory() {
+        return tempDirectory != null ? tempDirectory : Utils.getSystemTemporaryDirectory();
+    }
+
+    public void setTempDirectory(String tempDirectory) {
+        this.tempDirectory = tempDirectory != null ? tempDirectory : Utils.getSystemTemporaryDirectory();
+    }
+
+
 }
