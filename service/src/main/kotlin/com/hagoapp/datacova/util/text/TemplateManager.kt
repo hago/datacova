@@ -9,8 +9,6 @@
 package com.hagoapp.datacova.util.text
 
 import com.hagoapp.datacova.CoVaException
-import com.hagoapp.datacova.config.CoVaConfig
-import com.hagoapp.datacova.config.TemplateConfig
 import freemarker.template.Configuration
 import freemarker.template.Template
 import freemarker.template.TemplateExceptionHandler
@@ -18,18 +16,28 @@ import java.io.File
 import java.io.IOException
 import java.util.*
 
-class TemplateManager private constructor() {
+class TemplateManager private constructor(private val directory: File, private val aliases: Map<String, String>) {
     companion object {
 
-        private val manager = TemplateManager()
+        private val managers = mutableMapOf<File, TemplateManager>()
 
-        fun getManager(): TemplateManager {
-            return manager
+        @JvmStatic
+        fun getManager(directory: File, aliases: Map<String, String>): TemplateManager {
+            val tm = managers.compute(directory) { _, existed ->
+                existed ?: TemplateManager(directory, aliases)
+            }
+            return tm!!
+        }
+
+        @JvmStatic
+        fun getResourceTemplateManager(): TemplateManager {
+            val clz = TextResourceManager::class.java
+            val resource = clz.getResource("/templates") ?: throw CoVaException("resource templates not found")
+            return getManager(File(resource.toURI()), mapOf())
         }
     }
 
     private val config: Configuration
-    private val conf: TemplateConfig
 
     init {
         try {
@@ -38,8 +46,7 @@ class TemplateManager private constructor() {
             config.templateExceptionHandler = TemplateExceptionHandler.RETHROW_HANDLER
             config.logTemplateExceptions = false
             config.wrapUncheckedExceptions = true
-            conf = CoVaConfig.getConfig().template
-            config.setDirectoryForTemplateLoading(File(conf.directory))
+            config.setDirectoryForTemplateLoading(directory)
         } catch (ex: IOException) {
             throw CoVaException("template init error", ex)
         }
@@ -57,7 +64,7 @@ class TemplateManager private constructor() {
 
     private fun findTemplateFile(name: String, locale: Locale): String? {
         for (fileName in createPossibleTemplateFileNames(name, locale)) {
-            if (File(conf.directory, fileName).exists()) {
+            if (File(directory, fileName).exists()) {
                 return fileName
             }
         }
@@ -75,8 +82,8 @@ class TemplateManager private constructor() {
             "$name.ftl",
             "${name}___${Locale.getDefault()}.ftl",
         )
-        if (conf.aliases.containsKey(name)) {
-            val name0 = conf.aliases.getValue(name)
+        if (aliases.containsKey(name)) {
+            val name0 = aliases.getValue(name)
             l.addAll(
                 listOf(
                     "$name0/${if (locale == null) "main" else "___${locale}"}.ftl",
