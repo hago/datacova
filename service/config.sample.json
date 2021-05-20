@@ -61,7 +61,7 @@
     "from": "SENDER_IDENTITY",
     "ssl": false
   },
-  "templates": {
+  "template": {
     "directory": "./templates",
     "aliases": {
       "execution_report": "execution/report"
