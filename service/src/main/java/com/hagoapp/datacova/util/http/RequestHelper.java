@@ -84,4 +84,9 @@ public class RequestHelper {
             return parts.length == 2 ? new HttpCookie(parts[0], parts[1]) : null;
         }).filter(Objects::nonNull).collect(Collectors.toList());
     }
+
+    public static String getBaseUrl(RoutingContext context) {
+        return String.format("%s://%s:%d", context.request().scheme(), context.request().host(),
+                context.request().localAddress().port());
+    }
 }
