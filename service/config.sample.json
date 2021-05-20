@@ -11,8 +11,8 @@
     "privilegedIpAddresses": [
       "127.0.0.1"
     ],
-    "tempDirectory": "/tmp",
-    "uploadTempDirectory": "/tmp",
+    "tempDirectory": null,
+    "uploadTempDirectory": null,
     "uploadSizeLimit": -1,
     "outputStackTrace": true,
     "webSockets": [
@@ -69,6 +69,7 @@
   },
   "fileStorage": {
     "uploadDirectory": "",
-    "thumbnailDirectory": ""
+    "thumbnailDirectory": "",
+    "tempDirectory": null
   }
 }

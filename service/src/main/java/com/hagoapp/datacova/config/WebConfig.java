@@ -8,6 +8,8 @@
 
 package com.hagoapp.datacova.config;
 
+import com.hagoapp.datacova.util.Utils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -87,19 +89,20 @@ public class WebConfig {
     }
 
     public String getTempDirectory() {
-        return tempDirectory;
+        return tempDirectory != null ? tempDirectory : Utils.getSystemTemporaryDirectory();
     }
 
     public void setTempDirectory(String tempDirectory) {
-        this.tempDirectory = tempDirectory;
+        this.tempDirectory = tempDirectory != null ? tempDirectory : Utils.getSystemTemporaryDirectory();
     }
 
     public String getUploadTempDirectory() {
-        return uploadTempDirectory;
+        return uploadTempDirectory != null ? uploadTempDirectory : Utils.getSystemTemporaryDirectory();
     }
 
     public void setUploadTempDirectory(String uploadTempDirectory) {
-        this.uploadTempDirectory = uploadTempDirectory;
+        this.uploadTempDirectory = uploadTempDirectory != null ? uploadTempDirectory :
+                Utils.getSystemTemporaryDirectory();
     }
 
     public long getUploadSizeLimit() {
