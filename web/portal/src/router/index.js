@@ -16,6 +16,7 @@ import Task from '@/components/task/Task'
 import TaskFileUpload from '@/components/task/TaskFileUpload'
 import TaskExecution from '@/components/execution/TaskExecution'
 import Register from '@/components/Register.vue'
+import ActivateRegistration from '@/components/ActivateRegistration.vue'
 
 Vue.use(Vuex)
 Vue.use(Router)
@@ -88,6 +89,12 @@ const route = new Router({
       name: 'Register',
       component: Register,
       props: true
+    },
+    {
+      path: '/user/activate/:code',
+      name: 'ActivateRegistration',
+      component: ActivateRegistration,
+      props: false
     }
   ],
   linkActiveClass: 'nav-link',

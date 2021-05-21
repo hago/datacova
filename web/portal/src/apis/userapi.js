@@ -92,6 +92,14 @@ class UserApiHelper {
     })
     return rsp
   }
+
+  async activate (code) {
+    let rsp = await axios({
+      method: 'GET',
+      url: `${this.urlprefix}/api/user/activate/${code}`
+    })
+    return rsp
+  }
 }
 
 export default UserApiHelper
