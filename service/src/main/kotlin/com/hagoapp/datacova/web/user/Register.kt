@@ -9,6 +9,7 @@ package com.hagoapp.datacova.web.user
 
 import com.google.gson.Gson
 import com.hagoapp.datacova.config.CoVaConfig
+import com.hagoapp.datacova.data.user.UserCache
 import com.hagoapp.datacova.data.user.UserData
 import com.hagoapp.datacova.user.UserInfo
 import com.hagoapp.datacova.util.FileStoreUtils
@@ -26,10 +27,17 @@ import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.RoutingContext
 import java.io.ByteArrayInputStream
 import java.io.StringWriter
+import java.time.Instant
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import javax.mail.internet.InternetAddress
 
 class Register {
+
+    companion object {
+        private val REGISTRATION_CODE_EXPIRE_SECONDS = 86400
+    }
 
     @WebEndPoint(
         methods = [HttpMethod.PUT],
@@ -88,11 +96,8 @@ class Register {
             mapOf(
                 "user" to user,
                 "homepage" to getBaseUrl(context),
-                "activateurl" to String.format(
-                    "%s/user/activate/%s",
-                    getBaseUrl(context),
-                    Utils.genRandomString(16, null)
-                )
+                "activateurl" to String.format("%s/user/activate/%s", getBaseUrl(context), createActivationCode(user)),
+                "expire" to calcExpireDate()
             ), sw
         )
         val m = MailHelper(CoVaConfig.getConfig().mail)
@@ -104,5 +109,16 @@ class Register {
 
     private fun getBaseUrl(context: RoutingContext): String {
         return CoVaConfig.getConfig().web.baseUrl ?: RequestHelper.getBaseUrl(context)
+    }
+
+    private fun createActivationCode(user: UserInfo): String {
+        val code = Utils.genRandomString(16, null)
+        UserCache.saveUserRegistrationCode(user, code, REGISTRATION_CODE_EXPIRE_SECONDS)
+        return code
+    }
+
+    private fun calcExpireDate(): String {
+        val fmt = DateTimeFormatter.ISO_DATE_TIME
+        return fmt.format(ZonedDateTime.now().plusSeconds(REGISTRATION_CODE_EXPIRE_SECONDS.toLong()))
     }
 }

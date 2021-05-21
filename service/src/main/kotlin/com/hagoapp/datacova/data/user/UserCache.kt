@@ -19,6 +19,7 @@ class UserCache {
 
         private const val USER_INFO = "UserInfo"
         private const val USER_INFO_CACHE_TIME = 3600
+        private const val USER_REGISTRATION_CODE_KEY_PREFIX = "UserRegistrationActivation"
 
         @JvmStatic
         fun getUser(id: Long): UserInfo? {
@@ -56,6 +57,26 @@ class UserCache {
                 }
             }
             return list
+        }
+
+        @JvmStatic
+        fun saveUserRegistrationCode(userInfo: UserInfo, code: String, expireSecond: Int) {
+            JedisManager(CoVaConfig.getConfig().redis).use { manager ->
+                manager.jedis.use {
+                    val key = "$USER_REGISTRATION_CODE_KEY_PREFIX|$code"
+                    it.setex(key, expireSecond, userInfo.id.toString())
+                }
+            }
+        }
+
+        @JvmStatic
+        fun getUserIdByRegistrationCode(code: String): Long? {
+            JedisManager(CoVaConfig.getConfig().redis).use { manager ->
+                manager.jedis.use {
+                    val key = "$USER_REGISTRATION_CODE_KEY_PREFIX|$code"
+                    return it.get(key)?.toLong()
+                }
+            }
         }
     }
 }

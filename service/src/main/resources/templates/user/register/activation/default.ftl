@@ -12,7 +12,7 @@
         <p>Dear ${user.name}</p>
         <p></p>
         <p>You have registered at <a href="${homepage}">DataCoVa</a> successfully,
-        please click <a href="${activateurl}">here</a> to activate your account.</p>
+        please click <a href="${activateurl}">here</a> to activate your account, this link is valid before ${expire}.</p>
         <p></p>
         <p>Your sincerely</p>
         <p>DataCoVa team</p>
