@@ -42,6 +42,14 @@ class LocalUserProvider : UserAuthProvider {
                 logger.error("Local Database user auth: user not found for {} when try to login", userId)
                 null
             }
+            userInfo.status == UserStatus.Registered -> {
+                logger.error("Local Database user auth: user not activated for {} when try to login", userId)
+                null
+            }
+            userInfo.status == UserStatus.Deleted -> {
+                logger.error("Local Database user auth: user has been deleted for {} when try to login", userId)
+                null
+            }
             userInfo.pwdHash != UserData.computePwdHash(password) -> {
                 logger.error("Local Database user auth: password mismatch when user '{} try to login", userId)
                 null
