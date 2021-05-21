@@ -121,4 +121,23 @@ class Register {
         val fmt = DateTimeFormatter.ISO_DATE_TIME
         return fmt.format(ZonedDateTime.now().plusSeconds(REGISTRATION_CODE_EXPIRE_SECONDS.toLong()))
     }
+
+    @WebEndPoint(
+        path = "/api/user/activate/:code",
+        methods = [HttpMethod.GET],
+        authTypes = [AuthType.Anonymous]
+    )
+    fun activate(context: RoutingContext) {
+        val code = context.pathParam("code")
+        val id = UserCache.getUserIdByRegistrationCode(code)
+        if (id == null) {
+            ResponseHelper.respondError(context, HttpResponseStatus.NOT_FOUND, "invalid code")
+            return
+        }
+        if (UserData().activateUser(id) > 0) {
+            ResponseHelper.sendResponse(context, HttpResponseStatus.OK, mapOf("code" to 0))
+        } else {
+            ResponseHelper.respondError(context, HttpResponseStatus.NOT_FOUND, "invalid code")
+        }
+    }
 }

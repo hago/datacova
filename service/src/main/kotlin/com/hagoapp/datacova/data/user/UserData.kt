@@ -170,4 +170,11 @@ class UserData(config: DatabaseConfig) : CoVaDatabase(config) {
             }
         }
     }
+
+    fun activateUser(id: Long): Int {
+        connection.prepareStatement("update users set eustatus = 0 where id = ?").use { stmt ->
+            stmt.setLong(1, id)
+            return stmt.executeUpdate()
+        }
+    }
 }
