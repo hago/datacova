@@ -15,6 +15,7 @@ import java.io.FileOutputStream
 import java.io.InputStream
 import java.nio.charset.Charset
 import java.nio.file.Files
+import java.nio.file.Path
 import java.security.MessageDigest
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -31,9 +32,13 @@ class FileStoreUtils private constructor() {
             val instance = instances.compute(root) { k: String, existed: FileStoreUtils? ->
                 if (existed != null) existed
                 else {
-                    val f = FileStoreUtils()
-                    f.rootPath = File(k).path
-                    f
+                    val f = File(k)
+                    if (!f.exists()) {
+                        Files.createDirectory(Path.of(f.toURI()))
+                    }
+                    val fsu = FileStoreUtils()
+                    fsu.rootPath = File(k).path
+                    fsu
                 }
             }
             return instance!!
@@ -93,7 +98,12 @@ class FileStoreUtils private constructor() {
     }
 
     fun saveFileToStore(partialFileName: String, stream: InputStream) {
-        val target = File(rootPath, partialFileName).path
+        val f = File(rootPath, partialFileName)
+        val p = File(f.parent)
+        if (!p.exists()) {
+            Files.createDirectories(p.toPath())
+        }
+        val target = f.path
         FileOutputStream(target).use { fo ->
             val size = 1024 * 1024
             val buffer = ByteArray(size)
