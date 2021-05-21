@@ -83,10 +83,9 @@ abstract class TemplateManager private constructor(protected val conf: TemplateC
                 } else {
                     for (n in createPossibleTemplateFileNames(name, locale)) {
                         try {
-                            println("attempt $n")
                             return@compute config.getTemplate(n, locale)
                         } catch (ignored: Exception) {
-                            println(ignored)
+                            // println(ignored)
                         }
                     }
                     null
