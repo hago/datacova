@@ -18,13 +18,10 @@ import com.hagoapp.datacova.util.Utils
 import com.hagoapp.datacova.util.data.DatabaseFunctions
 import java.sql.ResultSet
 import java.sql.Timestamp
-import java.time.Instant
 
 class UserData(config: DatabaseConfig) : CoVaDatabase(config) {
 
     companion object {
-        private val basicUsers = mutableListOf<BasicUser>()
-        private var userLoadedAt: Long = Instant.now().toEpochMilli()
         fun computePwdHash(password: String): String {
             return Utils.sha1Digest("$password|${Utils.sha256Digest(password)}")
         }
