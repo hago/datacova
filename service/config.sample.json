@@ -19,7 +19,8 @@
       {
         "route": "/api/event"
       }
-    ]
+    ],
+    "baseUrl": null
   },
   "database": {
     "host": "127.0.0.1",

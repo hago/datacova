@@ -31,6 +31,15 @@ public class WebConfig {
     private long uploadSizeLimit = -1;
     private boolean outputStackTrace = true;
     private List<WebSocketConfig> webSockets;
+    private String baseUrl;
+
+    public String getBaseUrl() {
+        return baseUrl;
+    }
+
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
+    }
 
     public List<WebSocketConfig> getWebSockets() {
         return webSockets;
