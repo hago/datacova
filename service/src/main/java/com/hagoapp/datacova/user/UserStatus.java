@@ -10,6 +10,8 @@ package com.hagoapp.datacova.user;
 import com.google.gson.annotations.SerializedName;
 
 public enum UserStatus {
+    @SerializedName("-2")
+    Registered(-2),
     @SerializedName("-1")
     Unknown(-1),
     @SerializedName("0")

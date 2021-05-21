@@ -125,7 +125,7 @@ class UserData(config: DatabaseConfig) : CoVaDatabase(config) {
 
     fun registerUser(user: UserInfo): UserInfo {
         val sql = """insert into users (userid, pwdhash, email, mobile, addby, modifyby, modifytime, name, usertype, 
-            thumbnail) values (?, ?, ?, ?, -1, -1, now(), ?, 0, ?) returning id"""
+            thumbnail, eustatus) values (?, ?, ?, ?, -1, -1, now(), ?, 0, ?, -2) returning id"""
         val id = connection.prepareStatement(sql).use { stmt ->
             stmt.setString(1, user.userId)
             stmt.setString(2, user.pwdHash)
