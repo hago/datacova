@@ -21,7 +21,7 @@ class ExecutionMailReport : ExecutionReport {
     }
 
     override fun sendReport(execution: TaskExecution, detail: ExecutionDetail) {
-        val template = TemplateManager.getResourceTemplateManager().getTemplate(EXECUTION_REPORT_MAIL_TEMPLATE)
+        val template = TemplateManager.getResourcedTemplateManager().getTemplate(EXECUTION_REPORT_MAIL_TEMPLATE)
         if (template == null) {
             logger.error("Execution mail report template configuration incorrect")
             return

@@ -9,12 +9,12 @@
         </style>
     </head>
     <body>
-        <p>Dear ${user.name}</p>
+        <p>亲爱的用户 ${user.name}</p>
         <p></p>
-        <p>You have registered at <a href="${homepage}">DataCoVa</a> successfully,
-        please click <a href="${activateurl}">here</a> to activate your account.</p>
+        <p>你已经成功注册了<a href="${homepage}">DataCoVa</a>的账号,
+        请点击 <a href="${activateurl}">这里</a> 完成邮箱验证激活账号.</p>
         <p></p>
-        <p>Your sincerely</p>
-        <p>DataCoVa team</p>
+        <p>祝 安好顺利</p>
+        <p>DataCoVa 团队</p>
     </body>
 </html>

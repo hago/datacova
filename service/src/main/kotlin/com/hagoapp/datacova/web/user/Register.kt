@@ -60,6 +60,7 @@ class Register {
         user.pwdHash = UserData.computePwdHash(user.pwdHash)
         user.thumbnail = saveThumbnail(user.id.toString(), user.thumbnail)
         val u = dal.registerUser(user)
+        sendActivation(context, u, Locale.getDefault())
         ResponseHelper.sendResponse(
             context, HttpResponseStatus.OK, mapOf(
                 "code" to 0,
@@ -80,18 +81,28 @@ class Register {
     private fun sendActivation(context: RoutingContext, user: UserInfo, locale: Locale) {
         val resourceName = "user/register/activation"
         val tm = TextResourceManager.getManager()
-        val manager = TemplateManager.getResourceTemplateManager()
+        val manager = TemplateManager.getResourcedTemplateManager()
         val template = manager.getTemplate(resourceName, locale)
         val sw = StringWriter()
-        template!!.process(mapOf(
-            "user" to user,
-            "homepage" to RequestHelper.getBaseUrl(context),
-            "activateurl" to String.format("%s/user/activate", RequestHelper.getBaseUrl(context))
-        ), sw)
+        template!!.process(
+            mapOf(
+                "user" to user,
+                "homepage" to getBaseUrl(context),
+                "activateurl" to String.format(
+                    "%s/user/activate/%s",
+                    getBaseUrl(context),
+                    Utils.genRandomString(16, null)
+                )
+            ), sw
+        )
         val m = MailHelper(CoVaConfig.getConfig().mail)
         m.addRecipient(InternetAddress(user.email))
         m.setTitle(tm.getString(locale, resourceName)!!)
         m.setHtmlContent(sw.toString())
-        //m.sendMail()
+        m.sendMail()
+    }
+
+    private fun getBaseUrl(context: RoutingContext): String {
+        return CoVaConfig.getConfig().web.baseUrl ?: RequestHelper.getBaseUrl(context)
     }
 }
