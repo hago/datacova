@@ -12,14 +12,13 @@ import com.hagoapp.datacova.user.UserInfo
 import com.hagoapp.datacova.util.text.TemplateManager
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import java.io.File
 import java.io.StringWriter
 import java.util.*
 
 class TemplateTest {
     @Test
     fun testTemplateInResource() {
-        val manager = TemplateManager.getResourceTemplateManager()
+        val manager = TemplateManager.getResourcedTemplateManager()
         val template = manager.getTemplate("user/register/activation", Locale.getDefault())
         Assertions.assertNotNull(template)
         val user = UserInfo()
@@ -42,7 +41,7 @@ class TemplateTest {
     @Test
     fun testTemplateInConf() {
         val conf = CoVaConfig.getConfig().template
-        val manager = TemplateManager.getManager(File(conf.directory), conf.aliases)
+        val manager = TemplateManager.getManager(conf)
         val template = manager.getTemplate("user/register/activation", Locale.getDefault())
         Assertions.assertNotNull(template)
         val user = UserInfo()

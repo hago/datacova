@@ -9,35 +9,93 @@
 package com.hagoapp.datacova.util.text
 
 import com.hagoapp.datacova.CoVaException
+import com.hagoapp.datacova.config.TemplateConfig
 import freemarker.template.Configuration
 import freemarker.template.Template
 import freemarker.template.TemplateExceptionHandler
 import java.io.File
 import java.io.IOException
+import java.lang.Exception
 import java.util.*
 
-class TemplateManager private constructor(private val directory: File, private val aliases: Map<String, String>) {
+abstract class TemplateManager private constructor(protected val conf: TemplateConfig) {
     companion object {
 
-        private val managers = mutableMapOf<File, TemplateManager>()
+        private val managers = mutableMapOf<TemplateConfig, TemplateManager>()
 
         @JvmStatic
-        fun getManager(directory: File, aliases: Map<String, String>): TemplateManager {
-            val tm = managers.compute(directory) { _, existed ->
-                existed ?: TemplateManager(directory, aliases)
+        fun getManager(conf: TemplateConfig): TemplateManager {
+            val tm = managers.compute(conf) { newConf, existed ->
+                existed ?: createManager(newConf)
             }
             return tm!!
         }
 
         @JvmStatic
-        fun getResourceTemplateManager(): TemplateManager {
-            val clz = TextResourceManager::class.java
-            val resource = clz.getResource("/templates") ?: throw CoVaException("resource templates not found")
-            return getManager(File(resource.toURI()), mapOf())
+        fun getResourcedTemplateManager(): TemplateManager {
+            val resourceCfg = TemplateConfig()
+            resourceCfg.useResource = true
+            return getManager(resourceCfg)
+        }
+
+        private fun createManager(conf: TemplateConfig): TemplateManager {
+            return when {
+                conf.useResource -> ResourceTemplateManager(conf)
+                else -> FileTemplateManager(conf)
+            }
+        }
+
+        class FileTemplateManager(conf: TemplateConfig) : TemplateManager(conf) {
+
+            init {
+                config.setDirectoryForTemplateLoading(File(conf.directory))
+            }
+
+            private fun findTemplateFile(name: String, locale: Locale): String? {
+                for (fileName in createPossibleTemplateFileNames(name, locale)) {
+                    if (File(conf.directory, fileName).exists()) {
+                        return fileName
+                    }
+                }
+                return null
+            }
+
+            override fun getTemplate(name: String, locale: Locale): Template? {
+                val actualName = findTemplateFile(name, locale) ?: return null
+                return config.getTemplate(actualName, locale)
+            }
         }
     }
 
-    private val config: Configuration
+    class ResourceTemplateManager(conf: TemplateConfig) : TemplateManager(conf) {
+
+        private val templates = mutableMapOf<String, Template>()
+
+        init {
+            config.setClassForTemplateLoading(ResourceTemplateManager::class.java, "/templates")
+        }
+
+        override fun getTemplate(name: String, locale: Locale): Template? {
+            val k = "${name}___$locale"
+            return templates.compute(k) { _, existed ->
+                if (existed != null) {
+                    existed
+                } else {
+                    for (n in createPossibleTemplateFileNames(name, locale)) {
+                        try {
+                            println("attempt $n")
+                            return@compute config.getTemplate(n, locale)
+                        } catch (ignored: Exception) {
+                            println(ignored)
+                        }
+                    }
+                    null
+                }
+            }
+        }
+    }
+
+    protected val config: Configuration
 
     init {
         try {
@@ -46,7 +104,6 @@ class TemplateManager private constructor(private val directory: File, private v
             config.templateExceptionHandler = TemplateExceptionHandler.RETHROW_HANDLER
             config.logTemplateExceptions = false
             config.wrapUncheckedExceptions = true
-            config.setDirectoryForTemplateLoading(directory)
         } catch (ex: IOException) {
             throw CoVaException("template init error", ex)
         }
@@ -57,21 +114,9 @@ class TemplateManager private constructor(private val directory: File, private v
         return getTemplate(name, Locale.getDefault())
     }
 
-    fun getTemplate(name: String, locale: Locale): Template? {
-        val actualName = findTemplateFile(name, locale) ?: return null
-        return config.getTemplate(actualName, locale)
-    }
+    abstract fun getTemplate(name: String, locale: Locale): Template?
 
-    private fun findTemplateFile(name: String, locale: Locale): String? {
-        for (fileName in createPossibleTemplateFileNames(name, locale)) {
-            if (File(directory, fileName).exists()) {
-                return fileName
-            }
-        }
-        return null
-    }
-
-    private fun createPossibleTemplateFileNames(name: String, locale: Locale?): List<String> {
+    protected fun createPossibleTemplateFileNames(name: String, locale: Locale?): List<String> {
         val l = mutableListOf(
             "$name/${if (locale == null) "main" else "___${locale}"}.ftl",
             "$name/${if (locale == null) "default" else "___${locale}"}.ftl",
@@ -82,8 +127,8 @@ class TemplateManager private constructor(private val directory: File, private v
             "$name.ftl",
             "${name}___${Locale.getDefault()}.ftl",
         )
-        if (aliases.containsKey(name)) {
-            val name0 = aliases.getValue(name)
+        if (conf.aliases.containsKey(name)) {
+            val name0 = conf.aliases.getValue(name)
             l.addAll(
                 listOf(
                     "$name0/${if (locale == null) "main" else "___${locale}"}.ftl",
