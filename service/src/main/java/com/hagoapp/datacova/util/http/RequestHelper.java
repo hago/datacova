@@ -86,7 +86,6 @@ public class RequestHelper {
     }
 
     public static String getBaseUrl(RoutingContext context) {
-        return String.format("%s://%s:%d", context.request().scheme(), context.request().host(),
-                context.request().localAddress().port());
+        return String.format("%s://%s", context.request().scheme(), context.request());
     }
 }
