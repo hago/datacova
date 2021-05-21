@@ -211,7 +211,7 @@ export default {
         this.succeeded = true
         this.errorMessage = ''
       }).catch(err => {
-        this.errorMessage = err.response.error.message
+        this.errorMessage = err.response.data.error.message
       })
     },
     checkempty: function (input) {
