@@ -27,7 +27,6 @@ import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.RoutingContext
 import java.io.ByteArrayInputStream
 import java.io.StringWriter
-import java.time.Instant
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -36,7 +35,7 @@ import javax.mail.internet.InternetAddress
 class Register {
 
     companion object {
-        private val REGISTRATION_CODE_EXPIRE_SECONDS = 86400
+        private const val REGISTRATION_CODE_EXPIRE_SECONDS = 86400
     }
 
     @WebEndPoint(
