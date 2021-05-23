@@ -19,4 +19,6 @@ interface UserAuthProvider {
     }
 
     fun getUserInfo(userId: String): UserInfo?
+    fun loadThumbnail(userInfo: UserInfo)
+    fun saveThumbnail(userId: String, thumbnail: ByteArray): String
 }

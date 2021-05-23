@@ -10,10 +10,7 @@ package com.hagoapp.datacova.data.user
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.config.DatabaseConfig
 import com.hagoapp.datacova.data.CoVaDatabase
-import com.hagoapp.datacova.user.LocalUserProvider
-import com.hagoapp.datacova.user.UserInfo
-import com.hagoapp.datacova.user.UserStatus
-import com.hagoapp.datacova.user.UserType
+import com.hagoapp.datacova.user.*
 import com.hagoapp.datacova.util.Utils
 import com.hagoapp.datacova.util.data.DatabaseFunctions
 import java.sql.ResultSet
@@ -77,6 +74,9 @@ class UserData(config: DatabaseConfig) : CoVaDatabase(config) {
             provider = rs.getString("usertype")
             email = rs.getString("email")
             mobile = rs.getString("mobile")
+        }
+        if (user.thumbnail != null) {
+            UserAuthFactory.getFactory().getAuthProvider(user.userType.value).loadThumbnail(user)
         }
         return user
     }

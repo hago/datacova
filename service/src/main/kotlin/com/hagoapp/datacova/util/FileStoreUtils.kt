@@ -10,9 +10,7 @@ package com.hagoapp.datacova.util
 
 import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.config.CoVaConfig
-import java.io.File
-import java.io.FileOutputStream
-import java.io.InputStream
+import java.io.*
 import java.nio.charset.Charset
 import java.nio.file.Files
 import java.nio.file.Path
@@ -114,6 +112,16 @@ class FileStoreUtils private constructor() {
                 }
                 fo.write(buffer, 0, i)
             }
+        }
+    }
+
+    fun readFileInStore(partialFileName: String): ByteArray? {
+        val f = File(rootPath, partialFileName)
+        if (!f.exists()) {
+            return null
+        }
+        FileInputStream(f).use { fis ->
+            return fis.readAllBytes()
         }
     }
 }

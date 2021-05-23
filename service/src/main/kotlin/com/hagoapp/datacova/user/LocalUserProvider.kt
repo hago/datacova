@@ -11,8 +11,12 @@ import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.RedisCacheReader
 import com.hagoapp.datacova.data.user.UserData
+import com.hagoapp.datacova.util.FileStoreUtils
+import com.hagoapp.datacova.util.Utils
 import com.hagoapp.datacova.util.web.CaptchaUtils
 import io.vertx.ext.web.RoutingContext
+import java.io.ByteArrayInputStream
+import java.util.*
 
 class LocalUserProvider : UserAuthProvider {
 
@@ -74,6 +78,27 @@ class LocalUserProvider : UserAuthProvider {
             "UserInfo", 60 * 30,
             userInfoLoader, UserInfo::class.java, userId
         )
+    }
+
+    override fun loadThumbnail(userInfo: UserInfo) {
+        val path = calcThumbPath(userInfo.userId)
+        val fs = FileStoreUtils.getThumbnailFileStore()
+        val buffer = fs.readFileInStore(path)
+        if (buffer != null) {
+            userInfo.thumbnail = Base64.getEncoder().encodeToString(buffer)
+        }
+    }
+
+    override fun saveThumbnail(userId: String, thumbnail: ByteArray): String {
+        val fs = FileStoreUtils.getThumbnailFileStore()
+        val targetName = calcThumbPath(userId)
+        ByteArrayInputStream(thumbnail).use { fs.saveFileToStore(targetName, it) }
+        return targetName
+    }
+
+    private fun calcThumbPath(userId: String): String {
+        val hash = Utils.md5Digest(userId)
+        return "${hash.substring(0, 3)}/${hash.substring(3, 6)}/$hash"
     }
 
     private val userInfoLoader = object : RedisCacheReader.GenericLoader<UserInfo> {

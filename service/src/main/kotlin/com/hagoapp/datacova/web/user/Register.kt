@@ -11,8 +11,8 @@ import com.google.gson.Gson
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.user.UserCache
 import com.hagoapp.datacova.data.user.UserData
+import com.hagoapp.datacova.user.LocalUserProvider
 import com.hagoapp.datacova.user.UserInfo
-import com.hagoapp.datacova.util.FileStoreUtils
 import com.hagoapp.datacova.util.Utils
 import com.hagoapp.datacova.util.http.RequestHelper
 import com.hagoapp.datacova.util.http.ResponseHelper
@@ -25,7 +25,6 @@ import com.hagoapp.datacova.web.authentication.AuthType
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.RoutingContext
-import java.io.ByteArrayInputStream
 import java.io.StringWriter
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -65,7 +64,7 @@ class Register {
             return
         }
         user.pwdHash = UserData.computePwdHash(user.pwdHash)
-        user.thumbnail = saveThumbnail(user.id.toString(), user.thumbnail)
+        user.thumbnail = saveThumbnail(user.userId, user.thumbnail)
         val u = dal.registerUser(user)
         sendActivation(context, u, Locale.getDefault())
         ResponseHelper.sendResponse(
@@ -76,13 +75,9 @@ class Register {
         )
     }
 
-    private fun saveThumbnail(thumbName: String, b64stringThumb: String): String {
+    private fun saveThumbnail(userId: String, b64stringThumb: String): String {
         val buffer = Base64.getDecoder().decode(b64stringThumb)
-        val fs = FileStoreUtils.getThumbnailFileStore()
-        val hash = Utils.md5Digest(thumbName)
-        val targetName = "${hash.substring(0, 3)}/${hash.substring(3, 6)}/$hash"
-        ByteArrayInputStream(buffer).use { fs.saveFileToStore(targetName, it) }
-        return targetName
+        return LocalUserProvider().saveThumbnail(userId, buffer)
     }
 
     private fun sendActivation(context: RoutingContext, user: UserInfo, locale: Locale) {
