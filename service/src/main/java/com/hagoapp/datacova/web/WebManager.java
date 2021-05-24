@@ -85,15 +85,17 @@ public class WebManager {
     }
 
     public void shutDownWebServer() {
+        logger.info("web server is shutting down");
         try {
             webServer.close(handler -> {
                 vertx.close();
                 webServer = null;
                 vertx = null;
                 handlers.clear();
+                logger.info("web server shut down successfully");
             });
         } catch (Throwable e) {
-            //
+            logger.error("error in web shutting down: {}", e.getMessage());
         }
     }
 
