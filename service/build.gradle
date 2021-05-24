@@ -43,6 +43,8 @@ dependencies {
 
     implementation group: "org.luaj", name: "luaj-jse", version: "3.0.1"
 
+    implementation group: 'com.github.felfert', name: 'cidrutils', version: '1.4'
+
     implementation group: 'com.sun.mail', name: 'javax.mail', version: '1.6.2'
 
     implementation group: "org.freemarker", name: 'freemarker', version: '2.3.31'
