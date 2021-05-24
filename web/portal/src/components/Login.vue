@@ -55,9 +55,9 @@
       <div class="row">
         <div class="col-6">
           <button class="btn btn-info" v-on:click="register()">Register</button>
+          <span style="color:green">Doesn't have account?</span>
         </div>
         <div class="col-6 text-right">
-          <span style="color:green">Alerady registered?</span>
           <button class="btn btn-primary" v-on:click="login()">Log in</button>
         </div>
       </div>
