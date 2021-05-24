@@ -50,7 +50,7 @@ class ShutDown {
         ResponseHelper.sendResponse(context, HttpResponseStatus.OK)
     }
 
-    fun canShutDown(context: RoutingContext): Boolean {
+    private fun canShutDown(context: RoutingContext): Boolean {
         val ip = RequestHelper.getRemoteIp(context)
         return CoVaConfig.getConfig().web.privilegedIpAddresses.any {
             if (it.contains('/')) CIDRUtils(it).isInRange(ip) else it.equals(ip)
