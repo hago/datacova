@@ -83,6 +83,7 @@ abstract class TemplateManager private constructor(protected val conf: TemplateC
                 } else {
                     for (n in createPossibleTemplateFileNames(name, locale)) {
                         try {
+                            println("try $n")
                             return@compute config.getTemplate(n, locale)
                         } catch (ignored: Exception) {
                             // println(ignored)
@@ -116,31 +117,36 @@ abstract class TemplateManager private constructor(protected val conf: TemplateC
     abstract fun getTemplate(name: String, locale: Locale): Template?
 
     protected fun createPossibleTemplateFileNames(name: String, locale: Locale?): List<String> {
-        val l = mutableListOf(
-            "$name/${if (locale == null) "main" else "___${locale}"}.ftl",
-            "$name/${if (locale == null) "default" else "___${locale}"}.ftl",
-            "$name/main.ftl",
-            "$name/default.ftl",
-            "$name/${Locale.getDefault()}.ftl",
-            "$name${if (locale == null) "" else "___${locale}"}.ftl",
-            "$name.ftl",
-            "${name}___${Locale.getDefault()}.ftl",
-        )
+        val l = mutableListOf<String>()
+        l.addAll(createSortedTemplatesSearchList(name, locale))
         if (conf.aliases.containsKey(name)) {
             val name0 = conf.aliases.getValue(name)
+            l.addAll(createSortedTemplatesSearchList(name0, locale))
+        }
+        return l.toList()
+    }
+
+    protected fun createSortedTemplatesSearchList(name: String, locale: Locale?): List<String> {
+        val l = mutableListOf<String>()
+        if (locale != null) {
             l.addAll(
                 listOf(
-                    "$name0/${if (locale == null) "main" else "___${locale}"}.ftl",
-                    "$name0/${if (locale == null) "default" else "___${locale}"}.ftl",
-                    "$name0/main.ftl",
-                    "$name0/default.ftl",
-                    "$name0/${Locale.getDefault()}.ftl",
-                    "$name0${if (locale == null) "" else "___${locale}"}.ftl",
-                    "$name0.ftl",
-                    "${name0}___${Locale.getDefault()}.ftl",
+                    "$name/main_$locale.ftl",
+                    "$name/default_$locale.ftl",
+                    "${name}/$locale.ftl",
+                    "${name}__$locale.ftl",
                 )
             )
         }
-        return l.toList()
+        l.addAll(
+            listOf(
+                "$name/main.ftl",
+                "$name/default.ftl",
+                "$name/${Locale.getDefault()}.ftl",
+                "${name}__${Locale.getDefault()}.ftl",
+                "$name.ftl",
+            )
+        )
+        return l
     }
 }
