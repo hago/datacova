@@ -58,7 +58,6 @@ public class CoVaConfig implements JsonStringify {
 
     private WebConfig web;
     private DatabaseConfig database;
-    private LoggingConfig logging;
     private RedisConfig redis;
     private MailConfig mail;
     private TemplateConfig template;
@@ -98,14 +97,6 @@ public class CoVaConfig implements JsonStringify {
 
     public void setDatabase(DatabaseConfig database) {
         this.database = database;
-    }
-
-    public LoggingConfig getLogging() {
-        return logging;
-    }
-
-    public void setLogging(LoggingConfig logging) {
-        this.logging = logging;
     }
 
     public RedisConfig getRedis() {
