@@ -88,4 +88,8 @@ public class RequestHelper {
     public static String getBaseUrl(RoutingContext context) {
         return String.format("%s://%s", context.request().scheme(), context.request());
     }
+
+    public static String getRemoteIp(RoutingContext context) {
+        return context.request().remoteAddress().host();
+    }
 }
