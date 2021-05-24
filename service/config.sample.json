@@ -29,14 +29,6 @@
     "password": "cova",
     "databaseName": "covadb"
   },
-  "logging": {
-    "logFilePath": "./cova.log",
-    "rollingLogFilePattern": "./cova.log.%d{yyyyMMdd}",
-    "log2Console": true,
-    "log2File": false,
-    "messagePattern": "%d{DEFAULT_MICROS}\\t%-5level\\t%msg%n",
-    "level": "All"
-  },
   "redis": {
     "isSentinel": false,
     "serverConfig": {
