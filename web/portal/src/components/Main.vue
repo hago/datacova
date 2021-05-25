@@ -111,7 +111,7 @@ export default {
       }
     }
   },
-  created: function () {
+  mounted: function () {
     this.$root.$emit('onNeedLogin', user => {
       console.log(this.loginStatus)
       this.loadWorkspaces()
