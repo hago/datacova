@@ -124,6 +124,7 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
      **/
     override fun onStart(te: TaskExecution) {
         try {
+            WebSocketNotifier.notifyStart(te)
             TaskExecutionData().startTaskExecution(te)
             logger.info("Execution ${te.id} of Task ${te.task.name}(${te.taskId}) started")
         } catch (ex: Exception) {
@@ -134,6 +135,7 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
 
     override fun onComplete(te: TaskExecution, result: ExecutionDetail) {
         try {
+            WebSocketNotifier.notifyComplete(te)
             TaskExecutionData().completeTaskExecution(result)
             Reporter.sendReport(te, result)
             logger.info("Execution ${te.id} of Task ${te.task.name}(${te.taskId}) ${if (result.isSucceeded) "succeeded" else "failed"}")
