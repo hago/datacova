@@ -193,7 +193,7 @@ class Tasks {
 
     @WebEndPoint(
         path = "/api/workspace/:wkid/execution/:id/run",
-        methods = [HttpMethod.GET],
+        methods = [HttpMethod.POST],
         authTypes = [AuthType.UserToken]
     )
     fun runTask(context: RoutingContext) {
