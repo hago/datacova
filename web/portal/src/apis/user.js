@@ -56,6 +56,11 @@ class User {
     )
   }
 
+  getUser () {
+    let userstr = sessionStorage.getItem('user')
+    return userstr !== null ? JSON.parse(userstr) : null
+  }
+
   setLogin (userObj) {
     if ((userObj.user === undefined) || (userObj.token === undefined)) {
       console.log(`invalid user object: ${JSON.stringify(userObj)}`)
