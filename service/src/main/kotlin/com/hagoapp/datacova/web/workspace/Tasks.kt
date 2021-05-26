@@ -19,7 +19,9 @@ import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import com.hagoapp.datacova.web.authentication.AuthType
 import com.hagoapp.datacova.web.authentication.Authenticator
+import com.hagoapp.f2t.DataRow
 import com.hagoapp.f2t.datafile.FileInfoReader
+import com.hagoapp.f2t.datafile.ReaderFactory
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.RoutingContext
@@ -135,11 +137,11 @@ class Tasks {
     }
 
     @WebEndPoint(
-        path = "/api/workspace/:wkid/task/:id/run",
+        path = "/api/workspace/:wkid/task/:id/upload",
         methods = [HttpMethod.POST],
         authTypes = [AuthType.UserToken]
     )
-    fun runTask(context: RoutingContext) {
+    fun uploadFile4Task(context: RoutingContext) {
         val files = context.fileUploads()
         if (files.isEmpty()) {
             ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "no file found")
@@ -160,12 +162,12 @@ class Tasks {
             return
         }
         val rawInfo = context.request().getParam("extra")
-        val filestore = FileStoreUtils.getUploadedFileStore()
+        val fileStore = FileStoreUtils.getUploadedFileStore()
         val exec = TaskExecutionData().use { db ->
-            val target = filestore.copyFileToStore(file.uploadedFileName())
+            val target = fileStore.copyFileToStore(file.uploadedFileName())
             val eai = ExecutionFileInfo()
             val fi = FileInfoReader.json2FileInfo(rawInfo)
-            fi.filename = filestore.getRelativeFileName(target.absoluteFileName)
+            fi.filename = fileStore.getRelativeFileName(target.absoluteFileName)
             with(eai) {
                 originalName = file.fileName()
                 size = file.size()
@@ -187,5 +189,85 @@ class Tasks {
                 "data" to exec
             )
         )
+    }
+
+    @WebEndPoint(
+        path = "/api/workspace/:wkid/execution/:id/run",
+        methods = [HttpMethod.GET],
+        authTypes = [AuthType.UserToken]
+    )
+    fun runTask(context: RoutingContext) {
+        val user = Authenticator.getUser(context)
+        val workspaceId = context.pathParam("wkid").toInt()
+        val workSpace = WorkspaceCache.getWorkspace(workspaceId)
+        val execId = context.pathParam("id").toInt()
+        if ((workSpace == null) || !WorkspaceUserRoleUtil.isUser(user, workspaceId)) {
+            ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, "access denied")
+            return
+        }
+        val exec = TaskExecutionCache.getTaskExecution(execId)
+        if ((exec == null) || (exec.task.workspaceId != workspaceId)) {
+            ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "invalid request")
+            return
+        }
+        TaskExecutionData().runTask(exec)
+        ResponseHelper.sendResponse(
+            context, HttpResponseStatus.OK, mapOf(
+                "code" to 0
+            )
+        )
+    }
+
+    @WebEndPoint(
+        path = "/api/workspace/:wkid/execution/:id/data",
+        methods = [HttpMethod.POST],
+        authTypes = [AuthType.UserToken]
+    )
+    fun readDataOfExecution(context: RoutingContext) {
+        val user = Authenticator.getUser(context)
+        val workspaceId = context.pathParam("wkid").toInt()
+        val workSpace = WorkspaceCache.getWorkspace(workspaceId)
+        if ((workSpace == null) || !WorkspaceUserRoleUtil.isUser(user, workspaceId)) {
+            ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, "access denied")
+            return
+        }
+        val id = context.pathParam("id").toInt()
+        val exec = TaskExecutionCache.getTaskExecution(id)
+        if ((exec == null) || (exec.task.workspaceId != workspaceId)) {
+            ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "invalid request")
+            return
+        }
+        val size = context.request().getParam("size").toIntOrNull() ?: 20
+        val start = context.request().getParam("start").toIntOrNull() ?: 0
+        ReaderFactory.getReader(exec.fileInfo.fileInfo).use { reader ->
+            reader.open(exec.fileInfo.fileInfo)
+            val cols = reader.findColumns()
+            var i = 0
+            val end = start + size
+            val rows = mutableListOf<DataRow>()
+            while (reader.hasNext()) {
+                if (i < start) {
+                    reader.next()
+                } else if (i < end) {
+                    rows.add(reader.next())
+                }
+                i++
+            }
+            val colIndex = cols.sortedBy { it.index }.map { it.name }
+            ResponseHelper.sendResponse(context, HttpResponseStatus.OK, mapOf(
+                "code" to 0,
+                "data" to mapOf(
+                    "columns" to cols.map {
+                        mapOf(
+                            "index" to it.name,
+                            "title" to it.name
+                        )
+                    },
+                    "rows" to rows.map { row ->
+                        row.cells.associate { Pair(colIndex[it.index], it.data) }
+                    }
+                )
+            ))
+        }
     }
 }
