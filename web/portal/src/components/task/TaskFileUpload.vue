@@ -30,6 +30,9 @@
     <UnsupportedFile v-if="(fileType !== undefined) && (['csv', 'excel'].indexOf(fileType) === -1)"
       v-bind:fileType="fileType">
     </UnsupportedFile>
+    <div class="form-row">
+      <fancy-grid-vue :config="gridConfig"></fancy-grid-vue>
+    </div>
   </div>
 </template>
 
@@ -41,6 +44,7 @@ import UnsupportedFile from './upload/UnsupportedFile'
 import Vue from 'vue'
 import Toasted from 'vue-toasted'
 import WorkspaceApiHelper from '@/apis/workspace.js'
+import FancyGridVue from 'fancy-grid-vue'
 
 Vue.use(Toasted)
 const dateFormat = require('dateformat')
@@ -50,7 +54,8 @@ export default {
   components: {
     CsvAttributes,
     ExcelAttributes,
-    UnsupportedFile
+    UnsupportedFile,
+    FancyGridVue
   },
   data () {
     return {
@@ -59,11 +64,28 @@ export default {
       taskId: this.$route.params.id,
       task: {},
       file: undefined,
-      extraInfo: {}
+      extraInfo: {},
+      gridConfig: {
+        title: 'Vue with FancyGrid',
+        theme: 'gray',
+        width: 700,
+        height: 400,
+        data: [],
+        resizable: true,
+        defaults: {
+          type: 'string',
+          width: 100,
+          sortable: true,
+          editable: true,
+          resizable: true
+        },
+        selModel: 'rows',
+        trackOver: true,
+        columns: [
+          {'type': 'select'}
+        ]
+      }
     }
-  },
-  created: function () {
-    this.$root.$emit('onNeedLogin', user => {})
   },
   computed: {
     url: function () {
