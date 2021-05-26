@@ -145,11 +145,10 @@ class WorkspaceApiHelper {
     return rsp
   }
 
-  async runExec (workspaceId, execId, start = 0, size = 20) {
+  async runExec (workspaceId, execId) {
     let rsp = await axios({
       method: 'POST',
-      url: `${this.urlprefix}/api/workspace/${workspaceId}/execution/${execId}/run`,
-      data: `start=${start}&size=${size}`
+      url: `${this.urlprefix}/api/workspace/${workspaceId}/execution/${execId}/run`
     })
     return rsp
   }
@@ -177,6 +176,15 @@ class WorkspaceApiHelper {
     let rsp = await axios({
       method: 'GET',
       url: `${this.urlprefix}/api/execution/${id}`
+    })
+    return rsp
+  }
+
+  async readExecutionData (workspaceid, id, start = 0, size = 20) {
+    let rsp = await axios({
+      method: 'POST',
+      url: `${this.urlprefix}/api/workspace/${workspaceid}/execution/${id}/data`,
+      data: `start=${start}&size=${size}`
     })
     return rsp
   }
