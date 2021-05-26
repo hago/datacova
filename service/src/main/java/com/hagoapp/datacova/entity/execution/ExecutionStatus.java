@@ -22,7 +22,9 @@ public enum ExecutionStatus {
     @SerializedName("2")
     succeed(2),
     @SerializedName("-1")
-    fail(-1);
+    fail(-1),
+    @SerializedName("-2")
+    FileUploaded(-2);
 
     private final int value;
 
