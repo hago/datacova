@@ -86,8 +86,7 @@ export default {
     }
   },
   props: {
-    return: String,
-    loginStatus: Object
+    return: Object
   },
   created: function () {
     //
@@ -114,8 +113,7 @@ export default {
         this.errorMessage = '';
         (new User()).setLogin(rsp.data.data)
         this.$root.$emit('onLogin', rsp.data.data)
-        let dest = (this.return !== undefined) && (this.return !== null) && (this.return.trim() !== '')
-          ? this.return : '/main'
+        let dest = (this.return !== undefined) && (this.return !== null) ? this.return : '/main'
         router.push(dest).catch()
       }).catch(err => {
         console.log(err)

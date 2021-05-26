@@ -112,10 +112,7 @@ export default {
     }
   },
   mounted: function () {
-    this.$root.$emit('onNeedLogin', user => {
-      console.log(this.loginStatus)
-      this.loadWorkspaces()
-    })
+    this.loadWorkspaces()
   },
   computed: {
     myRoles: function () {
