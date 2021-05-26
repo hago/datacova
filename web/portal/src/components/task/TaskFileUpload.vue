@@ -129,6 +129,7 @@ export default {
       (new WorkspaceApiHelper()).uploadTaskFile(this.workspaceId, this.taskId, this.file, this.extraInfo)
         .then(rsp => {
           this.execid = rsp.data.data.id
+          this.readdata()
         })
     },
     runtask: function () {
@@ -143,6 +144,12 @@ export default {
           }
         })
       }).catch(err => console.log(err))
+    },
+    readdata: function () {
+      (new WorkspaceApiHelper()).readExecutionData(this.workspaceId, this.execid).then(rsp => {
+        this.gridConfig.columns = rsp.data.data.columns
+        this.gridConfig.data = rsp.data.data.rows
+      })
     }
   }
 }
