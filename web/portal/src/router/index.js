@@ -6,12 +6,13 @@ import Main from '@/components/Main'
 import Index from '@/components/Index'
 import Connection from '@/components/connection/Connection'
 import WorkspaceMember from '@/components/user/WorkspaceMember'
-import User from '@/components/user/User'
+import * as UserComponent from '@/components/user/User'
 import Task from '@/components/task/Task'
 import TaskFileUpload from '@/components/task/TaskFileUpload'
 import TaskExecution from '@/components/execution/TaskExecution'
 import Register from '@/components/Register.vue'
 import ActivateRegistration from '@/components/ActivateRegistration.vue'
+import User from '@/apis/user.js'
 
 Vue.use(Vuex)
 Vue.use(Router)
@@ -35,7 +36,10 @@ const route = new Router({
       path: '/main',
       name: 'Main',
       component: Main,
-      props: true
+      props: true,
+      meta: {
+        requireAuth: true
+      }
     },
     {
       path: '/login',
@@ -58,7 +62,7 @@ const route = new Router({
     {
       path: '/user/:id',
       name: 'User',
-      component: User,
+      component: UserComponent,
       props: true
     },
     {
@@ -71,7 +75,10 @@ const route = new Router({
       path: '/task/:workspaceId/:id/upload',
       name: 'TaskFileUpload',
       component: TaskFileUpload,
-      props: true
+      props: true,
+      meta: {
+        requireAuth: true
+      }
     },
     {
       path: '/execution/:id',
@@ -94,6 +101,35 @@ const route = new Router({
   ],
   linkActiveClass: 'nav-link',
   linkExactActiveClass: 'active'
+})
+
+route.beforeEach((to, from, next) => {
+  console.log(`from: ${from.path}, to: ${to.path}`)
+  if ((to.meta !== undefined) && to.meta.requireAuth) {
+    console.log('require auth')
+    let u = (new User()).getUser()
+    if (u != null) {
+      console.log('has logged')
+      next()
+    } else {
+      console.log('not logged')
+      if (next.path !== '/login') {
+        console.log('goto /login')
+        next({
+          name: 'Login',
+          params: {
+            return: to
+          }
+        })
+      } else {
+        console.log('goto /login by intension')
+        next()
+      }
+    }
+  } else {
+    console.log('doesn\'t require auth')
+    next()
+  }
 })
 
 export default route
