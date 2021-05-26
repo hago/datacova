@@ -239,9 +239,12 @@ class Tasks {
         }
         val size = context.request().getParam("size").toIntOrNull() ?: 20
         val start = context.request().getParam("start").toIntOrNull() ?: 0
-        ReaderFactory.getReader(exec.fileInfo.fileInfo).use { reader ->
-            reader.open(exec.fileInfo.fileInfo)
-            val cols = reader.findColumns()
+        val fi = exec.fileInfo.fileInfo
+        ReaderFactory.getReader(fi).use { reader ->
+            fi.filename = FileStoreUtils.getUploadedFileStore().getFullFileName(fi.filename!!)
+            reader.open(fi)
+            reader.findColumns()
+            val cols = reader.inferColumnTypes(start.toLong() + size.toLong())
             var i = 0
             val end = start + size
             val rows = mutableListOf<DataRow>()
