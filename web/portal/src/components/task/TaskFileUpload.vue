@@ -19,6 +19,7 @@
     <div class="form-row">
       <button class="btn btn-primary col-1" v-on:click="upload()">Upload</button>
       <button class="btn btn-info col-1" v-on:click="cancel()">Cancel</button>
+      <button class="btn btn-info col-1" v-on:click="runtask()" v-if="execid !== null">Run</button>
     </div>
     <CsvAttributes v-if="fileType === 'csv'"
       v-bind:extraInfo="extraInfo">
@@ -65,6 +66,7 @@ export default {
       task: {},
       file: undefined,
       extraInfo: {},
+      execid: null,
       gridConfig: {
         title: 'Vue with FancyGrid',
         theme: 'gray',
@@ -88,9 +90,6 @@ export default {
     }
   },
   computed: {
-    url: function () {
-      return `/api/workspace/${this.workspaceId}/task/${this.taskId}/run`
-    },
     fileType: function () {
       if (this.file === undefined) {
         return undefined
@@ -127,18 +126,23 @@ export default {
       if (this.file === undefined) {
         return
       }
-      (new WorkspaceApiHelper()).runTask(this.workspaceId, this.taskId, this.file, this.extraInfo)
+      (new WorkspaceApiHelper()).uploadTaskFile(this.workspaceId, this.taskId, this.file, this.extraInfo)
         .then(rsp => {
-          console.log(rsp.data)
-          Vue.toasted.show('file uploaded, execution is queued.', {
-            position: 'bottom-center',
-            duration: 1000,
-            type: 'success',
-            onComplete: function () {
-              history.back()
-            }
-          })
+          this.execid = rsp.data.data.id
         })
+    },
+    runtask: function () {
+      (new WorkspaceApiHelper()).runExec(this.workspaceId, this.execid).then(rsp => {
+        console.log(rsp.data)
+        Vue.toasted.show('file uploaded, execution is queued.', {
+          position: 'bottom-center',
+          duration: 1000,
+          type: 'success',
+          onComplete: function () {
+            history.back()
+          }
+        })
+      }).catch(err => console.log(err))
     }
   }
 }
