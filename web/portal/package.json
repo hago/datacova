@@ -14,6 +14,8 @@
     "axios": "^0.18.1",
     "bootstrap-vue": "^2.6.1",
     "dateformat": "^3.0.3",
+    "fancy-grid-vue": "^1.0.6",
+    "fancygrid": "^1.7.150",
     "js-sha256": "^0.9.0",
     "vue": "^2.6.10",
     "vue-datetime-picker": "^0.2.1",
