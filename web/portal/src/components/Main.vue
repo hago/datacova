@@ -138,7 +138,7 @@ export default {
         (new WorkspaceApiHelper()).getMyWorkspaces().then(rsp => {
           this.workspaces = rsp.data.data
           this.workspaceIndex = this.workspaces.length > 0 ? 0 : -1
-          if ((this.workspacesIndex > 0) && (this.workspaces.length > this.workspaceIndex)) {
+          if ((this.workspaceIndex >= 0) && (this.workspaces.length > this.workspaceIndex)) {
             this.loadConnections()
           }
         })
@@ -151,9 +151,8 @@ export default {
       Vue.set(this.conninfo, 'connections', connections)
     },
     loadConnections: function () {
-      console.log(this.workspacesIndex)
-      if ((this.workspacesIndex < 0) || (this.workspaces.length <= this.workspaceIndex)) {
-        console.log('exit')
+      if ((this.workspaceIndex < 0) || (this.workspaces.length <= this.workspaceIndex)) {
+        console.log('exit loadConnections')
         return
       }
       let wkid = this.workspaces[this.workspaceIndex].workspace.id;
