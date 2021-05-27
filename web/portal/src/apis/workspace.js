@@ -131,7 +131,7 @@ class WorkspaceApiHelper {
     return rsp
   }
 
-  async uploadTaskFile (workspaceId, taskId, file, extra) {
+  async runTask (workspaceId, taskId, file, extra) {
     let form = new FormData()
     form.append('file', file, file.name)
     if (extra !== undefined) {
@@ -139,16 +139,8 @@ class WorkspaceApiHelper {
     }
     let rsp = await axios({
       method: 'POST',
-      url: `${this.urlprefix}/api/workspace/${workspaceId}/task/${taskId}/upload`,
+      url: `${this.urlprefix}/api/workspace/${workspaceId}/task/${taskId}/run`,
       data: form
-    })
-    return rsp
-  }
-
-  async runExec (workspaceId, execId) {
-    let rsp = await axios({
-      method: 'POST',
-      url: `${this.urlprefix}/api/workspace/${workspaceId}/execution/${execId}/run`
     })
     return rsp
   }
@@ -180,11 +172,16 @@ class WorkspaceApiHelper {
     return rsp
   }
 
-  async readExecutionData (workspaceid, id, start = 0, size = 20) {
+  async previewFile (file, extra, start = 0, size = 20) {
+    let form = new FormData()
+    form.append('file', file, file.name)
+    form.append('extra', JSON.stringify(extra))
+    form.append('start', start)
+    form.append('size', size)
     let rsp = await axios({
       method: 'POST',
-      url: `${this.urlprefix}/api/workspace/${workspaceid}/execution/${id}/data`,
-      data: `start=${start}&size=${size}`
+      url: `${this.urlprefix}/api/file/preview`,
+      data: form
     })
     return rsp
   }
