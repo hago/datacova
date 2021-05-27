@@ -22,6 +22,9 @@ import com.hagoapp.datacova.web.authentication.Authenticator
 import com.hagoapp.f2t.DataRow
 import com.hagoapp.f2t.datafile.FileInfoReader
 import com.hagoapp.f2t.datafile.ReaderFactory
+import com.hagoapp.f2t.datafile.excel.ExcelDataFileParser
+import com.hagoapp.f2t.datafile.excel.FileInfoExcel
+import com.hagoapp.f2t.datafile.excel.FileInfoExcelX
 import com.hagoapp.f2t.util.JDBCTypeUtils
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.core.http.HttpMethod
@@ -142,11 +145,11 @@ class Tasks {
     }
 
     @WebEndPoint(
-        path = "/api/workspace/:wkid/task/:id/upload",
+        path = "/api/workspace/:wkid/task/:id/run",
         methods = [HttpMethod.POST],
         authTypes = [AuthType.UserToken]
     )
-    fun uploadFile4Task(context: RoutingContext) {
+    fun runTask(context: RoutingContext) {
         val files = context.fileUploads()
         if (files.isEmpty()) {
             ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "no file found")
@@ -197,56 +200,24 @@ class Tasks {
     }
 
     @WebEndPoint(
-        path = "/api/workspace/:wkid/execution/:id/run",
+        path = "/api/file/preview",
         methods = [HttpMethod.POST],
         authTypes = [AuthType.UserToken]
     )
-    fun runTask(context: RoutingContext) {
-        val user = Authenticator.getUser(context)
-        val workspaceId = context.pathParam("wkid").toInt()
-        val workSpace = WorkspaceCache.getWorkspace(workspaceId)
-        val execId = context.pathParam("id").toInt()
-        if ((workSpace == null) || !WorkspaceUserRoleUtil.isUser(user, workspaceId)) {
-            ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, "access denied")
+    fun preview(context: RoutingContext) {
+        val files = context.fileUploads()
+        if (files.isEmpty()) {
+            ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "no file found")
             return
         }
-        val exec = TaskExecutionCache.getTaskExecution(execId)
-        if ((exec == null) || (exec.task.workspaceId != workspaceId)) {
-            ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "invalid request")
-            return
-        }
-        TaskExecutionData().runTask(exec)
-        ResponseHelper.sendResponse(
-            context, HttpResponseStatus.OK, mapOf(
-                "code" to 0
-            )
-        )
-    }
-
-    @WebEndPoint(
-        path = "/api/workspace/:wkid/execution/:id/data",
-        methods = [HttpMethod.POST],
-        authTypes = [AuthType.UserToken]
-    )
-    fun readDataOfExecution(context: RoutingContext) {
-        val user = Authenticator.getUser(context)
-        val workspaceId = context.pathParam("wkid").toInt()
-        val workSpace = WorkspaceCache.getWorkspace(workspaceId)
-        if ((workSpace == null) || !WorkspaceUserRoleUtil.isUser(user, workspaceId)) {
-            ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, "access denied")
-            return
-        }
-        val id = context.pathParam("id").toInt()
-        val exec = TaskExecutionCache.getTaskExecution(id)
-        if ((exec == null) || (exec.task.workspaceId != workspaceId)) {
-            ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "invalid request")
-            return
-        }
-        val size = context.request().getParam("size").toIntOrNull() ?: 20
-        val start = context.request().getParam("start").toIntOrNull() ?: 0
-        val fi = exec.fileInfo.fileInfo
+        val file = context.fileUploads().first()
+        val rawInfo = context.request().getParam("extra")
+        val fi = FileInfoReader.json2FileInfo(rawInfo)
+        fi.filename = file.uploadedFileName()
+        val info = if (fi is FileInfoExcel) ExcelDataFileParser(file.uploadedFileName()).getInfo() else null
         ReaderFactory.getReader(fi).use { reader ->
-            fi.filename = FileStoreUtils.getUploadedFileStore().getFullFileName(fi.filename!!)
+            val size = context.request().getParam("size").toIntOrNull() ?: 20
+            val start = context.request().getParam("start").toIntOrNull() ?: 0
             reader.open(fi)
             reader.findColumns()
             val cols = reader.inferColumnTypes(start.toLong() + size.toLong())
@@ -270,7 +241,8 @@ class Tasks {
                     "columns" to cols.map { it.name },
                     "rows" to rows.map { row ->
                         row.cells.map { formatData(it.data, colIndex[it.index].inferredType) }
-                    }
+                    },
+                    "info" to info
                 )
             ))
         }
