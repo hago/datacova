@@ -29,3 +29,4 @@ build/
 
 config.json
 testconfig.json
+logback.xml
