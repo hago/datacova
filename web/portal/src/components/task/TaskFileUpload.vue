@@ -31,8 +31,8 @@
     <UnsupportedFile v-if="(fileType !== undefined) && (['csv', 'excel'].indexOf(fileType) === -1)"
       v-bind:fileType="fileType">
     </UnsupportedFile>
-    <div class="form-row">
-      <fancy-grid-vue :config="gridConfig"></fancy-grid-vue>
+    <div class="row">
+      <zing-grid ref="df" caption="Data in File" :data.prop="data" loading></zing-grid>
     </div>
   </div>
 </template>
@@ -45,7 +45,6 @@ import UnsupportedFile from './upload/UnsupportedFile'
 import Vue from 'vue'
 import Toasted from 'vue-toasted'
 import WorkspaceApiHelper from '@/apis/workspace.js'
-import FancyGridVue from 'fancy-grid-vue'
 
 Vue.use(Toasted)
 const dateFormat = require('dateformat')
@@ -55,8 +54,7 @@ export default {
   components: {
     CsvAttributes,
     ExcelAttributes,
-    UnsupportedFile,
-    FancyGridVue
+    UnsupportedFile
   },
   data () {
     return {
@@ -67,26 +65,8 @@ export default {
       file: undefined,
       extraInfo: {},
       execid: null,
-      gridConfig: {
-        title: 'Vue with FancyGrid',
-        theme: 'gray',
-        width: 700,
-        height: 400,
-        data: [],
-        resizable: true,
-        defaults: {
-          type: 'string',
-          width: 100,
-          sortable: true,
-          editable: true,
-          resizable: true
-        },
-        selModel: 'rows',
-        trackOver: true,
-        columns: [
-          {'type': 'select'}
-        ]
-      }
+      data: [],
+      columns: []
     }
   },
   computed: {
@@ -147,8 +127,14 @@ export default {
     },
     readdata: function () {
       (new WorkspaceApiHelper()).readExecutionData(this.workspaceId, this.execid).then(rsp => {
-        this.gridConfig.columns = rsp.data.data.columns
-        this.gridConfig.data = rsp.data.data.rows
+        this.columns = rsp.data.data.columns
+        this.data = rsp.data.data.rows.map(row => {
+          let x = {}
+          for (let i in row) {
+            x[this.columns[i]] = row[i]
+          }
+          return x
+        })
       })
     }
   }
