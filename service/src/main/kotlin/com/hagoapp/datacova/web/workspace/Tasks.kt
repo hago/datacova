@@ -22,9 +22,14 @@ import com.hagoapp.datacova.web.authentication.Authenticator
 import com.hagoapp.f2t.DataRow
 import com.hagoapp.f2t.datafile.FileInfoReader
 import com.hagoapp.f2t.datafile.ReaderFactory
+import com.hagoapp.f2t.util.JDBCTypeUtils
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.RoutingContext
+import java.sql.JDBCType
+import java.time.LocalDate
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 class Tasks {
 
@@ -249,28 +254,38 @@ class Tasks {
             val end = start + size
             val rows = mutableListOf<DataRow>()
             while (reader.hasNext()) {
-                if (i < start) {
-                    reader.next()
-                } else if (i < end) {
-                    rows.add(reader.next())
+                val row = reader.next()
+                if (i >= start) {
+                    rows.add(row)
                 }
                 i++
+                if (i >= end) {
+                    break
+                }
             }
-            val colIndex = cols.sortedBy { it.index }.map { it.name }
+            val colIndex = cols.sortedBy { it.index }
             ResponseHelper.sendResponse(context, HttpResponseStatus.OK, mapOf(
                 "code" to 0,
                 "data" to mapOf(
-                    "columns" to cols.map {
-                        mapOf(
-                            "index" to it.name,
-                            "title" to it.name
-                        )
-                    },
+                    "columns" to cols.map { it.name },
                     "rows" to rows.map { row ->
-                        row.cells.associate { Pair(colIndex[it.index], it.data) }
+                        row.cells.map { formatData(it.data, colIndex[it.index].inferredType) }
                     }
                 )
             ))
         }
+    }
+
+    private fun formatData(data: Any?, type: JDBCType?): Any? {
+        return when {
+            data == null -> null
+            type == null -> data.toString()
+            type == JDBCType.TIMESTAMP || type == JDBCType.TIMESTAMP_WITH_TIMEZONE -> {
+                val x = JDBCTypeUtils.toTypedValue(data, type) as ZonedDateTime
+                DateTimeFormatter.ISO_DATE_TIME.format(x)
+            }
+            else -> JDBCTypeUtils.toTypedValue(data, type)
+        }
+
     }
 }
