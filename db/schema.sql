@@ -118,7 +118,7 @@ create table if not exists taskexecution (
 	starttime timestamp with time zone null,
 	endtime timestamp with time zone null,
 	detail json null,
-	xstatus int not null default -2,		/* 0 - created 1 - executing 2 - success -1 - fail -2 - uploaded */
+	xstatus int not null default 0,		/* 0 - created 1 - executing 2 - success -1 - fail */
 	primary key(id)
 );
 
