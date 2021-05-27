@@ -16,22 +16,25 @@
     <div class="form-row" v-if="file !== undefined">
       <div class="col">Type: {{ file.type }}</div>
     </div>
-    <div class="form-row">
-      <button class="btn btn-primary col-1" v-on:click="upload()">Upload</button>
-      <button class="btn btn-info col-1" v-on:click="cancel()">Cancel</button>
-      <button class="btn btn-info col-1" v-on:click="runtask()" v-if="execid !== null">Run</button>
-    </div>
     <CsvAttributes v-if="fileType === 'csv'"
+      v-on:filePreview="filePreview"
+      v-bind:info="parseInfo"
       v-bind:extraInfo="extraInfo">
     </CsvAttributes>
     <ExcelAttributes v-if="fileType === 'excel'"
+      v-on:filePreview="filePreview"
       v-bind:file="file"
+      v-bind:info="parseInfo"
       v-bind:extraInfo="extraInfo">
     </ExcelAttributes>
     <UnsupportedFile v-if="(fileType !== undefined) && (['csv', 'excel'].indexOf(fileType) === -1)"
       v-bind:fileType="fileType">
     </UnsupportedFile>
-    <div class="row">
+    <div class="form-row">
+      <button class="btn btn-primary col-1" v-on:click="upload()">Upload</button>
+      <button class="btn btn-info col-1" v-on:click="cancel()">Cancel</button>
+    </div>
+    <div class="row" v-if="data.length > 0">
       <zing-grid ref="df" caption="Data in File" :data.prop="data" loading></zing-grid>
     </div>
   </div>
@@ -45,9 +48,11 @@ import UnsupportedFile from './upload/UnsupportedFile'
 import Vue from 'vue'
 import Toasted from 'vue-toasted'
 import WorkspaceApiHelper from '@/apis/workspace.js'
+import ZingGrid from 'zinggrid'
 
 Vue.use(Toasted)
 const dateFormat = require('dateformat')
+console.log(ZingGrid)
 
 export default {
   name: 'TaskFileUpload',
@@ -64,9 +69,9 @@ export default {
       task: {},
       file: undefined,
       extraInfo: {},
-      execid: null,
       data: [],
-      columns: []
+      columns: [],
+      parseInfo: {}
     }
   },
   computed: {
@@ -106,27 +111,21 @@ export default {
       if (this.file === undefined) {
         return
       }
-      (new WorkspaceApiHelper()).uploadTaskFile(this.workspaceId, this.taskId, this.file, this.extraInfo)
+      (new WorkspaceApiHelper()).runTask(this.workspaceId, this.taskId, this.file, this.extraInfo)
         .then(rsp => {
-          this.execid = rsp.data.data.id
-          this.readdata()
-        })
+          console.log(rsp.data)
+          Vue.toasted.show('file uploaded, execution is queued.', {
+            position: 'bottom-center',
+            duration: 1000,
+            type: 'success',
+            onComplete: function () {
+              history.back()
+            }
+          })
+        }).catch(err => console.log(err))
     },
-    runtask: function () {
-      (new WorkspaceApiHelper()).runExec(this.workspaceId, this.execid).then(rsp => {
-        console.log(rsp.data)
-        Vue.toasted.show('file uploaded, execution is queued.', {
-          position: 'bottom-center',
-          duration: 1000,
-          type: 'success',
-          onComplete: function () {
-            history.back()
-          }
-        })
-      }).catch(err => console.log(err))
-    },
-    readdata: function () {
-      (new WorkspaceApiHelper()).readExecutionData(this.workspaceId, this.execid).then(rsp => {
+    filePreview: function () {
+      (new WorkspaceApiHelper()).previewFile(this.file, this.extraInfo).then(rsp => {
         this.columns = rsp.data.data.columns
         this.data = rsp.data.data.rows.map(row => {
           let x = {}
@@ -135,6 +134,7 @@ export default {
           }
           return x
         })
+        this.parseInfo = rsp.data.data.info
       })
     }
   }

@@ -32,20 +32,19 @@
         </select>
       </div>
       <div class="form-group">
-        <button class="btn btn-primary form-control" v-on:click="parse()">Parse</button>
+        <button class="btn btn-primary form-control" v-on:click="preview()">Preview</button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import WorkspaceApiHelper from '@/apis/workspace.js'
-
 export default {
   name: 'ExcelAttributes',
   props: {
     extraInfo: Object,
-    file: File
+    file: File,
+    info: Object
   },
   created: function () {
     this.extraInfo.sheetIndex = 0
@@ -61,7 +60,6 @@ export default {
     return {
       useIndex: true,
       useName: false,
-      info: [],
       maxSheetIndex: false,
       parsed: false
     }
@@ -73,13 +71,8 @@ export default {
     checkName () {
       this.useIndex = !this.useName
     },
-    parse () {
-      (new WorkspaceApiHelper()).parseExcel(this.file).then(rsp => {
-        // console.log(rsp.data)
-        this.maxSheetIndex = rsp.data.data.sheets.length - 1
-        this.info = rsp.data.data.sheets
-        this.parsed = true
-      })
+    preview () {
+      this.$emit('filePreview')
     }
   }
 }
