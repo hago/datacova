@@ -3,13 +3,11 @@ package com.hagoapp.datacova.web.workspace
 import com.google.gson.GsonBuilder
 import com.hagoapp.datacova.data.execution.TaskExecutionCache
 import com.hagoapp.datacova.data.execution.TaskExecutionCache.Companion.TASK_EXECUTION_DEFAULT_PAGE_SIZE
-import com.hagoapp.datacova.data.execution.TaskExecutionData
 import com.hagoapp.datacova.data.rules.ValidationRuleCache
 import com.hagoapp.datacova.data.user.UserCache
 import com.hagoapp.datacova.data.workspace.WorkspaceCache
 import com.hagoapp.datacova.data.workspace.WorkSpaceData
 import com.hagoapp.datacova.entity.workspace.WorkSpace
-import com.hagoapp.datacova.entity.workspace.WorkSpaceUserRole
 import com.hagoapp.datacova.util.WorkspaceUserRoleUtil
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.annotation.WebEndPoint
@@ -17,14 +15,13 @@ import com.hagoapp.datacova.web.authentication.AuthType
 import com.hagoapp.datacova.web.authentication.Authenticator
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.core.http.HttpMethod
-import io.vertx.ext.auth.User
 import io.vertx.ext.web.RoutingContext
 
 class WorkSpaceApi {
 
     @WebEndPoint(
         methods = [HttpMethod.GET],
-        path = "/api/workspace/mine",
+        path = "/api/workspaces/mine",
         authTypes = [AuthType.UserToken]
     )
     fun myWorkSpaces(routeContext: RoutingContext) {
@@ -41,13 +38,15 @@ class WorkSpaceApi {
     private fun getMyWorkSpaces(userId: Long): List<WorkspaceWithUser> {
         val workspaces = WorkspaceCache.getMyWorkSpaces(userId)
         return workspaces?.map {
-            WorkspaceWithUser(
-                workspace = it,
-                users = findWorkspaceUsers(it.id),
-                owner = UserCache.getUser(it.ownerId)!!
-            )
+            workspaceWithUser(it)
         } ?: listOf()
     }
+
+    private fun workspaceWithUser(it: WorkSpace) = WorkspaceWithUser(
+        workspace = it,
+        users = findWorkspaceUsers(it.id),
+        owner = UserCache.getUser(it.ownerId)!!
+    )
 
     private fun findWorkspaceUsers(workspaceId: Int): List<WorkspaceUser> {
         val list = WorkspaceCache.getWorkspaceUserInRoles(workspaceId)
@@ -58,6 +57,27 @@ class WorkSpaceApi {
                 roles = list.filter { it.userid == u.id }.map { it.role }
             )
         }
+    }
+
+    @WebEndPoint(
+        methods = [HttpMethod.GET],
+        path = "/api/workspace/:id",
+        authTypes = [AuthType.UserToken]
+    )
+    fun getWorkSpace(context: RoutingContext) {
+        val userInfo = Authenticator.getUser(context)
+        val workspaceId = context.pathParam("id").toInt()
+        val wk = WorkspaceCache.getWorkspace(workspaceId)
+        if ((wk == null) || !WorkspaceUserRoleUtil.isUser(userInfo, workspaceId)) {
+            ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "Invalid Workspace Data")
+            return
+        }
+        ResponseHelper.sendResponse(
+            context, HttpResponseStatus.OK, mapOf(
+                "code" to 0,
+                "data" to workspaceWithUser(wk)
+            )
+        )
     }
 
     @WebEndPoint(
