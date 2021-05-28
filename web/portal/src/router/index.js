@@ -12,6 +12,7 @@ import TaskFileUpload from '@/components/task/TaskFileUpload'
 import TaskExecution from '@/components/execution/TaskExecution'
 import Register from '@/components/Register.vue'
 import ActivateRegistration from '@/components/ActivateRegistration.vue'
+import ValidationRule from '@/components/rules/ValidationRule.vue'
 import User from '@/apis/user.js'
 
 Vue.use(Vuex)
@@ -97,6 +98,12 @@ const route = new Router({
       name: 'ActivateRegistration',
       component: ActivateRegistration,
       props: false
+    },
+    {
+      path: '/validation/:wkid/:ruleid',
+      name: 'ValidationRule',
+      component: ValidationRule,
+      props: true
     }
   ],
   linkActiveClass: 'nav-link',
