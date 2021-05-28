@@ -135,3 +135,17 @@ create table if not exists connection (
     primary key(id),
     unique(wkid, name)
 );
+
+create table if not exists rules (
+    id serial,
+    name text not null,
+    description text not null,
+    ruleconfig json not null,
+    wkid int not null references workspace(id),
+    addby bigint not null,
+    addtime timestamp WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    modifyby bigint null,
+    modifytime TIMESTAMP WITH TIME ZONE null,
+    primary key(id),
+    unique (wkid, name)
+);
