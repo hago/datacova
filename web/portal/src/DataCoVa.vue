@@ -53,7 +53,6 @@ export default {
   data () {
     return {
       loginStatus: {},
-      currentpath: this.$route.path,
       useravatar: '@/assets/avatar.png'
     }
   },
@@ -85,7 +84,7 @@ export default {
       ws.open()
     },
     gotoLoginRegister: function () {
-      router.push({name: 'Login', params: {return: this.currentpath}}).catch(err => console.log(`redirect err: ${err}`))
+      router.push({name: 'Login', params: {return: this.$route}}).catch(err => console.log(`redirect err: ${err}`))
     },
     onNeedLogin: function (callback) {
       (new User()).checkLogin(false, user => {
