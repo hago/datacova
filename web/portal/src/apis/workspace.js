@@ -185,6 +185,14 @@ class WorkspaceApiHelper {
     })
     return rsp
   }
+
+  async getRules (workspaceId, start = 0, size = 20) {
+    let rsp = await axios({
+      method: 'GET',
+      url: `${this.urlprefix}/api/workspace/${workspaceId}/rules/${start}/${size}`
+    })
+    return rsp
+  }
 }
 
 export default WorkspaceApiHelper

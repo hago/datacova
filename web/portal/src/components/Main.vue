@@ -61,7 +61,9 @@
             ></ConnectionList>
         </b-tab>
         <b-tab title="Verification Rules">
-          Rules here
+          <RuleList v-if="(workspaceIndex >= 0) || (myRoles.filter(it => it !== 'Loader').length > 0)"
+            v-bind:workspace="workspaces[workspaceIndex]"
+            ></RuleList>
         </b-tab>
       </b-tabs>
     </div>
@@ -84,6 +86,7 @@ import ConnectionList from './main/ConnectionList.vue'
 import MemberList from './main/MemberList.vue'
 import TaskList from './main/TaskList.vue'
 import TaskExecutionList from '@/components/execution/TaskExecutionList.vue'
+import RuleList from '@/components/rules/RuleList.vue'
 
 export default {
   name: 'Main',
@@ -94,7 +97,8 @@ export default {
     ConnectionList,
     MemberList,
     TaskList,
-    TaskExecutionList
+    TaskExecutionList,
+    RuleList
   },
   data () {
     return {
