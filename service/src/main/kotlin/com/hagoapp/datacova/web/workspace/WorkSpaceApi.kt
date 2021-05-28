@@ -4,10 +4,12 @@ import com.google.gson.GsonBuilder
 import com.hagoapp.datacova.data.execution.TaskExecutionCache
 import com.hagoapp.datacova.data.execution.TaskExecutionCache.Companion.TASK_EXECUTION_DEFAULT_PAGE_SIZE
 import com.hagoapp.datacova.data.execution.TaskExecutionData
+import com.hagoapp.datacova.data.rules.ValidationRuleCache
 import com.hagoapp.datacova.data.user.UserCache
 import com.hagoapp.datacova.data.workspace.WorkspaceCache
 import com.hagoapp.datacova.data.workspace.WorkSpaceData
 import com.hagoapp.datacova.entity.workspace.WorkSpace
+import com.hagoapp.datacova.entity.workspace.WorkSpaceUserRole
 import com.hagoapp.datacova.util.WorkspaceUserRoleUtil
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.annotation.WebEndPoint
@@ -15,6 +17,7 @@ import com.hagoapp.datacova.web.authentication.AuthType
 import com.hagoapp.datacova.web.authentication.Authenticator
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.core.http.HttpMethod
+import io.vertx.ext.auth.User
 import io.vertx.ext.web.RoutingContext
 
 class WorkSpaceApi {
@@ -183,5 +186,29 @@ class WorkSpaceApi {
                 )
             )
         }
+    }
+
+    @WebEndPoint(
+        path = "/api/workspace/:wkid/rules/:start/:size",
+        methods = [HttpMethod.GET],
+        authTypes = [AuthType.UserToken]
+    )
+    fun getRules(context: RoutingContext) {
+        val workspaceId = context.pathParam("wkid").toInt()
+        val start = context.pathParam("start").toInt()
+        val size = context.pathParam("size").toInt()
+        val user = Authenticator.getUser(context)
+        val workspace = WorkspaceCache.getWorkspace(workspaceId)
+        if ((workspace == null) || !WorkspaceUserRoleUtil.isUser(user, workspaceId)) {
+            ResponseHelper.respondError(context, HttpResponseStatus.UNAUTHORIZED, "access denied")
+            return
+        }
+        val rules = ValidationRuleCache.getRules(workspaceId, start, size)
+        ResponseHelper.sendResponse(
+            context, HttpResponseStatus.OK, mapOf(
+                "code" to 0,
+                "data" to rules
+            )
+        )
     }
 }
