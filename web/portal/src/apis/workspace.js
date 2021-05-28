@@ -9,7 +9,16 @@ class WorkspaceApiHelper {
   async getMyWorkspaces () {
     let rsp = await axios({
       method: 'GET',
-      url: `${this.urlprefix}/api/workspace/mine`,
+      url: `${this.urlprefix}/api/workspaces/mine`,
+      withCredentials: true
+    })
+    return rsp
+  }
+
+  async getWorkspace (id) {
+    let rsp = await axios({
+      method: 'GET',
+      url: `${this.urlprefix}/api/workspace/${id}`,
       withCredentials: true
     })
     return rsp
