@@ -91,4 +91,8 @@ public class Rule implements JsonStringify {
     public void setModifyTime(long modifyTime) {
         this.modifyTime = modifyTime;
     }
+
+    public static Rule fromJson(String json) {
+        return null;
+    }
 }
