@@ -17,6 +17,7 @@ class ValidationRuleCache {
     companion object {
 
         private const val VALIDATION_RULE_LIST = "VALIDATION_RULE_LIST"
+        private const val VALIDATION_RULE = "VALIDATION_RULE"
 
         fun getRules(workspaceId: Int, start: Int, size: Int): List<Rule> {
             val token = object : TypeToken<List<Rule>>() {}
@@ -45,6 +46,23 @@ class ValidationRuleCache {
                     }
                 }
             }
+        }
+
+        fun getRule(id: Long): Rule? {
+            return RedisCacheReader.readCachedData(
+                VALIDATION_RULE,
+                86400,
+                object : RedisCacheReader.GenericLoader<Rule?> {
+                    override fun perform(vararg params: Any?): Rule? {
+                        return ValidationRuleData().getRule(params[0] as Long)
+                    }
+                },
+                Rule::class.java, id
+            )
+        }
+
+        fun clearRule(id: Long) {
+           RedisCacheReader.clearData(VALIDATION_RULE, id)
         }
     }
 }
