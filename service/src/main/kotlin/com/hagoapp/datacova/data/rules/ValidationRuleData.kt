@@ -13,6 +13,7 @@ import com.hagoapp.datacova.config.DatabaseConfig
 import com.hagoapp.datacova.data.CoVaDatabase
 import com.hagoapp.datacova.entity.action.verification.ConfigurationFactory
 import com.hagoapp.datacova.entity.action.verification.Rule
+import com.hagoapp.datacova.util.data.DatabaseFunctions
 import java.sql.ResultSet
 
 class ValidationRuleData(config: DatabaseConfig) : CoVaDatabase(config) {
@@ -50,5 +51,51 @@ class ValidationRuleData(config: DatabaseConfig) : CoVaDatabase(config) {
             ruleConfig = ConfigurationFactory.createConfiguration(map, json)
         }
         return rule
+    }
+
+    fun getRule(id: Long): Rule? {
+        val sql = "select * from rules where id = ?"
+        connection.prepareStatement(sql).use { stmt ->
+            stmt.setLong(1, id)
+            stmt.executeQuery().use { rs ->
+                if (rs.next()) {
+                    return row2Rule(rs)
+                }
+            }
+        }
+        return null
+    }
+
+    fun newRule(rule: Rule): Rule? {
+        val sql = """insert into rules(name, description, ruleconfig, wkid, addby, modifyby, modifytime)
+            values (?, ?, ?, ?, ?, ?, now()) returning id"""
+        connection.prepareStatement(sql).use { stmt ->
+            stmt.setString(1, rule.name)
+            stmt.setString(2, rule.description)
+            stmt.setObject(3, DatabaseFunctions.createPgObject("json", rule.ruleConfig))
+            stmt.setLong(4, rule.addBy)
+            stmt.setLong(5, rule.modifyTime)
+            stmt.executeQuery().use { rs ->
+                return if (rs.next()) {
+                    getRule(rs.getLong("id"))
+                } else {
+                    null
+                }
+            }
+        }
+    }
+
+    fun updateRule(rule: Rule): Rule? {
+        val sql = """update rules set name = ?, description = ?, ruleconfig = ?, modifyby = ?, modifytime = now()
+            where id = ?"""
+        connection.prepareStatement(sql).use { stmt ->
+            stmt.setString(1, rule.name)
+            stmt.setString(2, rule.description)
+            stmt.setObject(3, DatabaseFunctions.createPgObject("json", rule.ruleConfig))
+            stmt.setLong(4, rule.modifyBy)
+            stmt.setLong(5, rule.id)
+            stmt.execute()
+        }
+        return getRule(rule.id)
     }
 }
