@@ -4,10 +4,13 @@ import com.google.gson.GsonBuilder
 import com.hagoapp.datacova.data.execution.TaskExecutionCache
 import com.hagoapp.datacova.data.execution.TaskExecutionCache.Companion.TASK_EXECUTION_DEFAULT_PAGE_SIZE
 import com.hagoapp.datacova.data.rules.ValidationRuleCache
+import com.hagoapp.datacova.data.rules.ValidationRuleData
 import com.hagoapp.datacova.data.user.UserCache
 import com.hagoapp.datacova.data.workspace.WorkspaceCache
 import com.hagoapp.datacova.data.workspace.WorkSpaceData
+import com.hagoapp.datacova.entity.action.verification.Rule
 import com.hagoapp.datacova.entity.workspace.WorkSpace
+import com.hagoapp.datacova.entity.workspace.WorkSpaceUserRole
 import com.hagoapp.datacova.util.WorkspaceUserRoleUtil
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.annotation.WebEndPoint
@@ -228,6 +231,47 @@ class WorkSpaceApi {
             context, HttpResponseStatus.OK, mapOf(
                 "code" to 0,
                 "data" to rules
+            )
+        )
+    }
+
+    @WebEndPoint(
+        path = "/api/workspace/:wkid/rule",
+        methods = [HttpMethod.POST],
+        authTypes = [AuthType.UserToken]
+    )
+    fun saveRule(context: RoutingContext) {
+        val json = context.bodyAsString
+        val rule = Rule.fromJson(json)
+        val user = Authenticator.getUser(context)
+        val workspace = WorkspaceCache.getWorkspace(rule.workspaceId)
+        if ((workspace == null) || !WorkspaceUserRoleUtil.isAnyRolesOf(
+                user,
+                workspace,
+                setOf(WorkSpaceUserRole.Admin, WorkSpaceUserRole.Maintainer)
+            )
+        ) {
+            ResponseHelper.respondError(context, HttpResponseStatus.UNAUTHORIZED, "access denied")
+            return
+        }
+        rule.modifyBy = user.id
+        val rule1: Rule?
+        if (rule.id <= 0) {
+            rule.addBy = user.id
+            rule1 = ValidationRuleData().newRule(rule)
+        } else {
+            val rule0 = ValidationRuleCache.getRule(rule.id)
+            if (rule.id != rule0?.id) {
+                ResponseHelper.respondError(context, HttpResponseStatus.UNAUTHORIZED, "illegal update!")
+                return
+            }
+            rule1 = ValidationRuleData().updateRule(rule)
+            ValidationRuleCache.clearRule(rule.id)
+        }
+        ResponseHelper.sendResponse(
+            context, HttpResponseStatus.OK, mapOf(
+                "code" to 0,
+                "data" to rule1
             )
         )
     }
