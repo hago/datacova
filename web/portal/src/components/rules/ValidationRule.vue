@@ -85,6 +85,7 @@ export default {
   data: function () {
     return {
       rule: {
+        id: -1,
         name: '',
         description: '',
         ruleconfig: {}
