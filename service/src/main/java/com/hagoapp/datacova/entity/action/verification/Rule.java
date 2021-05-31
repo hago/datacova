@@ -7,7 +7,13 @@
 
 package com.hagoapp.datacova.entity.action.verification;
 
+import com.google.gson.Gson;
 import com.hagoapp.datacova.JsonStringify;
+import com.hagoapp.datacova.MapSerializer;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
+import java.util.Map;
 
 public class Rule implements JsonStringify {
     private long id;
@@ -92,7 +98,11 @@ public class Rule implements JsonStringify {
         this.modifyTime = modifyTime;
     }
 
-    public static Rule fromJson(String json) {
-        return null;
+    @NotNull
+    public static Rule fromJson(@NotNull String json) throws IOException {
+        Map<String, Object> map = MapSerializer.deserializeMap(json);
+        Rule rule = new Gson().fromJson(json, Rule.class);
+        rule.ruleConfig = ConfigurationFactory.createConfiguration(map, json);
+        return rule;
     }
 }
