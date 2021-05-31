@@ -100,7 +100,7 @@ const route = new Router({
       props: false
     },
     {
-      path: '/validation/:wkid/:ruleid',
+      path: '/workspace/:wkid/validation/:ruleid',
       name: 'ValidationRule',
       component: ValidationRule,
       props: true
