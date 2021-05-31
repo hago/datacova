@@ -9,7 +9,7 @@ class ValidationTemplateApi {
   async saveRuleTemplate (workspaceid, template) {
     let rsp = await axios({
       method: 'POST',
-      url: `${this.urlprefix}/api/workspaces/${workspaceid}/rules`,
+      url: `${this.urlprefix}/api/workspaces/${workspaceid}/rule`,
       data: template,
       withCredentials: true
     })
