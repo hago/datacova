@@ -98,11 +98,13 @@ public class Rule implements JsonStringify {
         this.modifyTime = modifyTime;
     }
 
+    @SuppressWarnings("unchecked")
     @NotNull
     public static Rule fromJson(@NotNull String json) throws IOException {
         Map<String, Object> map = MapSerializer.deserializeMap(json);
+        Map<String, Object> configMap = (Map<String, Object>)map.get("ruleConfig");
         Rule rule = new Gson().fromJson(json, Rule.class);
-        rule.ruleConfig = ConfigurationFactory.createConfiguration(map, json);
+        rule.ruleConfig = ConfigurationFactory.createConfiguration(configMap);
         return rule;
     }
 }
