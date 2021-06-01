@@ -73,8 +73,9 @@ class ValidationRuleData(config: DatabaseConfig) : CoVaDatabase(config) {
             stmt.setString(1, rule.name)
             stmt.setString(2, rule.description)
             stmt.setObject(3, DatabaseFunctions.createPgObject("json", rule.ruleConfig))
-            stmt.setLong(4, rule.addBy)
-            stmt.setLong(5, rule.modifyTime)
+            stmt.setInt(4, rule.workspaceId)
+            stmt.setLong(5, rule.addBy)
+            stmt.setLong(6, rule.modifyTime)
             stmt.executeQuery().use { rs ->
                 return if (rs.next()) {
                     getRule(rs.getLong("id"))
