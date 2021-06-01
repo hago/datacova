@@ -243,6 +243,7 @@ class WorkSpaceApi {
     fun saveRule(context: RoutingContext) {
         val json = context.bodyAsString
         val rule = Rule.fromJson(json)
+        println(rule)
         val user = Authenticator.getUser(context)
         val workspace = WorkspaceCache.getWorkspace(rule.workspaceId)
         if ((workspace == null) || !WorkspaceUserRoleUtil.isAnyRolesOf(
@@ -252,6 +253,10 @@ class WorkSpaceApi {
             )
         ) {
             ResponseHelper.respondError(context, HttpResponseStatus.UNAUTHORIZED, "access denied")
+            return
+        }
+        if (rule.name == null) {
+            ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "invalid data")
             return
         }
         rule.modifyBy = user.id
