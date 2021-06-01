@@ -11,7 +11,7 @@
         <li class="list-group-item bg-dark" v-for="rule in rules" v-bind:key="rule.id">
           <span v-on:click="editRule(rule.id)" class="clickable">{{ rule.name }}</span>
           <span v-on:click="deleteRule(rule.id)" style="float: right" class="clickable"
-            v-if="rules.canDelete.indexOf(rule.id) >= 0">-</span>
+            v-if="workspace.owner.id === loginStatus.user.id">-</span>
         </li>
       </ul>
     </div>
@@ -25,7 +25,8 @@ import router from '../../router'
 export default {
   name: 'RuleList',
   props: {
-    workspace: Object
+    workspace: Object,
+    loginStatus: Object
   },
   data: function () {
     return {
