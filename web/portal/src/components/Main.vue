@@ -63,6 +63,7 @@
         <b-tab title="Verification Rules">
           <RuleList v-if="(workspaceIndex >= 0) || (myRoles.filter(it => it !== 'Loader').length > 0)"
             v-bind:workspace="workspaces[workspaceIndex]"
+            v-bind:loginStatus="loginStatus"
             ></RuleList>
         </b-tab>
       </b-tabs>
