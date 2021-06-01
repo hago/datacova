@@ -243,7 +243,6 @@ class WorkSpaceApi {
     fun saveRule(context: RoutingContext) {
         val json = context.bodyAsString
         val rule = Rule.fromJson(json)
-        println(rule)
         val user = Authenticator.getUser(context)
         val workspace = WorkspaceCache.getWorkspace(rule.workspaceId)
         if ((workspace == null) || !WorkspaceUserRoleUtil.isAnyRolesOf(
