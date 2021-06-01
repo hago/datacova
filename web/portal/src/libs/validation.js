@@ -6,10 +6,10 @@ class ValidationTemplateApi {
     this.urlprefix = host === undefined ? getUrlPrefix() : host
   }
 
-  async saveRuleTemplate (workspaceid, template) {
+  async saveRuleTemplate (template) {
     let rsp = await axios({
       method: 'POST',
-      url: `${this.urlprefix}/api/workspaces/${workspaceid}/rule`,
+      url: `${this.urlprefix}/api/workspace/${template.workspaceId}/rule`,
       data: template,
       withCredentials: true
     })

@@ -15,7 +15,7 @@
     <div class="row">
       <div class="form-group col-5">
         <label for="typeSelect">Type</label>
-        <select class="form-control" id="typeSelect" v-model="rule.ruleconfig.type" v-on:change="changetype()">
+        <select class="form-control" id="typeSelect" v-model="rule.ruleConfig.type" v-on:change="changetype()">
           <option v-for="(value, name) in configs" v-bind:key="value" v-bind:value="value">{{ name }}</option>
           <option disabled value=undefined>Choose Type</option>
         </select>
@@ -23,28 +23,28 @@
     </div>
     <div class="row">
       <div class="col-11">
-        <NumberRangeVerifier v-if="rule.ruleconfig.type == 2"
-          v-bind:config="rule.ruleconfig"
+        <NumberRangeVerifier v-if="rule.ruleConfig.type == 2"
+          v-bind:config="rule.ruleConfig"
           v-bind:index="0"
           ></NumberRangeVerifier>
-        <TimeRangeVerifier v-if="rule.ruleconfig.type == 4"
-          v-bind:config="rule.ruleconfig"
+        <TimeRangeVerifier v-if="rule.ruleConfig.type == 4"
+          v-bind:config="rule.ruleConfig"
           v-bind:index="0"
           ></TimeRangeVerifier>
-        <RelativeTimeRangeVerifier v-if="rule.ruleconfig.type == 6"
-          v-bind:config="rule.ruleconfig"
+        <RelativeTimeRangeVerifier v-if="rule.ruleConfig.type == 6"
+          v-bind:config="rule.ruleConfig"
           v-bind:index="0"
           ></RelativeTimeRangeVerifier>
-        <OptionsVerifier v-if="rule.ruleconfig.type == 3"
-          v-bind:config="rule.ruleconfig"
+        <OptionsVerifier v-if="rule.ruleConfig.type == 3"
+          v-bind:config="rule.ruleConfig"
           v-bind:index="0"
           ></OptionsVerifier>
-        <LuaScriptVerifier v-if="rule.ruleconfig.type == 5"
-          v-bind:config="rule.ruleconfig"
+        <LuaScriptVerifier v-if="rule.ruleConfig.type == 5"
+          v-bind:config="rule.ruleConfig"
           v-bind:index="0"
           ></LuaScriptVerifier>
-        <RegexVerifier v-if="rule.ruleconfig.type == 1"
-          v-bind:config="rule.ruleconfig"
+        <RegexVerifier v-if="rule.ruleConfig.type == 1"
+          v-bind:config="rule.ruleConfig"
           v-bind:index="0"
           ></RegexVerifier>
       </div>
@@ -71,7 +71,7 @@ export default {
   name: 'ValidationRule',
   props: {
     workspace: Object,
-    wkid: String,
+    workspaceid: String,
     ruleid: String
   },
   components: {
@@ -88,7 +88,8 @@ export default {
         id: -1,
         name: '',
         description: '',
-        ruleconfig: {}
+        ruleConfig: {},
+        workspaceId: parseInt(this.workspaceid)
       },
       wk: this.workspace,
       configs: {
@@ -103,13 +104,13 @@ export default {
   },
   created: function () {
     if (this.wk === undefined) {
-      (new WorkspaceApiHelper().getWorkspace(parseInt(this.wkid))).then(rsp => {
+      (new WorkspaceApiHelper().getWorkspace(parseInt(this.rule.wkid))).then(rsp => {
         this.wk = rsp.data.data
       }).catch(err => console.log(err))
     }
     if (!isNaN(parseInt(this.ruleid))) {
       if (this.rule === undefined) {
-        (new WorkspaceApiHelper().getWorkspace(this.wkid)).then(rsp => {
+        (new WorkspaceApiHelper().getWorkspace(this.rule.wkid)).then(rsp => {
           this.rule = rsp.data.data
         }).catch(err => console.log(err))
       }
@@ -117,8 +118,8 @@ export default {
   },
   methods: {
     changetype: function () {
-      let x = defaultValidatorConfig(this.rule.ruleconfig.type)
-      Vue.set(this.rule, 'ruleconfig', Object.assign({type: this.rule.ruleconfig.type}, x))
+      let x = defaultValidatorConfig(this.rule.ruleConfig.type)
+      Vue.set(this.rule, 'ruleConfig', Object.assign({type: this.rule.ruleConfig.type}, x))
     },
     cancel: function () {
       if (confirm('Discard all changes')) {
@@ -126,6 +127,10 @@ export default {
       }
     },
     save: function () {
+      if (this.rule.name.trim() === '') {
+        alert('empty name')
+        return
+      }
       (new ValidationTemplateApi()).saveRuleTemplate(this.rule).then(rsp => {
         //
       }).catch(err => console.log(err))

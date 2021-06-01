@@ -43,7 +43,7 @@ export default {
         name: 'ValidationRule',
         params: {
           workspace: this.workspace,
-          wkid: this.workspace.workspace.id,
+          workspaceid: String(this.workspace.workspace.id),
           ruleid: 'new'
         }
       })
@@ -53,7 +53,7 @@ export default {
         name: 'ValidationRule',
         params: {
           workspace: this.workspace,
-          wkid: this.workspace.workspace.id,
+          workspaceid: String(this.workspace.workspace.id),
           ruleid: id
         }
       })
