@@ -7,6 +7,7 @@
 
 package com.hagoapp.datacova.dispatcher
 
+import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.ExecutorManager
 import com.hagoapp.datacova.data.execution.TaskExecutionData
@@ -36,7 +37,12 @@ class Dispatcher {
                     Thread.sleep(10000)
                 } else {
                     val te = queue.poll()
-                    TODO("send task execution to executor")
+                    try {
+                        ExecutionDispatch(x).dispatch(te)
+                    } catch (e: CoVaException) {
+                        logger.error(e.message)
+                        queue.put(te)
+                    }
                 }
             }
         }
