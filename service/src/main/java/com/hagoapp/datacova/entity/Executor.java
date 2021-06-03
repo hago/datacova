@@ -7,10 +7,14 @@
 
 package com.hagoapp.datacova.entity;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import com.hagoapp.datacova.JsonStringify;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class Executor {
+public class Executor implements JsonStringify {
     private String name;
     private String ipAddress;
     private String heartBeatPort;
@@ -51,5 +55,13 @@ public class Executor {
                 ", iPAddress='" + ipAddress + '\'' +
                 ", heartBeatPort='" + heartBeatPort + '\'' +
                 '}';
+    }
+
+    public static Executor fromJson(String json) {
+        try {
+            return new Gson().fromJson(json, Executor.class);
+        } catch (JsonSyntaxException ignored) {
+            return null;
+        }
     }
 }
