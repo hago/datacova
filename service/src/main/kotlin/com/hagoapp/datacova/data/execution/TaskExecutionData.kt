@@ -99,4 +99,18 @@ class TaskExecutionData(config: DatabaseConfig) : CoVaDatabase(config) {
             stmt.execute()
         }
     }
+
+    fun loadQueueingTaskExecution(): List<TaskExecution> {
+        val sql = "select * from taskexecution where xstatus = ?"
+        connection.prepareStatement(sql).use { stmt ->
+            stmt.setInt(1, ExecutionStatus.added.value)
+            val ret = mutableListOf<TaskExecution>()
+            stmt.executeQuery().use { rs ->
+                while (rs.next()) {
+                    ret.add(row2TaskExecution(rs))
+                }
+            }
+            return ret
+        }
+    }
 }
