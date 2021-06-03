@@ -30,4 +30,19 @@ class Dispatcher {
         ExecutorManager.getManager().registerExecutor(exe);
         ResponseHelper.sendResponse(context, HttpResponseStatus.OK, mapOf("code" to 0))
     }
+
+    @WebEndPoint(
+        path = "/executor/heartbeat",
+        methods = [HttpMethod.POST]
+    )
+    fun heartbeat(context: RoutingContext) {
+        val json = context.bodyAsString
+        val exe = Executor.fromJson(json)
+        if (exe == null) {
+            ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "invalid body");
+            return
+        }
+        ExecutorManager.getManager().keepAlive(exe);
+        ResponseHelper.sendResponse(context, HttpResponseStatus.OK, mapOf("code" to 0))
+    }
 }
