@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
@@ -61,6 +62,14 @@ public class ExecutorManager {
                 return new ExecutorInfo(executor);
             }
         });
+    }
+
+    public Executor findLessLoadedExecutor() {
+        if (executorMap.isEmpty()) {
+            return null;
+        }
+        return executorMap.values().stream()
+                .min(Comparator.comparingInt(o -> o.executor.getExecutionsRunning().size())).get().getExecutor();
     }
 
     public static class ExecutorInfo {
