@@ -7,5 +7,23 @@
 
 package com.hagoapp.datacova.config;
 
-public class ExecutorConfig extends WebConfig {
+public class ExecutorConfig extends BaseWebConfig {
+    private String dispatcherUrl;
+    private String publicKeyFile;
+
+    public String getDispatcherUrl() {
+        return dispatcherUrl;
+    }
+
+    public void setDispatcherUrl(String dispatcherUrl) {
+        this.dispatcherUrl = dispatcherUrl;
+    }
+
+    public String getPublicKeyFile() {
+        return publicKeyFile;
+    }
+
+    public void setPublicKeyFile(String publicKeyFile) {
+        this.publicKeyFile = publicKeyFile;
+    }
 }
