@@ -25,12 +25,17 @@ public class Start extends CommandWithConfig {
     public Integer call() throws CoVaException {
         CoVaConfig.loadConfig(configFile);
         Logger logger = CoVaLogger.getLogger();
-        WebManager.getManager().createWebServer(CoVaConfig.getConfig().getWeb(), List.of(
-                "com.hagoapp.datacova.web"
-        ));
-        logger.info("web server created");
-        Service.Companion.getExecutor().startExecutionService();
-        logger.info("builtin execution service created");
+        var config = CoVaConfig.getConfig();
+        if (config.getWeb() != null) {
+            WebManager.getManager().createWebServer(config.getWeb(), List.of(
+                    "com.hagoapp.datacova.web"
+            ));
+            logger.info("web server created");
+        }
+        if (config.getExecutor() != null) {
+            Service.Companion.getExecutor().startExecutionService();
+            logger.info("builtin execution service created");
+        }
         return super.call();
     }
 }

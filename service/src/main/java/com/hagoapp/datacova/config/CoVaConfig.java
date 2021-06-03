@@ -62,9 +62,14 @@ public class CoVaConfig implements JsonStringify {
     private MailConfig mail;
     private TemplateConfig template;
     private FileStorageConfig fileStorage;
+    private ExecutorConfig executor;
 
-    public static void setConfig(CoVaConfig config) {
-        CoVaConfig.config = config;
+    public ExecutorConfig getExecutor() {
+        return executor;
+    }
+
+    public void setExecutor(ExecutorConfig executor) {
+        this.executor = executor;
     }
 
     public FileStorageConfig getFileStorage() {
