@@ -1,5 +1,6 @@
 {
   "web": {
+    "__comments": "When this section exists, the application will launch web API and dispatcher service",
     "bindIp": "0.0.0.0",
     "port": 6786,
     "allowCrossOriginResourceSharing": true,
@@ -64,5 +65,25 @@
     "uploadDirectory": "",
     "thumbnailDirectory": "",
     "tempDirectory": null
+  },
+  "executor": {
+    "__comments": "When this section exists, the application will launch execution service",
+    "bindIp": "0.0.0.0",
+    "port": 6786,
+    "allowCrossOriginResourceSharing": true,
+    "crossOriginSources": [
+      "127.0.0.1",
+      "192.168.0.0/24",
+      "10.*.*.*"
+    ],
+    "privilegedIpAddresses": [
+      "127.0.0.1"
+    ],
+    "tempDirectory": null,
+    "uploadTempDirectory": null,
+    "uploadSizeLimit": -1,
+    "outputStackTrace": true,
+    "baseUrl": null,
+    "dispatcherUrl": "http://127.0.0.1/8080"
   }
 }
