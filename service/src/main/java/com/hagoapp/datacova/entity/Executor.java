@@ -16,7 +16,7 @@ import java.util.List;
 
 public class Executor implements JsonStringify {
     private String name;
-    private String ipAddress;
+    private String url;
     private String heartBeatPort;
     private final List<Integer> executionsRunning = new ArrayList<>();
 
@@ -28,12 +28,12 @@ public class Executor implements JsonStringify {
         this.name = name;
     }
 
-    public String getIpAddress() {
-        return ipAddress;
+    public String getUrl() {
+        return url;
     }
 
-    public void setIpAddress(String ipAddress) {
-        this.ipAddress = ipAddress;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public String getHeartBeatPort() {
@@ -52,7 +52,7 @@ public class Executor implements JsonStringify {
     public String toString() {
         return "Executor{" +
                 "name='" + name + '\'' +
-                ", iPAddress='" + ipAddress + '\'' +
+                ", iPAddress='" + url + '\'' +
                 ", heartBeatPort='" + heartBeatPort + '\'' +
                 '}';
     }
