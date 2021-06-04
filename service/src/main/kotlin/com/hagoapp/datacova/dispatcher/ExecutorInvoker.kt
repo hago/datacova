@@ -24,11 +24,11 @@ import java.nio.charset.StandardCharsets
  */
 class ExecutorInvoker(val executor: Executor) {
 
-    private val dispatchUrl = "${executor.url}/api/executor/execute"
+    private val executorUrl = "${executor.url}/api/executor/execute"
 
     fun dispatch(te: TaskExecution) {
         val load = te.toJson().toByteArray(StandardCharsets.UTF_8)
-        val req = HttpRequest.newBuilder(URI.create(dispatchUrl))
+        val req = HttpRequest.newBuilder(URI.create(executorUrl))
             .POST(HttpRequest.BodyPublishers.ofByteArray(load))
             .header(HttpHeaders.CONTENT_TYPE.toString(), "application/json")
             .header(HttpHeaders.CONTENT_LENGTH.toString(), load.size.toString())
