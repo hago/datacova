@@ -26,19 +26,19 @@ public class Start extends CommandWithConfig {
         CoVaConfig.loadConfig(configFile);
         Logger logger = CoVaLogger.getLogger();
         var config = CoVaConfig.getConfig();
+
         boolean runDispatcher = config.getWeb() != null;
         boolean runExecutor = config.getExecutor() != null;
+        logger.debug("runexecutor {}", runExecutor);
         List<String> packages;
-        if (runDispatcher && runExecutor) {
-            packages = List.of("com.hagoapp.datacova.web", "com.hagoapp.datacova.executor.web");
-        } else if (runDispatcher) {
+        if (runDispatcher) {
             packages = List.of("com.hagoapp.datacova.web");
-        } else if (runExecutor) {
-            packages = List.of("com.hagoapp.datacova.executor.web");
-        } else {
-            return super.call();
+            WebManager.getManager().createWebServer(config.getWeb(), packages);
         }
-        WebManager.getManager().createWebServer(config.getWeb(), packages);
+        if (runExecutor) {
+            packages = List.of("com.hagoapp.datacova.executor.web");
+            WebManager.getManager().createWebServer(config.getExecutor(), packages);
+        }
         logger.info("web server created");
         if (runExecutor) {
             Service.Companion.getExecutor().startExecutionService();
