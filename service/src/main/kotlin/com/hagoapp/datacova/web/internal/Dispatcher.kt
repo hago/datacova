@@ -17,7 +17,7 @@ import io.vertx.ext.web.RoutingContext
 
 class Dispatcher {
     @WebEndPoint(
-        path = "/executor/register",
+        path = "/api/dispatcher/register",
         methods = [HttpMethod.POST]
     )
     fun register(context: RoutingContext) {
@@ -32,7 +32,7 @@ class Dispatcher {
     }
 
     @WebEndPoint(
-        path = "/executor/heartbeat",
+        path = "/api/dispatcher/heartbeat",
         methods = [HttpMethod.POST]
     )
     fun heartbeat(context: RoutingContext) {
