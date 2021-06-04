@@ -19,7 +19,10 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.nio.charset.StandardCharsets
 
-class ExecutionDispatch(val executor: Executor) {
+/**
+ * This class send a task execution to an executor to run.
+ */
+class ExecutorInvoker(val executor: Executor) {
 
     private val dispatchUrl = "${executor.url}/api/executor/execute"
 

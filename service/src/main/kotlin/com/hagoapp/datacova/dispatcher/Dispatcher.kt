@@ -15,6 +15,10 @@ import com.hagoapp.datacova.entity.execution.TaskExecution
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.TimeUnit
 
+/**
+ * This class keeps running to check whether there's execution in queue, then find an executor with least load to run
+ * it.
+ */
 class Dispatcher {
     companion object {
         private val dispatcher = Dispatcher()
@@ -38,7 +42,7 @@ class Dispatcher {
                 } else {
                     val te = queue.poll()
                     try {
-                        ExecutionDispatch(x).dispatch(te)
+                        ExecutorInvoker(x).dispatch(te)
                     } catch (e: CoVaException) {
                         logger.error(e.message)
                         queue.put(te)
