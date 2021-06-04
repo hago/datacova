@@ -7,8 +7,6 @@
 
 package com.hagoapp.datacova.dispatcher
 
-import com.google.gson.Gson
-import com.google.gson.JsonSyntaxException
 import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.JsonStringify
 import com.hagoapp.datacova.config.CoVaConfig
@@ -16,7 +14,6 @@ import com.hagoapp.datacova.config.ExecutorConfig
 import com.hagoapp.datacova.entity.Executor
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.core.http.HttpHeaders
-import java.lang.Exception
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
