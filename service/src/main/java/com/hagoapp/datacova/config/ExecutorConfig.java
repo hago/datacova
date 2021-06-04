@@ -7,7 +7,7 @@
 
 package com.hagoapp.datacova.config;
 
-public class ExecutorConfig extends BaseWebConfig {
+public class ExecutorConfig extends WebConfig {
     private String dispatcherUrl;
     private String name;
     private String executorUrl;
