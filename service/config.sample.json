@@ -69,7 +69,7 @@
   "executor": {
     "__comments": "When this section exists, the application will launch execution service",
     "bindIp": "0.0.0.0",
-    "port": 6786,
+    "port": 6787,
     "allowCrossOriginResourceSharing": true,
     "crossOriginSources": [
       "127.0.0.1",
@@ -84,6 +84,8 @@
     "uploadSizeLimit": -1,
     "outputStackTrace": true,
     "baseUrl": null,
-    "dispatcherUrl": "http://127.0.0.1/8080"
+    "dispatcherUrl": "http://127.0.0.1:6786",
+    "name": "exe1",
+    "executorUrl": "http://127.0.0.1:6787"
   }
 }
