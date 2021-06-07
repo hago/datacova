@@ -62,6 +62,7 @@ class Dispatcher {
         val l = TaskExecutionData().loadQueueingTaskExecution()
         if (l.isNotEmpty()) {
             queue.addAll(l)
+            logger.info("${l.size} executions found and queued.")
         }
         return l.size
     }
