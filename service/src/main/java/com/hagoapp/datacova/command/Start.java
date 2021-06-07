@@ -30,17 +30,17 @@ public class Start extends CommandWithConfig {
 
         boolean runDispatcher = config.getWeb() != null;
         boolean runExecutor = config.getExecutor() != null;
-        logger.debug("runexecutor {}", runExecutor);
-        List<String> packages;
         if (runDispatcher) {
-            packages = List.of("com.hagoapp.datacova.web");
+            logger.info("Starting dispatcher functions");
+            var packages = List.of("com.hagoapp.datacova.web");
             WebManager.getManager().createWebServer(config.getWeb(), packages);
             logger.info("Web server started");
             Dispatcher.Companion.get().startDispatcher();
             logger.info("Dispatcher started");
         }
         if (runExecutor) {
-            packages = List.of("com.hagoapp.datacova.executor.web");
+            logger.info("Starting executor functions");
+            var packages = List.of("com.hagoapp.datacova.executor.web");
             WebManager.getManager().createWebServer(config.getExecutor(), packages);
             logger.info("Executor web API started");
             Service.Companion.getExecutor().startExecutionService();
