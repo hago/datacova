@@ -10,14 +10,12 @@ package com.hagoapp.datacova.dispatcher
 
 import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.entity.Executor
-import com.hagoapp.datacova.entity.execution.TaskExecution
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.core.http.HttpHeaders
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
-import java.nio.charset.StandardCharsets
 
 /**
  * This class send a task execution to an executor to run.
@@ -26,12 +24,11 @@ class ExecutorInvoker(val executor: Executor) {
 
     private val executorUrl = "${executor.url}/api/executor/execute"
 
-    fun dispatch(te: TaskExecution) {
-        val load = te.toJson().toByteArray(StandardCharsets.UTF_8)
-        val req = HttpRequest.newBuilder(URI.create(executorUrl))
-            .POST(HttpRequest.BodyPublishers.ofByteArray(load))
+    fun dispatch(executionId: Int) {
+        val req = HttpRequest.newBuilder(URI.create("$executorUrl/$executionId"))
+            .POST(HttpRequest.BodyPublishers.ofByteArray(ByteArray(0)))
             .header(HttpHeaders.CONTENT_TYPE.toString(), "application/json")
-            .header(HttpHeaders.CONTENT_LENGTH.toString(), load.size.toString())
+            .header(HttpHeaders.CONTENT_LENGTH.toString(), "0")
             .build()
         val client = HttpClient.newHttpClient()
         val rsp = client.send(req, HttpResponse.BodyHandlers.ofString())
