@@ -11,6 +11,7 @@ package com.hagoapp.datacova.command;
 import com.hagoapp.datacova.CoVaException;
 import com.hagoapp.datacova.CoVaLogger;
 import com.hagoapp.datacova.config.CoVaConfig;
+import com.hagoapp.datacova.dispatcher.Dispatcher;
 import com.hagoapp.datacova.execution.Service;
 import com.hagoapp.datacova.web.WebManager;
 import org.slf4j.Logger;
@@ -34,15 +35,16 @@ public class Start extends CommandWithConfig {
         if (runDispatcher) {
             packages = List.of("com.hagoapp.datacova.web");
             WebManager.getManager().createWebServer(config.getWeb(), packages);
+            logger.info("Web server started");
+            Dispatcher.Companion.get().startDispatcher();
+            logger.info("Dispatcher started");
         }
         if (runExecutor) {
             packages = List.of("com.hagoapp.datacova.executor.web");
             WebManager.getManager().createWebServer(config.getExecutor(), packages);
-        }
-        logger.info("web server created");
-        if (runExecutor) {
+            logger.info("Executor web API started");
             Service.Companion.getExecutor().startExecutionService();
-            logger.info("builtin execution service created");
+            logger.info("Execution service created");
         }
         return super.call();
     }
