@@ -10,6 +10,7 @@ package com.hagoapp.datacova.executor
 import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.dispatcher.DispatcherInvoker
+import java.util.*
 
 class Executor private constructor() {
     companion object {
@@ -25,15 +26,32 @@ class Executor private constructor() {
     private val logger = CoVaLogger.getLogger()
     private var exitFlag = false
     private var serviceStopped = true
+    private val dispatcher = DispatcherInvoker(config)
+    private var heartbeatFailCount = 0
+    private lateinit var timer: Timer
+    private val task = object : TimerTask() {
+        override fun run() {
+            if (dispatcher.heartbeat()) {
+                heartbeatFailCount = 0
+            } else {
+                heartbeatFailCount++
+                logger.error("heartbeat failed $heartbeatFailCount time${if (heartbeatFailCount > 1) "s" else ""}")
+            }
+        }
+
+    }
 
     fun start() {
-        if (!DispatcherInvoker(config).register()) {
+        if (!dispatcher.register()) {
             return
         }
+        timer = Timer("heartbeat", true)
+        timer.schedule(task, 60L, 60L)
     }
 
     fun stop() {
         logger.info("Stop Execution Service")
+        timer.cancel()
         exitFlag = true
         for (i in 0 until SERVICE_STOP_MAX_ATTEMPT) {
             if (serviceStopped) {
