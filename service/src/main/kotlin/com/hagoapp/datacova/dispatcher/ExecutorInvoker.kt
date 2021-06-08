@@ -28,7 +28,6 @@ class ExecutorInvoker(val executor: Executor) {
         val req = HttpRequest.newBuilder(URI.create("$executorUrl/$executionId"))
             .POST(HttpRequest.BodyPublishers.ofByteArray(ByteArray(0)))
             .header(HttpHeaders.CONTENT_TYPE.toString(), "application/json")
-            .header(HttpHeaders.CONTENT_LENGTH.toString(), "0")
             .build()
         val client = HttpClient.newHttpClient()
         val rsp = client.send(req, HttpResponse.BodyHandlers.ofString())
