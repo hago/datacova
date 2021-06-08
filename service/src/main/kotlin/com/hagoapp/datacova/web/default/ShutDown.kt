@@ -8,7 +8,7 @@
 package com.hagoapp.datacova.web.default
 
 import com.hagoapp.datacova.config.CoVaConfig
-import com.hagoapp.datacova.execution.Service
+import com.hagoapp.datacova.executor.Executor
 import com.hagoapp.datacova.util.http.RequestHelper
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.WebManager
@@ -44,7 +44,7 @@ class ShutDown {
         }
         isShuttingDown.set(true)
         GlobalScope.launch {
-            Service.getExecutor().stopExecutionService()
+            Executor.getExecutor().stop()
             WebManager.getManager().shutDownWebServer()
         }
         ResponseHelper.sendResponse(context, HttpResponseStatus.OK)
