@@ -53,21 +53,41 @@ public class WebManager {
 
     private final Logger logger = CoVaLogger.getLogger();
     private WebConfig webConfig;
-    private static final WebManager instance = new WebManager();
+    private static final Map<String, WebManager> instances = new HashMap<>();
     private final Map<String, WebHandler> handlers = new HashMap<>();
     private Vertx vertx;
     private HttpServer webServer;
 
-    public static WebManager getManager() {
-        return instance;
+    public static WebManager getManager(WebConfig config, List<String> packageNames) {
+        String k = createServerKey(config, packageNames);
+        return instances.compute(k, (key, existed) -> {
+            if (existed != null) {
+                return existed;
+            } else {
+                var instance = new WebManager();
+                try {
+                    instance.createWebServer(config, packageNames);
+                    return instance;
+                } catch (CoVaException e) {
+                    return null;
+                }
+            }
+        });
     }
 
-    public void createWebServer(WebConfig config) throws CoVaException {
-        Set<String> packageNames = Arrays.stream(Package.getPackages()).map(Package::getName).collect(Collectors.toSet());
-        createWebServer(config, new ArrayList<>(packageNames));
+    public static void shutdownAllWebServers() {
+        instances.values().forEach(WebManager::shutDownWebServer);
     }
 
-    public void createWebServer(WebConfig config, List<String> packageNames) throws CoVaException {
+    private WebManager() {
+
+    }
+
+    private static String createServerKey(WebConfig config, List<String> packageNames) {
+        return String.format("%s|%s", config.toString(), String.join("-", packageNames));
+    }
+
+    private void createWebServer(WebConfig config, List<String> packageNames) throws CoVaException {
         if (!isWebRunning()) {
             webConfig = config;
             VertxOptions options = new VertxOptions();
@@ -85,17 +105,17 @@ public class WebManager {
     }
 
     public void shutDownWebServer() {
-        logger.info("web server is shutting down");
+        logger.info("web server {} is shutting down", webConfig.getIdentity());
         try {
             webServer.close(handler -> {
                 vertx.close();
                 webServer = null;
                 vertx = null;
                 handlers.clear();
-                logger.info("web server shut down successfully");
+                logger.info("web server {} shut down successfully", webConfig.getIdentity());
             });
         } catch (Throwable e) {
-            logger.error("error in web shutting down: {}", e.getMessage());
+            logger.error("error in web {} shutting down: {}", webConfig.getIdentity(), e.getMessage());
         }
     }
 
@@ -119,8 +139,8 @@ public class WebManager {
             } else {
                 errorMessage = e.getMessage();
             }
-            logger.info("{} {} from {}\t{}", context.request().method().name(), context.request().path(),
-                    context.request().remoteAddress().host(), code);
+            logger.info("{} {} {} from {}\t{}", webConfig.getIdentity(), context.request().method().name(),
+                    context.request().path(), context.request().remoteAddress().host(), code);
             //logger.debug("message {}", errorMessage);
             List<String> stacktrace = new ArrayList<>();
             if (webConfig.isOutputStackTrace() && (e != null)) {
@@ -186,7 +206,7 @@ public class WebManager {
 
     private void createRouteHandlers(Router router, WebHandler handler) {
         Route route = createRoute(router, handler);
-        logger.debug("Create handler for {}", handler.toString());
+        logger.debug("{} Create handler for {}", webConfig.getIdentity(), handler);
         if (handler.isBlocking()) {
             createBlockHandler(handler, route);
         } else {
@@ -295,7 +315,7 @@ public class WebManager {
         Set<HttpMethod> allowedMethods = new HashSet<>();
         allowedMethods.add(HttpMethod.OPTIONS);
         allowedMethods.addAll(methods);
-        logger.info("CORS allow: {} {} {}", allowedMethods, allowHeaders, pattern);
+        logger.info("{} CORS allow: {} {} {}", webConfig.getIdentity(), allowedMethods, allowHeaders, pattern);
         return CorsHandler.create(pattern).allowedMethods(allowedMethods).allowedHeaders(allowHeaders)
                 .allowCredentials(true);
     }
@@ -317,7 +337,7 @@ public class WebManager {
     }
 
     private void loadAnnotatedWebHandlers(String packageName) throws CoVaException {
-        logger.info("searching WebEndPoint annotated methods in {}", packageName);
+        logger.info("{} searching WebEndPoint annotated methods in {}", webConfig.getIdentity(), packageName);
         Reflections reflections = new Reflections(packageName, new MethodAnnotationsScanner());
         Set<Method> methods = reflections.getMethodsAnnotatedWith(WebEndPoint.class);
         for (Method method : methods) {
@@ -326,12 +346,12 @@ public class WebManager {
                 continue;
             }
             if ((method.getModifiers() & Modifier.PUBLIC) == 0) {
-                logger.error("Annotated web handler {}.{} is not public",
+                logger.error("{} Annotated web handler {}.{} is not public", webConfig.getIdentity(),
                         clz.getPackageName(), method.getName());
             }
             Class<?>[] paramTypes = method.getParameterTypes();
             if ((paramTypes.length < 1) || !paramTypes[0].isAssignableFrom(RoutingContext.class)) {
-                logger.error("Annotated web handler {}.{} is not accepting RoutingContext",
+                logger.error("{} Annotated web handler {}.{} is not accepting RoutingContext", webConfig.getIdentity(),
                         clz.getPackageName(), method.getName());
             }
             WebEndPoint endPoint = method.getAnnotation(WebEndPoint.class);
@@ -347,13 +367,14 @@ public class WebManager {
                 handler.setPathAsRegex(endPoint.isPathRegex());
                 checkDuplicateHandler(handler, handlers);
                 handlers.put(handler.getKey(), handler);
-                logger.info("Annotated web handler found for {} {}", httpMethod.name(), endPoint.path());
+                logger.info("{} Annotated web handler found for {} {}", webConfig.getIdentity(),
+                        httpMethod.name(), endPoint.path());
             }
         }
     }
 
     private void loadWebInterfaces(String packageName) throws CoVaException {
-        logger.info("searching WebInterface descendants in {}", packageName);
+        logger.info("{} searching WebInterface descendants in {}", webConfig.getIdentity(), packageName);
         Reflections reflections = new Reflections(packageName, new SubTypesScanner());
         Set<Class<? extends WebInterface>> types = reflections.getSubTypesOf(WebInterface.class);
         for (Class<? extends WebInterface> clz : types) {
@@ -374,13 +395,14 @@ public class WebManager {
                     handler.setPathAsRegex(instance.isPathRegex());
                     checkDuplicateHandler(handler, handlers);
                     handlers.put(handler.getKey(), handler);
-                    logger.info("WebInterface descendant web handler found for {} {}",
+                    logger.info("{} WebInterface descendant web handler found for {} {}", webConfig.getIdentity(),
                             entry.getKey().name(), instance.getPath());
                 }
             } catch (NoSuchMethodException e) {
-                logger.error("WebInterface descendant {} has no default constructor", clz.getCanonicalName());
+                logger.error("{} WebInterface descendant {} has no default constructor", webConfig.getIdentity(),
+                        clz.getCanonicalName());
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-                logger.error("WebInterface descendant {} creation error: {}",
+                logger.error("{} WebInterface descendant {} creation error: {}", webConfig.getIdentity(),
                         clz.getCanonicalName(), e.getMessage());
             }
         }
@@ -413,7 +435,8 @@ public class WebManager {
     }
 
     private void generateDuplicateException(WebHandler handler1, WebHandler handler2) throws CoVaException {
-        String error = String.format("duplicated handler for %s [%s, %s] between %s.%s and %s.%s",
+        String error = String.format("%s duplicated handler for %s [%s, %s] between %s.%s and %s.%s",
+                webConfig.getIdentity(),
                 handler1.getMethod().name(), handler1.getPath(), handler2.getPath(),
                 handler1.getInstanceClass().getCanonicalName(), handler1.getFunction().getName(),
                 handler2.getInstanceClass(), handler2.getFunction().getName());

@@ -45,7 +45,7 @@ class ShutDown {
         isShuttingDown.set(true)
         GlobalScope.launch {
             Executor.getExecutor().stop()
-            WebManager.getManager().shutDownWebServer()
+            WebManager.shutdownAllWebServers()
         }
         ResponseHelper.sendResponse(context, HttpResponseStatus.OK)
     }

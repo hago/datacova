@@ -27,7 +27,7 @@ public class Configure implements Callable<Integer> {
 
     @CommandLine.Option(names = {"--out", "-o"},
             description = "the generated config file name, default to 'config.yyyyMMdd.json'")
-    private String outputFileName = String.format("config.%s.json",
+    private final String outputFileName = String.format("config.%s.json",
             LocalDateTime.now().format(DateTimeFormatter.BASIC_ISO_DATE));
 
     @CommandLine.Option(names = {"--bind", "-b"}, description = "Bind Address", defaultValue = "127.0.0.1")
@@ -43,7 +43,7 @@ public class Configure implements Callable<Integer> {
     public Integer call() throws Exception {
         Application.setData(CONFIG_FILE_TO_WRITE, outputFileName);
         WebConfig config = createConfigureWebConfig();
-        WebManager.getManager().createWebServer(config, List.of(
+        WebManager.getManager(config, List.of(
                 "com.hagoapp.datacova.configure",
                 "com.hagoapp.datacova.web.default"
         ));

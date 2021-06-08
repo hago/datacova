@@ -135,4 +135,8 @@ public class WebConfig {
                 ", webSockets=" + webSockets +
                 '}';
     }
+
+    public String getIdentity() {
+        return String.format("%s:%d", bindIp, port);
+    }
 }
