@@ -77,6 +77,7 @@ public class WebManager {
 
     public static void shutdownAllWebServers() {
         instances.values().forEach(WebManager::shutDownWebServer);
+        instances.clear();
     }
 
     private WebManager() {
