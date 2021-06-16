@@ -31,45 +31,37 @@ import java.util.regex.Pattern;
  */
 public class LdapUtils implements Closeable, ConnectionClosedEventListener {
 
-    public static final String ATTRIBUTE_DISPLAY_NAME = "displayName";
-    public static final String ATTRIBUTE_ITCODE = "cn";
-    public static final String ATTRIBUTE_EMPLOYEE_NUMBER = "employeeNumber";
-    public static final String ATTRIBUTE_EMPLOYEE_TYPE = "employeeType";
-    public static final String ATTRIBUTE_GIVEN_NAME = "givenName";
-    public static final String ATTRIBUTE_MAIL = "mail";
-    public static final String ATTRIBUTE_MANAGER = "manager";
-    public static final String ATTRIBUTE_TELEPHONE_NUMBER = "telephoneNumber";
-    public static final String ATTRIBUTE_SN = "sn";
-    public static final String ATTRIBUTE_PROXY_ADDRESS = "proxyAddresses";
-    public static final String ATTRIBUTE_THUMBNAIL_PHOTO = "thumbnailPhoto";
-    public static final String ATTRIBUTE_MEMBER_OF = "memberOf";
-    public static final String ATTRIBUTE_CHINESE_NAME = "msExchExtensionAttribute16";
-    public static final String ATTRIBUTE_TITLE = "title";
-    public static final String ATTRIBUTE_DISTINGUISHED_NAME = "distinguishedName";
-    public static final String ATTRIBUTE_DN = "dn";
-
     private static final int SEARCH_RETURN_LIMIT = 20;
 
-    public static final List<String> DEFAULT_ATTRIBUTES = List.of(
-            ATTRIBUTE_DISPLAY_NAME,
-            ATTRIBUTE_ITCODE,
-            ATTRIBUTE_EMPLOYEE_NUMBER,
-            ATTRIBUTE_EMPLOYEE_TYPE,
-            ATTRIBUTE_GIVEN_NAME,
-            ATTRIBUTE_MAIL,
-            ATTRIBUTE_MANAGER,
-            ATTRIBUTE_TELEPHONE_NUMBER,
-            ATTRIBUTE_SN,
-            ATTRIBUTE_PROXY_ADDRESS,
-            ATTRIBUTE_THUMBNAIL_PHOTO,
-            ATTRIBUTE_MEMBER_OF,
-            ATTRIBUTE_CHINESE_NAME,
-            ATTRIBUTE_TITLE,
-            ATTRIBUTE_DN,
-            ATTRIBUTE_DISTINGUISHED_NAME
+    public static final List<String> DEFAULT_ATTRIBUTE_IDENTITIES = List.of(
+            Attributes.ATTRIBUTE_DISPLAY_NAME,
+            Attributes.ATTRIBUTE_USERID,
+            Attributes.ATTRIBUTE_EMPLOYEE_NUMBER,
+            Attributes.ATTRIBUTE_EMPLOYEE_TYPE,
+            Attributes.ATTRIBUTE_GIVEN_NAME,
+            Attributes.ATTRIBUTE_MAIL,
+            Attributes.ATTRIBUTE_MANAGER,
+            Attributes.ATTRIBUTE_TELEPHONE_NUMBER,
+            Attributes.ATTRIBUTE_SN,
+            Attributes.ATTRIBUTE_PROXY_ADDRESS,
+            Attributes.ATTRIBUTE_THUMBNAIL_PHOTO,
+            Attributes.ATTRIBUTE_MEMBER_OF,
+            Attributes.ATTRIBUTE_NATIVE_NAME,
+            Attributes.ATTRIBUTE_TITLE,
+            Attributes.ATTRIBUTE_DN,
+            Attributes.ATTRIBUTE_DISTINGUISHED_NAME
     );
 
     private final Logger logger = CoVaLogger.getLogger();
+    private Attributes attributes = Attributes.loadDefault();
+
+    public Attributes getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(Attributes attributes) {
+        this.attributes = attributes;
+    }
 
     /**
      * Constructor using default port(389), default bind dn(null), default bind password(null) and not to use ssl.
@@ -276,11 +268,12 @@ public class LdapUtils implements Closeable, ConnectionClosedEventListener {
         }
         int pos = userId.indexOf("@");
         String itCode = pos > 0 ? userId.substring(0, pos) : userId;
-        Map<String, Object> userMap = getUser(itCode, List.of(ATTRIBUTE_ITCODE, ATTRIBUTE_DISTINGUISHED_NAME));
+        Map<String, Object> userMap = getUser(itCode, List.of(
+                Attributes.ATTRIBUTE_USERID, Attributes.ATTRIBUTE_DISTINGUISHED_NAME));
         if (userMap == null) {
             throw new CoVaException(String.format("user %s not found", userId));
         }
-        return userMap.get(ATTRIBUTE_DISTINGUISHED_NAME).toString();
+        return userMap.get(Attributes.ATTRIBUTE_DISTINGUISHED_NAME).toString();
     }
 
     /**
@@ -291,19 +284,19 @@ public class LdapUtils implements Closeable, ConnectionClosedEventListener {
      * @throws CoVaException if LDAP binding failed or connection corrupted
      */
     public Map<String, Object> getUser(String userName) throws CoVaException {
-        return getUser(userName, DEFAULT_ATTRIBUTES);
+        return getUser(userName, DEFAULT_ATTRIBUTE_IDENTITIES);
     }
 
     /**
      * Get specified user information.
      *
-     * @param userName   user name
-     * @param attributes The attributes need to retrieve
+     * @param userName            user name
+     * @param attributeIdentities The attributes need to retrieve
      * @return A map containing attribute {@literal ->} value pairs on demand, or null if user not existed
      * @throws CoVaException if LDAP binding failed or connection corrupted
      */
-    public Map<String, Object> getUser(String userName, List<String> attributes) throws CoVaException {
-        final List<Map<String, Object>> list = search(String.format("(cn=%s)", userName), attributes, 1);
+    public Map<String, Object> getUser(String userName, List<String> attributeIdentities) throws CoVaException {
+        final List<Map<String, Object>> list = search(String.format("(cn=%s)", userName), attributeIdentities, 1);
 
         if (list.isEmpty()) {
             return null;
@@ -312,10 +305,10 @@ public class LdapUtils implements Closeable, ConnectionClosedEventListener {
         }
     }
 
-    private List<Entry> rawSearch(String filter, List<String> attributes, Dn searchDn, long max)
+    private List<Entry> rawSearch(String filter, List<String> attributeNames, Dn searchDn, long max)
             throws LdapException, IOException {
-        String[] attributeArray = new String[attributes.size()];
-        attributeArray = attributes.toArray(attributeArray);
+        String[] attributeArray = new String[attributeNames.size()];
+        attributeArray = attributeNames.toArray(attributeArray);
         SearchRequest searchReq = new SearchRequestImpl()
                 .setScope(SearchScope.SUBTREE)
                 .setBase(searchDn)
@@ -344,19 +337,19 @@ public class LdapUtils implements Closeable, ConnectionClosedEventListener {
      * @throws CoVaException if LDAP binding failed or connection corrupted
      */
     public List<Map<String, Object>> search(String filter) throws CoVaException {
-        return search(filter, DEFAULT_ATTRIBUTES, baseDn, SEARCH_RETURN_LIMIT);
+        return search(filter, DEFAULT_ATTRIBUTE_IDENTITIES, baseDn, SEARCH_RETURN_LIMIT);
     }
 
     /**
      * Search entity from LDAP server with default base dn and default records amount.
      *
-     * @param filter     filter expression
-     * @param attributes attributes of target entities to retrieve
+     * @param filter              filter expression
+     * @param attributeIdentities attributes of target entities to retrieve
      * @return A List of entities found, each entity is represented as a map with attribute {@literal ->} value
      * @throws CoVaException if LDAP binding failed or connection corrupted
      */
-    public List<Map<String, Object>> search(String filter, List<String> attributes) throws CoVaException {
-        return search(filter, attributes, baseDn, SEARCH_RETURN_LIMIT);
+    public List<Map<String, Object>> search(String filter, List<String> attributeIdentities) throws CoVaException {
+        return search(filter, attributeIdentities, baseDn, SEARCH_RETURN_LIMIT);
     }
 
     /**
@@ -368,47 +361,47 @@ public class LdapUtils implements Closeable, ConnectionClosedEventListener {
      * @throws CoVaException if LDAP binding failed or connection corrupted
      */
     public List<Map<String, Object>> search(String filter, long max) throws CoVaException {
-        return search(filter, DEFAULT_ATTRIBUTES, baseDn, max);
+        return search(filter, DEFAULT_ATTRIBUTE_IDENTITIES, baseDn, max);
     }
 
     /**
      * Search entity from LDAP server with default base dn.
      *
-     * @param filter     filter expression
-     * @param attributes attributes of target entities to retrieve
-     * @param max        Max amount of records to return
+     * @param filter              filter expression
+     * @param attributeIdentities attributes of target entities to retrieve
+     * @param max                 Max amount of records to return
      * @return A List of entities found, each entity is represented as a map with attribute {@literal ->} value
      * @throws CoVaException if LDAP binding failed or connection corrupted
      */
-    public List<Map<String, Object>> search(String filter, List<String> attributes, long max) throws CoVaException {
-        return search(filter, attributes, baseDn, max);
+    public List<Map<String, Object>> search(String filter, List<String> attributeIdentities, long max) throws CoVaException {
+        return search(filter, attributeIdentities, baseDn, max);
     }
 
     /**
      * Search entity from LDAP server with default records amount.
      *
-     * @param filter        filter expression
-     * @param attributes    attributes of target entities to retrieve
-     * @param searchBasedDn Base directory to search in
+     * @param filter              filter expression
+     * @param attributeIdentities attributes of target entities to retrieve
+     * @param searchBasedDn       Base directory to search in
      * @return A List of entities found, each entity is represented as a map with attribute {@literal ->} value
      * @throws CoVaException if LDAP binding failed or connection corrupted
      */
-    public List<Map<String, Object>> search(String filter, List<String> attributes, String searchBasedDn)
+    public List<Map<String, Object>> search(String filter, List<String> attributeIdentities, String searchBasedDn)
             throws CoVaException {
-        return search(filter, attributes, searchBasedDn, SEARCH_RETURN_LIMIT);
+        return search(filter, attributeIdentities, searchBasedDn, SEARCH_RETURN_LIMIT);
     }
 
     /**
      * Search entity from LDAP server.
      *
-     * @param filter        filter expression
-     * @param attributes    attributes of target entities to retrieve
-     * @param searchBasedDn Base directory to search in
-     * @param max           Max amount of records to return
+     * @param filter              filter expression
+     * @param attributeIdentities attributes of target entities to retrieve
+     * @param searchBasedDn       Base directory to search in
+     * @param max                 Max amount of records to return
      * @return A List of entities found, each entity is represented as a map with attribute {@literal ->} value
      * @throws CoVaException if LDAP binding failed or connection corrupted
      */
-    public List<Map<String, Object>> search(String filter, List<String> attributes, String searchBasedDn, long max)
+    public List<Map<String, Object>> search(String filter, List<String> attributeIdentities, String searchBasedDn, long max)
             throws CoVaException {
         List<Map<String, Object>> maps = new ArrayList<>();
         try {
@@ -416,13 +409,13 @@ public class LdapUtils implements Closeable, ConnectionClosedEventListener {
                 bind();
             }
             Dn dn = new Dn(searchBasedDn);
-
-            rawSearch(filter, attributes, dn, max).forEach(entry -> {
+            var attributeNames = attributes.getAttributeNames(attributeIdentities);
+            rawSearch(filter, attributeIdentities, dn, max).forEach(entry -> {
                 Map<String, Object> map = new HashMap<>();
-                attributes.forEach(attrName -> {
+                attributeNames.forEach(attrName -> {
                     Attribute attr = entry.get(attrName);
                     if (attr == null) {
-                        if (attrName.equals(ATTRIBUTE_DN)) {
+                        if (attrName.equals(Attributes.ATTRIBUTE_DN)) {
                             map.put(attrName, entry.getDn().toString());
                         } else {
                             map.put(attrName, null);
