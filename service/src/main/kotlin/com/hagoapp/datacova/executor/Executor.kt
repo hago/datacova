@@ -10,13 +10,17 @@ package com.hagoapp.datacova.executor
 import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.dispatcher.DispatcherInvoker
+import com.hagoapp.datacova.entity.execution.TaskExecution
 import com.hagoapp.datacova.web.WebManager
 import java.util.*
+import java.util.concurrent.locks.ReentrantReadWriteLock
+import kotlin.concurrent.read
+import kotlin.concurrent.write
 
 class Executor private constructor() {
     companion object {
         private val executor = Executor()
-        private const val SERVICE_STOP_MAX_ATTEMPT = 10
+        private val lock = ReentrantReadWriteLock()
 
         fun getExecutor(): Executor {
             return executor
@@ -25,8 +29,10 @@ class Executor private constructor() {
 
     private val config = CoVaConfig.getConfig().executor
     private val logger = CoVaLogger.getLogger()
-    private var exitFlag = false
-    private var serviceStopped = true
+    private var runningWorkerCount = 0
+        get() {
+            lock.read { return field }
+        }
     private val dispatcher = DispatcherInvoker(config)
     private var heartbeatFailCount = 0
     private val timer = Timer("heartbeat", true)
@@ -49,19 +55,32 @@ class Executor private constructor() {
         timer.schedule(task, 60L, 60L)
     }
 
-    fun stop() {
+    fun stop(force: Boolean = false) {
         logger.info("Stop Execution Service")
         timer.cancel()
         WebManager.shutdownAllWebServers()
-        exitFlag = true
-        for (i in 0 until SERVICE_STOP_MAX_ATTEMPT) {
-            TODO("wait for all running task")
-            if (serviceStopped) {
-                break
+        if (!force) {
+            while (true) {
+                val n = getWorkerCount()
+                if (n == 0) {
+                    break
+                }
+                logger.info("waiting for {} running worker{} to stop", n, if (n > 1) "s" else "")
+                Thread.sleep(2000)
             }
-            System.err.println("waiting for Execution Service to stop")
-            Thread.sleep(2000)
         }
         logger.info("Execution Service Stopped")
+    }
+
+    private fun getWorkerCount(): Int {
+        lock.read { return runningWorkerCount }
+    }
+
+    fun workerStarts(t: TaskExecution) {
+        lock.write { runningWorkerCount++ }
+    }
+
+    fun workerCompletes(t: TaskExecution) {
+        lock.write { runningWorkerCount-- }
     }
 }
