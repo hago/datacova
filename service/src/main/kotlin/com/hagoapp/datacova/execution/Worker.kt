@@ -16,6 +16,7 @@ import com.hagoapp.datacova.entity.execution.ExecutionActionDetail
 import com.hagoapp.datacova.entity.execution.ExecutionDetail
 import com.hagoapp.datacova.entity.execution.TaskExecution
 import com.hagoapp.datacova.execution.executor.report.Reporter
+import com.hagoapp.datacova.executor.Executor
 import com.hagoapp.datacova.util.FileStoreUtils
 import com.hagoapp.datacova.util.StackTraceWriter
 import com.hagoapp.f2t.DataTable
@@ -36,6 +37,7 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
     }
 
     init {
+        Executor.getExecutor().workerStarts(taskExecution)
         addWatcher(this)
     }
 
@@ -143,6 +145,7 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
             logger.error("unexpected error in Execution Service call onComplete back: $ex")
             StackTraceWriter.write(ex, logger)
         }
+        Executor.getExecutor().workerCompletes(te)
     }
 
     override fun onError(te: TaskExecution, error: java.lang.Exception) {
