@@ -50,6 +50,28 @@ class ShutDown {
         ResponseHelper.sendResponse(context, HttpResponseStatus.OK)
     }
 
+    @WebEndPoint(
+        methods = [HttpMethod.GET],
+        authTypes = [AuthType.Anonymous],
+        path = "/api/service/shutdown/force",
+        isBlocking = false
+    )
+    fun forceShutDown(context: RoutingContext) {
+        if (!canShutDown(context)) {
+            ResponseHelper.respondError(context, HttpResponseStatus.UNAUTHORIZED, "NOT Allowed")
+            return
+        }
+        if (isShuttingDown.acquire) {
+            ResponseHelper.sendResponse(context, HttpResponseStatus.OK)
+        }
+        isShuttingDown.set(true)
+        GlobalScope.launch {
+            Executor.getExecutor().stop(true)
+            WebManager.shutdownAllWebServers()
+        }
+        ResponseHelper.sendResponse(context, HttpResponseStatus.OK)
+    }
+
     private fun canShutDown(context: RoutingContext): Boolean {
         val ip = RequestHelper.getRemoteIp(context)
         return CoVaConfig.getConfig().web.privilegedIpAddresses.any {
