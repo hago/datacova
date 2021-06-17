@@ -9,6 +9,7 @@ package com.hagoapp.datacova.executor.web
 
 import com.hagoapp.datacova.data.execution.TaskExecutionData
 import com.hagoapp.datacova.entity.execution.ExecutionStatus
+import com.hagoapp.datacova.execution.Worker
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import io.netty.handler.codec.http.HttpResponseStatus
@@ -27,7 +28,11 @@ class ExecutorApi {
             ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "execution $id is not for running")
             return
         }
-        //TODO("run")
+        val workerThread = Thread(Runnable {
+            Worker(te).execute()
+        })
+        workerThread.isDaemon = true
+        workerThread.start()
         ResponseHelper.sendResponse(context, HttpResponseStatus.OK, mapOf("code" to 0))
     }
 }
