@@ -31,12 +31,10 @@ public class Stop extends CommandWithConfig {
     @Override
     public Integer call() throws CoVaException {
         var config = CoVaConfig.getConfig().getWeb();
-        var url = String.format("http://%s:%d/api/service/shutdown", config.getBindIp(), config.getPort());
-        if (force) {
-            url += "/force";
-        }
+        var url = String.format("http://%s:%d/api/service/shutdown{}",
+                config.getBindIp(), config.getPort(), force ? "/force" : "");
         var http = HttpClient.newHttpClient();
-        var request = HttpRequest.newBuilder(URI.create("")).GET().build();
+        var request = HttpRequest.newBuilder(URI.create(url)).GET().build();
         try {
             http.send(request, HttpResponse.BodyHandlers.ofString());
             logger.info("Notification of stop has been sent to service");
