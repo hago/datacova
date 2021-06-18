@@ -17,4 +17,11 @@ public class WebSocketConfig {
     public void setRoute(String route) {
         this.route = route;
     }
+
+    @Override
+    public String toString() {
+        return "WebSocketConfig{" +
+                "route='" + route + '\'' +
+                '}';
+    }
 }
