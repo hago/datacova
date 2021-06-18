@@ -52,7 +52,7 @@ class Executor private constructor() {
         if (!dispatcher.register()) {
             return
         }
-        timer.schedule(task, 60L, 60L)
+        timer.schedule(task, 60000L, 60000L)
     }
 
     fun stop(force: Boolean = false) {
