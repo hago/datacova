@@ -59,7 +59,7 @@ public class WebManager {
     private HttpServer webServer;
 
     public static WebManager getManager(WebConfig config, List<String> packageNames) {
-        String k = createServerKey(config, packageNames);
+        String k = createServerKey(config);
         return instances.compute(k, (key, existed) -> {
             if (existed != null) {
                 return existed;
@@ -75,17 +75,12 @@ public class WebManager {
         });
     }
 
-    public static void shutdownAllWebServers() {
-        instances.values().forEach(WebManager::shutDownWebServer);
-        instances.clear();
-    }
-
     private WebManager() {
 
     }
 
-    private static String createServerKey(WebConfig config, List<String> packageNames) {
-        return String.format("%s|%s", config.toString(), String.join("-", packageNames));
+    private static String createServerKey(WebConfig config) {
+        return config.toString();
     }
 
     private void createWebServer(WebConfig config, List<String> packageNames) throws CoVaException {
@@ -109,10 +104,11 @@ public class WebManager {
         logger.info("web server {} is shutting down", webConfig.getIdentity());
         try {
             webServer.close(handler -> {
-                vertx.close();
                 webServer = null;
                 vertx = null;
                 handlers.clear();
+                instances.remove(createServerKey(webConfig));
+                vertx.close();
                 logger.info("web server {} shut down successfully", webConfig.getIdentity());
             });
         } catch (Throwable e) {
