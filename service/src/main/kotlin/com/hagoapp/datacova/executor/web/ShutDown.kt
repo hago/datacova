@@ -5,9 +5,10 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package com.hagoapp.datacova.web.default
+package com.hagoapp.datacova.executor.web
 
 import com.hagoapp.datacova.config.CoVaConfig
+import com.hagoapp.datacova.executor.Executor
 import com.hagoapp.datacova.util.http.RequestHelper
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.WebManager
@@ -30,7 +31,7 @@ class ShutDown {
     @WebEndPoint(
         methods = [HttpMethod.GET],
         authTypes = [AuthType.Anonymous],
-        path = "/api/service/web/shutdown",
+        path = "/api/service/executor/shutdown",
         isBlocking = false
     )
     fun shutDown(context: RoutingContext) {
@@ -48,8 +49,32 @@ class ShutDown {
         ResponseHelper.sendResponse(context, HttpResponseStatus.OK)
     }
 
-    private fun shutDown() {
+    @WebEndPoint(
+        methods = [HttpMethod.GET],
+        authTypes = [AuthType.Anonymous],
+        path = "/api/service/executor/shutdown/force",
+        isBlocking = false
+    )
+    fun forceShutDown(context: RoutingContext) {
+        if (!canShutDown(context)) {
+            ResponseHelper.respondError(context, HttpResponseStatus.UNAUTHORIZED, "NOT Allowed")
+            return
+        }
+        if (isShuttingDown.acquire) {
+            ResponseHelper.sendResponse(context, HttpResponseStatus.OK)
+        }
+        isShuttingDown.set(true)
+        GlobalScope.launch {
+            shutDown(true)
+        }
+        ResponseHelper.sendResponse(context, HttpResponseStatus.OK)
+    }
+
+    private fun shutDown(force: Boolean = false) {
         val cfg = CoVaConfig.getConfig()
+        if (cfg.executor != null) {
+            Executor.getExecutor().stop(force)
+        }
         if (cfg.web != null) {
             WebManager.getManager(cfg.web, listOf()).shutDownWebServer()
         }

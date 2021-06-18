@@ -30,17 +30,43 @@ public class Stop extends CommandWithConfig {
 
     @Override
     public Integer call() throws CoVaException {
+        CoVaConfig.loadConfig(configFile);
+        shutdownWeb();
+        shutdownExecutor();
+        return super.call();
+    }
+
+    private void shutdownWeb() {
         var config = CoVaConfig.getConfig().getWeb();
-        var url = String.format("http://%s:%d/api/service/shutdown%s",
+        if (config == null) {
+            return;
+        }
+        var url = String.format("http://%s:%d/api/service/web/shutdown",
+                config.getBindIp(), config.getPort());
+        var http = HttpClient.newHttpClient();
+        var request = HttpRequest.newBuilder(URI.create(url)).GET().build();
+        try {
+            var rsp = http.send(request, HttpResponse.BodyHandlers.ofString());
+            logger.info("Notification of stop has been sent to service: {}", rsp.statusCode());
+        } catch (IOException | InterruptedException e) {
+            logger.error("Messaging service to stop failed: {}", e.getMessage());
+        }
+    }
+
+    private void shutdownExecutor() {
+        var config = CoVaConfig.getConfig().getExecutor();
+        if (config == null) {
+            return;
+        }
+        var url = String.format("http://%s:%d/api/service/executor/shutdown%s",
                 config.getBindIp(), config.getPort(), force ? "/force" : "");
         var http = HttpClient.newHttpClient();
         var request = HttpRequest.newBuilder(URI.create(url)).GET().build();
         try {
-            http.send(request, HttpResponse.BodyHandlers.ofString());
-            logger.info("Notification of stop has been sent to service");
+            var rsp = http.send(request, HttpResponse.BodyHandlers.ofString());
+            logger.info("Notification of stop has been sent to service: {}", rsp.statusCode());
         } catch (IOException | InterruptedException e) {
             logger.error("Messaging service to stop failed: {}", e.getMessage());
         }
-        return super.call();
     }
 }
