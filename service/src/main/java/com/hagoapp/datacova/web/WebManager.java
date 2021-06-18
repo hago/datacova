@@ -104,8 +104,6 @@ public class WebManager {
         logger.info("web server {} is shutting down", webConfig.getIdentity());
         try {
             webServer.close(handler -> {
-                webServer = null;
-                vertx = null;
                 handlers.clear();
                 instances.remove(createServerKey(webConfig));
                 vertx.close();

@@ -44,8 +44,7 @@ class ShutDown {
         }
         isShuttingDown.set(true)
         GlobalScope.launch {
-            Executor.getExecutor().stop()
-            WebManager.getManager(CoVaConfig.getConfig().web, listOf()).shutDownWebServer()
+            shutDown()
         }
         ResponseHelper.sendResponse(context, HttpResponseStatus.OK)
     }
@@ -66,10 +65,19 @@ class ShutDown {
         }
         isShuttingDown.set(true)
         GlobalScope.launch {
-            Executor.getExecutor().stop(true)
-            WebManager.getManager(CoVaConfig.getConfig().web, listOf()).shutDownWebServer()
+            shutDown(true)
         }
         ResponseHelper.sendResponse(context, HttpResponseStatus.OK)
+    }
+
+    private fun shutDown(force: Boolean = false) {
+        val cfg = CoVaConfig.getConfig()
+        if (cfg.executor != null) {
+            Executor.getExecutor().stop(force)
+        }
+        if (cfg.web != null) {
+            WebManager.getManager(cfg.web, listOf()).shutDownWebServer()
+        }
     }
 
     private fun canShutDown(context: RoutingContext): Boolean {
