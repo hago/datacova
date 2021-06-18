@@ -43,6 +43,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -53,7 +54,7 @@ public class WebManager {
 
     private final Logger logger = CoVaLogger.getLogger();
     private WebConfig webConfig;
-    private static final Map<String, WebManager> instances = new HashMap<>();
+    private static final Map<String, WebManager> instances = new ConcurrentHashMap<>();
     private final Map<String, WebHandler> handlers = new HashMap<>();
     private Vertx vertx;
     private HttpServer webServer;
