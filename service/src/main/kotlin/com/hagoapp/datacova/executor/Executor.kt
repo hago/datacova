@@ -58,7 +58,7 @@ class Executor private constructor() {
     fun stop(force: Boolean = false) {
         logger.info("Stop Execution Service")
         timer.cancel()
-        WebManager.shutdownAllWebServers()
+        WebManager.getManager(config, listOf()).shutDownWebServer()
         if (!force) {
             while (true) {
                 val n = getWorkerCount()

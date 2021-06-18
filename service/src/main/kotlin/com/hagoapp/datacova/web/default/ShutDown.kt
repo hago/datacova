@@ -45,7 +45,7 @@ class ShutDown {
         isShuttingDown.set(true)
         GlobalScope.launch {
             Executor.getExecutor().stop()
-            WebManager.shutdownAllWebServers()
+            WebManager.getManager(CoVaConfig.getConfig().web, listOf()).shutDownWebServer()
         }
         ResponseHelper.sendResponse(context, HttpResponseStatus.OK)
     }
@@ -67,7 +67,7 @@ class ShutDown {
         isShuttingDown.set(true)
         GlobalScope.launch {
             Executor.getExecutor().stop(true)
-            WebManager.shutdownAllWebServers()
+            WebManager.getManager(CoVaConfig.getConfig().web, listOf()).shutDownWebServer()
         }
         ResponseHelper.sendResponse(context, HttpResponseStatus.OK)
     }
