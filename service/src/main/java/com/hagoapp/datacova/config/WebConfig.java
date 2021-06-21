@@ -80,7 +80,7 @@ public class WebConfig {
     }
 
     public String getTempDirectory() {
-        return tempDirectory;
+        return tempDirectory == null ? System.getProperty("java.io.tmpdir") : tempDirectory;
     }
 
     public void setTempDirectory(String tempDirectory) {
@@ -88,7 +88,7 @@ public class WebConfig {
     }
 
     public String getUploadTempDirectory() {
-        return uploadTempDirectory;
+        return uploadTempDirectory == null ? System.getProperty("java.io.tmpdir") : uploadTempDirectory;
     }
 
     public void setUploadTempDirectory(String uploadTempDirectory) {
