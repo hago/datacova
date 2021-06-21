@@ -13,6 +13,7 @@ public class FileStorageConfig {
     private String uploadDirectory;
     private String thumbnailDirectory;
     private String tempDirectory;
+    private String sshDirectory;
 
     public String getUploadDirectory() {
         return uploadDirectory;
@@ -38,5 +39,11 @@ public class FileStorageConfig {
         this.tempDirectory = tempDirectory != null ? tempDirectory : Utils.getSystemTemporaryDirectory();
     }
 
+    public String getSshDirectory() {
+        return sshDirectory;
+    }
 
+    public void setSshDirectory(String sshDirectory) {
+        this.sshDirectory = sshDirectory;
+    }
 }
