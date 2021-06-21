@@ -12,8 +12,26 @@ package com.hagoapp.datacova.entity.action.distribute;
  */
 public class Configuration {
     protected int type;
+    protected boolean copyOriginal = false;
+    protected boolean overwriteExisted = false;
 
     public int getType() {
         return type;
+    }
+
+    public boolean isCopyOriginal() {
+        return copyOriginal;
+    }
+
+    public void setCopyOriginal(boolean copyOriginal) {
+        this.copyOriginal = copyOriginal;
+    }
+
+    public boolean isOverwriteExisted() {
+        return overwriteExisted;
+    }
+
+    public void setOverwriteExisted(boolean overwriteExisted) {
+        this.overwriteExisted = overwriteExisted;
     }
 }
