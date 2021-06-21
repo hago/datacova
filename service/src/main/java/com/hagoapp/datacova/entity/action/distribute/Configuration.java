@@ -11,13 +11,9 @@ package com.hagoapp.datacova.entity.action.distribute;
  * Configuration for distribution.
  */
 public class Configuration {
-    private int type;
+    protected int type;
 
     public int getType() {
         return type;
-    }
-
-    public void setType(int type) {
-        this.type = type;
     }
 }
