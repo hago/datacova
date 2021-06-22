@@ -35,4 +35,8 @@ class FtpDistributor(action: TaskActionDistribute) : Distributor(action) {
             }
         }
     }
+
+    override fun supportedDistributionType(): Int {
+        return FtpConfig.DISTRIBUTION_TYPE_FTP
+    }
 }

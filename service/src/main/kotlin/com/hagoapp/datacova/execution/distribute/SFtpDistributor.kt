@@ -44,4 +44,8 @@ class SFtpDistributor(action: TaskActionDistribute) : Distributor(action) {
             sftp?.quit()
         }
     }
+
+    override fun supportedDistributionType(): Int {
+        return SFtpConfig.DISTRIBUTE_TYPE_SFTP
+    }
 }
