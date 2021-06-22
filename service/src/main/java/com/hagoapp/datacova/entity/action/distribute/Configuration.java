@@ -7,10 +7,12 @@
 
 package com.hagoapp.datacova.entity.action.distribute;
 
+import com.hagoapp.datacova.JsonStringify;
+
 /**
  * Configuration for distribution.
  */
-public class Configuration {
+public class Configuration implements JsonStringify {
     protected int type;
     protected boolean copyOriginal = false;
     protected boolean overwriteExisted = false;
