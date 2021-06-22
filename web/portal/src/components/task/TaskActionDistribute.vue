@@ -24,10 +24,10 @@
         </div>
       </div>
     </div>
-    <FtpDistribute v-if="config.type === 'FTP'"
+    <FtpDistribute v-if="config.type === '0'"
       v-bind:config="config"
       ></FtpDistribute>
-    <SFtpDistribute v-if="config.type === 'SFTP'"
+    <SFtpDistribute v-if="config.type === '1'"
       v-bind:config="config"
       ></SFtpDistribute>
   </div>
@@ -50,8 +50,8 @@ export default {
   data () {
     return {
       types: {
-        FTP: 'FTP Server',
-        SFTP: 'Secure Shell FTP Server'
+        '0': 'FTP Server',
+        '1': 'Secure Shell FTP Server'
       },
       config: {}
     }
