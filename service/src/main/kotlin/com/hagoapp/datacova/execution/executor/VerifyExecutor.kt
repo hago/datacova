@@ -11,6 +11,7 @@ import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.entity.action.TaskAction
 import com.hagoapp.datacova.entity.action.verification.TaskActionVerify
 import com.hagoapp.datacova.entity.execution.DataMessage
+import com.hagoapp.datacova.entity.execution.TaskExecution
 import com.hagoapp.datacova.entity.task.Task
 import com.hagoapp.datacova.execution.executor.validator.ValidatorFactory
 import com.hagoapp.f2t.DataTable
@@ -21,7 +22,7 @@ class VerifyExecutor : BaseTaskActionExecutor(), ProgressNotify {
     private lateinit var taskAction: TaskActionVerify
     private var verificationFailed = false
 
-    override fun execute(task: Task, action: TaskAction, data: DataTable) {
+    override fun execute(taskExecution: TaskExecution, action: TaskAction, data: DataTable) {
         if (action !is TaskActionVerify) {
             val ex = CoVaException("Not an TaskActionVerify: ${action.name}")
             watcher?.onError(action, ex)
@@ -30,7 +31,7 @@ class VerifyExecutor : BaseTaskActionExecutor(), ProgressNotify {
         taskAction = action
         val descriptions = mutableListOf<String>()
         val validators = action.configurations.map { conf ->
-            descriptions.add(conf.describe(task.extra.locale))
+            descriptions.add(conf.describe(taskExecution.task.extra.locale))
             ValidatorFactory.createValidator(conf).withColumnDefinition(data.columnDefinition).setConfig(conf)
         }
         val size = data.rows.size.toFloat()

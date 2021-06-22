@@ -11,12 +11,12 @@ import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.entity.action.TaskAction
 import com.hagoapp.datacova.entity.action.idle.TaskActionIdle
 import com.hagoapp.datacova.entity.action.idle.TaskActionIdle.TASK_ACTION_TYPE_IDLE
-import com.hagoapp.datacova.entity.task.Task
+import com.hagoapp.datacova.entity.execution.TaskExecution
 import com.hagoapp.f2t.DataTable
 import java.security.SecureRandom
 
 class IdleExecutor : BaseTaskActionExecutor() {
-    override fun execute(task: Task, action: TaskAction, data: DataTable) {
+    override fun execute(taskExecution: TaskExecution, action: TaskAction, data: DataTable) {
         if (action !is TaskActionIdle) {
             throw CoVaException()
         }
