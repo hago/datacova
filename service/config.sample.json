@@ -64,7 +64,8 @@
   "fileStorage": {
     "uploadDirectory": "",
     "thumbnailDirectory": "",
-    "tempDirectory": null
+    "tempDirectory": null,
+    "sshDirectory": ""
   },
   "executor": {
     "__comments": "When this section exists, the application will launch execution service",
