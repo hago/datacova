@@ -49,6 +49,10 @@ class FileStoreUtils private constructor() {
         fun getThumbnailFileStore(): FileStoreUtils {
             return getFileStore(CoVaConfig.getConfig().fileStorage.thumbnailDirectory)
         }
+
+        fun getTemporaryFileStore(): FileStoreUtils {
+            return getFileStore(CoVaConfig.getConfig().fileStorage.tempDirectory)
+        }
     }
 
     data class CopyTarget(
