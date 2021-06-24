@@ -2,7 +2,7 @@
   <div>
     <select class="form-control col-6" v-model="config.type">
       <option value=undefined disabled>Select Distribute Type</option>
-      <option v-for="(item, t) in types" v-bind:key="t" v-bind:value="t">{{ item }}</option>
+      <option v-for="(t, item) in types" v-bind:key="t" v-bind:value="t">{{ item }}</option>
     </select>
     <div>
       <div class="form-row">
@@ -24,10 +24,10 @@
         </div>
       </div>
     </div>
-    <FtpDistribute v-if="config.type === '0'"
+    <FtpDistribute v-if="config.type === 1"
       v-bind:config="config"
       ></FtpDistribute>
-    <SFtpDistribute v-if="config.type === '1'"
+    <SFtpDistribute v-if="config.type === 2"
       v-bind:config="config"
       ></SFtpDistribute>
   </div>
@@ -50,8 +50,8 @@ export default {
   data () {
     return {
       types: {
-        '0': 'FTP Server',
-        '1': 'Secure Shell FTP Server'
+        'FTP Server': 1,
+        'Secure Shell FTP Server': 2
       },
       config: {}
     }

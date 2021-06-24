@@ -80,9 +80,6 @@ export default {
       if ((config.remotePath === undefined) || (config.remotePath.trim() === '')) {
         return 'remote path not defined'
       }
-      if ((config.remoteName === undefined) || (config.remoteName.trim() === '')) {
-        return 'remote file name not defined'
-      }
       return true
     }
   },
