@@ -53,6 +53,10 @@ class FileStoreUtils private constructor() {
         fun getTemporaryFileStore(): FileStoreUtils {
             return getFileStore(CoVaConfig.getConfig().fileStorage.tempDirectory)
         }
+
+        fun getSshFileStore(): FileStoreUtils {
+            return getFileStore(CoVaConfig.getConfig().fileStorage.sshDirectory)
+        }
     }
 
     data class CopyTarget(
