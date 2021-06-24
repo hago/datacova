@@ -8,8 +8,11 @@
 package com.hagoapp.datacova.web.distribute
 
 import com.google.gson.Gson
+import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.entity.action.distribute.conf.SFtpConfig
 import com.hagoapp.datacova.execution.distribute.sftp.KnownHostsStore
+import com.hagoapp.datacova.util.SFtpClient
+import com.hagoapp.datacova.util.StackTraceWriter
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import com.hagoapp.datacova.web.authentication.AuthType
@@ -19,6 +22,9 @@ import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.RoutingContext
 
 class SFtp {
+
+    private val logger = CoVaLogger.getLogger()
+
     @WebEndPoint(
         methods = [HttpMethod.POST],
         authTypes = [AuthType.UserToken],
@@ -31,49 +37,28 @@ class SFtp {
             ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "not valid sftp config json")
             return
         }
+        logger.debug("ssh config: {}", config.toJson())
         try {
-            val session = connectSession(config)
-            val channel = session.openChannel("sftp") as ChannelSftp
-            channel.connect()
-            channel.cd(config.remotePath)
+            SFtpClient(
+                config.host, config.port, config.login, config.password,
+                KnownHostsStore.getStore()
+            ).use {
+                val ftp = it.getClient()
+                if ((config.remotePath != null) && config.remotePath.isNotBlank()) {
+                    ftp.cd(config.remotePath)
+                } else {
+                    config.remotePath = ftp.pwd()
+                }
+                logger.debug("sftp session connected, remote path is {}", config.remotePath)
+            }
         } catch (ex: JSchException) {
+            logger.error("JSchException error: {}", ex.message)
+            StackTraceWriter.write(ex, logger)
             ResponseHelper.respondError(context, HttpResponseStatus.INTERNAL_SERVER_ERROR, ex.message)
         } catch (ex: SftpException) {
+            logger.error("SftpException error: {}", ex.message)
+            StackTraceWriter.write(ex, logger)
             ResponseHelper.respondError(context, HttpResponseStatus.INTERNAL_SERVER_ERROR, ex.message)
         }
-    }
-
-    private fun connectSession(config: SFtpConfig): Session {
-        val session = createSession(config)
-        return try {
-            session.connect()
-            session
-        } catch (ex: JSchException) {
-            if (ex.toString().indexOf("UnknownHostKey", 0, true) >= 0) {
-                updateKnownHosts(session.hostKey)
-                val session1 = createSession(config)
-                session1.connect()
-                session1
-            } else throw ex
-        }
-    }
-
-    private fun createSession(config: SFtpConfig): Session {
-        val client = JSch()
-        KnownHostsStore.getStore().toStream().use { client.setKnownHosts(it) }
-        val session = client.getSession(config.login)
-        session.host = config.host
-        session.port = config.port
-        session.setPassword(config.password)
-        return session
-    }
-
-    private fun updateKnownHosts(hostKey: HostKey) {
-//        println("marker: ${hostKey.marker}")
-//        println("host: ${hostKey.host}")
-//        println("comment: ${hostKey.comment}")
-//        println("key: ${hostKey.key}")
-//        println("type: ${hostKey.type}")
-        KnownHostsStore.getStore().updateHost(hostKey)
     }
 }
