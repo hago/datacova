@@ -2,7 +2,7 @@
   <div class="form-row">
     <div class="col">
       <label for="inputKeyFile">Key File</label>
-      <input type="file" class="form-control" id="inputKeyFile" />
+      <b-form-file type="file" class="form-control" id="inputKeyFile" v-model="config.filex" ></b-form-file>
     </div>
     <div class="col">
       <label for="inputPassPhrase">PassPhrase</label>

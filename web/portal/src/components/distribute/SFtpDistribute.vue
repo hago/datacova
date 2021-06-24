@@ -77,13 +77,18 @@ export default {
       if ((config.host === undefined) || (config.host.trim() === '')) {
         return 'host not defined'
       }
-      if ((config.authType === 'Password') && ((config.login === undefined) || (config.login.trim() === ''))) {
+      if ((config.login === undefined) && (config.login.trim() === '')) {
         return 'user name is empty!'
       }
-      if ((config.authType === 'PublicKey') && ((config.publicKey === undefined) || (config.publicKey.trim() === ''))) {
-        return 'public key is empty!'
+      if ((config.authType === 'Password') &&
+        ((config.password === null) || (config.password === undefined) || (config.password.trim() === ''))) {
+        return 'password is empty'
       }
-      if ((config.remotePath === undefined) || (config.remotePath.trim() === '')) {
+      if ((config.authType === 'PrivateKey') &&
+        ((config.privateKeyFile === undefined) || (config.privateKeyFile === null) || (config.privateKeyFile.trim() === ''))) {
+        return 'private key is empty!'
+      }
+      if ((config.remotePath === undefined) || (config.remotePath === null) || (config.remotePath.trim() === '')) {
         return 'remote path not defined'
       }
       return true
