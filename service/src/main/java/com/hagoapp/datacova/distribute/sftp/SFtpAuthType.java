@@ -8,6 +8,6 @@
 package com.hagoapp.datacova.distribute.sftp;
 
 public enum SFtpAuthType {
-    //PublicKey,
+    PublicKey,
     Password
 }
