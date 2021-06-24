@@ -21,13 +21,7 @@ class SFtpDistributor(action: TaskActionDistribute) : Distributor(action) {
     override fun distribute(source: String?) {
         var sftp: ChannelSftp? = null
         try {
-            sftp = SFtpClient(
-                config.host,
-                config.port,
-                config.login,
-                config.password,
-                KnownHostsStore.getStore()
-            ).getClient()
+            sftp = SFtpClient(config, KnownHostsStore.getStore()).getClient()
             sftp.cd(config.remotePath)
             if (sftp.ls("*").any {
                     (it as ChannelSftp.LsEntry).filename.compareTo(config.remoteName, true) == 0

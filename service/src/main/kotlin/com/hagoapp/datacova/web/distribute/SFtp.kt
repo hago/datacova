@@ -39,18 +39,16 @@ class SFtp {
         }
         logger.debug("ssh config: {}", config.toJson())
         try {
-            SFtpClient(
-                config.host, config.port, config.login, config.password,
-                KnownHostsStore.getStore()
-            ).use {
-                val ftp = it.getClient()
-                if ((config.remotePath != null) && config.remotePath.isNotBlank()) {
-                    ftp.cd(config.remotePath)
-                } else {
-                    config.remotePath = ftp.pwd()
+            SFtpClient(config, KnownHostsStore.getStore())
+                .use {
+                    val ftp = it.getClient()
+                    if ((config.remotePath != null) && config.remotePath.isNotBlank()) {
+                        ftp.cd(config.remotePath)
+                    } else {
+                        config.remotePath = ftp.pwd()
+                    }
+                    logger.debug("sftp session connected, remote path is {}", config.remotePath)
                 }
-                logger.debug("sftp session connected, remote path is {}", config.remotePath)
-            }
         } catch (ex: JSchException) {
             logger.error("JSchException error: {}", ex.message)
             StackTraceWriter.write(ex, logger)
