@@ -21,12 +21,18 @@
         </select>
       </div>
     </div>
+    <div class="form-row">
+      <div class="col-6">
+        <label for="inputUser">User Name</label>
+        <input type="text" class="form-control" v-model="config.login" id="inputUser" placeholder="anonymous" />
+      </div>
+    </div>
     <SFtpLoginPwd v-if="config.authType === 'Password'"
       v-bind:config="config"
       ></SFtpLoginPwd>
-    <SFftpPublicKey v-if="config.authType === 'PublicKey'"
+    <SFtpPrivateKey v-if="config.authType === 'PrivateKey'"
       v-bind:config="config"
-      ></SFftpPublicKey>
+      ></SFtpPrivateKey>
     <div class="form-row">
       <div class="col">
         <label for="remotePath">Remote Path</label>
@@ -42,7 +48,7 @@
 
 <script>
 import SFtpLoginPwd from '@/components/distribute/SFtpLoginPwd.vue'
-import SFftpPublicKey from '@/components/distribute/SFtpPublicKey.vue'
+import SFtpPrivateKey from '@/components/distribute/SFtpPrivateKey.vue'
 import Vue from 'vue'
 import DistributorApiHelper from '@/apis/distributor.js'
 import Toasted from 'vue-toasted'
@@ -56,13 +62,13 @@ export default {
   },
   components: {
     SFtpLoginPwd,
-    SFftpPublicKey
+    SFtpPrivateKey
   },
   data () {
     return {
       authTypes: {
         Password: 'UserName / Password',
-        PublicKey: 'Public Key (DSA,RSA,ECDSA)'
+        PrivateKey: 'Private Key (DSA,RSA,ECDSA)'
       }
     }
   },
