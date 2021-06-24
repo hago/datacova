@@ -17,7 +17,8 @@ public class SFtpConfig extends Configuration implements IDistributeExtra {
     private String remoteName;
     private SFtpAuthType authType = SFtpAuthType.Password;
     private HostKeyItem knownHost;
-    private String publicKeyFile;
+    private String privateKeyFile;
+    private String passPhrase;
 
     public static final int DISTRIBUTE_TYPE_SFTP = 2;
 
@@ -90,12 +91,20 @@ public class SFtpConfig extends Configuration implements IDistributeExtra {
         this.knownHost = knownHost;
     }
 
-    public String getPublicKeyFile() {
-        return publicKeyFile;
+    public String getPrivateKeyFile() {
+        return privateKeyFile;
     }
 
-    public void setPublicKeyFile(String publicKeyFile) {
-        this.publicKeyFile = publicKeyFile;
+    public void setPrivateKeyFile(String privateKeyFile) {
+        this.privateKeyFile = privateKeyFile;
+    }
+
+    public String getPassPhrase() {
+        return passPhrase;
+    }
+
+    public void setPassPhrase(String passPhrase) {
+        this.passPhrase = passPhrase;
     }
 
     @Override
