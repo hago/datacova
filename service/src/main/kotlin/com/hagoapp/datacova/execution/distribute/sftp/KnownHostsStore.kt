@@ -9,6 +9,7 @@ package com.hagoapp.datacova.execution.distribute.sftp
 
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.distribute.sftp.HostKeyItem
+import com.hagoapp.datacova.util.FileStoreUtils
 import com.hagoapp.datacova.util.Utils
 import com.jcraft.jsch.HostKey
 import java.io.*
@@ -71,8 +72,7 @@ class KnownHostsStore {
     }
 
     private fun load(fileName: String? = null) {
-        val sshDirectory = CoVaConfig.getConfig().fileStorage.sshDirectory
-        knownHostsFile = fileName ?: Utils.joinPath(sshDirectory, KNOWN_HOSTS_FILE)
+        knownHostsFile = fileName ?: FileStoreUtils.getSshFileStore().getFullFileName(KNOWN_HOSTS_FILE)
         if (!File(knownHostsFile).exists()) {
             File(knownHostsFile).createNewFile()
         } else {
