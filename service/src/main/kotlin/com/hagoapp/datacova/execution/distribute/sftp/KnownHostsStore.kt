@@ -73,18 +73,22 @@ class KnownHostsStore {
     private fun load(fileName: String? = null) {
         val sshDirectory = CoVaConfig.getConfig().fileStorage.sshDirectory
         knownHostsFile = fileName ?: Utils.joinPath(sshDirectory, KNOWN_HOSTS_FILE)
-        try {
-            val content = FileInputStream(knownHostsFile).use { it.readAllBytes() }
-            val newHostKeys = String(content).split("\n").mapNotNull { line ->
-                val parts = line.split(" ")
-                if (parts.size >= 3) {
-                    val hk = HostKeyItem(parts[0], parts[1], parts[2])
-                    Pair(hk.host, hk)
-                } else null
-            }.toMap()
-            lock.write { hostKeys = newHostKeys.toMutableMap() }
-        } catch (ex: FileNotFoundException) {
-            //
+        if (!File(knownHostsFile).exists()) {
+            File(knownHostsFile).createNewFile()
+        } else {
+            try {
+                val content = FileInputStream(knownHostsFile).use { it.readAllBytes() }
+                val newHostKeys = String(content).split("\n").mapNotNull { line ->
+                    val parts = line.split(" ")
+                    if (parts.size >= 3) {
+                        val hk = HostKeyItem(parts[0], parts[1], parts[2])
+                        Pair(hk.host, hk)
+                    } else null
+                }.toMap()
+                lock.write { hostKeys = newHostKeys.toMutableMap() }
+            } catch (ex: FileNotFoundException) {
+                //
+            }
         }
     }
 }
