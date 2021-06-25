@@ -22,6 +22,7 @@ import com.jcraft.jsch.*
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.RoutingContext
+import java.io.FileInputStream
 
 class SFtp {
 
@@ -81,8 +82,13 @@ class SFtp {
         }
         logger.debug("ssh config: {}", config.toJson())
         val f = context.fileUploads().first()
-        val tf = FileStoreUtils.getTemporaryFileStore().copyFileToStore(f.uploadedFileName())
-        if (!SFtpClient.isValidPrivateKeyFile(tf.absoluteFileName)) {
+        val target = SFtpClient.createPemFileName(config.login, config.host, config.port)
+        val fs = FileStoreUtils.getSshFileStore()
+        FileInputStream(f.uploadedFileName()).use {
+            fs.saveFileToStore(target, it)
+        }
+        val keyFullName = fs.getFullFileName(target)
+        if (!SFtpClient.isValidPrivateKeyFile(keyFullName)) {
             ResponseHelper.respondError(
                 context,
                 HttpResponseStatus.BAD_REQUEST,
@@ -90,7 +96,7 @@ class SFtp {
             )
             return
         }
-        config.privateKeyFile = tf.absoluteFileName
+        config.privateKeyFile = keyFullName
         try {
             SFtpClient(config, KnownHostsStore.getStore())
                 .use {
@@ -102,7 +108,9 @@ class SFtp {
                     }
                     logger.debug("sftp session connected, remote path is {}", config.remotePath)
                 }
-            ResponseHelper.sendResponse(context, HttpResponseStatus.OK)
+            ResponseHelper.sendResponse(
+                context, HttpResponseStatus.OK, mapOf("code" to 0, "data" to mapOf("keyStored" to target))
+            )
         } catch (ex: JSchException) {
             logger.error("JSchException error: {}", ex.message)
             StackTraceWriter.write(ex, logger)

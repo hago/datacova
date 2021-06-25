@@ -23,6 +23,10 @@ class SFtpClient(
             }.toString(StandardCharsets.UTF_8).toLowerCase()
             return content.contains("begin rsa private key")
         }
+
+        fun createPemFileName(login: String, host: String, port: Int): String {
+            return "$login/$host-$port.pem"
+        }
     }
 
     private val sshClient: JSch = JSch()
