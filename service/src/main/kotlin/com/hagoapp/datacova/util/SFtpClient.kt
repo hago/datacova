@@ -8,11 +8,23 @@ import com.hagoapp.datacova.execution.distribute.sftp.KnownHostsStore
 import com.jcraft.jsch.*
 import java.io.Closeable
 import java.io.File
+import java.io.FileInputStream
+import java.nio.charset.StandardCharsets
 
 class SFtpClient(
     private val config: SFtpConfig,
     private val knownHostsStore: KnownHostsStore
 ) : Closeable {
+
+    companion object {
+        fun isValidPrivateKeyFile(filename: String): Boolean {
+            val content = FileInputStream(filename).use {
+                it.readAllBytes()
+            }.toString(StandardCharsets.UTF_8).toLowerCase()
+            return content.contains("begin rsa private key")
+        }
+    }
+
     private val sshClient: JSch = JSch()
     private var channel: ChannelSftp? = null
     private var session: Session? = null
