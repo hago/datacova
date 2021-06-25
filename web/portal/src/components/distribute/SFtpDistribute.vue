@@ -132,6 +132,7 @@ export default {
         return
       }
       (new DistributorApiHelper()).verifySFtpWithKey(this.config, this.file).then(rsp => {
+        this.config.privateKeyFile = rsp.data.data.keyStored
         this.$toasted.show('ftp verification succeeded', {
           position: 'bottom-center',
           duration: 1000,
