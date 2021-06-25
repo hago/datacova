@@ -7,6 +7,7 @@ import com.hagoapp.datacova.entity.action.distribute.conf.SFtpConfig
 import com.hagoapp.datacova.execution.distribute.sftp.KnownHostsStore
 import com.jcraft.jsch.*
 import java.io.Closeable
+import java.io.File
 
 class SFtpClient(
     private val config: SFtpConfig,
@@ -61,11 +62,15 @@ class SFtpClient(
             throw CoVaException("Credential is missing for sftp ${config.host}:${config.port}")
         }
         return if (config.authType == SFtpAuthType.PrivateKey) {
-            val fs = FileStoreUtils.getSshFileStore()
-            if ((config.privateKeyFile == null) || !fs.isFileExists(config.privateKeyFile)) {
+            if ((config.privateKeyFile == null) || !File(config.privateKeyFile).exists()) {
                 throw CoVaException("private key file for ${config.host}:${config.port} is missing")
             }
-            sshClient.addIdentity(fs.getFullFileName(config.privateKeyFile), config.passPhrase)
+            val phrase = when {
+                config.passPhrase == null -> null
+                config.passPhrase.isEmpty() -> null
+                else -> config.passPhrase
+            }
+            sshClient.addIdentity(config.privateKeyFile, phrase)
             sshClient.getSession(config.login, config.host, config.port)
         } else {
             val session = sshClient.getSession(config.login, config.host, config.port)
