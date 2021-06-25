@@ -9,8 +9,10 @@ package com.hagoapp.datacova.web.distribute
 
 import com.google.gson.Gson
 import com.hagoapp.datacova.CoVaLogger
+import com.hagoapp.datacova.distribute.sftp.SFtpAuthType
 import com.hagoapp.datacova.entity.action.distribute.conf.SFtpConfig
 import com.hagoapp.datacova.execution.distribute.sftp.KnownHostsStore
+import com.hagoapp.datacova.util.FileStoreUtils
 import com.hagoapp.datacova.util.SFtpClient
 import com.hagoapp.datacova.util.StackTraceWriter
 import com.hagoapp.datacova.util.http.ResponseHelper
@@ -33,11 +35,53 @@ class SFtp {
     fun verify(context: RoutingContext) {
         val json = context.bodyAsString
         val config = Gson().fromJson(json, SFtpConfig::class.java)
-        if (config == null) {
+        if ((config == null) || (config.authType != SFtpAuthType.Password)) {
             ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "not valid sftp config json")
             return
         }
         logger.debug("ssh config: {}", config.toJson())
+        try {
+            SFtpClient(config, KnownHostsStore.getStore())
+                .use {
+                    val ftp = it.getClient()
+                    if ((config.remotePath != null) && config.remotePath.isNotBlank()) {
+                        ftp.cd(config.remotePath)
+                    } else {
+                        config.remotePath = ftp.pwd()
+                    }
+                    logger.debug("sftp session connected, remote path is {}", config.remotePath)
+                }
+        } catch (ex: JSchException) {
+            logger.error("JSchException error: {}", ex.message)
+            StackTraceWriter.write(ex, logger)
+            ResponseHelper.respondError(context, HttpResponseStatus.INTERNAL_SERVER_ERROR, ex.message)
+        } catch (ex: SftpException) {
+            logger.error("SftpException error: {}", ex.message)
+            StackTraceWriter.write(ex, logger)
+            ResponseHelper.respondError(context, HttpResponseStatus.INTERNAL_SERVER_ERROR, ex.message)
+        }
+    }
+
+    @WebEndPoint(
+        methods = [HttpMethod.POST],
+        authTypes = [AuthType.UserToken],
+        path = "/api/distribute/verify/sftp/keyfile"
+    )
+    fun verifyKeyAuth(context: RoutingContext) {
+        if (context.fileUploads().isEmpty()) {
+            ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "no key file found")
+            return
+        }
+        val json = context.request().getParam("config")
+        val config = Gson().fromJson(json, SFtpConfig::class.java)
+        if ((config == null) || (config.authType != SFtpAuthType.PrivateKey)) {
+            ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "not valid sftp config json")
+            return
+        }
+        logger.debug("ssh config: {}", config.toJson())
+        val f = context.fileUploads().first()
+        val tf = FileStoreUtils.getTemporaryFileStore().copyFileToStore(f.uploadedFileName())
+        config.privateKeyFile = tf.absoluteFileName
         try {
             SFtpClient(config, KnownHostsStore.getStore())
                 .use {

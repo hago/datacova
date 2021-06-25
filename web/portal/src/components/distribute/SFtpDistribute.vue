@@ -32,6 +32,7 @@
       ></SFtpLoginPwd>
     <SFtpPrivateKey v-if="config.authType === 'PrivateKey'"
       v-bind:config="config"
+      v-on:keyfileset="onKeyFileSet"
       ></SFtpPrivateKey>
     <div class="form-row">
       <div class="col">
@@ -69,7 +70,8 @@ export default {
       authTypes: {
         Password: 'UserName / Password',
         PrivateKey: 'Private Key (DSA,RSA,ECDSA)'
-      }
+      },
+      file: undefined
     }
   },
   mounted: function () {
@@ -96,6 +98,16 @@ export default {
   },
   methods: {
     verify: function () {
+      if (this.config.authType === 'Password') {
+        this.verifyPassword()
+      } else {
+        this.verifyKeyFile()
+      }
+    },
+    onKeyFileSet: function (f) {
+      this.file = f
+    },
+    verifyPassword: function () {
       (new DistributorApiHelper()).verifySFtp(this.config).then(rsp => {
         this.$toasted.show('ftp verification succeeded', {
           position: 'bottom-center',
@@ -103,6 +115,30 @@ export default {
           type: 'success'
         })
       }).catch(err => {
+        this.$toasted.show(err.response.data.error.message, {
+          position: 'bottom-center',
+          duration: 1000,
+          type: 'error'
+        })
+      })
+    },
+    verifyKeyFile: function () {
+      if (this.file === undefined) {
+        this.$toasted.show('no private key file', {
+          position: 'bottom-center',
+          duration: 1000,
+          type: 'error'
+        })
+        return
+      }
+      (new DistributorApiHelper()).verifySFtpWithKey(this.config, this.file).then(rsp => {
+        this.$toasted.show('ftp verification succeeded', {
+          position: 'bottom-center',
+          duration: 1000,
+          type: 'success'
+        })
+      }).catch(err => {
+        console.log(err)
         this.$toasted.show(err.response.data.error.message, {
           position: 'bottom-center',
           duration: 1000,

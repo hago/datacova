@@ -25,6 +25,19 @@ class DistributorApiHelper {
     })
     return rsp
   }
+
+  async verifySFtpWithKey (sFtpConfig, file) {
+    let form = new FormData()
+    form.append('file', file, file.name)
+    form.append('config', JSON.stringify(sFtpConfig))
+    let rsp = await axios({
+      method: 'POST',
+      url: `${this.urlprefix}/api/distribute/verify/sftp/keyfile`,
+      data: form,
+      withCredentials: true
+    })
+    return rsp
+  }
 }
 
 export default DistributorApiHelper
