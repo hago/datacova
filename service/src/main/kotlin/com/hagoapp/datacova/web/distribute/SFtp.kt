@@ -51,6 +51,7 @@ class SFtp {
                     }
                     logger.debug("sftp session connected, remote path is {}", config.remotePath)
                 }
+            ResponseHelper.sendResponse(context, HttpResponseStatus.OK)
         } catch (ex: JSchException) {
             logger.error("JSchException error: {}", ex.message)
             StackTraceWriter.write(ex, logger)
@@ -81,6 +82,14 @@ class SFtp {
         logger.debug("ssh config: {}", config.toJson())
         val f = context.fileUploads().first()
         val tf = FileStoreUtils.getTemporaryFileStore().copyFileToStore(f.uploadedFileName())
+        if (!SFtpClient.isValidPrivateKeyFile(tf.absoluteFileName)) {
+            ResponseHelper.respondError(
+                context,
+                HttpResponseStatus.BAD_REQUEST,
+                "Acceptable private key file should start with 'BEGIN RSA PRIVATE KEY'"
+            )
+            return
+        }
         config.privateKeyFile = tf.absoluteFileName
         try {
             SFtpClient(config, KnownHostsStore.getStore())
@@ -93,6 +102,7 @@ class SFtp {
                     }
                     logger.debug("sftp session connected, remote path is {}", config.remotePath)
                 }
+            ResponseHelper.sendResponse(context, HttpResponseStatus.OK)
         } catch (ex: JSchException) {
             logger.error("JSchException error: {}", ex.message)
             StackTraceWriter.write(ex, logger)
