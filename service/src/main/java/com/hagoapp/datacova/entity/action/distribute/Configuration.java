@@ -7,6 +7,7 @@
 
 package com.hagoapp.datacova.entity.action.distribute;
 
+import com.hagoapp.datacova.CoVaException;
 import com.hagoapp.datacova.JsonStringify;
 
 /**
@@ -35,5 +36,9 @@ public class Configuration implements JsonStringify {
 
     public void setOverwriteExisted(boolean overwriteExisted) {
         this.overwriteExisted = overwriteExisted;
+    }
+
+    public void checkValidity() throws CoVaException {
+        //
     }
 }

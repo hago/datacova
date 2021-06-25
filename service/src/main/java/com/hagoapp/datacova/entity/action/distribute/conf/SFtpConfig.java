@@ -6,6 +6,9 @@ import com.hagoapp.datacova.distribute.sftp.SFtpAuthType;
 import com.hagoapp.datacova.entity.action.distribute.Configuration;
 import com.hagoapp.datacova.entity.action.distribute.IDistributeExtra;
 import com.hagoapp.datacova.execution.distribute.sftp.KnownHostsStore;
+import com.hagoapp.datacova.util.FileStoreUtils;
+
+import java.io.File;
 
 public class SFtpConfig extends Configuration implements IDistributeExtra {
 
@@ -117,6 +120,16 @@ public class SFtpConfig extends Configuration implements IDistributeExtra {
         }
         if (knownHost == null) {
             throw new CoVaException(String.format("ssh key not found host %s with port %d", host, port));
+        }
+    }
+
+    @Override
+    public void checkValidity() throws CoVaException {
+        if (authType == SFtpAuthType.PrivateKey) {
+            var f = new File(FileStoreUtils.Companion.getSshFileStore().getFullFileName(privateKeyFile));
+            if (!f.exists()) {
+                throw new CoVaException(String.format("private key file %s not existed", privateKeyFile));
+            }
         }
     }
 }

@@ -10,6 +10,7 @@ package com.hagoapp.datacova.entity.action.distribute;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.hagoapp.datacova.Application;
+import com.hagoapp.datacova.CoVaException;
 import com.hagoapp.datacova.CoVaLogger;
 import com.hagoapp.datacova.MapSerializer;
 import org.reflections.Reflections;
@@ -45,7 +46,7 @@ public class ConfigurationFactory {
         });
     }
 
-    public static Configuration createConfiguration(Map<String, Object> content) {
+    public static Configuration createConfiguration(Map<String, Object> content) throws CoVaException {
         try {
             return createConfiguration(content, MapSerializer.serializeMap(content));
         } catch (IOException e) {
@@ -54,7 +55,7 @@ public class ConfigurationFactory {
         }
     }
 
-    public static Configuration createConfiguration(Map<String, Object> content, String json) {
+    public static Configuration createConfiguration(Map<String, Object> content, String json) throws CoVaException {
         try {
             if (!content.containsKey("type")) {
                 logger.error("No verify configuration type found: '{}'", json);
@@ -66,7 +67,9 @@ public class ConfigurationFactory {
                 logger.error("Corresponding class for distribute action configuration with type {} not found", typeInt);
                 return null;
             }
-            return new Gson().fromJson(json, clz);
+            var conf = new Gson().fromJson(json, clz);
+            conf.checkValidity();
+            return conf;
         } catch (NumberFormatException e) {
             logger.error("Creation of distribute action configuration with type {} failed", content.get("type"));
             return null;
