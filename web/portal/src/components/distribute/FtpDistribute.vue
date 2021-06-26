@@ -74,14 +74,11 @@ export default {
       Vue.set(this.config, 'binaryTransport', true)
     }
     this.config.validator = function (config) {
-      if ((config.host === undefined) || (config.host.trim() === '')) {
+      if ((config.host === undefined) || (config.host === null) || (config.host.trim() === '')) {
         return 'host not defined'
       }
-      if ((config.remotePath === undefined) || (config.remotePath.trim() === '')) {
+      if ((config.remotePath === undefined) || (config.remotePath === null) || (config.remotePath.trim() === '')) {
         return 'remote path not defined'
-      }
-      if ((config.remoteName === undefined) || (config.remoteName.trim() === '')) {
-        return 'remote file name not defined'
       }
       return true
     }
