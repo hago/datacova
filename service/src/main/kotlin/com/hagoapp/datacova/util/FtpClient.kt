@@ -1,30 +1,17 @@
 package com.hagoapp.datacova.util
 
+import com.hagoapp.datacova.entity.action.distribute.conf.FtpConfig
 import org.apache.commons.net.ftp.FTP
 import org.apache.commons.net.ftp.FTPClient
 import java.io.*
 
-class FtpClient(
-    server: String,
-    serverPort: Int = 21,
-    login: String? = ANONYMOUS_LOGIN,
-    pwd: String? = ""
-) : Closeable {
+class FtpClient(private val config: FtpConfig) : Closeable {
 
     enum class FtpMode {
         ASCII,
         BINARY
     }
 
-    companion object {
-        const val ANONYMOUS_LOGIN = "anonymous"
-        const val ANONYMOUS_PASSWORD = "codiva@lenovo.com"
-    }
-
-    private val host = server
-    private val port = serverPort
-    private val username = login ?: ANONYMOUS_LOGIN
-    private val password = pwd ?: ANONYMOUS_PASSWORD
     private val ftp = FTPClient()
 
     private var _mode = FtpMode.BINARY
@@ -36,8 +23,8 @@ class FtpClient(
         }
 
     init {
-        ftp.connect(host, port)
-        ftp.login(username, password)
+        ftp.connect(config.host, config.port)
+        ftp.login(config.login, config.password)
     }
 
     fun cd(path: String): Boolean {
