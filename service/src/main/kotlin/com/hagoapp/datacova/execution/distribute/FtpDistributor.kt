@@ -12,26 +12,36 @@ import com.hagoapp.datacova.distribute.Distributor
 import com.hagoapp.datacova.entity.action.distribute.TaskActionDistribute
 import com.hagoapp.datacova.entity.action.distribute.conf.FtpConfig
 import com.hagoapp.datacova.util.FtpClient
+import com.hagoapp.datacova.util.Utils
 
-class FtpDistributor(action: TaskActionDistribute) : Distributor(action) {
-    private val config = distAction.configuration as FtpConfig
+class FtpDistributor() : Distributor() {
+    private lateinit var config: FtpConfig
+    override fun init(action: TaskActionDistribute?) {
+        super.init(action)
+        if (action == null) {
+            throw CoVaException("null distribute action!")
+        }
+        config = action.configuration as FtpConfig
+    }
+
     override fun distribute(source: String) {
         FtpClient(config).use { ftp ->
             ftp.ftpMode = if (config.isBinaryTransport) FtpClient.FtpMode.BINARY else FtpClient.FtpMode.ASCII
             ftp.cd(config.remotePath)
+            val rName = if (config.remoteName != null) config.remoteName else Utils.parseFileName(source).nameWithExt()
             if (ftp.ls(config.remotePath).any { file -> file.compareTo(config.remoteName) == 0 }) {
                 if (config.isOverwriteExisted) {
-                    ftp.delete(config.remoteName)
+                    ftp.delete(rName)
                 } else {
-                    throw CoVaException("remote file ${config.remoteName} in ${config.remotePath} existed")
+                    throw CoVaException("remote file $rName in ${config.remotePath} existed")
                 }
             }
-            ftp.put(config.remoteName, source)
+            ftp.put(rName, source)
             if (!ftp.ls(config.remotePath).any { file ->
                     println(file)
-                    file.compareTo(config.remoteName) == 0
+                    file.compareTo(rName) == 0
                 }) {
-                throw CoVaException("ftp uploaded store file ${config.remoteName} in ${config.remotePath} not found")
+                throw CoVaException("ftp uploaded store file $rName in ${config.remotePath} not found")
             }
         }
     }

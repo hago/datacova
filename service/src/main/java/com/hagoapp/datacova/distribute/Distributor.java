@@ -18,10 +18,14 @@ abstract public class Distributor {
     protected final Logger logger = CoVaLogger.getLogger();
     protected CoVaConfig cfg = CoVaConfig.getConfig();
 
-    public Distributor(TaskActionDistribute action) {
+    public void init(TaskActionDistribute action) {
         distAction = action;
     }
 
+    public Distributor() {
+    }
+
     abstract public void distribute(String source);
+
     abstract public int supportedDistributionType();
 }

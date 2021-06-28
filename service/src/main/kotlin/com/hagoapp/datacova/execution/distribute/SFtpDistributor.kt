@@ -16,8 +16,16 @@ import com.hagoapp.datacova.util.SFtpClient
 import com.jcraft.jsch.ChannelSftp
 import com.jcraft.jsch.JSchException
 
-class SFtpDistributor(action: TaskActionDistribute) : Distributor(action) {
-    private val config = distAction.configuration as SFtpConfig
+class SFtpDistributor() : Distributor() {
+    private lateinit var config: SFtpConfig
+    override fun init(action: TaskActionDistribute?) {
+        super.init(action)
+        if (action == null) {
+            throw CoVaException("null distribute action!")
+        }
+        config = action.configuration as SFtpConfig
+    }
+
     override fun distribute(source: String?) {
         var sftp: ChannelSftp? = null
         try {

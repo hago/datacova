@@ -11,7 +11,7 @@ import com.hagoapp.datacova.Application
 import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.distribute.Distributor
-import com.hagoapp.datacova.entity.action.distribute.Configuration
+import com.hagoapp.datacova.entity.action.distribute.TaskActionDistribute
 import org.reflections.Reflections
 import org.reflections.scanners.SubTypesScanner
 import java.lang.reflect.Constructor
@@ -40,10 +40,13 @@ class DistributorFactory {
             }
         }
 
-        fun getDistributor(conf: Configuration): Distributor {
+        fun getDistributor(action: TaskActionDistribute): Distributor {
+            val conf = action.configuration
             val constructor =
                 distributorMap[conf.type] ?: throw CoVaException("distributor type ${conf.type} not supported")
-            return constructor.newInstance()
+            val instance = constructor.newInstance()
+            instance.init(action)
+            return instance
         }
     }
 }
