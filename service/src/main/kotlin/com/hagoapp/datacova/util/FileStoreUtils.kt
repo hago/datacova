@@ -103,7 +103,7 @@ class FileStoreUtils private constructor() {
         return if (partial.startsWith("/")) partial.substring(1) else partial
     }
 
-    fun saveFileToStore(partialFileName: String, stream: InputStream) {
+    fun saveFileToStore(partialFileName: String, stream: InputStream): String {
         val f = File(rootPath, partialFileName)
         val p = File(f.parent)
         if (!p.exists()) {
@@ -120,6 +120,7 @@ class FileStoreUtils private constructor() {
                 }
                 fo.write(buffer, 0, i)
             }
+            return target
         }
     }
 
