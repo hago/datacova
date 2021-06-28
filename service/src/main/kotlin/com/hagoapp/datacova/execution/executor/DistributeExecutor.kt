@@ -24,8 +24,10 @@ import com.hagoapp.f2t.datafile.FileInfo
 import com.hagoapp.f2t.datafile.csv.FileInfoCsv
 import com.hagoapp.f2t.datafile.excel.FileInfoExcel
 import com.hagoapp.f2t.datafile.excel.FileInfoExcelX
-import java.io.FileOutputStream
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 import java.time.Instant
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 class DistributeExecutor : BaseTaskActionExecutor() {
@@ -35,13 +37,14 @@ class DistributeExecutor : BaseTaskActionExecutor() {
             throw CoVaException("Invalid distribute action")
         }
         val filename = prepareSourceFile(taskExecution.id, action.configuration, data, taskExecution.fileInfo.fileInfo)
-        DistributorFactory.getDistributor(action.configuration).distribute(filename)
+        println(action.configuration.toJson())
+        DistributorFactory.getDistributor(action).distribute(filename)
     }
 
     private fun prepareSourceFile(id: Int, conf: Configuration, data: DataTable, fileInfo: FileInfo): String {
         return if (conf.isCopyOriginal) fileInfo.filename!!
         else {
-            val d = DateTimeFormatter.ofPattern("yyyy/MM/dd/HHmmssSSS")
+            val d = DateTimeFormatter.ofPattern("yyyy/MM/dd/HHmmssSSS").withZone(ZoneId.of("UTC"))
             val s = Utils.parseFileName(fileInfo.filename!!).ext
             val p = "execution/${id}/${d.format(Instant.now())}.$s"
             val writer = when (fileInfo) {
@@ -65,11 +68,13 @@ class DistributeExecutor : BaseTaskActionExecutor() {
                 else -> throw CoVaException(String.format("unsupported data file type: %s", fileInfo))
             }
             for (i in 0 until data.rows.size) {
-                writer.addData(data.rows[i].cells)
+                writer.addData(data.rows[i].cells.map { it.data })
             }
-            val fn = FileStoreUtils.getTemporaryFileStore().getFullFileName(p)
-            FileOutputStream(fn).use { writer.write(it) }
-            fn
+            val fs = FileStoreUtils.getTemporaryFileStore()
+            ByteArrayOutputStream().use {
+                writer.write(it)
+                return fs.saveFileToStore(p, ByteArrayInputStream(it.toByteArray()))
+            }
         }
     }
 
