@@ -16,7 +16,7 @@ import com.hagoapp.datacova.util.FtpClient
 class FtpDistributor(action: TaskActionDistribute) : Distributor(action) {
     private val config = distAction.configuration as FtpConfig
     override fun distribute(source: String) {
-        FtpClient(config.host, config.port, config.login, config.password).use { ftp ->
+        FtpClient(config).use { ftp ->
             ftp.ftpMode = if (config.isBinaryTransport) FtpClient.FtpMode.BINARY else FtpClient.FtpMode.ASCII
             ftp.cd(config.remotePath)
             if (ftp.ls(config.remotePath).any { file -> file.compareTo(config.remoteName) == 0 }) {
