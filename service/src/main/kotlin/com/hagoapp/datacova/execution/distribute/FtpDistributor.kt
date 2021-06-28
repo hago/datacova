@@ -27,6 +27,7 @@ class FtpDistributor() : Distributor() {
     override fun distribute(source: String) {
         FtpClient(config).use { ftp ->
             ftp.ftpMode = if (config.isBinaryTransport) FtpClient.FtpMode.BINARY else FtpClient.FtpMode.ASCII
+            createDirectoryIfNecessary(ftp, config.remotePath)
             ftp.cd(config.remotePath)
             val rName = if (config.remoteName != null) config.remoteName else Utils.parseFileName(source).nameWithExt()
             if (ftp.ls(config.remotePath).any { file -> file.compareTo(config.remoteName) == 0 }) {
@@ -43,6 +44,20 @@ class FtpDistributor() : Distributor() {
                 }) {
                 throw CoVaException("ftp uploaded store file $rName in ${config.remotePath} not found")
             }
+        }
+    }
+
+    private fun createDirectoryIfNecessary(ftp: FtpClient, path: String) {
+        if (ftp.exists(path)) {
+            return
+        }
+        val pathParts = path.split("/").filter { it.isNotBlank() }
+        var cwd = if (path.startsWith("/")) "/${pathParts[0]}" else pathParts[0]
+        for (sub in pathParts.drop(1).plus("")) {
+            if (!ftp.exists(cwd)) {
+                ftp.createDirectory(cwd)
+            }
+            cwd += "/$sub"
         }
     }
 
