@@ -31,6 +31,11 @@ class FtpClient(private val config: FtpConfig) : Closeable {
         return ftp.changeWorkingDirectory(path)
     }
 
+    fun exists(path: String): Boolean {
+        val l = ftp.listNames(path)
+        return l != null
+    }
+
     fun pwd(): String {
         return ftp.printWorkingDirectory()
     }
@@ -101,6 +106,10 @@ class FtpClient(private val config: FtpConfig) : Closeable {
 
     fun getReply(): Pair<Int, String> {
         return Pair(ftp.replyCode, ftp.replyString)
+    }
+
+    fun createDirectory(path: String) {
+        ftp.mkd(path)
     }
 
     override fun close() {
