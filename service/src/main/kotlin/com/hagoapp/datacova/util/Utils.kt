@@ -105,7 +105,11 @@ class Utils {
             val path: String,
             val name: String,
             val ext: String
-        )
+        ) {
+            fun nameWithExt(): String {
+                return "$name.${if (ext.isBlank()) "" else ext}"
+            }
+        }
 
         @JvmStatic
         fun getSystemTemporaryDirectory(): String {
