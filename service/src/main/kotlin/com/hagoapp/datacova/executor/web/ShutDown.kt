@@ -73,7 +73,7 @@ class ShutDown {
     private fun shutDown(force: Boolean = false) {
         val cfg = CoVaConfig.getConfig()
         if (cfg.executor != null) {
-            Executor.getExecutor().stop(force)
+            Executor.getExecutor()?.stop(force)
         }
         if (cfg.web != null) {
             WebManager.getManager(cfg.web, listOf()).shutDownWebServer()

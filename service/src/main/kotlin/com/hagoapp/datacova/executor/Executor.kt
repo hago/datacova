@@ -19,10 +19,10 @@ import kotlin.concurrent.write
 
 class Executor private constructor() {
     companion object {
-        private val executor = Executor()
+        private val executor = if (CoVaConfig.getConfig().executor == null) null else Executor()
         private val lock = ReentrantReadWriteLock()
 
-        fun getExecutor(): Executor {
+        fun getExecutor(): Executor? {
             return executor
         }
     }

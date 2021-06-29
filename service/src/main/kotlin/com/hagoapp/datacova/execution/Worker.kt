@@ -37,7 +37,7 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
     }
 
     init {
-        Executor.getExecutor().workerStarts(taskExecution)
+        Executor.getExecutor()?.workerStarts(taskExecution)
         addWatcher(this)
     }
 
@@ -145,7 +145,7 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
             logger.error("unexpected error in Execution Service call onComplete back: $ex")
             StackTraceWriter.write(ex, logger)
         }
-        Executor.getExecutor().workerCompletes(te)
+        Executor.getExecutor()?.workerCompletes(te)
     }
 
     override fun onError(te: TaskExecution, error: java.lang.Exception) {
