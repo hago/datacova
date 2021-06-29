@@ -107,7 +107,7 @@ class Utils {
             val ext: String
         ) {
             fun nameWithExt(): String {
-                return "$name.${if (ext.isBlank()) "" else ext}"
+                return "$name${if (ext.isBlank()) "" else ".$ext"}"
             }
         }
 
