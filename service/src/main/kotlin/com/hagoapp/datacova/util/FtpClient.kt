@@ -97,7 +97,7 @@ class FtpClient(private val config: FtpConfig) : Closeable {
     }
 
     fun ls(): Array<String> {
-        return ftp.listNames()
+        return ftp.listNames() ?: arrayOf()
     }
 
     fun ls(path: String): Array<String> {
