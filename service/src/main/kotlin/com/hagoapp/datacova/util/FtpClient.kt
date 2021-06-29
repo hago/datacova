@@ -32,8 +32,7 @@ class FtpClient(private val config: FtpConfig) : Closeable {
     }
 
     fun exists(path: String): Boolean {
-        val l = ftp.listNames(path)
-        return l != null
+        return ftp.changeWorkingDirectory(path)
     }
 
     fun pwd(): String {
@@ -101,7 +100,7 @@ class FtpClient(private val config: FtpConfig) : Closeable {
     }
 
     fun ls(path: String): Array<String> {
-        return ftp.listNames(path)
+        return ftp.listNames(path) ?: arrayOf()
     }
 
     fun getReply(): Pair<Int, String> {
