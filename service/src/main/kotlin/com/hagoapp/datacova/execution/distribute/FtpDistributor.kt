@@ -52,7 +52,11 @@ class FtpDistributor() : Distributor() {
             return
         }
         val pathParts = path.split("/").filter { it.isNotBlank() }
-        var cwd = if (path.startsWith("/")) "/${pathParts[0]}" else pathParts[0]
+        var cwd = when {
+            pathParts.isEmpty() -> path
+            path.startsWith("/") -> "/${pathParts[0]}"
+            else -> pathParts[0]
+        }
         for (sub in pathParts.drop(1).plus("")) {
             if (!ftp.exists(cwd)) {
                 ftp.createDirectory(cwd)
