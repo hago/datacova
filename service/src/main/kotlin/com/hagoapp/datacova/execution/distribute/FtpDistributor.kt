@@ -30,7 +30,7 @@ class FtpDistributor() : Distributor() {
             createDirectoryIfNecessary(ftp, config.remotePath)
             ftp.cd(config.remotePath)
             val rName = if (config.remoteName != null) config.remoteName else Utils.parseFileName(source).nameWithExt()
-            if (ftp.ls(config.remotePath).any { file -> file.compareTo(config.remoteName) == 0 }) {
+            if (ftp.ls(config.remotePath).any { file -> file.compareTo(rName) == 0 }) {
                 if (config.isOverwriteExisted) {
                     ftp.delete(rName)
                 } else {
