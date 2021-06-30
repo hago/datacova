@@ -40,6 +40,7 @@ class DistributeExecutor : BaseTaskActionExecutor() {
         }
         this.execution = taskExecution
         val filename = prepareSourceFile(taskExecution.id, action.configuration, data, taskExecution.fileInfo.fileInfo)
+        action.configuration.targetFileName = prepareTargetFile(action)
         println(action.configuration.toJson())
         DistributorFactory.getDistributor(action).distribute(filename)
     }
@@ -79,6 +80,10 @@ class DistributeExecutor : BaseTaskActionExecutor() {
                 return fs.saveFileToStore(p, ByteArrayInputStream(it.toByteArray()))
             }
         }
+    }
+
+    private fun prepareTargetFile(action: TaskActionDistribute): String {
+        return action.configuration.targetFileName ?: execution.fileInfo.originalName
     }
 
     override fun getActionType(): Int {
