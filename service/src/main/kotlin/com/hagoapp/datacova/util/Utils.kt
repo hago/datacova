@@ -8,6 +8,7 @@
 
 package com.hagoapp.datacova.util
 
+import com.hagoapp.datacova.CoVaException
 import java.io.File
 import java.math.BigInteger
 import java.nio.file.FileSystems
@@ -121,6 +122,25 @@ class Utils {
             val absolutePath: String = temp.toString()
             val separator = FileSystems.getDefault().separator
             return absolutePath.substring(0, absolutePath.lastIndexOf(separator))
+        }
+
+        @JvmStatic
+        fun splitPath(path: String, delimiter: String = File.pathSeparator): List<String> {
+            val ret = mutableListOf<String>()
+            var start = 0
+            if (path.startsWith(delimiter)) {
+                val i = path.indexOf('/', 1)
+                when (i) {
+                    -1 -> return listOf(path)
+                    1 -> throw CoVaException("Invalid path $path")
+                    else -> {
+                        start = 1
+                        ret.add(path.substring(0, i))
+                    }
+                }
+            }
+            ret.addAll(path.substring(start).split("/").filter { it.isNotBlank() })
+            return ret
         }
     }
 }
