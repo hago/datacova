@@ -13,8 +13,10 @@ import com.hagoapp.datacova.entity.action.distribute.TaskActionDistribute
 import com.hagoapp.datacova.entity.action.distribute.conf.SFtpConfig
 import com.hagoapp.datacova.execution.distribute.sftp.KnownHostsStore
 import com.hagoapp.datacova.util.SFtpClient
+import com.hagoapp.datacova.util.Utils
 import com.jcraft.jsch.ChannelSftp
 import com.jcraft.jsch.JSchException
+import com.jcraft.jsch.SftpException
 
 class SFtpDistributor() : Distributor() {
     private lateinit var config: SFtpConfig
@@ -27,27 +29,48 @@ class SFtpDistributor() : Distributor() {
     }
 
     override fun distribute(source: String?) {
-        var sftp: ChannelSftp? = null
+        SFtpClient(config, KnownHostsStore.getStore()).use {
+            try {
+                val sftp = it.getClient()
+                createDirectoryIfNecessary(sftp, config.remotePath)
+                val rName = if (config.remoteName != null) config.remoteName else config.targetFileName
+                sftp.cd(config.remotePath)
+                if (sftp.ls("*").any {
+                        (it as ChannelSftp.LsEntry).filename.compareTo(rName, true) == 0
+                    }) {
+                    if (config.isOverwriteExisted) sftp.rm(rName)
+                    else throw CoVaException("remote file $rName in ${config.remotePath} existed")
+                }
+                sftp.put(source, rName)
+                if (!sftp.ls("*").any {
+                        (it as ChannelSftp.LsEntry).filename.compareTo(rName, true) == 0
+                    }) {
+                    throw CoVaException("ftp uploaded store file $rName in ${config.remotePath} not found")
+                }
+            } catch (ex: JSchException) {
+                throw CoVaException(ex.message, ex.cause)
+            }
+        }
+    }
+
+    private fun createDirectoryIfNecessary(sftp: ChannelSftp, path: String) {
+        val realPath = sftp.realpath(path)
         try {
-            sftp = SFtpClient(config, KnownHostsStore.getStore()).getClient()
-            sftp.cd(config.remotePath)
-            if (sftp.ls("*").any {
-                    (it as ChannelSftp.LsEntry).filename.compareTo(config.remoteName, true) == 0
-                }) {
-                if (config.isOverwriteExisted) sftp.rm(config.remoteName)
-                else throw CoVaException("remote file ${config.remoteName} in ${config.remotePath} existed")
+            sftp.cd(realPath)
+        } catch (e: SftpException) {
+            createDirectory(sftp, realPath)
+        }
+    }
+
+    private fun createDirectory(sftp: ChannelSftp, path: String) {
+        val parts = Utils.splitPath(path, "/")
+        for (p in parts) {
+            try {
+                sftp.cd(p)
+            } catch (e: SftpException) {
+                sftp.mkdir(p)
+                sftp.cd(p)
             }
-            sftp.put(source, config.remoteName)
-            if (!sftp.ls("*").any {
-                    (it as ChannelSftp.LsEntry).filename.compareTo(config.remoteName, true) == 0
-                }) {
-                throw CoVaException("ftp uploaded store file ${config.remoteName} in ${config.remotePath} not found")
-            }
-            sftp.quit()
-        } catch (ex: JSchException) {
-            throw CoVaException(ex.message, ex.cause)
-        } finally {
-            sftp?.quit()
         }
     }
 
