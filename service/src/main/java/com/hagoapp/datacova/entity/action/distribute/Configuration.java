@@ -17,6 +17,7 @@ public class Configuration implements JsonStringify {
     protected int type;
     protected boolean copyOriginal = false;
     protected boolean overwriteExisted = false;
+    protected String targetFileName;
 
     public int getType() {
         return type;
@@ -40,5 +41,13 @@ public class Configuration implements JsonStringify {
 
     public void checkValidity() throws CoVaException {
         //
+    }
+
+    public String getTargetFileName() {
+        return targetFileName;
+    }
+
+    public void setTargetFileName(String targetFileName) {
+        this.targetFileName = targetFileName;
     }
 }
