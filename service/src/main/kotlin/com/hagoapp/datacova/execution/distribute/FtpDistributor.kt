@@ -29,7 +29,7 @@ class FtpDistributor() : Distributor() {
             ftp.ftpMode = if (config.isBinaryTransport) FtpClient.FtpMode.BINARY else FtpClient.FtpMode.ASCII
             createDirectoryIfNecessary(ftp, config.remotePath)
             ftp.cd(config.remotePath)
-            val rName = if (config.remoteName != null) config.remoteName else Utils.parseFileName(source).nameWithExt()
+            val rName = if (config.remoteName != null) config.remoteName else config.targetFileName
             if (ftp.ls(config.remotePath).any { file -> file.compareTo(rName) == 0 }) {
                 if (config.isOverwriteExisted) {
                     ftp.delete(rName)
