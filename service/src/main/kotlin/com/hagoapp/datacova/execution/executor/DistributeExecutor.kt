@@ -32,10 +32,13 @@ import java.time.format.DateTimeFormatter
 
 class DistributeExecutor : BaseTaskActionExecutor() {
 
+    private lateinit var execution: TaskExecution
+
     override fun execute(taskExecution: TaskExecution, action: TaskAction, data: DataTable) {
         if (action !is TaskActionDistribute) {
             throw CoVaException("Invalid distribute action")
         }
+        this.execution = taskExecution
         val filename = prepareSourceFile(taskExecution.id, action.configuration, data, taskExecution.fileInfo.fileInfo)
         println(action.configuration.toJson())
         DistributorFactory.getDistributor(action).distribute(filename)
@@ -44,9 +47,7 @@ class DistributeExecutor : BaseTaskActionExecutor() {
     private fun prepareSourceFile(id: Int, conf: Configuration, data: DataTable, fileInfo: FileInfo): String {
         return if (conf.isCopyOriginal) fileInfo.filename!!
         else {
-            val d = DateTimeFormatter.ofPattern("yyyy/MM/dd/HHmmssSSS").withZone(ZoneId.of("UTC"))
-            val s = Utils.parseFileName(fileInfo.filename!!).ext
-            val p = "execution/${id}/${d.format(Instant.now())}.$s"
+            val d = DateTimeFormatter.ofPattern("yyyy/MM/dd/yyyyMMddHHmmssSSS").withZone(ZoneId.of("UTC"))
             val writer = when (fileInfo) {
                 is FileInfoCsv -> {
                     val csvWriter = CSVDataFileWriter()
@@ -67,6 +68,8 @@ class DistributeExecutor : BaseTaskActionExecutor() {
                 }
                 else -> throw CoVaException(String.format("unsupported data file type: %s", fileInfo))
             }
+            val s = Utils.parseFileName(execution.fileInfo.originalName).ext
+            val p = "execution/${id}/${d.format(Instant.now())}${if (s.isBlank()) "" else ".$s"}"
             for (i in 0 until data.rows.size) {
                 writer.addData(data.rows[i].cells.map { it.data })
             }
