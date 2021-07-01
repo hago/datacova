@@ -126,20 +126,17 @@ class Utils {
 
         @JvmStatic
         fun splitPath(path: String, delimiter: String = File.pathSeparator): List<String> {
-            val ret = mutableListOf<String>()
-            var start = 0
-            if (path.startsWith(delimiter)) {
-                val i = path.indexOf('/', 1)
-                when (i) {
-                    -1 -> return listOf(path)
-                    1 -> throw CoVaException("Invalid path $path")
-                    else -> {
-                        start = 1
-                        ret.add(path.substring(0, i))
-                    }
-                }
+            if (Regex.fromLiteral("[/]{2,}").containsMatchIn(path)) {
+                throw CoVaException("not a valid path: $path")
             }
-            ret.addAll(path.substring(start).split("/").filter { it.isNotBlank() })
+            val ret = mutableListOf<String>()
+            val path0 = if (path.startsWith("/")) {
+                ret.add("/")
+                path.substring(1)
+            } else {
+                path
+            }
+            ret.addAll(path0.split("/"))
             return ret
         }
     }
