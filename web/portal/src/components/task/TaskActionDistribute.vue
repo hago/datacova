@@ -8,7 +8,7 @@
       <div class="form-row">
         <div class="col-3 form-group">
           <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="copyOriginal" v-model="config.copyOriginal">
+            <input class="form-check-input" type="checkbox" :id="'copyOriginal' + actionIndex" v-model="config.copyOriginal">
             <label class="form-check-label" for="copyOriginal">
               Copy Original
             </label>
@@ -16,7 +16,7 @@
         </div>
         <div class="col-3 form-group">
           <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="overwriteExisted" v-model="config.overwriteExisted">
+            <input class="form-check-input" type="checkbox" :id="'overwriteExisted' + actionIndex" v-model="config.overwriteExisted">
             <label class="form-check-label" for="overwriteExisted">
               Overwrite if existed
             </label>
@@ -45,7 +45,8 @@ export default {
     SFtpDistribute
   },
   props: {
-    action: Object
+    action: Object,
+    actionIndex: Number
   },
   data () {
     return {
