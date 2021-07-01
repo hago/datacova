@@ -42,17 +42,12 @@ class SFtp {
         }
         logger.debug("ssh config: {}", config.toJson())
         try {
-            SFtpClient(config, KnownHostsStore.getStore())
-                .use {
-                    val ftp = it.getClient()
-                    if ((config.remotePath != null) && config.remotePath.isNotBlank()) {
-                        ftp.cd(config.remotePath)
-                    } else {
-                        config.remotePath = ftp.pwd()
-                    }
-                    logger.debug("sftp session connected, remote path is {}", config.remotePath)
-                }
-            ResponseHelper.sendResponse(context, HttpResponseStatus.OK)
+            val pwd = SFtpClient(config, KnownHostsStore.getStore()).use {
+                val ftp = it.getClient()
+                ftp.pwd()
+            }
+            logger.debug("sftp session connected, remote path is {}", pwd)
+            ResponseHelper.sendResponse(context, HttpResponseStatus.OK, mapOf("data" to mapOf("pwd" to pwd)))
         } catch (ex: JSchException) {
             logger.error("JSchException error: {}", ex.message)
             StackTraceWriter.write(ex, logger)
@@ -98,18 +93,13 @@ class SFtp {
         }
         config.privateKeyFile = keyFullName
         try {
-            SFtpClient(config, KnownHostsStore.getStore())
-                .use {
-                    val ftp = it.getClient()
-                    if ((config.remotePath != null) && config.remotePath.isNotBlank()) {
-                        ftp.cd(config.remotePath)
-                    } else {
-                        config.remotePath = ftp.pwd()
-                    }
-                    logger.debug("sftp session connected, remote path is {}", config.remotePath)
-                }
+            val pwd = SFtpClient(config, KnownHostsStore.getStore()).use {
+                val ftp = it.getClient()
+                ftp.pwd()
+            }
+            logger.debug("sftp session connected, remote path is {}", pwd)
             ResponseHelper.sendResponse(
-                context, HttpResponseStatus.OK, mapOf("code" to 0, "data" to mapOf("keyStored" to target))
+                context, HttpResponseStatus.OK, mapOf("code" to 0, "data" to mapOf("keyStored" to target, "pwd" to pwd))
             )
         } catch (ex: JSchException) {
             logger.error("JSchException error: {}", ex.message)

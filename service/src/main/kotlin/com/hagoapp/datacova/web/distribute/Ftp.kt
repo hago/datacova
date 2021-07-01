@@ -37,15 +37,11 @@ class Ftp {
         }
         logger.debug("ftp config: {}", config.toJson())
         try {
-            FtpClient(config).use {
-                if ((config.remotePath != null) && config.remotePath.isNotBlank()) {
-                    it.cd(config.remotePath)
-                } else {
-                    config.remotePath = it.pwd()
-                }
-                logger.debug("ftp session connected, remote path is {}", config.remotePath)
+            val pwd = FtpClient(config).use {
+                it.pwd()
             }
-            ResponseHelper.sendResponse(context, HttpResponseStatus.OK)
+            logger.debug("ftp session connected, remote path is {}", pwd)
+            ResponseHelper.sendResponse(context, HttpResponseStatus.OK, mapOf("data" to mapOf("pwd" to pwd)))
         } catch (ex: Exception) {
             logger.error("Ftp verification error: {}", ex.message)
             StackTraceWriter.write(ex, logger)
