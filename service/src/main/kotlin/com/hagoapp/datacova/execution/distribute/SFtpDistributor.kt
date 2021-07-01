@@ -32,9 +32,11 @@ class SFtpDistributor() : Distributor() {
         SFtpClient(config, KnownHostsStore.getStore()).use {
             try {
                 val sftp = it.getClient()
-                createDirectoryIfNecessary(sftp, config.remotePath)
-                val rName = if (config.remoteName != null) config.remoteName else config.targetFileName
-                sftp.cd(config.remotePath)
+                val actualPath = normalizePath(sftp, config.remotePath)
+                createDirectoryIfNecessary(sftp, actualPath)
+                val rName = if ((config.remoteName != null) && config.remoteName.isNotBlank()) config.remoteName
+                else config.targetFileName
+                sftp.cd(actualPath)
                 if (sftp.ls("*").any { entry ->
                         (entry as ChannelSftp.LsEntry).filename.compareTo(rName, true) == 0
                     }) {
@@ -53,12 +55,21 @@ class SFtpDistributor() : Distributor() {
         }
     }
 
+    private fun normalizePath(sftp: ChannelSftp, path: String): String {
+        return if (path.startsWith("~")) {
+            val home = sftp.home
+            val rest = path.substring(1)
+            "$home${if (rest == "/") "" else rest}"
+        } else {
+            path
+        }
+    }
+
     private fun createDirectoryIfNecessary(sftp: ChannelSftp, path: String) {
-        val realPath = sftp.realpath(path)
         try {
-            sftp.cd(realPath)
+            sftp.cd(path)
         } catch (e: SftpException) {
-            createDirectory(sftp, realPath)
+            createDirectory(sftp, path)
         }
     }
 
