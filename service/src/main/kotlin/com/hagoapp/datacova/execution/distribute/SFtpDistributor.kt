@@ -35,15 +35,15 @@ class SFtpDistributor() : Distributor() {
                 createDirectoryIfNecessary(sftp, config.remotePath)
                 val rName = if (config.remoteName != null) config.remoteName else config.targetFileName
                 sftp.cd(config.remotePath)
-                if (sftp.ls("*").any {
-                        (it as ChannelSftp.LsEntry).filename.compareTo(rName, true) == 0
+                if (sftp.ls("*").any { entry ->
+                        (entry as ChannelSftp.LsEntry).filename.compareTo(rName, true) == 0
                     }) {
                     if (config.isOverwriteExisted) sftp.rm(rName)
                     else throw CoVaException("remote file $rName in ${config.remotePath} existed")
                 }
                 sftp.put(source, rName)
-                if (!sftp.ls("*").any {
-                        (it as ChannelSftp.LsEntry).filename.compareTo(rName, true) == 0
+                if (!sftp.ls("*").any { entry ->
+                        (entry as ChannelSftp.LsEntry).filename.compareTo(rName, true) == 0
                     }) {
                     throw CoVaException("ftp uploaded store file $rName in ${config.remotePath} not found")
                 }
