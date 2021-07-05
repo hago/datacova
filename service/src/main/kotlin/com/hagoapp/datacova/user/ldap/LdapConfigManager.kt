@@ -9,7 +9,7 @@ package com.hagoapp.datacova.user.ldap
 
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
-import com.hagoapp.datacova.config.init.LdapConfig
+import com.hagoapp.datacova.config.indb.LdapConfig
 
 class LdapConfigManager {
     companion object {

@@ -5,7 +5,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package com.hagoapp.datacova.config.init;
+package com.hagoapp.datacova.config.indb;
 
 public class LdapConfig {
     private String host;
