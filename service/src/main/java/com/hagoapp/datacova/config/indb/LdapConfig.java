@@ -10,8 +10,8 @@ package com.hagoapp.datacova.config.indb;
 public class LdapConfig {
     private String host;
     private int port = 389;
-    private String baseDistinguishedName;
-    private String bindDistinguishedName;
+    private String baseDistinguishName;
+    private String bindDistinguishName;
     private String bindPassword;
     private String userFilter;
     private String groupFilter;
@@ -33,20 +33,20 @@ public class LdapConfig {
         this.port = port;
     }
 
-    public String getBaseDistinguishedName() {
-        return baseDistinguishedName;
+    public String getBaseDistinguishName() {
+        return baseDistinguishName;
     }
 
-    public void setBaseDistinguishedName(String baseDistinguishedName) {
-        this.baseDistinguishedName = baseDistinguishedName;
+    public void setBaseDistinguishName(String baseDistinguishName) {
+        this.baseDistinguishName = baseDistinguishName;
     }
 
-    public String getBindDistinguishedName() {
-        return bindDistinguishedName;
+    public String getBindDistinguishName() {
+        return bindDistinguishName;
     }
 
-    public void setBindDistinguishedName(String bindDistinguishedName) {
-        this.bindDistinguishedName = bindDistinguishedName;
+    public void setBindDistinguishName(String bindDistinguishName) {
+        this.bindDistinguishName = bindDistinguishName;
     }
 
     public String getBindPassword() {
