@@ -7,8 +7,8 @@
 
 package com.hagoapp.datacova
 
-import com.hagoapp.datacova.config.CoVaConfig
-import com.hagoapp.datacova.config.MailConfig
+import com.hagoapp.datacova.config.init.CoVaConfig
+import com.hagoapp.datacova.config.init.MailConfig
 import com.hagoapp.datacova.config.TestConfig
 import com.hagoapp.datacova.config.TestMailConfig
 import com.hagoapp.datacova.util.mail.MailHelper

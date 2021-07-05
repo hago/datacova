@@ -5,7 +5,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package com.hagoapp.datacova.config;
+package com.hagoapp.datacova.config.init;
 
 public class ExecutorConfig extends WebConfig {
     private String dispatcherUrl;

@@ -8,7 +8,7 @@
 package com.hagoapp.datacova.executor
 
 import com.hagoapp.datacova.CoVaLogger
-import com.hagoapp.datacova.config.CoVaConfig
+import com.hagoapp.datacova.config.init.CoVaConfig
 import com.hagoapp.datacova.dispatcher.DispatcherInvoker
 import com.hagoapp.datacova.entity.execution.TaskExecution
 import com.hagoapp.datacova.web.WebManager

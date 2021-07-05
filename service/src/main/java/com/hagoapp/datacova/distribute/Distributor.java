@@ -8,7 +8,7 @@
 package com.hagoapp.datacova.distribute;
 
 import com.hagoapp.datacova.CoVaLogger;
-import com.hagoapp.datacova.config.CoVaConfig;
+import com.hagoapp.datacova.config.init.CoVaConfig;
 import com.hagoapp.datacova.entity.action.distribute.TaskActionDistribute;
 import org.slf4j.Logger;
 

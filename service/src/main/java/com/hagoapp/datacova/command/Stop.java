@@ -10,7 +10,7 @@ package com.hagoapp.datacova.command;
 
 import com.hagoapp.datacova.CoVaException;
 import com.hagoapp.datacova.CoVaLogger;
-import com.hagoapp.datacova.config.CoVaConfig;
+import com.hagoapp.datacova.config.init.CoVaConfig;
 import org.slf4j.Logger;
 import picocli.CommandLine;
 

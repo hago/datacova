@@ -9,8 +9,8 @@
 package com.hagoapp.datacova.util.mail
 
 import com.hagoapp.datacova.CoVaLogger
-import com.hagoapp.datacova.config.CoVaConfig
-import com.hagoapp.datacova.config.MailConfig
+import com.hagoapp.datacova.config.init.CoVaConfig
+import com.hagoapp.datacova.config.init.MailConfig
 import java.util.*
 import javax.activation.DataHandler
 import javax.activation.FileDataSource
