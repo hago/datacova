@@ -10,28 +10,33 @@ package com.hagoapp.datacova.executor
 import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.dispatcher.DispatcherInvoker
+import com.hagoapp.datacova.entity.execution.ExecutionActionDetail
+import com.hagoapp.datacova.entity.execution.ExecutionDetail
 import com.hagoapp.datacova.entity.execution.TaskExecution
+import com.hagoapp.datacova.execution.TaskExecutionWatcher
 import com.hagoapp.datacova.web.WebManager
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
 
-class Executor private constructor() {
+class Executor private constructor() : TaskExecutionWatcher {
     companion object {
         private val executor = if (CoVaConfig.getConfig().executor == null) null else Executor()
-        private val lock = ReentrantReadWriteLock()
 
         fun getExecutor(): Executor? {
             return executor
         }
     }
 
+    private val lock = ReentrantReadWriteLock()
     private val config = CoVaConfig.getConfig().executor
     private val logger = CoVaLogger.getLogger()
-    private var runningWorkerCount = 0
+    private val statuses = ConcurrentHashMap<Int, Status>()
+    private val runningWorkerCount: Int
         get() {
-            lock.read { return field }
+            lock.read { return statuses.size }
         }
     private val dispatcher = DispatcherInvoker(config)
     private var heartbeatFailCount = 0
@@ -76,11 +81,29 @@ class Executor private constructor() {
         lock.read { return runningWorkerCount }
     }
 
-    fun workerStarts(t: TaskExecution) {
-        lock.write { runningWorkerCount++ }
+    override fun onStart(te: TaskExecution) {
+        lock.write { statuses.put(te.id, Status(te, 0f)) }
     }
 
-    fun workerCompletes(t: TaskExecution) {
-        lock.write { runningWorkerCount-- }
+    override fun onComplete(te: TaskExecution, result: ExecutionDetail) {
+        lock.write { statuses.remove(te.id) }
+    }
+
+    override fun onError(te: TaskExecution, error: Exception) {
+        lock.write { statuses.remove(te.id) }
+    }
+
+    override fun onActionComplete(te: TaskExecution, actionIndex: Int, result: ExecutionActionDetail) {
+        val p = (2 + actionIndex).toFloat() / calcSteps(te)
+        lock.write { statuses.put(te.id, Status(te, p)) }
+    }
+
+    override fun onDataLoadComplete(te: TaskExecution, isLoadingSuccessful: Boolean) {
+        val p = 1f / calcSteps(te)
+        lock.write { statuses.put(te.id, Status(te, p)) }
+    }
+
+    private fun calcSteps(te: TaskExecution): Float {
+        return te.task.actions.size.toFloat() + 1f
     }
 }
