@@ -7,9 +7,11 @@
 
 package com.hagoapp.datacova.executor.web
 
+import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.execution.TaskExecutionData
 import com.hagoapp.datacova.entity.execution.ExecutionStatus
 import com.hagoapp.datacova.execution.Worker
+import com.hagoapp.datacova.executor.Executor
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import io.netty.handler.codec.http.HttpResponseStatus
@@ -34,5 +36,22 @@ class ExecutorApi {
         workerThread.isDaemon = true
         workerThread.start()
         ResponseHelper.sendResponse(context, HttpResponseStatus.OK, mapOf("code" to 0))
+    }
+
+    @WebEndPoint(
+        path = "/api/executor/execute/status",
+        methods = [HttpMethod.GET]
+    )
+    fun status(context: RoutingContext) {
+        val statuses = Executor.getExecutor()!!.getExecutionStatuses()
+        ResponseHelper.sendResponse(
+            context, HttpResponseStatus.OK, mapOf(
+                "code" to 0,
+                "data" to mapOf(
+                    "executor" to CoVaConfig.getConfig().executor,
+                    "executions" to statuses
+                )
+            )
+        )
     }
 }
