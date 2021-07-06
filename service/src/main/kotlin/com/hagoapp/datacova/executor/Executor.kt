@@ -15,6 +15,7 @@ import com.hagoapp.datacova.entity.execution.ExecutionDetail
 import com.hagoapp.datacova.entity.execution.TaskExecution
 import com.hagoapp.datacova.execution.TaskExecutionWatcher
 import com.hagoapp.datacova.web.WebManager
+import java.time.Instant
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -82,7 +83,7 @@ class Executor private constructor() : TaskExecutionWatcher {
     }
 
     override fun onStart(te: TaskExecution) {
-        lock.write { statuses.put(te.id, Status(te, 0f)) }
+        lock.write { statuses.put(te.id, Status(te, 0f, Instant.now().toEpochMilli())) }
     }
 
     override fun onComplete(te: TaskExecution, result: ExecutionDetail) {
@@ -95,15 +96,37 @@ class Executor private constructor() : TaskExecutionWatcher {
 
     override fun onActionComplete(te: TaskExecution, actionIndex: Int, result: ExecutionActionDetail) {
         val p = (2 + actionIndex).toFloat() / calcSteps(te)
-        lock.write { statuses.put(te.id, Status(te, p)) }
+        lock.write {
+            statuses.compute(te.id) { _, existed ->
+                if (existed == null) Status(te, p, Instant.now().toEpochMilli())
+                else {
+                    existed.progress = p
+                    existed
+                }
+            }
+        }
     }
 
     override fun onDataLoadComplete(te: TaskExecution, isLoadingSuccessful: Boolean) {
         val p = 1f / calcSteps(te)
-        lock.write { statuses.put(te.id, Status(te, p)) }
+        lock.write {
+            statuses.compute(te.id) { _, existed ->
+                if (existed == null) Status(te, p, Instant.now().toEpochMilli())
+                else {
+                    existed.progress = p
+                    existed
+                }
+            }
+        }
     }
 
     private fun calcSteps(te: TaskExecution): Float {
         return te.task.actions.size.toFloat() + 1f
+    }
+
+    fun getExecutionStatuses(): List<Status> {
+        lock.read {
+            return statuses.values.map { it }
+        }
     }
 }

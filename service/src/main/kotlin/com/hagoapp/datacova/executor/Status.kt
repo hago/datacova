@@ -12,5 +12,6 @@ import com.hagoapp.datacova.entity.execution.TaskExecution
 
 data class Status(
     val taskExecution: TaskExecution,
-    var progress: Float
+    var progress: Float,
+    val startTime: Long
 )
