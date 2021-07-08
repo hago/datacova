@@ -2,6 +2,7 @@ package com.hagoapp.datacova.util.ldap;
 
 import com.hagoapp.datacova.CoVaException;
 import com.hagoapp.datacova.CoVaLogger;
+import com.hagoapp.datacova.config.indb.LdapConfig;
 import org.apache.directory.api.ldap.model.cursor.SearchCursor;
 import org.apache.directory.api.ldap.model.entry.Attribute;
 import org.apache.directory.api.ldap.model.entry.Entry;
@@ -124,6 +125,17 @@ public class LdapUtils implements Closeable, ConnectionClosedEventListener {
     public LdapUtils(String serverName, int serverPort, String baseDistinguishedName, String bindDistinguishedName,
                      String bindPassword) throws CoVaException {
         init(serverName, serverPort, baseDistinguishedName, bindDistinguishedName, bindPassword, false);
+    }
+
+    /**
+     * Constructor with <code>LdapConfig</code>.
+     *
+     * @param config config of ldap
+     * @throws CoVaException if connect to server failed or bind failed
+     */
+    public LdapUtils(LdapConfig config) throws CoVaException {
+        init(config.getHost(), config.getPort(), config.getBaseDistinguishName(), config.getBindDistinguishName(),
+                config.getBindPassword(), config.isSsl());
     }
 
     /**
