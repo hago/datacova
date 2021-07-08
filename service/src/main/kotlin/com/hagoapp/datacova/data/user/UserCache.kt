@@ -18,6 +18,7 @@ class UserCache {
     companion object {
 
         private const val USER_INFO = "UserInfo"
+        private const val USER_INFO_BY_USERID = "UserInfoUserId"
         private const val USER_INFO_CACHE_TIME = 3600
         private const val USER_REGISTRATION_CODE_KEY_PREFIX = "UserRegistrationActivation"
 
@@ -77,6 +78,25 @@ class UserCache {
                     return it.get(key)?.toLong()
                 }
             }
+        }
+
+        @JvmStatic
+        fun getUserByUserId(userId: String, userType: Int): UserInfo? {
+            return RedisCacheReader.readCachedData(
+                USER_INFO_BY_USERID,
+                USER_INFO_CACHE_TIME,
+                object : GenericLoader<UserInfo?> {
+                    override fun perform(vararg params: Any?): UserInfo? {
+                        val uid = params[0].toString()
+                        val type = params[1] as Int
+                        return UserData().findUser(uid, type)
+                    }
+
+                },
+                UserInfo::class.java,
+                userId,
+                userType
+            )
         }
     }
 }
