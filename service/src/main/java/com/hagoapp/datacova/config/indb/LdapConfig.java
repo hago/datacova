@@ -13,6 +13,7 @@ public class LdapConfig {
     private String baseDistinguishName;
     private String bindDistinguishName;
     private String bindPassword;
+    private String userDnPattern;
     private String userFilter;
     private String groupFilter;
     private boolean ssl;
@@ -79,5 +80,13 @@ public class LdapConfig {
 
     public void setSsl(boolean ssl) {
         this.ssl = ssl;
+    }
+
+    public String getUserDnPattern() {
+        return userDnPattern;
+    }
+
+    public void setUserDnPattern(String userDnPattern) {
+        this.userDnPattern = userDnPattern;
     }
 }
