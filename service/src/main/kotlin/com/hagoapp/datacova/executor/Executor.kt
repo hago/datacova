@@ -83,7 +83,7 @@ class Executor private constructor() : TaskExecutionWatcher {
     }
 
     override fun onStart(te: TaskExecution) {
-        lock.write { statuses.put(te.id, Status(te, 0f, Instant.now().toEpochMilli())) }
+        lock.write { statuses.put(te.id, Status(te.id, 0f, Instant.now().toEpochMilli())) }
     }
 
     override fun onComplete(te: TaskExecution, result: ExecutionDetail) {
@@ -98,7 +98,7 @@ class Executor private constructor() : TaskExecutionWatcher {
         val p = (2 + actionIndex).toFloat() / calcSteps(te)
         lock.write {
             statuses.compute(te.id) { _, existed ->
-                if (existed == null) Status(te, p, Instant.now().toEpochMilli())
+                if (existed == null) Status(te.id, p, Instant.now().toEpochMilli())
                 else {
                     existed.progress = p
                     existed
@@ -111,7 +111,7 @@ class Executor private constructor() : TaskExecutionWatcher {
         val p = 1f / calcSteps(te)
         lock.write {
             statuses.compute(te.id) { _, existed ->
-                if (existed == null) Status(te, p, Instant.now().toEpochMilli())
+                if (existed == null) Status(te.id, p, Instant.now().toEpochMilli())
                 else {
                     existed.progress = p
                     existed

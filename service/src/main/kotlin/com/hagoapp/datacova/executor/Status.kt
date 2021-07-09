@@ -8,10 +8,8 @@
 
 package com.hagoapp.datacova.executor
 
-import com.hagoapp.datacova.entity.execution.TaskExecution
-
 data class Status(
-    val taskExecution: TaskExecution,
+    val taskExecutionId: Int,
     var progress: Float,
     val startTime: Long
 )
