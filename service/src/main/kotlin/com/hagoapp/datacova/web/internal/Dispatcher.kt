@@ -8,7 +8,7 @@
 package com.hagoapp.datacova.web.internal
 
 import com.hagoapp.datacova.ExecutorManager
-import com.hagoapp.datacova.entity.Executor
+import com.hagoapp.datacova.entity.internal.ExecutorStatus
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import io.netty.handler.codec.http.HttpResponseStatus
@@ -22,7 +22,7 @@ class Dispatcher {
     )
     fun register(context: RoutingContext) {
         val json = context.bodyAsString
-        val exe = Executor.fromJson(json)
+        val exe = ExecutorStatus.fromJson(json)
         if (exe == null) {
             ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "invalid body");
             return
@@ -37,7 +37,7 @@ class Dispatcher {
     )
     fun heartbeat(context: RoutingContext) {
         val json = context.bodyAsString
-        val exe = Executor.fromJson(json)
+        val exe = ExecutorStatus.fromJson(json)
         if (exe == null) {
             ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "invalid body");
             return

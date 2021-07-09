@@ -7,7 +7,7 @@
 
 package com.hagoapp.datacova;
 
-import com.hagoapp.datacova.entity.Executor;
+import com.hagoapp.datacova.entity.internal.ExecutorStatus;
 import org.slf4j.Logger;
 
 import java.time.Instant;
@@ -26,6 +26,9 @@ public class ExecutorManager {
         return manager;
     }
 
+    /**
+     * name: executor name; value: executor info
+     */
     private final ConcurrentHashMap<String, ExecutorInfo> executorMap = new ConcurrentHashMap<>();
     private final Logger logger = CoVaLogger.getLogger();
 
@@ -49,41 +52,37 @@ public class ExecutorManager {
         timer.schedule(checker, 2 * 1000, CHECK_INTERVAL);
     }
 
-    public void registerExecutor(Executor executor) {
-        executorMap.put(executor.toString(), new ExecutorInfo(executor));
+    public void registerExecutor(ExecutorStatus status) {
+        executorMap.put(getExecutorName(status), new ExecutorInfo(status));
     }
 
-    public void keepAlive(Executor executor) {
-        executorMap.compute(executor.toString(), (k, existed) -> {
+    private String getExecutorName(ExecutorStatus status) {
+        return status.getExecutor().getName();
+    }
+
+    public void keepAlive(ExecutorStatus status) {
+        executorMap.compute(getExecutorName(status), (k, existed) -> {
             if (existed != null) {
                 existed.lastActiveTime = Instant.now().toEpochMilli();
                 return existed;
             } else {
-                return new ExecutorInfo(executor);
+                return new ExecutorInfo(status);
             }
         });
     }
 
-    public Executor findLessLoadedExecutor() {
+    public ExecutorStatus findLessLoadedExecutor() {
         if (executorMap.isEmpty()) {
             return null;
         }
         return executorMap.values().stream()
-                .min(Comparator.comparingInt(o -> o.executor.getExecutionsRunning().size())).get().getExecutor();
+                .min(Comparator.comparingInt(o -> o.status.getExecutions().size())).get().status;
     }
 
     public static class ExecutorInfo {
-        private Executor executor;
+        private ExecutorStatus status;
         private long addTime = Instant.now().toEpochMilli();
         private long lastActiveTime = Instant.now().toEpochMilli();
-
-        public Executor getExecutor() {
-            return executor;
-        }
-
-        public void setExecutor(Executor executor) {
-            this.executor = executor;
-        }
 
         public long getAddTime() {
             return addTime;
@@ -101,8 +100,16 @@ public class ExecutorManager {
             this.lastActiveTime = lastActiveTime;
         }
 
-        public ExecutorInfo(Executor executor) {
-            this.executor = executor;
+        public ExecutorStatus getStatus() {
+            return status;
+        }
+
+        public void setStatus(ExecutorStatus status) {
+            this.status = status;
+        }
+
+        public ExecutorInfo(ExecutorStatus status) {
+            this.status = status;
         }
     }
 }

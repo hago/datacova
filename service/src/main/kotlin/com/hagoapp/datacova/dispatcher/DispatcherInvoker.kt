@@ -12,7 +12,6 @@ import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.JsonStringify
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.config.ExecutorConfig
-import com.hagoapp.datacova.entity.Executor
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.core.http.HttpHeaders
 import java.net.URI
@@ -33,13 +32,8 @@ class DispatcherInvoker(val config: ExecutorConfig) {
     private val logger = CoVaLogger.getLogger()
 
     fun register(): Boolean {
-        val executor = Executor()
-        with(executor) {
-            name = config.name
-            url = config.executorUrl
-        }
         return try {
-            http(registerUrl, executor)
+            http(registerUrl, config)
             logger.info("executor registration succeeded")
             true
         } catch (e: Exception) {
@@ -49,13 +43,8 @@ class DispatcherInvoker(val config: ExecutorConfig) {
     }
 
     fun heartbeat(): Boolean {
-        val executor = Executor()
-        with(executor) {
-            name = config.name
-            url = config.executorUrl
-        }
         return try {
-            http(heartbeatUrl, executor)
+            http(heartbeatUrl, config)
             logger.info("executor heartbeat succeeded")
             true
         } catch (e: Exception) {
