@@ -8,13 +8,15 @@
 
 package com.hagoapp.datacova.config;
 
+import com.hagoapp.datacova.JsonStringify;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Configuration of web interfaces.
  */
-public class WebConfig {
+public class WebConfig implements JsonStringify {
     private String bindIp = "127.0.0.1";
     private int port = 6786;
     private boolean allowCrossOriginResourceSharing = false;
