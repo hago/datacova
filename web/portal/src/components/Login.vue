@@ -6,7 +6,7 @@
         <div class="col-6">
           <select class="form-control" v-model="loginChoice" id="channel">
             <option v-if="loginMethods.length === 0" value="-1">Login Disabled</option>
-            <option v-for="(method, index) in loginMethods" v-bind:value="index" v-bind:key="index">
+            <option v-for="(providerType, method) in loginMethods" v-bind:value="providerType" v-bind:key="providerType">
               {{ method }}
             </option>
           </select>
@@ -34,7 +34,7 @@
             class="form-control" />
         </div>
       </div>
-      <div class="form-group row">
+      <div class="form-group row" v-if="loginChoice==0">
         <label for="captcha" class="col-form-label col-4">Captcha</label>
         <div class="col-6">
           <input
@@ -45,7 +45,7 @@
             class="form-control" />
         </div>
       </div>
-      <div class="row">
+      <div class="row" v-if="loginChoice==0">
         <img v-bind:src="captchaUrl" class="captcha"/>
         <button class="btn btn-info" v-on:click="refreshCaptcha()">Refresh</button>
       </div>
@@ -67,6 +67,7 @@
 
 <script>
 import UserAPIHelper from '../apis/userapi.js'
+import SiteHelper from '../apis/site.js'
 import User from '../apis/user.js'
 import router from '@/router'
 
@@ -79,17 +80,26 @@ export default {
       captcha: '',
       captchaUrl: `${process.env.SERVICE_BASE_URL === undefined ? '' : process.env.SERVICE_BASE_URL}/api/auth/captcha?${Math.random()}`,
       errorMessage: '',
-      loginMethods: [
-        'Regular(username, password and captcha)'
-      ],
-      loginChoice: 0
+      loginChoice: 0,
+      loginMethods: {
+        'Regular(username, password and captcha)': 0
+      }
     }
   },
   props: {
     return: Object
   },
   created: function () {
-    //
+    let api = new SiteHelper(process.env.SERVICE_BASE_URL)
+    api.loadsettings().then(rsp => {
+      let extraProviders = {}
+      for (var k in rsp.data.settings.userProviders) {
+        let element = rsp.data.settings.userProviders[k]
+        extraProviders[element.name] = element.providerType
+      }
+      console.log(extraProviders)
+      this.loginMethods = Object.assign({}, this.loginMethods, extraProviders)
+    })
   },
   methods: {
     login () {
