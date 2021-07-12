@@ -8,11 +8,12 @@
 package com.hagoapp.datacova.config.indb;
 
 import com.hagoapp.datacova.JsonStringify;
-import com.hagoapp.datacova.util.ldap.Attributes;
 
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class LdapAttributes implements JsonStringify {
     public static final String ATTRIBUTE_DISPLAY_NAME = "displayName";
@@ -32,14 +33,10 @@ public class LdapAttributes implements JsonStringify {
     public static final String ATTRIBUTE_DISTINGUISHED_NAME = "distinguishedName";
     public static final String ATTRIBUTE_DN = "dn";
 
-    private static final Map<String, String> items = new HashMap<>();
+    private static final Map<String, String> defaults = new HashMap<>();
 
-    public static Map<String, String> getItems() {
-        return items;
-    }
-
-    public void normalize() {
-        var fields = Attributes.class.getDeclaredFields();
+    static {
+        var fields = LdapAttributes.class.getDeclaredFields();
         for (var field : fields) {
             int modifiers = field.getModifiers();
             if (!Modifier.isStatic(modifiers) || !Modifier.isPublic(modifiers) || !Modifier.isFinal(modifiers)) {
@@ -51,10 +48,53 @@ public class LdapAttributes implements JsonStringify {
             try {
                 var attrIdentity = field.getName();
                 var attrDefaultName = field.get(null).toString();
-                items.putIfAbsent(attrIdentity, attrDefaultName);
+                defaults.putIfAbsent(attrIdentity, attrDefaultName);
             } catch (IllegalAccessException e) {
                 System.err.printf("LDAP attribute %s read error\r\n", field.getName());
             }
         }
+    }
+
+    public static LdapAttributes defaultAttributes() {
+        var instance = new LdapAttributes();
+        instance.normalize();
+        return instance;
+    }
+
+    public static Map<String, String> getDefaults() {
+        return defaults;
+    }
+
+    private final Map<String, String> items = new HashMap<>();
+
+    public void normalize() {
+        defaults.forEach((k, v) -> {
+            if (!items.containsKey(k)) {
+                items.put(k, v);
+            }
+        });
+    }
+
+    public Map<String, String> getItems() {
+        return items;
+    }
+
+    public Map<String, String> getAttributes() {
+        return getItems();
+    }
+
+    public String getActualAttribute(String name) {
+        return items.get(name);
+    }
+
+    public List<String> getActualAttributes(List<String> names) {
+        return names.stream().map(name -> {
+            var k = getActualAttribute(name);
+            if (k == null) {
+                return name;
+            } else {
+                return k;
+            }
+        }).collect(Collectors.toList());
     }
 }

@@ -17,6 +17,7 @@ public class LdapConfig {
     private String userFilter;
     private String groupFilter;
     private boolean ssl;
+    private LdapAttributes attributes;
 
     public String getHost() {
         return host;
@@ -88,5 +89,13 @@ public class LdapConfig {
 
     public void setUserDnPattern(String userDnPattern) {
         this.userDnPattern = userDnPattern;
+    }
+
+    public LdapAttributes getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(LdapAttributes attributes) {
+        this.attributes = attributes;
     }
 }
