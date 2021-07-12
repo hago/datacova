@@ -23,7 +23,7 @@ class LdapAuthProvider : UserAuthProvider {
         const val LDAP_USER_TYPE = 1
     }
 
-    private val config: LdapConfig? = LdapConfigManager.getDefault()
+    var config: LdapConfig? = null
 
     private fun createLdap(): LdapUtils? {
         return if (config == null) null
