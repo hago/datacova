@@ -7,7 +7,9 @@
 
 package com.hagoapp.datacova.config.indb;
 
-public class LdapConfig {
+import com.hagoapp.datacova.JsonStringify;
+
+public class LdapConfig implements JsonStringify {
     private String host;
     private int port = 389;
     private String baseDistinguishName;
