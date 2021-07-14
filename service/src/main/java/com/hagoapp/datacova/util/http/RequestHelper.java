@@ -90,6 +90,33 @@ public class RequestHelper {
     }
 
     public static String getRemoteIp(RoutingContext context) {
-        return context.request().remoteAddress().host();
+        var request = context.request();
+        String headerXForwardFor = request.getHeader("X-Forwarded-For");
+        if (headerXForwardFor != null) {
+            XForwardFor objectXForwardFor = XForwardFor.parse(headerXForwardFor);
+            if (objectXForwardFor != null) {
+                return objectXForwardFor.getClientIp();
+            }
+        }
+        String forwardedHeader = request.getHeader("Forwarded");
+        if (forwardedHeader != null) {
+            Forwarded forwarded = Forwarded.parse(forwardedHeader);
+            if (forwarded.getForClientIp() != null) {
+                return forwarded.getForClientIp();
+            }
+        }
+        return request.remoteAddress().host();
+    }
+
+    /**
+     * Whether the request comes from internet.
+     *
+     * @param context request context
+     * @return true if the request comes from internet, or false for intranet
+     */
+    public static boolean isFromInternet(RoutingContext context) {
+        return List.of(
+                "X-Forwarded-For", "Forwarded"
+        ).stream().anyMatch(header -> context.request().getHeader(header) != null);
     }
 }
