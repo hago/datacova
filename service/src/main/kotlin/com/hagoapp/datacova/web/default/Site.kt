@@ -9,6 +9,7 @@ package com.hagoapp.datacova.web.default
 
 import com.hagoapp.datacova.data.setting.SettingsDatabase
 import com.hagoapp.datacova.user.ldap.LdapAuthProvider
+import com.hagoapp.datacova.util.http.RequestHelper
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import io.netty.handler.codec.http.HttpResponseStatus
@@ -25,7 +26,8 @@ class Site {
             context, HttpResponseStatus.OK, mapOf(
                 "code" to 0,
                 "settings" to mapOf(
-                    "userProviders" to loadUserProviders()
+                    "userProviders" to loadUserProviders(),
+                    "fromExtranet" to RequestHelper.isFromInternet(context)
                 )
             )
         )
