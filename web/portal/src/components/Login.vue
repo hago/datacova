@@ -67,7 +67,7 @@
 
 <script>
 import UserAPIHelper from '../apis/userapi.js'
-import SiteHelper from '../apis/site.js'
+import SiteHelper from '../apis/sitesetting.js'
 import User from '../apis/user.js'
 import router from '@/router'
 
@@ -91,10 +91,10 @@ export default {
   },
   created: function () {
     let api = new SiteHelper(process.env.SERVICE_BASE_URL)
-    api.loadsettings().then(rsp => {
+    api.getSettings().then(settings => {
       let extraProviders = {}
-      for (var k in rsp.data.settings.userProviders) {
-        let element = rsp.data.settings.userProviders[k]
+      for (var k in settings.userProviders) {
+        let element = settings.userProviders[k]
         extraProviders[element.name] = element.providerType
       }
       console.log(extraProviders)
