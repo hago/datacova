@@ -7,8 +7,8 @@
 
 package com.hagoapp.datacova.web.default
 
-import com.hagoapp.datacova.data.setting.SettingsDatabase
 import com.hagoapp.datacova.user.ldap.LdapAuthProvider
+import com.hagoapp.datacova.user.ldap.LdapConfigManager
 import com.hagoapp.datacova.util.http.RequestHelper
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.annotation.WebEndPoint
@@ -35,7 +35,7 @@ class Site {
 
     private fun loadUserProviders(): List<UserProvider> {
         val userProviders = mutableListOf<UserProvider>()
-        if (SettingsDatabase().loadLdapConfig() != null) {
+        if (LdapConfigManager.isLdapEnabled()) {
             val ldapProvider = LdapAuthProvider()
             userProviders.add(UserProvider(ldapProvider.getProviderName(), ldapProvider.getProviderType()))
         }
