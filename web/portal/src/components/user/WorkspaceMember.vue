@@ -2,13 +2,24 @@
   <div style="margin-left: 5px" v-title data-title="Member Management">
     <div>
       <h4>pick users to add them as
-        <b><i>{{ type === 0 ? 'Administrator' : (type === 1 ? 'Maintainer' : 'Loader') }}</i></b> of workspace
+        <b><i>{{ rolename }}</i></b> of workspace
         <b><i>{{ workspace.workspace.name }}</i></b>
       </h4>
     </div>
     <div>
       <button class="btn btn-primary" v-on:click="save()" v-if="!this.readonly">Save</button>
       <button class="btn btn-warning" v-on:click="cancel()">Cancel</button>
+    </div>
+    <div class="row" v-if="userproviders.length > 0">
+      <div class="col-2" v-for="(provider, index) in userproviders" v-bind:key="index">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" checked :id="'provider' + provider.providerType"
+            v-on:change="toggleProvider(provider.providerType)" />
+          <label class="form-check-label" :for="'provider' + provider.providerType">
+            {{ provider.name }}
+          </label>
+        </div>
+      </div>
     </div>
     <div>
       <div class="leftpanel">
@@ -49,6 +60,7 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import UserApiHelper from '@/apis/userapi.js'
 import router from '../../router'
 import WorkspaceApiHelper from '@/apis/workspace.js'
+import SiteSetting from '@/apis/sitesetting.js'
 
 Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)
@@ -70,13 +82,33 @@ export default {
       lastSearch: '',
       searchContent: '',
       errorMessage: '',
-      readonly: true
+      readonly: true,
+      userproviders: [],
+      selectedproviders: []
+    }
+  },
+  computed: {
+    rolename: function () {
+      switch (parseInt(this.type)) {
+        case 0:
+          return 'Administrator'
+        case 1:
+          return 'Maintainer'
+        case 2:
+          return 'Loader'
+        default:
+          return `unknown role ${this.type}`
+      }
     }
   },
   created: function () {
-    this.$root.$emit('onNeedLogin', user => {
-      this.readonly = (this.loginStatus.user.id !== this.workspace.owner.id) &&
-        (this.workspace.users.find(it => this.loginStatus.user.id === it.user.id && it.roles.indexOf('0') >= 0) !== undefined)
+    this.readonly = (this.loginStatus.user.id !== this.workspace.owner.id) &&
+      (this.workspace.users.find(it => this.loginStatus.user.id === it.user.id && it.roles.indexOf('0') >= 0) !== undefined)
+    new SiteSetting().getSettings().then(settings => {
+      console.log(settings.userProviders)
+      Vue.set(this, 'userproviders', settings.userProviders.filter(provider => provider.providerType !== 0))
+      Vue.set(this, 'selectedproviders', settings.userProviders.filter(provider => provider.providerType !== 0)
+        .map(provider => provider.providerType))
     })
   },
   methods: {
@@ -130,6 +162,14 @@ export default {
         }).catch(err => {
           this.errorMessage = err
         })
+    },
+    toggleProvider: function (providerType) {
+      let i = this.selectedproviders.indexOf(providerType)
+      if (i >= 0) {
+        this.selectedproviders.splice(i, 1)
+      } else {
+        this.selectedproviders.push(providerType)
+      }
     }
   }
 }
