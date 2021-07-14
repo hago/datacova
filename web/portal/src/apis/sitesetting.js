@@ -13,7 +13,7 @@ class SiteSetting {
     return new Promise(
       function (resolve, reject) {
         if (settingStr !== null) {
-          console.log('sute setting info found')
+          console.log('site setting info found')
           resolve(JSON.parse(settingStr))
         } else {
           (new SiteApiHelper(process.env.SERVICE_BASE_URL)).loadsettings().then(rsp => {
