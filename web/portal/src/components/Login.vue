@@ -113,6 +113,9 @@ export default {
         case 0:
           logincall = api.loginRegular(this.user.trim(), this.password.trim(), this.captcha.trim())
           break
+        case 1:
+          logincall = api.loginLdap(this.user.trim(), this.password.trim())
+          break
       }
       if (logincall == null) {
         this.errorMessage = 'undefined login method'
@@ -133,8 +136,13 @@ export default {
     },
     check () {
       let userId = this.user.trim()
-      if (this.loginChoice === 0) {
-        return userId !== '' && this.password.trim() !== '' && this.captcha.trim() !== ''
+      switch (this.loginChoice) {
+        case 0:
+          return userId !== '' && this.password.trim() !== '' && this.captcha.trim() !== ''
+        case 1:
+          return userId !== '' && this.password.trim() !== ''
+        default:
+          return false
       }
     },
     refreshCaptcha () {

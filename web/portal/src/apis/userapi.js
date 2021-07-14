@@ -20,7 +20,24 @@ class UserApiHelper {
     let data = {
       userId: user,
       password: pwd,
+      provider: 0,
       captcha: captcha
+    }
+    let rsp = await axios({
+      method: 'POST',
+      url: `${this.urlprefix}/api/auth/login`,
+      data: querystring.stringify(data),
+      withCredentials: true
+    })
+    return rsp
+  }
+
+  async loginLdap (user, pwd, otp = undefined) {
+    let data = {
+      userId: user,
+      password: pwd,
+      provider: 1,
+      otp: otp
     }
     let rsp = await axios({
       method: 'POST',
