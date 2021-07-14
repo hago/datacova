@@ -177,4 +177,44 @@ class UserData(config: DatabaseConfig) : CoVaDatabase(config) {
             return stmt.executeUpdate()
         }
     }
+
+    fun addUserFromProvider(user: UserInfo): UserInfo {
+        connection.autoCommit = false
+        val select = "select id from users where userid = ? and usertype = ?"
+        var id = connection.prepareStatement(select).use { stmt ->
+            stmt.setString(1, user.userId)
+            stmt.setInt(2, user.userType.value)
+            stmt.executeQuery().use { rs ->
+                if (rs.next()) rs.getLong("id") else null
+            }
+        }
+        if (id == null) {
+            val sql = """insert into users 
+            (userid, email, mobile, addby, modifyby, modifytime, name, usertype, eustatus, pwdhash) 
+            values (?, ?, ?, -1, -1, now(), ?, ?, 0, ?) returning id"""
+            id = connection.prepareStatement(sql).use { stmt ->
+                stmt.setString(1, user.userId)
+                stmt.setString(2, user.email)
+                stmt.setString(3, user.mobile)
+                stmt.setString(4, user.name)
+                stmt.setInt(5, user.userType.value)
+                stmt.setString(6, user.pwdHash)
+                stmt.executeQuery().use { rs ->
+                    rs.next()
+                    rs.getLong("id")
+                }
+            }
+        } else {
+            val sql = """update users set name = ?, email = ?, mobile = ?, modifytime = now() where id = ?"""
+            connection.prepareStatement(sql).use { stmt ->
+                stmt.setString(1, user.name)
+                stmt.setString(2, user.email)
+                stmt.setString(3, user.mobile)
+                stmt.setLong(4, id)
+                stmt.execute()
+            }
+        }
+        connection.commit()
+        return findUser(id)!!
+    }
 }
