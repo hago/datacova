@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * A wrapper of apache directory API to make use of Active Directory through
@@ -55,7 +53,6 @@ public class LdapUtils implements Closeable, ConnectionClosedEventListener {
     );
 
     private final Logger logger = CoVaLogger.getLogger();
-    private LdapAttributes attributes = LdapAttributes.defaultAttributes();
     private final LdapConfig conf;
 
     /**
@@ -66,8 +63,7 @@ public class LdapUtils implements Closeable, ConnectionClosedEventListener {
      */
     public LdapUtils(LdapConfig config) throws CoVaException {
         conf = config;
-        attributes = config.getAttributes();
-        attributes.normalize();
+        conf.getAttributes().normalize();
         init(config.getHost(), config.getPort(), config.getBaseDistinguishName(), config.getBindDistinguishName(),
                 config.getBindPassword(), config.isSsl());
     }
@@ -184,16 +180,13 @@ public class LdapUtils implements Closeable, ConnectionClosedEventListener {
         return bound;
     }
 
-    private String createDistinguishedName(String userId) throws CoVaException {
-        var dnForm = String.format(conf.getUserDnPattern(), userId);
-        Pattern pattern = Pattern.compile(dnForm, Pattern.CASE_INSENSITIVE);
-        Matcher match = pattern.matcher(userId);
-        if (match.find()) {
+    public String createDistinguishedName(String userId) throws CoVaException {
+        if (userId.contains("=")) {
             return userId;
         }
         int pos = userId.indexOf("@");
         String itCode = pos > 0 ? userId.substring(0, pos) : userId;
-        var dnField = attributes.getActualAttribute(LdapAttributes.ATTRIBUTE_DISTINGUISHED_NAME);
+        var dnField = conf.getAttributes().getActualAttribute(LdapAttributes.ATTRIBUTE_DISTINGUISHED_NAME);
         Map<String, Object> userMap = getUser(itCode, List.of(dnField));
         if (userMap == null) {
             throw new CoVaException(String.format("user %s not found", userId));
@@ -209,7 +202,7 @@ public class LdapUtils implements Closeable, ConnectionClosedEventListener {
      * @throws CoVaException if LDAP binding failed or connection corrupted
      */
     public Map<String, Object> getUser(String userName) throws CoVaException {
-        return getUser(userName, attributes.getActualAttributes(DEFAULT_ATTRIBUTE_NAMES));
+        return getUser(userName, conf.getAttributes().getActualAttributes(DEFAULT_ATTRIBUTE_NAMES));
     }
 
     /**
@@ -262,7 +255,7 @@ public class LdapUtils implements Closeable, ConnectionClosedEventListener {
      * @throws CoVaException if LDAP binding failed or connection corrupted
      */
     public List<Map<String, Object>> search(String filter) throws CoVaException {
-        return search(filter, attributes.getActualAttributes(DEFAULT_ATTRIBUTE_NAMES), baseDn, SEARCH_RETURN_LIMIT);
+        return search(filter, conf.getAttributes().getActualAttributes(DEFAULT_ATTRIBUTE_NAMES), baseDn, SEARCH_RETURN_LIMIT);
     }
 
     /**
@@ -286,7 +279,7 @@ public class LdapUtils implements Closeable, ConnectionClosedEventListener {
      * @throws CoVaException if LDAP binding failed or connection corrupted
      */
     public List<Map<String, Object>> search(String filter, long max) throws CoVaException {
-        return search(filter, attributes.getActualAttributes(DEFAULT_ATTRIBUTE_NAMES), baseDn, max);
+        return search(filter, conf.getAttributes().getActualAttributes(DEFAULT_ATTRIBUTE_NAMES), baseDn, max);
     }
 
     /**
@@ -329,7 +322,7 @@ public class LdapUtils implements Closeable, ConnectionClosedEventListener {
     public List<Map<String, Object>> search(String filter, List<String> attributeIdentities, String searchBasedDn, long max)
             throws CoVaException {
         List<Map<String, Object>> maps = new ArrayList<>();
-        var dnField = attributes.getActualAttribute(LdapAttributes.ATTRIBUTE_DISTINGUISHED_NAME);
+        var dnField = conf.getAttributes().getActualAttribute(LdapAttributes.ATTRIBUTE_DISTINGUISHED_NAME);
         try {
             if (!bound) {
                 bind();
