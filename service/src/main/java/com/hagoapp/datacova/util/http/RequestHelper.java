@@ -10,10 +10,12 @@ package com.hagoapp.datacova.util.http;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import edazdarevic.commons.net.CIDRUtils;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.vertx.ext.web.RoutingContext;
 
 import java.net.HttpCookie;
+import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -109,14 +111,31 @@ public class RequestHelper {
     }
 
     /**
+     * Whether the request is forwarded by any reverse proxies.
+     *
+     * @param context request context
+     * @return true if the request comes from internet, or false for intranet
+     */
+    public static boolean requestForwarded(RoutingContext context) {
+        return List.of(
+                "X-Forwarded-For", "Forwarded"
+        ).stream().anyMatch(header -> context.request().getHeader(header) != null);
+    }
+
+    /**
      * Whether the request comes from internet.
      *
      * @param context request context
      * @return true if the request comes from internet, or false for intranet
      */
     public static boolean isFromInternet(RoutingContext context) {
-        return List.of(
-                "X-Forwarded-For", "Forwarded"
-        ).stream().anyMatch(header -> context.request().getHeader(header) != null);
+        String ip = getRemoteIp(context);
+        return List.of("192.68.0.0/16", "10.0.0.0/8", "172.1.0.0/11", "127.0.0.0/8").stream().noneMatch(subnet -> {
+            try {
+                return new CIDRUtils(subnet).isInHostsRange(ip);
+            } catch (UnknownHostException e) {
+                return false;
+            }
+        });
     }
 }
