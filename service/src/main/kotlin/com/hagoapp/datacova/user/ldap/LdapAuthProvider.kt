@@ -93,13 +93,17 @@ class LdapAuthProvider : UserAuthProvider {
             val attributes = LdapConfigManager.defaultConfig!!.attributes
             val cn = attributes.getActualAttribute(LdapAttributes.ATTRIBUTE_USERID)
             val name = attributes.getActualAttribute(LdapAttributes.ATTRIBUTE_DISPLAY_NAME)
-            val l = ldap.searchUser(search, listOf(cn, name), count)
+            val mobile = attributes.getActualAttribute(LdapAttributes.ATTRIBUTE_TELEPHONE_NUMBER)
+            val email = attributes.getActualAttribute(LdapAttributes.ATTRIBUTE_MAIL)
+            val l = ldap.searchUser(search, listOf(cn, name, mobile, email), count)
             return l.map { item ->
                 UserSearchResultItem(
                     item.getValue(cn).toString(),
                     null,
                     item.getValue(name).toString(),
-                    getProviderType()
+                    getProviderType(),
+                    item.getValue(email).toString(),
+                    item.getValue(mobile)?.toString() ?: ""
                 )
             }
         }
