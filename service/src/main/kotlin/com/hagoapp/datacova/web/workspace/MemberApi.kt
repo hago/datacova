@@ -9,9 +9,13 @@ package com.hagoapp.datacova.web.workspace
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.hagoapp.datacova.data.user.UserData
 import com.hagoapp.datacova.data.workspace.WorkspaceCache
 import com.hagoapp.datacova.data.workspace.WorkSpaceData
 import com.hagoapp.datacova.entity.workspace.WorkSpaceUserRole
+import com.hagoapp.datacova.user.UserInfo
+import com.hagoapp.datacova.user.UserSearchResultItem
+import com.hagoapp.datacova.user.UserType
 import com.hagoapp.datacova.util.WorkspaceUserRoleUtil
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.annotation.WebEndPoint
@@ -40,8 +44,22 @@ class MemberApi {
             ResponseHelper.respondError(routeContext, HttpResponseStatus.FORBIDDEN, "denied")
             return
         }
-        val token = object : TypeToken<List<Long>>() {}
-        val idList = Gson().fromJson<List<Long>>(routeContext.bodyAsString, token.type)
+        val token = object : TypeToken<List<UserSearchResultItem>>() {}
+        val users = Gson().fromJson<List<UserSearchResultItem>>(routeContext.bodyAsString, token.type)
+        val idList = users.map {
+            if (it.id != null) it.id else {
+                val u = UserInfo()
+                with(u) {
+                    userId = it.userId
+                    name = it.name
+                    userType = UserType.parseInt(it.provider)
+                    mobile = it.mobile
+                    email = it.email
+                    pwdHash = ""
+                }
+                UserData().addUserFromProvider(u).id
+            }
+        }
         WorkSpaceData().addMemberForWorkspace(id, WorkSpaceUserRole.parseInt(type), idList)
         WorkspaceCache.clearWorkspaceUser(id)
         ResponseHelper.sendResponse(routeContext, HttpResponseStatus.OK, mapOf("code" to 0))
