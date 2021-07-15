@@ -11,7 +11,9 @@ data class UserSearchResultItem(
     val userId: String,
     val id: Long?,
     val name: String,
-    val provider: Int
+    val provider: Int,
+    val email: String,
+    val mobile: String
 ) {
     companion object {
         fun fromUserInfo(userInfo: UserInfo): UserSearchResultItem {
@@ -19,7 +21,9 @@ data class UserSearchResultItem(
                 userInfo.userId,
                 userInfo.id,
                 userInfo.name,
-                userInfo.userType.value
+                userInfo.userType.value,
+                userInfo.email,
+                userInfo.mobile
             )
         }
     }
