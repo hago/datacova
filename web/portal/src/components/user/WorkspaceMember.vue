@@ -31,12 +31,28 @@
               <img src="@/assets/gear-loading.gif" v-if="isLoading" />
             </div>
           </div>
-          <ul class="list-group">
-            <li class="list-group-item bg-dark" v-for="(user, index) in searchResult" v-bind:key="index"
-            v-on:click="addUser(index)">
-              <span class="clickable">{{ user.name }}  <i>({{ user.userId }})</i></span>
-            </li>
-          </ul>
+          <div class="form-row" v-if="searchResult.foundInDatabase.length>0">
+            <div>
+              <div>Found existed users:</div>
+              <ul class="list-group">
+                <li class="list-group-item bg-dark" v-for="(user, index) in searchResult.foundInDatabase" v-bind:key="index"
+                v-on:click="addUser(user)">
+                  <span class="clickable">{{ user.name }}  <i>({{ user.userId }})</i></span>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="form-row" v-if="Object.keys(searchResult.foundInProviders).length>0">
+            <div v-for="(users, providerType) in searchResult.foundInProviders" v-bind:key="providerType">
+              <div>Found users from <i>{{ findprovider(parseInt(providerType)).name }}</i>:</div>
+              <ul class="list-group">
+                <li class="list-group-item bg-dark" v-for="(user, index) in users" v-bind:key="index"
+                    v-on:click="addUser(user)">
+                  <span class="clickable">{{ user.name }}  <i>({{ user.userId }})</i></span>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
       <div class="rightpanel">
@@ -76,7 +92,10 @@ export default {
   data () {
     return {
       isLoading: false,
-      searchResult: [],
+      searchResult: {
+        foundInDatabase: [],
+        foundInProviders: []
+      },
       selected: [],
       timer: null,
       lastSearch: '',
@@ -112,8 +131,10 @@ export default {
     })
   },
   methods: {
-    addUser: function (index) {
-      let user = this.searchResult[index]
+    findprovider: function (providertype) {
+      return this.userproviders.find(p => p.providerType === providertype)
+    },
+    addUser: function (user) {
       if (this.selected.indexOf(user) < 0) {
         this.selected.push(user)
       }
@@ -127,9 +148,12 @@ export default {
         this.searchResult = []
         return
       }
-      (new UserApiHelper()).searchUser(w).then(rsp => {
+      this.isLoading = true;
+      (new UserApiHelper()).searchUser(w, this.selectedproviders).then(rsp => {
+        this.isLoading = false
         this.searchResult = rsp.data.data
       }).catch(err => {
+        this.isLoading = false
         this.errorMessage = err
       })
     },
@@ -152,7 +176,7 @@ export default {
       (new WorkspaceApiHelper()).addMember(
         this.workspace.workspace.id,
         this.type,
-        this.selected.map(user => user.id))
+        this.selected)
         .then(rsp => {
           this.$toasted.show('Members Added', {
             position: 'bottom-center',

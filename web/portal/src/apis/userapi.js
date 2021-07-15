@@ -56,11 +56,16 @@ class UserApiHelper {
     return rsp
   }
 
-  async searchUser (word) {
+  async searchUser (word, userproviders, count = 5) {
+    let load = {
+      search: word,
+      userProviders: userproviders,
+      count: count
+    }
     let rsp = await axios({
       method: 'POST',
       url: `${this.urlprefix}/api/user/search`,
-      data: word
+      data: load
     })
     return rsp
   }
