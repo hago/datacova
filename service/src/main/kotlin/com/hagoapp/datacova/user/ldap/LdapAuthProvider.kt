@@ -12,6 +12,7 @@ import com.hagoapp.datacova.data.user.UserCache
 import com.hagoapp.datacova.data.user.UserData
 import com.hagoapp.datacova.user.UserAuthProvider
 import com.hagoapp.datacova.user.UserInfo
+import com.hagoapp.datacova.user.UserSearchResultItem
 import com.hagoapp.datacova.user.UserType
 import com.hagoapp.datacova.util.ldap.LdapUtils
 import io.vertx.ext.web.RoutingContext
@@ -85,5 +86,22 @@ class LdapAuthProvider : UserAuthProvider {
 
     override fun saveThumbnail(userId: String, thumbnail: ByteArray): String {
         throw UnsupportedOperationException("Update thumbnail is not supported")
+    }
+
+    override fun searchUser(search: String, count: Int): List<UserSearchResultItem> {
+        createLdap().use { ldap ->
+            val attributes = LdapConfigManager.defaultConfig!!.attributes
+            val cn = attributes.getActualAttribute(LdapAttributes.ATTRIBUTE_USERID)
+            val name = attributes.getActualAttribute(LdapAttributes.ATTRIBUTE_DISPLAY_NAME)
+            val l = ldap.searchUser(search, listOf(cn, name), count)
+            return l.map { item ->
+                UserSearchResultItem(
+                    item.getValue(cn).toString(),
+                    null,
+                    item.getValue(name).toString(),
+                    getProviderType()
+                )
+            }
+        }
     }
 }
