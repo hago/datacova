@@ -9,5 +9,5 @@ package com.hagoapp.datacova.user
 
 data class UserSearchResult(
     val foundInDatabase: List<UserSearchResultItem>,
-    val foundInProvider: Map<Int, List<UserSearchResultItem>>
+    val foundInProviders: Map<Int, List<UserSearchResultItem>>
 )
