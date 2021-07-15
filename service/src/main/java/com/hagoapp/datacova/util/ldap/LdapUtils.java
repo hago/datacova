@@ -214,13 +214,41 @@ public class LdapUtils implements Closeable, ConnectionClosedEventListener {
      * @throws CoVaException if LDAP binding failed or connection corrupted
      */
     public Map<String, Object> getUser(String userName, List<String> attributeIdentities) throws CoVaException {
-        final List<Map<String, Object>> list = search(String.format("(cn=%s)", userName), attributeIdentities, 1);
-
+        var cn = conf.getAttributes().getActualAttribute(LdapAttributes.ATTRIBUTE_USERID);
+        final List<Map<String, Object>> list = search(String.format("(%s=%s)", cn, userName), attributeIdentities, 1);
         if (list.isEmpty()) {
             return null;
         } else {
             return list.get(0);
         }
+    }
+
+    /**
+     * Search specified user information whose id matches pattern "keyword*".
+     *
+     * @param userId user id
+     * @return A map containing attribute {@literal ->} value pairs on demand, or null if user not existed
+     * @throws CoVaException if LDAP binding failed or connection corrupted
+     */
+    public List<Map<String, Object>> searchUser(String userId, int count) throws CoVaException {
+        return searchUser(userId, conf.getAttributes().getActualAttributes(DEFAULT_ATTRIBUTE_NAMES), count);
+    }
+
+    /**
+     * Search specified user information whose id matches pattern "keyword*".
+     *
+     * @param userId              user id
+     * @param attributeIdentities The attributes need to retrieve
+     * @return A map containing attribute {@literal ->} value pairs on demand, or null if user not existed
+     * @throws CoVaException if LDAP binding failed or connection corrupted
+     */
+    public List<Map<String, Object>> searchUser(String userId, List<String> attributeIdentities, int count)
+            throws CoVaException {
+        var uid = conf.getAttributes().getActualAttribute(LdapAttributes.ATTRIBUTE_USERID);
+        var name = conf.getAttributes().getActualAttribute(LdapAttributes.ATTRIBUTE_DISPLAY_NAME);
+        final List<Map<String, Object>> list =
+                search(String.format("(|(%s=%s*)(%s=%s*))", uid, userId, name, userId), attributeIdentities, count);
+        return list;
     }
 
     private List<Entry> rawSearch(String filter, List<String> attributeNames, Dn searchDn, long max)
