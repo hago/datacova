@@ -13,7 +13,7 @@ import com.hagoapp.datacova.Application
 import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.command.Configure
-import com.hagoapp.datacova.config.CoVaConfig
+import com.hagoapp.datacova.config.init.CoVaConfig
 import com.hagoapp.datacova.util.http.RequestHelper
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.annotation.WebEndPoint

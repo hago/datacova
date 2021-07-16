@@ -8,7 +8,7 @@
 package com.hagoapp.datacova.user
 
 import com.hagoapp.datacova.CoVaLogger
-import com.hagoapp.datacova.config.CoVaConfig
+import com.hagoapp.datacova.config.init.CoVaConfig
 import com.hagoapp.datacova.data.RedisCacheReader
 import com.hagoapp.datacova.data.user.UserData
 import com.hagoapp.datacova.util.FileStoreUtils
@@ -16,6 +16,7 @@ import com.hagoapp.datacova.util.Utils
 import com.hagoapp.datacova.util.web.CaptchaUtils
 import io.vertx.ext.web.RoutingContext
 import java.io.ByteArrayInputStream
+import java.lang.UnsupportedOperationException
 import java.util.*
 
 class LocalUserProvider : UserAuthProvider {
@@ -94,6 +95,10 @@ class LocalUserProvider : UserAuthProvider {
         val targetName = calcThumbPath(userId)
         ByteArrayInputStream(thumbnail).use { fs.saveFileToStore(targetName, it) }
         return targetName
+    }
+
+    override fun searchUser(search: String, count: Int): List<UserSearchResultItem> {
+        throw UnsupportedOperationException("Local user provider contains users from others, don't call it here!")
     }
 
     private fun calcThumbPath(userId: String): String {
