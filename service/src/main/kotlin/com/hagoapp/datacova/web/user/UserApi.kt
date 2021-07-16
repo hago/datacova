@@ -10,7 +10,8 @@ package com.hagoapp.datacova.web.user
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.hagoapp.datacova.data.user.UserCache
-import com.hagoapp.datacova.data.user.UserData
+import com.hagoapp.datacova.user.UserFinder
+import com.hagoapp.datacova.user.UserSearchReq
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import com.hagoapp.datacova.web.authentication.AuthType
@@ -26,8 +27,9 @@ class UserApi {
         authTypes = [AuthType.UserToken]
     )
     fun searchUser(context: RoutingContext) {
-        val word = context.bodyAsString
-        val users = UserData().searchUser(word).map { it.maskUserInfo() }
+        val load = context.bodyAsString
+        val search = Gson().fromJson(load, UserSearchReq::class.java)
+        val users = UserFinder.search(search)
         ResponseHelper.sendResponse(
             context,
             HttpResponseStatus.OK,

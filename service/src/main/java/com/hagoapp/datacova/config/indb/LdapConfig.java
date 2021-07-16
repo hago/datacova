@@ -5,17 +5,21 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package com.hagoapp.datacova.config;
+package com.hagoapp.datacova.config.indb;
 
-public class LdapConfig {
+import com.hagoapp.datacova.JsonStringify;
+
+public class LdapConfig implements JsonStringify {
     private String host;
     private int port = 389;
-    private String baseDistinguishedName;
-    private String bindDistinguishedName;
+    private String baseDistinguishName;
+    private String bindDistinguishName;
     private String bindPassword;
+    private String userDnPattern;
     private String userFilter;
     private String groupFilter;
     private boolean ssl;
+    private LdapAttributes attributes;
 
     public String getHost() {
         return host;
@@ -33,20 +37,20 @@ public class LdapConfig {
         this.port = port;
     }
 
-    public String getBaseDistinguishedName() {
-        return baseDistinguishedName;
+    public String getBaseDistinguishName() {
+        return baseDistinguishName;
     }
 
-    public void setBaseDistinguishedName(String baseDistinguishedName) {
-        this.baseDistinguishedName = baseDistinguishedName;
+    public void setBaseDistinguishName(String baseDistinguishName) {
+        this.baseDistinguishName = baseDistinguishName;
     }
 
-    public String getBindDistinguishedName() {
-        return bindDistinguishedName;
+    public String getBindDistinguishName() {
+        return bindDistinguishName;
     }
 
-    public void setBindDistinguishedName(String bindDistinguishedName) {
-        this.bindDistinguishedName = bindDistinguishedName;
+    public void setBindDistinguishName(String bindDistinguishName) {
+        this.bindDistinguishName = bindDistinguishName;
     }
 
     public String getBindPassword() {
@@ -79,5 +83,21 @@ public class LdapConfig {
 
     public void setSsl(boolean ssl) {
         this.ssl = ssl;
+    }
+
+    public String getUserDnPattern() {
+        return userDnPattern;
+    }
+
+    public void setUserDnPattern(String userDnPattern) {
+        this.userDnPattern = userDnPattern;
+    }
+
+    public LdapAttributes getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(LdapAttributes attributes) {
+        this.attributes = attributes;
     }
 }

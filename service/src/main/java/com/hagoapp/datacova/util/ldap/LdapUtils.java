@@ -2,6 +2,8 @@ package com.hagoapp.datacova.util.ldap;
 
 import com.hagoapp.datacova.CoVaException;
 import com.hagoapp.datacova.CoVaLogger;
+import com.hagoapp.datacova.config.indb.LdapAttributes;
+import com.hagoapp.datacova.config.indb.LdapConfig;
 import org.apache.directory.api.ldap.model.cursor.SearchCursor;
 import org.apache.directory.api.ldap.model.entry.Attribute;
 import org.apache.directory.api.ldap.model.entry.Entry;
@@ -19,8 +21,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * A wrapper of apache directory API to make use of Active Directory through
@@ -33,119 +33,39 @@ public class LdapUtils implements Closeable, ConnectionClosedEventListener {
 
     private static final int SEARCH_RETURN_LIMIT = 20;
 
-    public static final List<String> DEFAULT_ATTRIBUTE_IDENTITIES = List.of(
-            Attributes.ATTRIBUTE_DISPLAY_NAME,
-            Attributes.ATTRIBUTE_USERID,
-            Attributes.ATTRIBUTE_EMPLOYEE_NUMBER,
-            Attributes.ATTRIBUTE_EMPLOYEE_TYPE,
-            Attributes.ATTRIBUTE_GIVEN_NAME,
-            Attributes.ATTRIBUTE_MAIL,
-            Attributes.ATTRIBUTE_MANAGER,
-            Attributes.ATTRIBUTE_TELEPHONE_NUMBER,
-            Attributes.ATTRIBUTE_SN,
-            Attributes.ATTRIBUTE_PROXY_ADDRESS,
-            Attributes.ATTRIBUTE_THUMBNAIL_PHOTO,
-            Attributes.ATTRIBUTE_MEMBER_OF,
-            Attributes.ATTRIBUTE_NATIVE_NAME,
-            Attributes.ATTRIBUTE_TITLE,
-            Attributes.ATTRIBUTE_DN,
-            Attributes.ATTRIBUTE_DISTINGUISHED_NAME
+    public static final List<String> DEFAULT_ATTRIBUTE_NAMES = List.of(
+            "ATTRIBUTE_DISPLAY_NAME",
+            "ATTRIBUTE_USERID",
+            "ATTRIBUTE_EMPLOYEE_NUMBER",
+            "ATTRIBUTE_EMPLOYEE_TYPE",
+            "ATTRIBUTE_GIVEN_NAME",
+            "ATTRIBUTE_MAIL",
+            "ATTRIBUTE_MANAGER",
+            "ATTRIBUTE_TELEPHONE_NUMBER",
+            "ATTRIBUTE_SN",
+            "ATTRIBUTE_PROXY_ADDRESS",
+            "ATTRIBUTE_THUMBNAIL_PHOTO",
+            "ATTRIBUTE_MEMBER_OF",
+            "ATTRIBUTE_NATIVE_NAME",
+            "ATTRIBUTE_TITLE",
+            "ATTRIBUTE_DN",
+            "ATTRIBUTE_DISTINGUISHED_NAME"
     );
 
     private final Logger logger = CoVaLogger.getLogger();
-    private Attributes attributes = Attributes.loadDefault();
-
-    public Attributes getAttributes() {
-        return attributes;
-    }
-
-    public void setAttributes(Attributes attributes) {
-        this.attributes = attributes;
-    }
+    private final LdapConfig conf;
 
     /**
-     * Constructor using default port(389), default bind dn(null), default bind password(null) and not to use ssl.
+     * Constructor with <code>LdapConfig</code>.
      *
-     * @param serverName            LDAP server name
-     * @param baseDistinguishedName Base distinguished name from which to find elements
+     * @param config config of ldap
      * @throws CoVaException if connect to server failed or bind failed
      */
-    public LdapUtils(String serverName, String baseDistinguishedName) throws CoVaException {
-        init(serverName, 389, baseDistinguishedName, null, null, false);
-    }
-
-    /**
-     * Constructor using default base distinguished name(null, any follow-up operation must use explicit base_dn),
-     * default bind dn(null), default bind password(null).
-     *
-     * @param serverName LDAP server name
-     * @param serverPort LDAP server port
-     * @param useSsl     whether to connect through ssl
-     * @throws CoVaException if connect to server failed or bind failed
-     */
-    public LdapUtils(String serverName, int serverPort, Boolean useSsl) throws CoVaException {
-        init(serverName, serverPort, null, null, null, useSsl);
-    }
-
-    /**
-     * Constructor default bind dn(null), default bind password(null) and not to use ssl.
-     *
-     * @param serverName            LDAP server name
-     * @param serverPort            LDAP server port
-     * @param baseDistinguishedName Base distinguished name from which to find elements
-     * @throws CoVaException if connect to server failed or bind failed
-     */
-    public LdapUtils(String serverName, int serverPort, String baseDistinguishedName) throws CoVaException {
-        init(serverName, serverPort, baseDistinguishedName, null, null, false);
-    }
-
-    /**
-     * Constructor using default port(389), default bind dn(null), default bind password(null).
-     *
-     * @param serverName            LDAP server name
-     * @param baseDistinguishedName Base distinguished name from which to find elements
-     * @param useSsl                whether to connect through ssl
-     * @throws CoVaException if connect to server failed or bind failed
-     */
-    public LdapUtils(String serverName, String baseDistinguishedName, boolean useSsl) throws CoVaException {
-        init(serverName, 389, baseDistinguishedName, null, null, useSsl);
-    }
-
-    /**
-     * Constructor not to use ssl.
-     *
-     * @param serverName            LDAP server name
-     * @param serverPort            LDAP server port
-     * @param baseDistinguishedName Base distinguished name from which to find elements
-     * @param bindDistinguishedName The distinguished name to bind with
-     * @param bindPassword          The password to bind with
-     * @throws CoVaException if connect to server failed or bind failed
-     */
-    public LdapUtils(String serverName, int serverPort, String baseDistinguishedName, String bindDistinguishedName,
-                     String bindPassword) throws CoVaException {
-        init(serverName, serverPort, baseDistinguishedName, bindDistinguishedName, bindPassword, false);
-    }
-
-    /**
-     * Constructor with all arguments.
-     *
-     * @param serverName            LDAP server name
-     * @param serverPort            LDAP server port
-     * @param baseDistinguishedName Base distinguished name from which to find elements
-     * @param bindDistinguishedName The distinguished name to bind with
-     * @param bindPassword          The password to bind with
-     * @param useSsl                whether to connect through ssl
-     * @throws CoVaException if connect to server failed or bind failed
-     */
-    public LdapUtils(
-            String serverName,
-            int serverPort,
-            String baseDistinguishedName,
-            String bindDistinguishedName,
-            String bindPassword,
-            boolean useSsl
-    ) throws CoVaException {
-        init(serverName, serverPort, baseDistinguishedName, bindDistinguishedName, bindPassword, useSsl);
+    public LdapUtils(LdapConfig config) throws CoVaException {
+        conf = config;
+        conf.getAttributes().normalize();
+        init(config.getHost(), config.getPort(), config.getBaseDistinguishName(), config.getBindDistinguishName(),
+                config.getBindPassword(), config.isSsl());
     }
 
     private LdapNetworkConnection conn;
@@ -260,20 +180,18 @@ public class LdapUtils implements Closeable, ConnectionClosedEventListener {
         return bound;
     }
 
-    private String createDistinguishedName(String userId) throws CoVaException {
-        Pattern pattern = Pattern.compile("cn=([^,]+),(.*?),DC=lenovo,DC=com", Pattern.CASE_INSENSITIVE);
-        Matcher match = pattern.matcher(userId);
-        if (match.find()) {
+    public String createDistinguishedName(String userId) throws CoVaException {
+        if (userId.contains("=")) {
             return userId;
         }
         int pos = userId.indexOf("@");
         String itCode = pos > 0 ? userId.substring(0, pos) : userId;
-        Map<String, Object> userMap = getUser(itCode, List.of(
-                Attributes.ATTRIBUTE_USERID, Attributes.ATTRIBUTE_DISTINGUISHED_NAME));
+        var dnField = conf.getAttributes().getActualAttribute(LdapAttributes.ATTRIBUTE_DISTINGUISHED_NAME);
+        Map<String, Object> userMap = getUser(itCode, List.of(dnField));
         if (userMap == null) {
             throw new CoVaException(String.format("user %s not found", userId));
         }
-        return userMap.get(Attributes.ATTRIBUTE_DISTINGUISHED_NAME).toString();
+        return userMap.get(dnField).toString();
     }
 
     /**
@@ -284,7 +202,7 @@ public class LdapUtils implements Closeable, ConnectionClosedEventListener {
      * @throws CoVaException if LDAP binding failed or connection corrupted
      */
     public Map<String, Object> getUser(String userName) throws CoVaException {
-        return getUser(userName, DEFAULT_ATTRIBUTE_IDENTITIES);
+        return getUser(userName, conf.getAttributes().getActualAttributes(DEFAULT_ATTRIBUTE_NAMES));
     }
 
     /**
@@ -296,13 +214,41 @@ public class LdapUtils implements Closeable, ConnectionClosedEventListener {
      * @throws CoVaException if LDAP binding failed or connection corrupted
      */
     public Map<String, Object> getUser(String userName, List<String> attributeIdentities) throws CoVaException {
-        final List<Map<String, Object>> list = search(String.format("(cn=%s)", userName), attributeIdentities, 1);
-
+        var cn = conf.getAttributes().getActualAttribute(LdapAttributes.ATTRIBUTE_USERID);
+        final List<Map<String, Object>> list = search(String.format("(%s=%s)", cn, userName), attributeIdentities, 1);
         if (list.isEmpty()) {
             return null;
         } else {
             return list.get(0);
         }
+    }
+
+    /**
+     * Search specified user information whose id matches pattern "keyword*".
+     *
+     * @param userId user id
+     * @return A map containing attribute {@literal ->} value pairs on demand, or null if user not existed
+     * @throws CoVaException if LDAP binding failed or connection corrupted
+     */
+    public List<Map<String, Object>> searchUser(String userId, int count) throws CoVaException {
+        return searchUser(userId, conf.getAttributes().getActualAttributes(DEFAULT_ATTRIBUTE_NAMES), count);
+    }
+
+    /**
+     * Search specified user information whose id matches pattern "keyword*".
+     *
+     * @param userId              user id
+     * @param attributeIdentities The attributes need to retrieve
+     * @return A map containing attribute {@literal ->} value pairs on demand, or null if user not existed
+     * @throws CoVaException if LDAP binding failed or connection corrupted
+     */
+    public List<Map<String, Object>> searchUser(String userId, List<String> attributeIdentities, int count)
+            throws CoVaException {
+        var uid = conf.getAttributes().getActualAttribute(LdapAttributes.ATTRIBUTE_USERID);
+        var name = conf.getAttributes().getActualAttribute(LdapAttributes.ATTRIBUTE_DISPLAY_NAME);
+        final List<Map<String, Object>> list =
+                search(String.format("(|(%s=%s*)(%s=%s*))", uid, userId, name, userId), attributeIdentities, count);
+        return list;
     }
 
     private List<Entry> rawSearch(String filter, List<String> attributeNames, Dn searchDn, long max)
@@ -337,7 +283,7 @@ public class LdapUtils implements Closeable, ConnectionClosedEventListener {
      * @throws CoVaException if LDAP binding failed or connection corrupted
      */
     public List<Map<String, Object>> search(String filter) throws CoVaException {
-        return search(filter, DEFAULT_ATTRIBUTE_IDENTITIES, baseDn, SEARCH_RETURN_LIMIT);
+        return search(filter, conf.getAttributes().getActualAttributes(DEFAULT_ATTRIBUTE_NAMES), baseDn, SEARCH_RETURN_LIMIT);
     }
 
     /**
@@ -361,7 +307,7 @@ public class LdapUtils implements Closeable, ConnectionClosedEventListener {
      * @throws CoVaException if LDAP binding failed or connection corrupted
      */
     public List<Map<String, Object>> search(String filter, long max) throws CoVaException {
-        return search(filter, DEFAULT_ATTRIBUTE_IDENTITIES, baseDn, max);
+        return search(filter, conf.getAttributes().getActualAttributes(DEFAULT_ATTRIBUTE_NAMES), baseDn, max);
     }
 
     /**
@@ -404,18 +350,18 @@ public class LdapUtils implements Closeable, ConnectionClosedEventListener {
     public List<Map<String, Object>> search(String filter, List<String> attributeIdentities, String searchBasedDn, long max)
             throws CoVaException {
         List<Map<String, Object>> maps = new ArrayList<>();
+        var dnField = conf.getAttributes().getActualAttribute(LdapAttributes.ATTRIBUTE_DISTINGUISHED_NAME);
         try {
             if (!bound) {
                 bind();
             }
             Dn dn = new Dn(searchBasedDn);
-            var attributeNames = attributes.getAttributeNames(attributeIdentities);
             rawSearch(filter, attributeIdentities, dn, max).forEach(entry -> {
                 Map<String, Object> map = new HashMap<>();
-                attributeNames.forEach(attrName -> {
+                attributeIdentities.forEach(attrName -> {
                     Attribute attr = entry.get(attrName);
                     if (attr == null) {
-                        if (attrName.equals(Attributes.ATTRIBUTE_DN)) {
+                        if (attrName.equals(dnField)) {
                             map.put(attrName, entry.getDn().toString());
                         } else {
                             map.put(attrName, null);

@@ -7,10 +7,8 @@
 
 package com.hagoapp.datacova.execution.distribute.sftp
 
-import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.distribute.sftp.HostKeyItem
 import com.hagoapp.datacova.util.FileStoreUtils
-import com.hagoapp.datacova.util.Utils
 import com.jcraft.jsch.HostKey
 import java.io.*
 import java.util.concurrent.locks.ReentrantReadWriteLock

@@ -11,7 +11,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonSyntaxException
 import com.hagoapp.datacova.Application
-import com.hagoapp.datacova.config.CoVaConfig
+import com.hagoapp.datacova.config.init.CoVaConfig
 import com.hagoapp.datacova.data.redis.JedisManager
 import redis.clients.jedis.Jedis
 import java.lang.reflect.Type

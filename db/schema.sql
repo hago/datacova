@@ -149,3 +149,11 @@ create table if not exists rules (
     primary key(id),
     unique (wkid, name)
 );
+
+create table if not exists settings (
+    id serial,
+    name varchar(100) not null,
+    content json not null,
+    unique(name),
+    primary key(id)
+);

@@ -9,7 +9,7 @@
 package com.hagoapp.datacova.command;
 
 import com.hagoapp.datacova.CoVaException;
-import com.hagoapp.datacova.config.CoVaConfig;
+import com.hagoapp.datacova.config.init.CoVaConfig;
 import picocli.CommandLine;
 
 import java.io.File;

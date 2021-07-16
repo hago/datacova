@@ -10,8 +10,8 @@ package com.hagoapp.datacova.data
 
 import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.CoVaLogger
-import com.hagoapp.datacova.config.CoVaConfig
-import com.hagoapp.datacova.config.DatabaseConfig
+import com.hagoapp.datacova.config.init.CoVaConfig
+import com.hagoapp.datacova.config.init.DatabaseConfig
 import org.slf4j.Logger
 import java.io.Closeable
 import java.sql.Connection

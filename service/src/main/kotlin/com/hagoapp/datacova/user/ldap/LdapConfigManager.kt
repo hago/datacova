@@ -9,27 +9,22 @@ package com.hagoapp.datacova.user.ldap
 
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
-import com.hagoapp.datacova.config.LdapConfig
+import com.hagoapp.datacova.config.indb.LdapConfig
+import com.hagoapp.datacova.data.setting.SettingsDatabase
 
 class LdapConfigManager {
     companion object {
-        private var defaultConfig: LdapConfig? = null
-        private var initialized = false
-        fun getDefault(): LdapConfig? {
-            if (!initialized) {
-                initialized = true
-                TODO()
-            }
-            return defaultConfig
-        }
+        var defaultConfig: LdapConfig? = SettingsDatabase().loadLdapConfig()
 
         fun isLdapEnabled(): Boolean {
-            return getDefault() != null
+            return defaultConfig != null
         }
 
         fun getConfig(content: String): LdapConfig? {
             return try {
-                Gson().fromJson(content, LdapConfig::class.java)
+                val conf = Gson().fromJson(content, LdapConfig::class.java)
+                conf.attributes.normalize()
+                conf
             } catch (e: JsonSyntaxException) {
                 null
             }

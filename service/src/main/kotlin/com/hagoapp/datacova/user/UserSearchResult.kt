@@ -1,15 +1,13 @@
 /*
- * Copyright (c) 2020.
+ * Copyright (c) 2021.
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
- *
  */
 
-package com.hagoapp.datacova.config;
+package com.hagoapp.datacova.user
 
-import com.hagoapp.f2t.database.config.PgSqlConfig;
-
-public class DatabaseConfig extends PgSqlConfig {
-
-}
+data class UserSearchResult(
+    val foundInDatabase: List<UserSearchResultItem>,
+    val foundInProviders: Map<Int, List<UserSearchResultItem>>
+)

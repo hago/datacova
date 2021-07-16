@@ -21,4 +21,5 @@ interface UserAuthProvider {
     fun getUserInfo(userId: String): UserInfo?
     fun loadThumbnail(userInfo: UserInfo)
     fun saveThumbnail(userId: String, thumbnail: ByteArray): String
+    fun searchUser(search: String, count: Int): List<UserSearchResultItem>
 }

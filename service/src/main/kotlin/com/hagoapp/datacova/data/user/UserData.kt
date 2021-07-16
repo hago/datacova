@@ -7,8 +7,8 @@
 
 package com.hagoapp.datacova.data.user
 
-import com.hagoapp.datacova.config.CoVaConfig
-import com.hagoapp.datacova.config.DatabaseConfig
+import com.hagoapp.datacova.config.init.CoVaConfig
+import com.hagoapp.datacova.config.init.DatabaseConfig
 import com.hagoapp.datacova.data.CoVaDatabase
 import com.hagoapp.datacova.user.*
 import com.hagoapp.datacova.util.Utils
@@ -86,14 +86,19 @@ class UserData(config: DatabaseConfig) : CoVaDatabase(config) {
         val description: String
     )
 
-    fun searchUser(word: String, limit: Int = 10): List<UserInfo> {
-        val sql = "select * from users where userid ilike ? or name ilike ? or description ilike ? limit ?"
+    fun searchUser(word: String, providers: List<Int> = listOf(), limit: Int = 10): List<UserInfo> {
+        var sql = "select * from users where "
+        if (providers.isNotEmpty()) {
+            sql += "usertype in (${providers.joinToString(", ") { "?" }}) and "
+        }
+        sql += " userid ilike ? or name ilike ? or description ilike ? limit ?"
         connection.prepareStatement(sql).use { stmt ->
+            providers.forEachIndexed { index, i -> stmt.setInt(index + 1, i) }
             val keyword = "%${DatabaseFunctions.escapePGLike(word)}%"
-            stmt.setString(1, keyword)
-            stmt.setString(2, keyword)
-            stmt.setString(3, keyword)
-            stmt.setInt(4, limit)
+            stmt.setString(1 + providers.size, keyword)
+            stmt.setString(2 + providers.size, keyword)
+            stmt.setString(3 + providers.size, keyword)
+            stmt.setInt(4 + providers.size, limit)
             val users = mutableListOf<UserInfo>()
             stmt.executeQuery().use { rs ->
                 while (rs.next()) {
@@ -176,5 +181,45 @@ class UserData(config: DatabaseConfig) : CoVaDatabase(config) {
             stmt.setLong(1, id)
             return stmt.executeUpdate()
         }
+    }
+
+    fun addUserFromProvider(user: UserInfo): UserInfo {
+        connection.autoCommit = false
+        val select = "select id from users where userid = ? and usertype = ?"
+        var id = connection.prepareStatement(select).use { stmt ->
+            stmt.setString(1, user.userId)
+            stmt.setInt(2, user.userType.value)
+            stmt.executeQuery().use { rs ->
+                if (rs.next()) rs.getLong("id") else null
+            }
+        }
+        if (id == null) {
+            val sql = """insert into users 
+            (userid, email, mobile, addby, modifyby, modifytime, name, usertype, eustatus, pwdhash) 
+            values (?, ?, ?, -1, -1, now(), ?, ?, 0, ?) returning id"""
+            id = connection.prepareStatement(sql).use { stmt ->
+                stmt.setString(1, user.userId)
+                stmt.setString(2, user.email)
+                stmt.setString(3, user.mobile)
+                stmt.setString(4, user.name)
+                stmt.setInt(5, user.userType.value)
+                stmt.setString(6, user.pwdHash)
+                stmt.executeQuery().use { rs ->
+                    rs.next()
+                    rs.getLong("id")
+                }
+            }
+        } else {
+            val sql = """update users set name = ?, email = ?, mobile = ?, modifytime = now() where id = ?"""
+            connection.prepareStatement(sql).use { stmt ->
+                stmt.setString(1, user.name)
+                stmt.setString(2, user.email)
+                stmt.setString(3, user.mobile)
+                stmt.setLong(4, id)
+                stmt.execute()
+            }
+        }
+        connection.commit()
+        return findUser(id)!!
     }
 }
