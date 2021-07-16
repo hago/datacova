@@ -129,7 +129,7 @@ class Utils {
             if (Regex.fromLiteral("[/]{2,}").containsMatchIn(path)) {
                 throw CoVaException("not a valid path: $path")
             }
-            val ret = mutableListOf<String>()
+            val ret = mutableListOf<String>() 
             val path0 = if (path.startsWith("/")) {
                 ret.add("/")
                 path.substring(1)
