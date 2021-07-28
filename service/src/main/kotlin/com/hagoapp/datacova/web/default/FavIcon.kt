@@ -28,17 +28,17 @@ class FavIcon : WebInterface {
                 val stream = FavIcon::class.java.getResourceAsStream("/web/favicon.png")
                 if (stream == null) {
                     context.fail(404)
-                } else {
-                    stream.use {
-                        val content = it.readAllBytes()
-                        ResponseHelper.sendResponse(
-                            context, HttpResponseStatus.OK,
-                            mutableMapOf(
-                                HttpHeaders.CONTENT_TYPE.toString() to "image/png"
-                            ),
-                            content
-                        )
-                    }
+                    return@Handler
+                }
+                stream.use {
+                    val content = it.readAllBytes()
+                    ResponseHelper.sendResponse(
+                        context, HttpResponseStatus.OK,
+                        mutableMapOf(
+                            HttpHeaders.CONTENT_TYPE.toString() to "image/png"
+                        ),
+                        content
+                    )
                 }
             })
     }

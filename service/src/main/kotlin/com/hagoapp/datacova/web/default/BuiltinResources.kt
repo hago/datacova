@@ -30,6 +30,7 @@ class BuiltinResources {
         val stream = BuiltinResources::class.java.getResourceAsStream(localPath)
         if (stream == null) {
             context.fail(404, CoVaException("$path not found"))
+            return
         }
         stream.use {
             val content = it.readAllBytes()
