@@ -7,6 +7,9 @@
 
 package com.hagoapp.datacova.config.init;
 
+/**
+ * This is the config to start executor service of application.
+ */
 public class ExecutorConfig extends WebConfig {
     private String dispatcherUrl;
     private String name;
