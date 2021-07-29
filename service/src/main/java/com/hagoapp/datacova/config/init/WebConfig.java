@@ -29,6 +29,10 @@ public class WebConfig implements JsonStringify {
     private String uploadTempDirectory = "./";
     private long uploadSizeLimit = -1;
     private boolean outputStackTrace = true;
+    /**
+     * The public url endpoint where user should access from. This field is used in user register activation email
+     * creation and other where full web url is required.
+     */
     private String baseUrl;
     private List<WebSocketConfig> webSockets;
 
