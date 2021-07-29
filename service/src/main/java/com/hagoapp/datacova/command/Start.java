@@ -43,7 +43,12 @@ public class Start extends CommandWithConfig {
             var packages = List.of("com.hagoapp.datacova.executor.web");
             WebManager.getManager(config.getExecutor(), packages);
             logger.info("Executor web API started");
-            Executor.Companion.getExecutor().start();
+            var executor = Executor.Companion.getExecutor();
+            if (executor == null) {
+                logger.error("Error executor creation");
+            } else {
+                executor.start();
+            }
             logger.info("Executor service created");
         }
         return super.call();
