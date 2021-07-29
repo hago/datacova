@@ -7,7 +7,9 @@
 
 package com.hagoapp.datacova.web.internal
 
+import com.google.gson.Gson
 import com.hagoapp.datacova.ExecutorManager
+import com.hagoapp.datacova.config.init.ExecutorConfig
 import com.hagoapp.datacova.entity.internal.ExecutorStatus
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.annotation.WebEndPoint
@@ -22,11 +24,14 @@ class Dispatcher {
     )
     fun register(context: RoutingContext) {
         val json = context.bodyAsString
-        val exe = ExecutorStatus.fromJson(json)
-        if (exe == null) {
+        val config = Gson().fromJson(json, ExecutorConfig::class.java)
+        if (config == null) {
             ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "invalid body");
             return
         }
+        val exe = ExecutorStatus()
+        exe.executor = config
+        exe.executions = listOf()
         ExecutorManager.getManager().registerExecutor(exe);
         ResponseHelper.sendResponse(context, HttpResponseStatus.OK, mapOf("code" to 0))
     }
