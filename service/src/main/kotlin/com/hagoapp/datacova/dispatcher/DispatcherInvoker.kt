@@ -12,6 +12,8 @@ import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.JsonStringify
 import com.hagoapp.datacova.config.init.CoVaConfig
 import com.hagoapp.datacova.config.init.ExecutorConfig
+import com.hagoapp.datacova.entity.internal.ExecutorStatus
+import com.hagoapp.datacova.executor.Executor
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.core.http.HttpHeaders
 import java.net.URI
@@ -44,7 +46,10 @@ class DispatcherInvoker(val config: ExecutorConfig) {
 
     fun heartbeat(): Boolean {
         return try {
-            http(heartbeatUrl, config)
+            val status = ExecutorStatus()
+            status.executor = config
+            status.executions = Executor.getExecutor()!!.getExecutionStatuses()
+            http(heartbeatUrl, status)
             logger.info("executor heartbeat succeeded")
             true
         } catch (e: Exception) {
