@@ -13,7 +13,7 @@ public class TaskActionIdle extends TaskAction {
 
     public static final int TASK_ACTION_TYPE_IDLE = 0;
     private Configuration configuration;
-    private boolean result = true;
+    private boolean executeResult = true;
     private String failReason = "Idle Action Fail";
 
     public TaskActionIdle() {
@@ -29,12 +29,12 @@ public class TaskActionIdle extends TaskAction {
         this.configuration = configuration;
     }
 
-    public boolean isResult() {
-        return result;
+    public boolean getExecuteResult() {
+        return executeResult;
     }
 
-    public void setResult(boolean result) {
-        this.result = result;
+    public void setExecuteResult(boolean executeResult) {
+        this.executeResult = executeResult;
     }
 
     public String getFailReason() {
