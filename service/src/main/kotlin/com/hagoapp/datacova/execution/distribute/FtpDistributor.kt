@@ -39,7 +39,7 @@ class FtpDistributor() : Distributor() {
             }
             ftp.put(rName, source)
             if (!ftp.ls(config.remotePath).any { file ->
-                    println(file)
+                    //println(file)
                     file.compareTo(rName) == 0
                 }) {
                 throw CoVaException("ftp uploaded store file $rName in ${config.remotePath} not found")
