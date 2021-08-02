@@ -50,4 +50,25 @@ class Dispatcher {
         ExecutorManager.getManager().keepAlive(exe);
         ResponseHelper.sendResponse(context, HttpResponseStatus.OK, mapOf("code" to 0))
     }
+
+    @WebEndPoint(
+        path = "/api/execute/status",
+        methods = [HttpMethod.GET]
+    )
+    fun status(context: RoutingContext) {
+        val executors = ExecutorManager.getManager().executors.values.sortedWith() { a, b ->
+            when {
+                a.lastActiveTime < b.lastActiveTime -> 1
+                a.lastActiveTime > b.lastActiveTime -> -1
+                a.status.executions.size < b.status.executions.size -> 1
+                else -> -1
+            }
+        }
+        ResponseHelper.sendResponse(
+            context, HttpResponseStatus.OK, mapOf(
+                "code" to 0,
+                "data" to executors
+            )
+        )
+    }
 }
