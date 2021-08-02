@@ -18,7 +18,7 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 
 /**
- * This class calls web interface of a executor.
+ * This class calls web interface of an executor.
  */
 class ExecutorInvoker(private val config: ExecutorConfig) {
 
