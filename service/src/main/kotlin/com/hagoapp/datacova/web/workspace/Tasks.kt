@@ -10,6 +10,7 @@ package com.hagoapp.datacova.web.workspace
 import com.hagoapp.datacova.data.execution.TaskExecutionCache
 import com.hagoapp.datacova.data.execution.TaskExecutionData
 import com.hagoapp.datacova.data.workspace.*
+import com.hagoapp.datacova.dispatcher.Dispatcher
 import com.hagoapp.datacova.entity.execution.ExecutionFileInfo
 import com.hagoapp.datacova.entity.execution.TaskExecution
 import com.hagoapp.datacova.entity.task.Task
@@ -191,6 +192,7 @@ class Tasks {
             db.createTaskExecution(execTask)
         }
         TaskExecutionCache.clearWorkspaceTaskExecutions(workspaceId)
+        Dispatcher.get().executionComing(exec)
         ResponseHelper.sendResponse(
             context, HttpResponseStatus.OK, mapOf(
                 "code" to 0,
