@@ -10,6 +10,7 @@ package com.hagoapp.datacova.dispatcher
 
 import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.config.init.ExecutorConfig
+import com.hagoapp.datacova.entity.execution.TaskExecution
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.core.http.HttpHeaders
 import java.net.URI
@@ -24,8 +25,8 @@ class ExecutorInvoker(private val config: ExecutorConfig) {
 
     private val executorUrl = "${config.executorUrl}/api/executor/execute"
 
-    fun dispatch(executionId: Int) {
-        val req = HttpRequest.newBuilder(URI.create("$executorUrl/$executionId"))
+    fun dispatch(execution: TaskExecution) {
+        val req = HttpRequest.newBuilder(URI.create("$executorUrl/${execution.id}"))
             .POST(HttpRequest.BodyPublishers.ofByteArray(ByteArray(0)))
             .header(HttpHeaders.CONTENT_TYPE.toString(), "application/json")
             .build()

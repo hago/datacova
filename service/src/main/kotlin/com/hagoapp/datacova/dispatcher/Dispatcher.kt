@@ -42,7 +42,7 @@ class Dispatcher {
                 } else {
                     val te = queue.poll()
                     try {
-                        ExecutorInvoker(x.executor).dispatch(te.id)
+                        ExecutorInvoker(x.executor).dispatch(te)
                     } catch (e: CoVaException) {
                         logger.error(e.message)
                         queue.put(te)
