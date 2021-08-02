@@ -11,10 +11,7 @@ import com.hagoapp.datacova.entity.internal.ExecutorStatus;
 import org.slf4j.Logger;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ExecutorManager {
@@ -41,6 +38,8 @@ public class ExecutorManager {
                 var n = Instant.now().toEpochMilli();
                 keys.forEach(key -> executorMap.compute(key, (k, existed) -> {
                     if ((existed != null) && (existed.lastActiveTime + CHECK_INTERVAL * 5 < n)) {
+                        logger.debug("executor {} will be removed due to long time inactive",
+                                existed.getStatus().getExecutor().getName());
                         return null;
                     } else {
                         return existed;
@@ -77,6 +76,10 @@ public class ExecutorManager {
         }
         return executorMap.values().stream()
                 .min(Comparator.comparingInt(o -> o.status.getExecutions().size())).get().status;
+    }
+
+    public Map<String, ExecutorInfo> getExecutors() {
+        return this.executorMap;
     }
 
     public static class ExecutorInfo {
