@@ -25,6 +25,10 @@
           v-bind:detail="detail"
           v-bind:actiondetail="actiondetail"
         ></TaskExecutionVerify>
+        <TaskExecutionDistribute v-if="actiondetail.action.type === 3"
+          v-bind:detail="detail"
+          v-bind:actiondetail="actiondetail"
+        ></TaskExecutionDistribute>
       </li>
     </ul>
   </div>
@@ -34,12 +38,14 @@
 import Router from '../../router'
 import TaskExecutionIngest from '@/components/execution/TaskExecutionIngest.vue'
 import TaskExecutionVerify from '@/components/execution/TaskExecutionVerify.vue'
+import TaskExecutionDistribute from '@/components/execution/TaskExecutionDistribute.vue'
 
 export default {
   name: 'TaskExecutionCompleted',
   components: {
     TaskExecutionIngest,
-    TaskExecutionVerify
+    TaskExecutionVerify,
+    TaskExecutionDistribute
   },
   props: {
     execution: Object
