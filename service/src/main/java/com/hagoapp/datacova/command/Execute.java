@@ -17,6 +17,7 @@ import com.hagoapp.datacova.entity.execution.ExecutionDetail;
 import com.hagoapp.datacova.entity.execution.TaskExecution;
 import com.hagoapp.datacova.execution.TaskExecutionWatcher;
 import com.hagoapp.datacova.execution.Worker;
+import com.hagoapp.datacova.executor.ExecuteResultMailer;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import picocli.CommandLine;
@@ -40,6 +41,7 @@ public class Execute extends CommandWithConfig implements TaskExecutionWatcher {
             }
             Worker worker = new Worker(taskExecution);
             worker.addWatcher(this);
+            worker.addWatcher(new ExecuteResultMailer());
             worker.execute();
             return super.call();
         }
