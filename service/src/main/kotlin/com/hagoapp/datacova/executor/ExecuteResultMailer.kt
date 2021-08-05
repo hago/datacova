@@ -7,10 +7,13 @@
 
 package com.hagoapp.datacova.executor
 
+import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.config.init.CoVaConfig
+import com.hagoapp.datacova.data.user.UserCache
 import com.hagoapp.datacova.entity.execution.ExecutionDetail
 import com.hagoapp.datacova.entity.execution.TaskExecution
 import com.hagoapp.datacova.execution.TaskExecutionWatcher
+import com.hagoapp.datacova.user.UserInfo
 import com.hagoapp.datacova.util.mail.MailHelper
 import com.hagoapp.datacova.util.text.TemplateManager
 import java.io.StringWriter
@@ -25,17 +28,20 @@ class ExecuteResultMailer : TaskExecutionWatcher {
         const val MAIL_COMPLETE_TITLE_TEMPLATE_NAME = "templates/execution/complete/title"
     }
 
+    private lateinit var user: UserInfo
+
     override fun onStart(te: TaskExecution) {
         val tplMgr = if (CoVaConfig.getConfig().template == null) TemplateManager.getResourcedTemplateManager()
         else TemplateManager.getManager(CoVaConfig.getConfig().template)
+        user = UserCache.getUser(te.addBy) ?: createUser(te.addBy)
         val body = StringWriter().use { writer ->
             val tpl = tplMgr.getTemplate(MAIL_START_BODY_TEMPLATE_NAME)
-            tpl!!.process(mapOf("execution" to te), writer)
+            tpl!!.process(mapOf("execution" to te, "user" to user), writer)
             writer.toString()
         }
         val title = StringWriter().use { writer ->
             val tpl = tplMgr.getTemplate(MAIL_START_TITLE_TEMPLATE_NAME)
-            tpl!!.process(mapOf("execution" to te), writer)
+            tpl!!.process(mapOf("execution" to te, "user" to user), writer)
             writer.toString()
         }
         val mail = MailHelper().setHtmlContent(body)
@@ -46,17 +52,25 @@ class ExecuteResultMailer : TaskExecutionWatcher {
         mail.sendMail()
     }
 
+    private fun createUser(id: Long): UserInfo {
+        val u = UserInfo()
+        u.id = id
+        u.userId = "user $id"
+        u.name = "user $id"
+        return u
+    }
+
     override fun onComplete(te: TaskExecution, result: ExecutionDetail) {
         val tplMgr = if (CoVaConfig.getConfig().template == null) TemplateManager.getResourcedTemplateManager()
         else TemplateManager.getManager(CoVaConfig.getConfig().template)
         val body = StringWriter().use { writer ->
             val tpl = tplMgr.getTemplate(MAIL_COMPLETE_BODY_TEMPLATE_NAME)
-            tpl!!.process(mapOf("execution" to te, "result" to result), writer)
+            tpl!!.process(mapOf("execution" to te, "result" to result, "user" to user), writer)
             writer.toString()
         }
         val title = StringWriter().use { writer ->
             val tpl = tplMgr.getTemplate(MAIL_COMPLETE_TITLE_TEMPLATE_NAME)
-            tpl!!.process(mapOf("execution" to te, "result" to result), writer)
+            tpl!!.process(mapOf("execution" to te, "result" to result, "user" to user), writer)
             writer.toString()
         }
         val mail = MailHelper().setHtmlContent(body)
