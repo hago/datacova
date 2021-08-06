@@ -15,7 +15,6 @@ import com.hagoapp.datacova.entity.execution.DataMessage
 import com.hagoapp.datacova.entity.execution.ExecutionActionDetail
 import com.hagoapp.datacova.entity.execution.ExecutionDetail
 import com.hagoapp.datacova.entity.execution.TaskExecution
-import com.hagoapp.datacova.execution.executor.report.Reporter
 import com.hagoapp.datacova.executor.Executor
 import com.hagoapp.datacova.util.FileStoreUtils
 import com.hagoapp.datacova.util.StackTraceWriter
@@ -86,8 +85,8 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
             } catch (ex: Exception) {
                 logger.error("Error occurs in action $i: ${action.name} of execution ${taskExec.id}: ${ex.message}")
                 StackTraceWriter.write(ex, logger)
-                currentActionDetail!!.error = ex;
-                currentActionDetail!!.end();
+                currentActionDetail!!.error = ex
+                currentActionDetail!!.end()
                 observers.forEach { it.onActionComplete(taskExec, i, currentActionDetail!!) }
                 if (action.extra.continueNextWhenError) {
                     logger.info("continue next action of execution ${taskExec.id}")
@@ -142,7 +141,6 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
         try {
             WebSocketNotifier.notifyComplete(te)
             TaskExecutionData().completeTaskExecution(result)
-            Reporter.sendReport(te, result)
             logger.info("Execution ${te.id} of Task ${te.task.name}(${te.taskId}) ${if (result.isSucceeded) "succeeded" else "failed"}")
         } catch (ex: Throwable) {
             logger.error("unexpected error in Execution Service call onComplete back: $ex")
