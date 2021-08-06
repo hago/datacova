@@ -57,6 +57,7 @@
   },
   "template": {
     "directory": "./templates",
+    "useResource": false,
     "aliases": {
       "execution_report": "execution/report"
     }
