@@ -1,1 +1,1 @@
-Processing of your file ${execution.fileInfo.originalName} is completed <#if execution.isSucceeded()> successfully<#else>with error</#if>
+Processing of your file ${execution.fileInfo.originalName} is completed <#if result.isSucceeded()> successfully<#else>with error</#if>

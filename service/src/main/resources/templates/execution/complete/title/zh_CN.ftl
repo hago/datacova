@@ -1,1 +1,1 @@
-您的文件${execution.fileInfo.originalName}处理完毕<#if !execution.isSucceeded()>，有错误发生</#if>
+您的文件${execution.fileInfo.originalName}处理完毕<#if !result.isSucceeded()>，有错误发生</#if>
