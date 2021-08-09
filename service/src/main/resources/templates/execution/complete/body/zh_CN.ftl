@@ -52,14 +52,17 @@
             </#if>
             <#list execution.task.actions as action>
                 <#switch action.type>
-                    <#case 0>
-                        <#include path = "/executions/action/ingest/index.ftl">
-                        <#break>
                     <#case 1>
-                        <#include path = "/executions/action/validation/index.ftl">
+                        <#include "/execution/action/ingest/index_zh_CN.ftl">
                         <#break>
                     <#case 2>
-                        <#include path = "/executions/action/distribute/index.ftl">
+                        <#include "/execution/action/validation/index_zh_CN.ftl">
+                        <#break>
+                    <#case 3>
+                        <#include "/execution/action/distribute/index_zh_CN.ftl">
+                        <#break>
+                    <#case 0>
+                        <#include "/execution/action/idle/index_zh_CN.ftl">
                         <#break>
                     <#default>
                         <p>action type is ${action.type}</p>
