@@ -6,6 +6,7 @@
         .succeed { color: green; }
         .fail { color: red; }
         .emphasize { font-weight:bold; }
+        .ident { color: green; }
         </style>
     </head>
     <body>
@@ -50,24 +51,20 @@
                     <span class="fail">${result.dataLoadingError.message}</span>
                 </div>
             </#if>
-            <#list execution.task.actions as action>
-                <#switch action.type>
-                    <#case 1>
-                        <#include "/execution/action/ingest/index_zh_CN.ftl">
-                        <#break>
-                    <#case 2>
-                        <#include "/execution/action/validation/index_zh_CN.ftl">
-                        <#break>
-                    <#case 3>
-                        <#include "/execution/action/distribute/index_zh_CN.ftl">
-                        <#break>
-                    <#case 0>
-                        <#include "/execution/action/idle/index_zh_CN.ftl">
-                        <#break>
-                    <#default>
-                        <p>action type is ${action.type}</p>
-                </#switch>
+            <ul>
+            <#list result.actionDetailMap as index, detail>
+                <li>
+                    <div>
+                        任务"<span class="ident">${execution.task.name}</span>"的第 <span class="ident">${index?number+1}</span> 步操作
+                        "<span class="ident">${detail.action.name}</span>"出现错误
+                    </div>
+                    <div class="fail">
+                        <p>action type is ${detail.action.type}</p>
+                        <p>错误信息：${((detail.error.detailMessage)!detail.error.message)!detail.error}</p>
+                    </div>
+                </li>
             </#list>
+            </ul>
         </#if>
         <p></p>
         <p>祝一切顺利</p>

@@ -6,6 +6,7 @@
         .succeed { color: green; }
         .fail { color: red; }
         .emphasize { font-weight:bold; }
+        .ident { color: green; }
         </style>
     </head>
     <body>
@@ -79,17 +80,17 @@
                 </div>
             </#if>
             <#list execution.task.actions as action>
-                <#switch action.type>
-                    <#case 0>
-                        <#include path = "/executions/action/ingest/index.ftl">
-                        <#break>
-                    <#case 1>
-                        <#include path = "/executions/action/validation/index.ftl">
-                        <#break>
-                    <#case 2>
-                        <#include path = "/executions/action/distribute/index.ftl">
-                        <#break>
-                </#switch>
+                <li>
+                    <div>
+                        Error occurs while executing Action <span class="ident">${index?number+1}</span> - 
+                        "<span class="ident">${detail.action.name}</span>" of
+                        the task "<span class="ident">${execution.task.name}</span>"
+                    </div>
+                    <div class="fail">
+                        <p>action type is ${detail.action.type}</p>
+                        <p>Error message：${((detail.error.detailMessage)!detail.error.message)!detail.error}</p>
+                    </div>
+                </li>
             </#list>
         </#if>
         <p></p>
