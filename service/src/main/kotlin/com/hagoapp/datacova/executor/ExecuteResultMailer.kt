@@ -34,12 +34,12 @@ class ExecuteResultMailer : TaskExecutionWatcher {
         val tplMgr = TemplateManager.getManager(CoVaConfig.getConfig().template)
         user = UserCache.getUser(te.addBy) ?: createUser(te.addBy)
         val body = StringWriter().use { writer ->
-            val tpl = tplMgr.getTemplate(MAIL_START_BODY_TEMPLATE_NAME)
+            val tpl = tplMgr.getTemplate(MAIL_START_BODY_TEMPLATE_NAME, te.task.extra.locale)
             tpl!!.process(mapOf("execution" to te, "user" to user), writer)
             writer.toString()
         }
         val title = StringWriter().use { writer ->
-            val tpl = tplMgr.getTemplate(MAIL_START_TITLE_TEMPLATE_NAME)
+            val tpl = tplMgr.getTemplate(MAIL_START_TITLE_TEMPLATE_NAME, te.task.extra.locale)
             tpl!!.process(mapOf("execution" to te, "user" to user), writer)
             writer.toString()
         }
@@ -62,7 +62,7 @@ class ExecuteResultMailer : TaskExecutionWatcher {
     override fun onComplete(te: TaskExecution, result: ExecutionDetail) {
         val tplMgr = TemplateManager.getManager(CoVaConfig.getConfig().template)
         val body = StringWriter().use { writer ->
-            val tpl = tplMgr.getTemplate(MAIL_COMPLETE_BODY_TEMPLATE_NAME)
+            val tpl = tplMgr.getTemplate(MAIL_COMPLETE_BODY_TEMPLATE_NAME, te.task.extra.locale)
             tpl!!.process(
                 mapOf(
                     "execution" to te,
@@ -74,7 +74,7 @@ class ExecuteResultMailer : TaskExecutionWatcher {
             writer.toString()
         }
         val title = StringWriter().use { writer ->
-            val tpl = tplMgr.getTemplate(MAIL_COMPLETE_TITLE_TEMPLATE_NAME)
+            val tpl = tplMgr.getTemplate(MAIL_COMPLETE_TITLE_TEMPLATE_NAME, te.task.extra.locale)
             tpl!!.process(mapOf("execution" to te, "result" to result, "user" to user), writer)
             writer.toString()
         }
