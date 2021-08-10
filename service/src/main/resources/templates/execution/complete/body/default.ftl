@@ -14,7 +14,7 @@
             <#local s = "">
             <#if (d.toHours() > 0)>
                 <#local s += d.toHours()?c + "hour">
-                <#if (d.toHours() > 1>
+                <#if (d.toHours() > 1)>
                     <#local s += "s">
                 </#if>
                 <#local s += " ">
@@ -22,14 +22,14 @@
             <#if !s?has_content>
                 <#if (d.toMinutesPart() > 0)>
                     <#local s += d.toMinutesPart()?c + "minute">
-                    <#if (d.toMinutesPart() > 1>
+                    <#if (d.toMinutesPart() > 1)>
                         <#local s += "s">
                     </#if>
                     <#local s += " ">
                 </#if>
             <#else>
                 <#local s += d.toMinutesPart()?c + "minute">
-                <#if (d.toMinutesPart() > 1>
+                <#if (d.toMinutesPart() > 1)>
                     <#local s += "s">
                 </#if>
                 <#local s += " ">
@@ -37,14 +37,14 @@
             <#if !s?has_content>
                 <#if (d.toSecondsPart() > 0)>
                     <#local s += d.toSecondsPart()?c + "second">
-                    <#if (d.toMinutesPart() > 1>
+                    <#if (d.toMinutesPart() > 1)>
                         <#local s += "s">
                     </#if>
                     <#local s += " ">
                 </#if>
             <#else>
                 <#local s += d.toSecondsPart()?c + "second">
-                <#if (d.toMinutesPart() > 1>
+                <#if (d.toMinutesPart() > 1)>
                     <#local s += "s">
                 </#if>
                 <#local s += " ">
@@ -52,14 +52,14 @@
             <#if !s?has_content>
                 <#if (d.toMillisPart() > 0)>
                     <#local s += d.toMillisPart()?c + "millisecond">
-                    <#if (d.toMinutesPart() > 1>
+                    <#if (d.toMinutesPart() > 1)>
                         <#local s += "s">
                     </#if>
                     <#local s += " ">
                 </#if>
             <#else>
                 <#local s += d.toMillisPart()?c + "millisecond">
-                <#if (d.toMinutesPart() > 1>
+                <#if (d.toMinutesPart() > 1)>
                     <#local s += "s">
                 </#if>
                 <#local s += " ">
@@ -79,7 +79,7 @@
                     <span class="fail">${result.dataLoadingError.message}</span>
                 </div>
             </#if>
-            <#list execution.task.actions as action>
+            <#list execution.task.actions as index, action>
                 <li>
                     <div>
                         Error occurs while executing Action <span class="ident">${index?number+1}</span> - 
