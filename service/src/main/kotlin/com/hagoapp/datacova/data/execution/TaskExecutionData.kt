@@ -83,6 +83,8 @@ class TaskExecutionData(config: DatabaseConfig) : CoVaDatabase(config) {
     }
 
     fun completeTaskExecution(detail: ExecutionDetail) {
+        // detail and taskexecution are mutually referenced, remove redundant internal detail
+        detail.execution.detail = ExecutionDetail.EMPTY_DETAIL
         val sql = "update taskexecution set detail = ?, xstatus = ? where id = ?"
         connection.prepareStatement(sql).use { stmt ->
             stmt.setObject(1, DatabaseFunctions.createPgObject("json", detail))

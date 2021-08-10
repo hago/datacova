@@ -19,6 +19,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ExecutionDetail implements JsonStringify {
+
+    /**
+     * This internal final static instance is only a placeholder. Its intention is to remove redundant internal of
+     * <code>ExecutionDetail</code> of <code>execution</code> field. Or the persisted detail json looks so heavy since
+     * they are mutually referenced.
+     * This one does NOT have any actual meaning and calling any method / field on it causes error.
+     */
+    public final static ExecutionDetail EMPTY_DETAIL = new ExecutionDetail(null);
+
     private long startTime = -1;
     private long endTime = -1;
     private final Map<Integer, ExecutionActionDetail> actionDetailMap = new HashMap<>();
@@ -52,7 +61,7 @@ public class ExecutionDetail implements JsonStringify {
     }
 
     public long getTimeUsedMilliSeconds() throws CoVaException {
-        if (endTime < 0) {
+        if ((endTime < 0) && (execution != null)) {
             throw new CoVaException("Timing not started");
         }
         return endTime - startTime;

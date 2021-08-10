@@ -48,7 +48,7 @@ class ExecuteResultMailer : TaskExecutionWatcher {
             .addRecipientCCList(te.task.extra.mailCCRecipients.map { InternetAddress(it) })
             .addRecipientBCCList(te.task.extra.mailBCCRecipients.map { InternetAddress(it) })
             .setTitle(title)
-        mail.sendMail()
+        //mail.sendMail()
     }
 
     private fun createUser(id: Long): UserInfo {
