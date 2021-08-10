@@ -22,11 +22,16 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import picocli.CommandLine;
 
+import java.util.Locale;
+
 @CommandLine.Command(name = "exec", description = "execute a task")
 public class Execute extends CommandWithConfig implements TaskExecutionWatcher {
 
     @CommandLine.Option(names = {"-i", "--id"}, description = "id of task execution to be executed", required = true)
     private int taskExecId;
+
+    @CommandLine.Option(names = {"-l", "--l"}, description = "locale to be used", required = false)
+    private String locale;
 
     private final Logger logger = CoVaLogger.getLogger();
 
@@ -38,6 +43,12 @@ public class Execute extends CommandWithConfig implements TaskExecutionWatcher {
             if (taskExecution == null) {
                 logger.error("Task execution {} not found", taskExecId);
                 return -1;
+            }
+            if (locale != null) {
+                logger.debug("using cli locale: {}", locale);
+                var loc = Locale.forLanguageTag(locale);
+                logger.debug("get locale: {}", loc);
+                taskExecution.getTask().getExtra().setLocale(loc);
             }
             Worker worker = new Worker(taskExecution);
             worker.addWatcher(this);
