@@ -22,7 +22,9 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import picocli.CommandLine;
 
+import java.util.Arrays;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 @CommandLine.Command(name = "exec", description = "execute a task")
 public class Execute extends CommandWithConfig implements TaskExecutionWatcher {
@@ -48,7 +50,17 @@ public class Execute extends CommandWithConfig implements TaskExecutionWatcher {
             if (locale != null) {
                 logger.debug("using cli locale: {}", locale);
                 var loc = Locale.forLanguageTag(locale);
-                logger.debug("get locale: {}", loc);
+                if (loc.toLanguageTag().equals("und")) {
+                    logger.error("Unrecognized locale: {}", locale);
+                    logger.info("options of locale include:");
+                    var locales = Arrays.stream(Locale.getAvailableLocales())
+                            .map(Locale::toLanguageTag)
+                            .filter(s -> !s.equals("und") && !s.equals("nn"))
+                            .collect(Collectors.joining(","));
+                    logger.info(locales);
+                    return -1;
+                }
+                logger.debug("get locale: {}", loc.toLanguageTag());
                 taskExecution.getTask().getExtra().setLocale(loc);
             }
             Worker worker = new Worker(taskExecution);
