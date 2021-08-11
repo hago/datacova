@@ -68,7 +68,7 @@ class ExecuteResultMailer : TaskExecutionWatcher {
                     "execution" to te,
                     "result" to result,
                     "user" to user,
-                    "duration" to Duration.ofMillis(te.detail.timeUsedMilliSeconds)
+                    "duration" to Duration.ofMillis(result.timeUsedMilliSeconds)
                 ), writer
             )
             writer.toString()
