@@ -44,6 +44,7 @@ public class Execute extends CommandWithConfig implements TaskExecutionWatcher {
                 logger.error("Task execution {} not found", taskExecId);
                 return -1;
             }
+            taskExecution.setDetail(null);
             if (locale != null) {
                 logger.debug("using cli locale: {}", locale);
                 var loc = Locale.forLanguageTag(locale);
