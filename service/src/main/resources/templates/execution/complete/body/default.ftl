@@ -67,10 +67,11 @@
         <p>Dear ${user.name}</p>
         <p></p>
         <#if result.isSucceeded()>
-        <p>Processing of your file ${execution.fileInfo.originalName} is complete successfully in ${calctime(duration)}.</p>
-        <p>Congratulations!</p>
+            <p>Processing of your file ${execution.fileInfo.originalName} is complete successfully in ${calctime(duration)}.</p>
+            <#include "/execution/complete/datamessage/default.ftl">
+            <p>Congratulations!</p>
         <#else>
-        <p>Processing of your file ${execution.fileInfo.originalName} is complete in ${calctime(duration)}, but some issues happened. Please see details below:</p>
+            <p>Processing of your file ${execution.fileInfo.originalName} is complete in ${calctime(duration)}, but some issues happened. Please see details below:</p>
             <#if result.dataLoadingError??>
                 <div>
                     <span>Error occurs while data loading: </span>
@@ -90,6 +91,7 @@
                     </div>
                 </li>
             </#list>
+            <#include "/execution/complete/datamessage/default.ftl">
         </#if>
         <p></p>
         <p>Your sincerely</p>

@@ -41,10 +41,11 @@
         <p>亲爱的用户 ${user.name}</p>
         <p></p>
         <#if result.isSucceeded()>
-        <p>您的文件 ${execution.fileInfo.originalName} 已经成功处理完成, 耗时${calctime(duration)}</p>
-        <p>祝贺你!</p>
+            <p>您的文件 ${execution.fileInfo.originalName} 已经成功处理完成, 耗时${calctime(duration)}</p>
+            <#include "/execution/complete/datamessage/zh_CN.ftl">
+            <p>祝贺你!</p>
         <#else>
-        <p>您的文件 ${execution.fileInfo.originalName} 已经处理完成, 耗时${calctime(duration)}, 处理过程中出现了下列的问题.</p>
+            <p>您的文件 ${execution.fileInfo.originalName} 已经处理完成, 耗时${calctime(duration)}, 处理过程中出现了下列的问题.</p>
             <#if result.dataLoadingError??>
                 <div>
                     <span>数据文件加载时出现错误: </span>
@@ -65,6 +66,7 @@
                 </li>
             </#list>
             </ul>
+            <#include "/execution/complete/datamessage/zh_CN.ftl">
         </#if>
         <p></p>
         <p>祝一切顺利</p>
