@@ -108,4 +108,9 @@ public class ExecutionDetail implements JsonStringify {
                 ", execution=" + execution +
                 '}';
     }
+
+    public boolean hasDataMessages() {
+        return !actionDetailMap.isEmpty() &&
+                actionDetailMap.values().stream().anyMatch(ExecutionActionDetail::hasDataMessage);
+    }
 }

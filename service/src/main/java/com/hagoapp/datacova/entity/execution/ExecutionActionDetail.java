@@ -73,4 +73,8 @@ public class ExecutionActionDetail implements JsonStringify {
                 ", endTime=" + endTime +
                 '}';
     }
+
+    public boolean hasDataMessage() {
+        return !dataMessages.isEmpty();
+    }
 }
