@@ -43,8 +43,11 @@ class ShutDown {
             ResponseHelper.sendResponse(context, HttpResponseStatus.OK)
         }
         isShuttingDown.set(true)
-        GlobalScope.launch {
-            shutDown()
+        context.addBodyEndHandler {
+            Thread.sleep(1000)
+            GlobalScope.launch {
+                shutDown()
+            }
         }
         ResponseHelper.sendResponse(context, HttpResponseStatus.OK)
     }
@@ -64,8 +67,11 @@ class ShutDown {
             ResponseHelper.sendResponse(context, HttpResponseStatus.OK)
         }
         isShuttingDown.set(true)
-        GlobalScope.launch {
-            shutDown(true)
+        context.addBodyEndHandler {
+            Thread.sleep(1000)
+            GlobalScope.launch {
+                shutDown()
+            }
         }
         ResponseHelper.sendResponse(context, HttpResponseStatus.OK)
     }
