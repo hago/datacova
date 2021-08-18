@@ -14,8 +14,8 @@
                 <#list detail.getDataMessages() as line, messages>
                     <#list messages as message>
                         <p>
-                        line ${line} - Value of field "${message.field}" is 
-                        ${(message.value)!"null"}, reason: ${message.descriptionExpected}
+                        line ${line} - Value of field <span class="field">${message.field}</span> is
+                        <span class="value">${(message.value)!"null"}</span>, reason: <span class="expect">${message.descriptionExpected}</span>
                         </p>
                     </#list>
                 </#list>

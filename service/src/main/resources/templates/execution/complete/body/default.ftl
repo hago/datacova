@@ -7,6 +7,14 @@
         .fail { color: red; }
         .emphasize { font-weight:bold; }
         .ident { color: green; }
+        .field { color: gray; }
+        .value {
+            color: red;
+            font-style: italic;
+        }
+        .expect {
+            color: orangered;
+        }
         </style>
     </head>
     <body>

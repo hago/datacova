@@ -1,4 +1,3 @@
-<p>xyz</p>
 <#if result.hasDataMessages()>
     <p>数据处理程序为您记录了下列消息，需要您关注：</p>
     <ul>
@@ -11,9 +10,10 @@
             </div>
             <div class="datamessage">
                 <ul>
-                <#list detail.datamessages as line, messages>
+                <#list detail.getDataMessages() as line, messages>
                     <#list messages as message>
-                    <p>字段“${message.field}”的值是“${messgae.value}”，期望是：“${message.descriptionExpected}”</p>
+                    <p>字段 <span class="field">${message.field}</span> 的值是 <span class="value">${(message.value)!"null"}</span>，
+                    期望是：<span class="expect">${message.descriptionExpected}</span></p>
                     </#list>
                 </#list>
                 </ul>
