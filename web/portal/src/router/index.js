@@ -14,6 +14,7 @@ import Register from '@/components/Register.vue'
 import ActivateRegistration from '@/components/ActivateRegistration.vue'
 import ValidationRule from '@/components/rules/ValidationRule.vue'
 import User from '@/apis/user.js'
+import AdminIndex from '@/components/admin/Index.vue'
 
 Vue.use(Vuex)
 Vue.use(Router)
@@ -104,6 +105,16 @@ const route = new Router({
       name: 'ValidationRule',
       component: ValidationRule,
       props: true
+    },
+    {
+      path: '/admin',
+      name: 'AdminIndex',
+      component: AdminIndex,
+      props: true,
+      meta: {
+        requireAuth: true,
+        requireAdmin: true
+      }
     }
   ],
   linkActiveClass: 'nav-link',
@@ -112,13 +123,15 @@ const route = new Router({
 
 route.beforeEach((to, from, next) => {
   console.log(`from: ${from.path}, to: ${to.path}`)
-  if ((to.meta !== undefined) && to.meta.requireAuth) {
-    console.log('require auth')
-    let u = (new User()).getUser()
-    if (u != null) {
-      console.log('has logged')
-      next()
-    } else {
+  if (to.meta === undefined) {
+    console.log('doesn\'t require auth')
+    next()
+    return
+  }
+  console.log('require auth')
+  let u = (new User()).getUser()
+  if (to.meta.requireAuth) {
+    if (u == null) {
       console.log('not logged')
       if (next.path !== '/login') {
         console.log('goto /login')
@@ -132,11 +145,21 @@ route.beforeEach((to, from, next) => {
         console.log('goto /login by intension')
         next()
       }
+      return
     }
-  } else {
-    console.log('doesn\'t require auth')
-    next()
   }
+  console.log(u.admin)
+  console.log(to.meta)
+  if (to.meta.requireAdmin && (u.admin === undefined)) {
+    next({
+      name: 'NotFound',
+      params: {
+        message: 'Access Denied'
+      }
+    })
+    return
+  }
+  next()
 })
 
 export default route
