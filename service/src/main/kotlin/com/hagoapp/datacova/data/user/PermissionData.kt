@@ -1,0 +1,116 @@
+/*
+ * Copyright (c) 2021.
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
+package com.hagoapp.datacova.data.user
+
+import com.hagoapp.datacova.config.init.CoVaConfig
+import com.hagoapp.datacova.config.init.DatabaseConfig
+import com.hagoapp.datacova.data.CoVaDatabase
+import com.hagoapp.datacova.user.UserInfo
+import com.hagoapp.datacova.user.permission.Permission
+import com.hagoapp.datacova.user.permission.Role
+import com.hagoapp.datacova.user.permission.UserPermissions
+import com.hagoapp.datacova.user.permission.UserRoles
+import java.sql.ResultSet
+
+class PermissionData(config: DatabaseConfig) : CoVaDatabase(config) {
+    constructor() : this(CoVaConfig.getConfig().database)
+
+    fun getUserRoles(userInfo: UserInfo): UserRoles {
+        val sql = "select * from userroles where userid = ?"
+        connection.prepareStatement(sql).use { stmt ->
+            stmt.setLong(1, userInfo.id)
+            val ur = UserRoles()
+            ur.userInfo = userInfo
+            stmt.executeQuery().use { rs ->
+                while (rs.next()) {
+                    ur.roles.add(result2Role(rs))
+                }
+            }
+            return ur
+        }
+    }
+
+    private fun result2Role(rs: ResultSet): Role {
+        val role = Role()
+        with(role) {
+            id = rs.getInt("id")
+            name = rs.getString("name")
+            description = rs.getString("description")
+        }
+        return role
+    }
+
+    fun getRolePermissions(roleId: Int): Set<Permission> {
+        val permissions = getAllPermissions()
+        val sql = "select permissionid from rolepermissions where roleid = ?"
+        connection.prepareStatement(sql).use { stmt ->
+            stmt.setInt(1, roleId)
+            val permissionIds = mutableListOf<Int>()
+            stmt.executeQuery().use { rs ->
+                while (rs.next()) {
+                    permissionIds.add(rs.getInt("permissionid"))
+                }
+            }
+            return permissions.filter { permissionIds.contains(it.id) }.toSet()
+        }
+    }
+
+    private fun result2Permission(rs: ResultSet): Permission {
+        val permission = Permission()
+        with(permission) {
+            id = rs.getInt("id")
+            name = rs.getString("name")
+            description = rs.getString("description")
+            parentId = rs.getInt("parentid")
+        }
+        return permission
+    }
+
+    private fun getAllPermissions(): Set<Permission> {
+        val sql = "select * from permissions"
+        connection.prepareStatement(sql).use { stmt ->
+            val ret = mutableSetOf<Permission>()
+            stmt.executeQuery().use { rs ->
+                while (rs.next()) {
+                    ret.add(result2Permission(rs))
+                }
+            }
+            return ret.map { p ->
+                p.parent = ret.find { p.parentId == it.id }
+                p
+            }.toSet()
+        }
+    }
+
+    fun getUserPermissions(userInfo: UserInfo): UserPermissions {
+        val ur = getUserRoles(userInfo)
+        val ret = UserPermissions()
+        ret.userInfo = userInfo
+        ret.roles.addAll(ur.roles)
+        val permissions = ur.roles.map { getRolePermissions(it.id) }.reduce { acc, set ->
+            val combined = mutableSetOf<Permission>()
+            combined.addAll(acc)
+            combined.addAll(set)
+            combined
+        }
+        val pIds = mutableListOf<Int>()
+        val sql = "select * from userpermissions where userid = ?"
+        connection.prepareStatement(sql).use { stmt ->
+            stmt.setLong(1, userInfo.id)
+            stmt.executeQuery().use { rs ->
+                while (rs.next()) {
+                    pIds.add(rs.getInt("permissionid"))
+                }
+            }
+        }
+        val allPermissions = getAllPermissions()
+        pIds.removeIf { permissions.any { p -> p.id == it } }
+        ret.permissions = permissions.plus(allPermissions.filter { pIds.contains(it.id) })
+        return ret
+    }
+}

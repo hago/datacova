@@ -9,6 +9,7 @@
 package com.hagoapp.datacova.web.auth
 
 import com.hagoapp.datacova.CoVaLogger
+import com.hagoapp.datacova.data.user.PermissionCache
 import com.hagoapp.datacova.user.UserInfo
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.util.web.AuthUtils
@@ -18,6 +19,7 @@ import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.RoutingContext
 import com.hagoapp.datacova.user.UserAuthFactory
 import com.hagoapp.datacova.user.UserAuthProvider
+import com.hagoapp.datacova.user.permission.UserPermissions
 
 class Login : WebInterface {
 
@@ -61,10 +63,15 @@ class Login : WebInterface {
         private fun loginSucceed(routeContext: RoutingContext, user: UserInfo, provider: UserAuthProvider) {
             logger.debug("authenticate succeeded by provider {}", provider.getProviderName())
             val token = AuthUtils.loginUser(routeContext, user)
+            val userPermission = PermissionCache.getUserPermissions(user)
             ResponseHelper.sendResponse(
                 routeContext, HttpResponseStatus.OK, mapOf(
                     "code" to 0,
-                    "data" to mapOf("user" to user.maskUserInfo(), "token" to token)
+                    "data" to LoginUser(
+                        user.maskUserInfo(),
+                        token,
+                        userPermission
+                    )
                 )
             )
         }
@@ -74,5 +81,10 @@ class Login : WebInterface {
         private const val LOGIN_PROVIDER = "provider"
     }
 
+    data class LoginUser(
+        val user: UserInfo,
+        val token: String,
+        val permission: UserPermissions
+    )
 
 }
