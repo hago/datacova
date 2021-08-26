@@ -157,3 +157,41 @@ create table if not exists settings (
     unique(name),
     primary key(id)
 );
+
+create table if not exists permissions(
+    id serial,
+    name varchar(100) unique not null,
+    description text not null default '',
+    parentid int null references permissions(id),
+    primary key(id)
+);
+
+create table if not exists userpermissions(
+    id serial,
+    userid bigint not null references users(id),
+    permissionid bigint not null references permissions(id),
+    unique(userid, permissionid),
+    primary key(id)
+);
+
+create table if not exists roles(
+    id serial,
+    name varchar(500) unique not null,
+    description text not null default '',
+    primary key(id)
+);
+
+create table if not exists rolepermissions(
+    id serial,
+    roleid bigint not null references roles(id),
+    permissionid bigint not null references permissions(id),
+    primary key(id)
+);
+
+create table if not exists userroles(
+    id serial,
+    userid bigint not null references users(id),
+    roleid bigint not null references roles(id),
+    unique(userid, roleid),
+    primary key(id)
+);
