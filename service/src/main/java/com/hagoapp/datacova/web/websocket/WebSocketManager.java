@@ -86,10 +86,14 @@ public class WebSocketManager {
     }
 
     public void sendUserMessage(ServerMessage message, UserInfo user) {
+        String text = message.toJson();
+        sendUserMessage(text, user);
+    }
+
+    public void sendUserMessage(String rawMessage, UserInfo user) {
         var sockets = userMap.get(user);
         if (sockets != null) {
-            String text = message.toJson();
-            sockets.forEach(socket -> socket.writeTextMessage(text));
+            sockets.forEach(socket -> socket.writeTextMessage(rawMessage));
         }
     }
 }
