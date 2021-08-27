@@ -19,6 +19,10 @@ import AdminIndex from '@/components/admin/Index.vue'
 Vue.use(Vuex)
 Vue.use(Router)
 
+function hasPermission (user, permissionName) {
+  return (user.permission !== undefined) && user.permission.permissions.some(p => p.name === permissionName)
+}
+
 const route = new Router({
   mode: 'history',
   routes: [
@@ -148,16 +152,16 @@ route.beforeEach((to, from, next) => {
       return
     }
   }
-  console.log(u.admin)
-  console.log(to.meta)
-  if (to.meta.requireAdmin && (u.admin === undefined)) {
-    next({
-      name: 'NotFound',
-      params: {
-        message: 'Access Denied'
-      }
-    })
-    return
+  if (to.meta.requireAdmin) {
+    if ((u !== null) && hasPermission(u, 'adminroot')) {
+      next({
+        name: 'Error',
+        params: {
+          message: 'Access Denied'
+        }
+      })
+      return
+    }
   }
   next()
 })
