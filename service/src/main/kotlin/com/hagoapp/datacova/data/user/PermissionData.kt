@@ -71,20 +71,24 @@ class PermissionData(config: DatabaseConfig) : CoVaDatabase(config) {
         return permission
     }
 
+    private lateinit var allPermissions: Set<Permission>
     private fun getAllPermissions(): Set<Permission> {
-        val sql = "select * from permissions"
-        connection.prepareStatement(sql).use { stmt ->
-            val ret = mutableSetOf<Permission>()
-            stmt.executeQuery().use { rs ->
-                while (rs.next()) {
-                    ret.add(result2Permission(rs))
+        if (!this::allPermissions.isInitialized) {
+            val sql = "select * from permissions"
+            connection.prepareStatement(sql).use { stmt ->
+                val ret = mutableSetOf<Permission>()
+                stmt.executeQuery().use { rs ->
+                    while (rs.next()) {
+                        ret.add(result2Permission(rs))
+                    }
                 }
+                allPermissions = ret.map { p ->
+                    p.parent = ret.find { p.parentId == it.id }
+                    p
+                }.toSet()
             }
-            return ret.map { p ->
-                p.parent = ret.find { p.parentId == it.id }
-                p
-            }.toSet()
         }
+        return allPermissions
     }
 
     fun getUserPermissions(userInfo: UserInfo): UserPermissions {
@@ -92,11 +96,10 @@ class PermissionData(config: DatabaseConfig) : CoVaDatabase(config) {
         val ret = UserPermissions()
         ret.userInfo = userInfo
         ret.roles.addAll(ur.roles)
-        val permissions = ur.roles.map { getRolePermissions(it.id) }.reduce { acc, set ->
-            val combined = mutableSetOf<Permission>()
-            combined.addAll(acc)
-            combined.addAll(set)
-            combined
+        val permissions = mutableListOf<Permission>()
+        ur.roles.forEach {
+            val rolePermissions = getRolePermissions(it.id)
+            permissions.addAll(rolePermissions)
         }
         val pIds = mutableListOf<Int>()
         val sql = "select * from userpermissions where userid = ?"
@@ -110,7 +113,8 @@ class PermissionData(config: DatabaseConfig) : CoVaDatabase(config) {
         }
         val allPermissions = getAllPermissions()
         pIds.removeIf { permissions.any { p -> p.id == it } }
-        ret.permissions = permissions.plus(allPermissions.filter { pIds.contains(it.id) })
+        permissions.addAll(allPermissions.filter { pIds.contains(it.id) })
+        ret.permissions = permissions.distinctBy { it.id }.toSet()
         return ret
     }
 }
