@@ -15,6 +15,7 @@ import ActivateRegistration from '@/components/ActivateRegistration.vue'
 import ValidationRule from '@/components/rules/ValidationRule.vue'
 import User from '@/apis/user.js'
 import AdminIndex from '@/components/admin/Index.vue'
+import WsMessageSend from '@/components/admin/wsmessage/send.vue'
 
 Vue.use(Vuex)
 Vue.use(Router)
@@ -114,6 +115,16 @@ const route = new Router({
       path: '/admin',
       name: 'AdminIndex',
       component: AdminIndex,
+      props: true,
+      meta: {
+        requireAuth: true,
+        requireAdmin: true
+      }
+    },
+    {
+      path: '/admin/wsmessage/send',
+      name: 'WsMessageSend',
+      component: WsMessageSend,
       props: true,
       meta: {
         requireAuth: true,
