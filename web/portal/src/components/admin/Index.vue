@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-title data-title="DataCoVa Admin">
     <div>
       <ul>
         <li>
