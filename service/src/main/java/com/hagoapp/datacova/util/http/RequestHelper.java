@@ -12,6 +12,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import edazdarevic.commons.net.CIDRUtils;
 import io.netty.handler.codec.http.HttpHeaderNames;
+import io.vertx.core.MultiMap;
 import io.vertx.ext.web.RoutingContext;
 
 import java.net.HttpCookie;
@@ -137,5 +138,25 @@ public class RequestHelper {
                 return false;
             }
         });
+    }
+
+    /**
+     * Retrieve user agent
+     *
+     * @param context request context
+     * @return agent string
+     */
+    public static String getUserAgent(RoutingContext context) {
+        return getUserAgent(context.request().headers());
+    }
+
+    /**
+     * Retrieve user agent
+     *
+     * @param map headers from request
+     * @return agent string
+     */
+    public static String getUserAgent(MultiMap map) {
+        return map.get(HttpHeaderNames.USER_AGENT);
     }
 }
