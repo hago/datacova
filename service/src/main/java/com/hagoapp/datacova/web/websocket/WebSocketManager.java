@@ -97,7 +97,7 @@ public class WebSocketManager {
         }
     }
 
-    public synchronized List<WsSession> getAllWebSockets() {
+    public synchronized List<WsSession> getAllWsSessions() {
         return socketMap.values().stream().sorted((session1, session2) -> {
             int uIndex = session1.getUserInfo().toString().compareTo(session2.getUserInfo().toString());
             if (uIndex != 0 ) {
