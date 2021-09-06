@@ -17,7 +17,7 @@ public class WsSession {
     private UserInfo userInfo;
     private String id;
     private String deviceIdentity;
-    private long establishedAt = Instant.now().toEpochMilli();
+    private final long establishedAt = Instant.now().toEpochMilli();
 
     public WsSession() {
         id = Utils.genRandomString(32, null);
