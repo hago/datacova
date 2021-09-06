@@ -13,6 +13,7 @@ import io.vertx.core.http.ServerWebSocket;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class WebSocketManager {
 
@@ -96,12 +97,15 @@ public class WebSocketManager {
         }
     }
 
-    public synchronized Set<ServerWebSocket> getAllWebSockets() {
-        var keys = socketMap.keys();
-        var ret = new HashSet<ServerWebSocket>();
-        while (keys.hasMoreElements()) {
-            ret.add(keys.nextElement());
-        }
-        return ret;
+    public synchronized List<WsSession> getAllWebSockets() {
+        return socketMap.values().stream().sorted((session1, session2) -> {
+            int uIndex = session1.getUserInfo().toString().compareTo(session2.getUserInfo().toString());
+            if (uIndex != 0 ) {
+                return uIndex;
+            } else {
+                return (int) (session1.getEstablishedAt() - session2.getEstablishedAt());
+            }
+        }).collect(Collectors.toList());
+
     }
 }
