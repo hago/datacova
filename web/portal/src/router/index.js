@@ -144,7 +144,7 @@ route.beforeEach((to, from, next) => {
     return
   }
   console.log('require auth')
-  let u = (new User()).getUser()
+  let u = (new User()).getCurrentUser()
   if (to.meta.requireAuth) {
     if (u == null) {
       console.log('not logged')
