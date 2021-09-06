@@ -10,12 +10,14 @@ package com.hagoapp.datacova.web.websocket;
 import com.hagoapp.datacova.user.UserInfo;
 import com.hagoapp.datacova.util.Utils;
 
+import java.time.Instant;
 import java.util.Objects;
 
 public class WsSession {
     private UserInfo userInfo;
     private String id;
     private String deviceIdentity;
+    private long establishedAt = Instant.now().toEpochMilli();
 
     public WsSession() {
         id = Utils.genRandomString(32, null);
@@ -43,6 +45,10 @@ public class WsSession {
 
     public void setDeviceIdentity(String deviceIdentity) {
         this.deviceIdentity = deviceIdentity == null ? String.format("Device %s", id) : deviceIdentity;
+    }
+
+    public long getEstablishedAt() {
+        return establishedAt;
     }
 
     @Override
