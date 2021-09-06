@@ -14,6 +14,7 @@ import com.hagoapp.datacova.config.init.WebConfig;
 import com.hagoapp.datacova.config.init.WebSocketConfig;
 import com.hagoapp.datacova.user.UserInfo;
 import com.hagoapp.datacova.util.StackTraceWriter;
+import com.hagoapp.datacova.util.http.RequestHelper;
 import com.hagoapp.datacova.util.http.ResponseHelper;
 import com.hagoapp.datacova.web.annotation.WebEndPoint;
 import com.hagoapp.datacova.web.authentication.AuthType;
@@ -177,8 +178,11 @@ public class WebManager {
                 event.reject(HttpResponseStatus.FORBIDDEN.code());
                 return;
             }
+            WsSession session = new WsSession();
+            session.setUserInfo(userInfo);
+            session.setDeviceIdentity(RequestHelper.getUserAgent(event.headers()));
             WebSocketManager wsm = WebSocketManager.getManager();
-            wsm.addUserSession(userInfo, event);
+            wsm.addUserSession(session, event);
             event.textMessageHandler(msg -> {
                 MessageHandlerFactory factory = null;
                 try {
@@ -411,7 +415,7 @@ public class WebManager {
         if (handler.isPathAsRegex()) {
             Pattern pattern = Pattern.compile(handler.getPath());
             List<WebHandler> nonRegexHandlers = map.values().stream().filter(entry ->
-                    !entry.getMethod().equals(handler.getMethod()) && !entry.isPathAsRegex())
+                            !entry.getMethod().equals(handler.getMethod()) && !entry.isPathAsRegex())
                     .collect(Collectors.toList());
             for (WebHandler exHandler : nonRegexHandlers) {
                 if (pattern.matcher(exHandler.getPath()).find()) {

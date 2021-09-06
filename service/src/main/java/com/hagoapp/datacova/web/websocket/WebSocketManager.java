@@ -10,8 +10,7 @@ package com.hagoapp.datacova.web.websocket;
 import com.hagoapp.datacova.user.UserInfo;
 import io.vertx.core.http.ServerWebSocket;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 
@@ -28,10 +27,10 @@ public class WebSocketManager {
     }
 
     private final ConcurrentHashMap<UserInfo, List<ServerWebSocket>> userMap = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<ServerWebSocket, UserInfo> socketMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<ServerWebSocket, WsSession> socketMap = new ConcurrentHashMap<>();
 
-    public void addUserSession(UserInfo userInfo, ServerWebSocket socket) {
-        userMap.compute(userInfo, (key, existing) -> {
+    public void addUserSession(WsSession session, ServerWebSocket socket) {
+        userMap.compute(session.getUserInfo(), (key, existing) -> {
             if (existing == null) {
                 var newValue = new ArrayList<ServerWebSocket>();
                 newValue.add(socket);
@@ -41,7 +40,7 @@ public class WebSocketManager {
                 return existing;
             }
         });
-        socketMap.put(socket, userInfo);
+        socketMap.put(socket, session);
     }
 
     public void removeUserSessions(UserInfo userInfo) {
@@ -55,14 +54,14 @@ public class WebSocketManager {
         return userMap.get(userInfo);
     }
 
-    public UserInfo getUser(ServerWebSocket webSocket) {
+    public WsSession getUser(ServerWebSocket webSocket) {
         return socketMap.get(webSocket);
     }
 
     public void removeSession(ServerWebSocket webSocket) {
-        UserInfo userInfo = socketMap.remove(webSocket);
-        if (userInfo != null) {
-            userMap.compute(userInfo, (key, existing) -> {
+        WsSession session = socketMap.remove(webSocket);
+        if (session != null) {
+            userMap.compute(session.getUserInfo(), (key, existing) -> {
                 if (existing == null) {
                     return null;
                 } else {
@@ -95,5 +94,14 @@ public class WebSocketManager {
         if (sockets != null) {
             sockets.forEach(socket -> socket.writeTextMessage(rawMessage));
         }
+    }
+
+    public synchronized Set<ServerWebSocket> getAllWebSockets() {
+        var keys = socketMap.keys();
+        var ret = new HashSet<ServerWebSocket>();
+        while (keys.hasMoreElements()) {
+            ret.add(keys.nextElement());
+        }
+        return ret;
     }
 }
