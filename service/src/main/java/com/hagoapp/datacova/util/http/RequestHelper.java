@@ -94,21 +94,28 @@ public class RequestHelper {
 
     public static String getRemoteIp(RoutingContext context) {
         var request = context.request();
-        String headerXForwardFor = request.getHeader("X-Forwarded-For");
+        return getRemoteIp(context.request().headers(), request.remoteAddress().host());
+    }
+
+    public static String getRemoteIp(MultiMap headers) {
+        return getRemoteIp(headers, null);
+    }
+    public static String getRemoteIp(MultiMap headers, String defaultIp) {
+        String headerXForwardFor = headers.get("X-Forwarded-For");
         if (headerXForwardFor != null) {
             XForwardFor objectXForwardFor = XForwardFor.parse(headerXForwardFor);
             if (objectXForwardFor != null) {
                 return objectXForwardFor.getClientIp();
             }
         }
-        String forwardedHeader = request.getHeader("Forwarded");
+        String forwardedHeader = headers.get("Forwarded");
         if (forwardedHeader != null) {
             Forwarded forwarded = Forwarded.parse(forwardedHeader);
             if (forwarded.getForClientIp() != null) {
                 return forwarded.getForClientIp();
             }
         }
-        return request.remoteAddress().host();
+        return defaultIp;
     }
 
     /**
