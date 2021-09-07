@@ -18,9 +18,18 @@ public class WsSession {
     private String id;
     private String deviceIdentity;
     private final long establishedAt = Instant.now().toEpochMilli();
+    private String remoteIp;
 
     public WsSession() {
         id = Utils.genRandomString(32, null);
+    }
+
+    public String getRemoteIp() {
+        return remoteIp;
+    }
+
+    public void setRemoteIp(String remoteIp) {
+        this.remoteIp = remoteIp;
     }
 
     public UserInfo getUserInfo() {
