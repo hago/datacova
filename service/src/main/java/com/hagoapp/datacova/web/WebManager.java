@@ -139,7 +139,7 @@ public class WebManager {
             logger.info("{} {} {} from {}\t{}", webConfig.getIdentity(), context.request().method().name(),
                     context.request().path(), context.request().remoteAddress().host(), code);
             //logger.debug("message {}", errorMessage);
-            List<String> stacktrace = new ArrayList<>();
+            List<String> stacktrace;
             if (webConfig.isOutputStackTrace() && (e != null)) {
                 stacktrace = StackTraceWriter.write(e, logger);
                 ResponseHelper.respondError(context, HttpResponseStatus.valueOf(code), errorMessage,
@@ -180,11 +180,12 @@ public class WebManager {
             }
             WsSession session = new WsSession();
             session.setUserInfo(userInfo);
+            session.setRemoteIp(RequestHelper.getRemoteIp(event.headers(), event.remoteAddress().host()));
             session.setDeviceIdentity(RequestHelper.getUserAgent(event.headers()));
             WebSocketManager wsm = WebSocketManager.getManager();
             wsm.addUserSession(session, event);
             event.textMessageHandler(msg -> {
-                MessageHandlerFactory factory = null;
+                MessageHandlerFactory factory;
                 try {
                     factory = new MessageHandlerFactory(msg);
                     var handler = factory.createMessageHandler();
