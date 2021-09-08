@@ -10,7 +10,7 @@ class AdminApi {
   async getwssessions () {
     let rsp = await axios({
       method: 'GET',
-      url: `${this.urlprefix}/api/ws/sessions`,
+      url: `${this.urlprefix}/api/admin/ws/sessions`,
       withCredentials: true
     })
     return rsp
