@@ -200,8 +200,14 @@ public class WebManager {
                     event.writeTextMessage(new ErrorResponseMessage(e.getMessage()).toJson());
                 }
             });
-            event.closeHandler(ignore -> wsm.removeSession(event));
+            event.closeHandler(ignore -> {
+                wsm.removeSession(event);
+                logger.info("web socket {} closed of device {} from {}", session.getId(),
+                        session.getDeviceIdentity(), session.getRemoteIp());
+            });
             event.writeTextMessage(new ConnectServerMessage().toJson());
+            logger.info("web socket {} established for {} {}", session.getId(),
+                    session.getDeviceIdentity(), session.getRemoteIp());
         });
     }
 
