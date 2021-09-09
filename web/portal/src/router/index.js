@@ -138,28 +138,23 @@ const route = new Router({
 
 route.beforeEach((to, from, next) => {
   console.log(`from: ${from.path}, to: ${to.path}`)
-  if (to.meta === undefined) {
+  if ((to.meta === undefined) || (to.path === '/login')) {
     console.log('doesn\'t require auth')
     next()
     return
   }
   console.log('require auth')
-  let u = (new User()).getCurrentUser()
+  let u = (new User()).getUser()
   if (to.meta.requireAuth) {
     if (u == null) {
       console.log('not logged')
-      if (next.path !== '/login') {
-        console.log('goto /login')
-        next({
-          name: 'Login',
-          params: {
-            return: to
-          }
-        })
-      } else {
-        console.log('goto /login by intension')
-        next()
-      }
+      console.log('goto /login')
+      next({
+        name: 'Login',
+        params: {
+          return: to
+        }
+      })
       return
     }
   }
@@ -174,6 +169,7 @@ route.beforeEach((to, from, next) => {
       return
     }
   }
+  console.log(`go to ${to.path}`)
   next()
 })
 
