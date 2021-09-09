@@ -57,11 +57,14 @@ export default {
     }
   },
   created: function () {
-    this.$root.$on('onLogin', this.onLogged)
-    this.$root.$on('onNeedLogin', this.onNeedLogin);
-    (new User()).checkLogin(false, user => {
-      this.loginStatus = Object.assign({}, user)
-    })
+    let user = (new User()).getUser()
+    if (user !== null) {
+      this.loginStatus = user
+      let ws = new WSConnection()
+      ws.open()
+    } else {
+      this.$root.$on('onLogin', this.onLogged)
+    }
   },
   methods: {
     logout: function () {
@@ -85,14 +88,6 @@ export default {
     },
     gotoLoginRegister: function () {
       router.push({name: 'Login', params: {return: this.$route}}).catch(err => console.log(`redirect err: ${err}`))
-    },
-    onNeedLogin: function (callback) {
-      (new User()).checkLogin(false, user => {
-        this.onLogged(user)
-        if (callback !== undefined) {
-          callback(user)
-        }
-      }, this.onNotLogged)
     }
   }
 }
