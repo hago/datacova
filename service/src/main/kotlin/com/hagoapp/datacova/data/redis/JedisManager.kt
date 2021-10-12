@@ -9,59 +9,77 @@ package com.hagoapp.datacova.data.redis
 
 import redis.clients.jedis.Jedis
 import redis.clients.jedis.JedisPool
-import redis.clients.jedis.JedisPoolAbstract
 import redis.clients.jedis.JedisSentinelPool
+import redis.clients.jedis.util.Pool
 
-import java.io.Closeable
+class JedisManager(private val config: RedisConfig) {
 
-class JedisManager(config: RedisConfig) : Closeable {
+    companion object {
+        private var defaultPool: Pool<Jedis>? = null
+        private val internalPools = mutableMapOf<RedisConfig, Pool<Jedis>>()
 
-    private val cfg = config
-    private val internalPool: JedisPoolAbstract
-
-    init {
-        internalPool = getJedisPool()
-    }
-
-    val jedis: Jedis
-        get() {
-            val resource = internalPool.resource
-            if (cfg.password == null) {
-                resource.client.setPassword(cfg.password)
+        fun terminate() {
+            internalPools.forEach { (_, pool) ->
+                try {
+                    pool.close()
+                } catch (e: Throwable) {
+                    //
+                }
             }
-            resource.select(cfg.database)
-            return resource
+            internalPools.clear()
         }
 
+        @JvmStatic
+        fun getJedis(): Jedis? {
+            return defaultPool?.resource
+        }
 
-    private fun getJedisPool(): JedisPoolAbstract {
-        return when (cfg.isSentinel) {
+        @JvmStatic
+        fun getJedis(config: RedisConfig): Jedis {
+            return internalPools.compute(config) { k, existed ->
+                if (existed == null) {
+                    JedisManager(k)
+                    internalPools.getValue(k)
+                } else {
+                    existed
+                }
+            }!!.resource
+        }
+    }
+
+    init {
+        internalPools.compute(config) { _, existed ->
+            if (existed == null) {
+                val p = getJedisPool()
+                if (defaultPool == null) {
+                    defaultPool = p
+                }
+                p
+            } else {
+                existed
+            }
+        }
+    }
+
+    private fun getJedisPool(): Pool<Jedis> {
+        return when (config.isSentinel) {
             true -> getJedisSentinelPool()
             false -> {
-                val pool = JedisPool(cfg.serverConfig.host, cfg.serverConfig.port)
-                cfg.password ?: pool.resource.client.setPassword(cfg.password)
-                pool.resource.select(cfg.database)
+                val pool = JedisPool(config.serverConfig.host, config.serverConfig.port)
+                config.password ?: pool.resource.client.auth(config.password)
                 pool
             }
         }
     }
 
-    private fun getJedisSentinelPool(): JedisPoolAbstract {
-        val nodes = cfg.sentinelConfig.nodes.map { node ->
+    private fun getJedisSentinelPool(): Pool<Jedis> {
+        val nodes = config.sentinelConfig.nodes.map { node ->
             "${node.key}:${node.value}"
         }.toSet()
-        return when (cfg.password) {
-            null -> JedisSentinelPool(cfg.sentinelConfig.master, nodes)
-            else -> JedisSentinelPool(cfg.sentinelConfig.master, nodes, cfg.password)
+        return when (config.password) {
+            null -> JedisSentinelPool(config.sentinelConfig.master, nodes)
+            else -> JedisSentinelPool(config.sentinelConfig.master, nodes, config.password)
         }
     }
 
-    override fun close() {
-        try {
-            internalPool.resource.close()
-            internalPool.close()
-        } catch (e: Throwable) {
-            //
-        }
-    }
 }

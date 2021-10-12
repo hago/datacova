@@ -18,7 +18,7 @@ import java.util.Set;
 public class UserTokenStoreRedis implements UserTokenStore {
 
     private final RedisConfig config;
-    private final int TOKEN_LIFE = 3600;
+    private final long TOKEN_LIFE = 3600L;
 
     public UserTokenStoreRedis(RedisConfig config) {
         this.config = config;
@@ -26,8 +26,7 @@ public class UserTokenStoreRedis implements UserTokenStore {
 
     @Override
     public void storeUserToken(String token, UserInfo userInfo) {
-        try (JedisManager man = new JedisManager(config)) {
-            Jedis redis = man.getJedis();
+        try (var redis = JedisManager.getJedis(config)) {
             redis.setex(token, TOKEN_LIFE, userInfo.toJson());
             redis.hset(userInfo.toString(), token, "1");
         }
@@ -35,8 +34,7 @@ public class UserTokenStoreRedis implements UserTokenStore {
 
     @Override
     public void removeUserToken(String token) {
-        try (JedisManager man = new JedisManager(config)) {
-            Jedis redis = man.getJedis();
+        try (var redis = JedisManager.getJedis(config)) {
             String json = redis.get(token);
             if (json != null) {
                 redis.del(token);
@@ -48,8 +46,7 @@ public class UserTokenStoreRedis implements UserTokenStore {
 
     @Override
     public UserInfo findUserToken(String token) {
-        try (JedisManager man = new JedisManager(config)) {
-            Jedis redis = man.getJedis();
+        try (var redis = JedisManager.getJedis(config)) {
             String json = redis.get(token);
             if (json == null) {
                 return null;
@@ -65,8 +62,7 @@ public class UserTokenStoreRedis implements UserTokenStore {
 
     @Override
     public Set<String> findTokensOfUser(UserInfo userInfo) {
-        try (JedisManager man = new JedisManager(config)) {
-            Jedis redis = man.getJedis();
+        try (var redis = JedisManager.getJedis(config)) {
             var l = redis.hgetAll(userInfo.toString()).keySet();
             return l;
         }

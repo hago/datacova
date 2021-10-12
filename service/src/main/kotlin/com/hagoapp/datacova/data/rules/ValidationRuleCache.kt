@@ -38,12 +38,10 @@ class ValidationRuleCache {
         }
 
         fun clearRules() {
-            JedisManager(CoVaConfig.getConfig().redis).use {
-                it.jedis.use { jedis ->
-                    val keys = jedis.keys("$VALIDATION_RULE_LIST*")
-                    if (keys.isNotEmpty()) {
-                        jedis.del(*keys.toTypedArray())
-                    }
+            JedisManager.getJedis(CoVaConfig.getConfig().redis).use { jedis ->
+                val keys = jedis.keys("$VALIDATION_RULE_LIST*")
+                if (keys.isNotEmpty()) {
+                    jedis.del(*keys.toTypedArray())
                 }
             }
         }
@@ -62,7 +60,7 @@ class ValidationRuleCache {
         }
 
         fun clearRule(id: Long) {
-           RedisCacheReader.clearData(VALIDATION_RULE, id)
+            RedisCacheReader.clearData(VALIDATION_RULE, id)
         }
     }
 }

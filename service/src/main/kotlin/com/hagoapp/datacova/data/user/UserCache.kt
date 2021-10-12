@@ -19,7 +19,7 @@ class UserCache {
 
         private const val USER_INFO = "UserInfo"
         private const val USER_INFO_BY_USERID = "UserInfoUserId"
-        private const val USER_INFO_CACHE_TIME = 3600
+        private const val USER_INFO_CACHE_TIME = 3600L
         private const val USER_REGISTRATION_CODE_KEY_PREFIX = "UserRegistrationActivation"
 
         @JvmStatic
@@ -45,8 +45,7 @@ class UserCache {
             val nullUsers = list.mapIndexed { i, info ->
                 if (info == null) Pair(idList[i], i) else null
             }.filterNotNull().toMap()
-            JedisManager(CoVaConfig.getConfig().redis).use {
-                val jedis = it.jedis
+            JedisManager.getJedis(CoVaConfig.getConfig().redis).use { jedis ->
                 val gson = Gson()
                 UserData().batchGetUser(nullUsers.keys).forEach { info ->
                     if (info != null) {
@@ -61,22 +60,18 @@ class UserCache {
         }
 
         @JvmStatic
-        fun saveUserRegistrationCode(userInfo: UserInfo, code: String, expireSecond: Int) {
-            JedisManager(CoVaConfig.getConfig().redis).use { manager ->
-                manager.jedis.use {
-                    val key = "$USER_REGISTRATION_CODE_KEY_PREFIX|$code"
-                    it.setex(key, expireSecond, userInfo.id.toString())
-                }
+        fun saveUserRegistrationCode(userInfo: UserInfo, code: String, expireSecond: Long) {
+            JedisManager.getJedis(CoVaConfig.getConfig().redis).use {
+                val key = "$USER_REGISTRATION_CODE_KEY_PREFIX|$code"
+                it.setex(key, expireSecond, userInfo.id.toString())
             }
         }
 
         @JvmStatic
         fun getUserIdByRegistrationCode(code: String): Long? {
-            JedisManager(CoVaConfig.getConfig().redis).use { manager ->
-                manager.jedis.use {
-                    val key = "$USER_REGISTRATION_CODE_KEY_PREFIX|$code"
-                    return it.get(key)?.toLong()
-                }
+            JedisManager.getJedis(CoVaConfig.getConfig().redis).use {
+                val key = "$USER_REGISTRATION_CODE_KEY_PREFIX|$code"
+                return it.get(key)?.toLong()
             }
         }
 

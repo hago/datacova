@@ -15,7 +15,7 @@ class PermissionCache {
     companion object {
 
         private const val USER_PERMISSIONS = "USER_PERMISSIONS"
-        private const val PERMISSION_EXPIRY = 30 * 60
+        private const val PERMISSION_EXPIRY = 30 * 60L
 
         fun getUserPermissions(userInfo: UserInfo): UserPermissions {
             val up = RedisCacheReader.readCachedData(

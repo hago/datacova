@@ -42,8 +42,8 @@ class AuthUtils {
 
         fun loginUser(context: RoutingContext, user: UserInfo): String {
             val identity = Utils.genRandomString(12, null)
-            JedisManager(CoVaConfig.getConfig().redis).use { pool ->
-                pool.jedis.setex(identity, 86400, toJson(user))
+            JedisManager.getJedis(CoVaConfig.getConfig().redis).use { jedis ->
+                jedis.setex(identity, 86400L, toJson(user))
             }
             val cookie = Cookie.cookie(LOGIN_COOKIE, identity).setPath("/")
             context.addCookie(cookie)
@@ -52,14 +52,14 @@ class AuthUtils {
 
         fun logoutCurrentUser(context: RoutingContext) {
             val token = getCurrentToken(context)
-            JedisManager(CoVaConfig.getConfig().redis).use { it.jedis.del(token) }
+            JedisManager.getJedis(CoVaConfig.getConfig().redis).use { it.del(token) }
             context.removeCookie(LOGIN_COOKIE)
         }
 
         fun setImpersonator(context: RoutingContext, impersonatedUser: UserInfo) {
             val identity = Utils.genRandomString(12, null)
-            JedisManager(CoVaConfig.getConfig().redis).use {
-                it.jedis.setex(identity, 86400, toJson(impersonatedUser))
+            JedisManager.getJedis(CoVaConfig.getConfig().redis).use {
+                it.setex(identity, 86400L, toJson(impersonatedUser))
             }
             val cookie = Cookie.cookie(IMPERSONATOR_COOKIE, identity).setPath("/")
             context.addCookie(cookie)
@@ -67,15 +67,15 @@ class AuthUtils {
 
         fun clearImpersonator(context: RoutingContext) {
             val token = getCurrentToken(context)
-            JedisManager(CoVaConfig.getConfig().redis).use { it.jedis.del(token) }
+            JedisManager.getJedis(CoVaConfig.getConfig().redis).use { it.del(token) }
             context.removeCookie(IMPERSONATOR_COOKIE)
         }
 
         fun getCurrentUser(context: RoutingContext, jumpPath: String? = null): UserInfo? {
             val userJson = when (val token = getCurrentToken(context)) {
                 null -> null
-                else -> JedisManager(CoVaConfig.getConfig().redis).use {
-                    it.jedis.get(token)
+                else -> JedisManager.getJedis(CoVaConfig.getConfig().redis).use {
+                    it.get(token)
                 }
             }
             val user = fromJson(userJson)
@@ -117,8 +117,8 @@ class AuthUtils {
         fun getImpersonateUser(context: RoutingContext): UserInfo? {
             val impJson = when (val identity = getImpersonateToken(context)) {
                 null -> null
-                else -> JedisManager(CoVaConfig.getConfig().redis).use {
-                    it.jedis.get(identity)
+                else -> JedisManager.getJedis(CoVaConfig.getConfig().redis).use {
+                    it.get(identity)
                 }
             }
             return fromJson(impJson)

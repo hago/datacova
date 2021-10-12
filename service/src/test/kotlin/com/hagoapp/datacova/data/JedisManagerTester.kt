@@ -26,8 +26,8 @@ class JedisManagerTester {
         var success = 0
         for (i in 0 until count) {
             try {
-                JedisManager(redisConfig).use { redis ->
-                    val pong = redis.jedis.ping()
+                JedisManager.getJedis(redisConfig).use { redis ->
+                    val pong = redis.ping()
                     println("No. $i ping: $pong")
                 }
                 success++

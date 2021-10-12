@@ -65,29 +65,25 @@ class KeyValue {
     }
 
     private fun saveKeyPairs(userInfo: UserInfo, pairs: List<KeyValuePair>) {
-        JedisManager(CoVaConfig.getConfig().redis).use { pool ->
-            pool.jedis.use { it ->
-                it.hset(userInfo.toString(), pairs.map { item -> Pair(item.key, item.value) }.toMap())
-            }
+        JedisManager.getJedis(CoVaConfig.getConfig().redis).use {
+            it.hset(userInfo.toString(), pairs.map { item -> Pair(item.key, item.value) }.toMap())
         }
     }
 
     @WebEndPoint(methods = [HttpMethod.GET], path = "/store/pair/:key", authTypes = [AuthType.UserToken])
     fun readKey(context: RoutingContext) {
-        JedisManager(CoVaConfig.getConfig().redis).use { pool ->
-            pool.jedis.use {
-                val key = context.request().getParam("key")
-                val value = it.hget(
-                    Authenticator.getUser(context).toString(),
-                    context.request().getParam("key")
+        JedisManager.getJedis(CoVaConfig.getConfig().redis).use {
+            val key = context.request().getParam("key")
+            val value = it.hget(
+                Authenticator.getUser(context).toString(),
+                context.request().getParam("key")
+            )
+            ResponseHelper.sendResponse(
+                context, HttpResponseStatus.OK, mapOf(
+                    "code" to 0,
+                    "data" to KeyValuePair(key, if (value == "nil") null else value)
                 )
-                ResponseHelper.sendResponse(
-                    context, HttpResponseStatus.OK, mapOf(
-                        "code" to 0,
-                        "data" to KeyValuePair(key, if (value == "nil") null else value)
-                    )
-                )
-            }
+            )
         }
     }
 
@@ -97,22 +93,20 @@ class KeyValue {
         val token = object : TypeToken<List<KeyValuePair>>() {}
         try {
             val keys = Gson().fromJson<List<String>>(json, token.type)
-            JedisManager(CoVaConfig.getConfig().redis).use { pool ->
-                pool.jedis.use {
-                    val values = it.hmget(Authenticator.getUser(context).toString(), *keys.toTypedArray())
-                    val pairs = Array(keys.size) { i ->
-                        KeyValuePair(
-                            keys[i],
-                            if (values[i] == "nil") null else values[i]
-                        )
-                    }
-                    ResponseHelper.sendResponse(
-                        context, HttpResponseStatus.OK, mapOf(
-                            "code" to 0,
-                            "data" to pairs
-                        )
+            JedisManager.getJedis(CoVaConfig.getConfig().redis).use {
+                val values = it.hmget(Authenticator.getUser(context).toString(), *keys.toTypedArray())
+                val pairs = Array(keys.size) { i ->
+                    KeyValuePair(
+                        keys[i],
+                        if (values[i] == "nil") null else values[i]
                     )
                 }
+                ResponseHelper.sendResponse(
+                    context, HttpResponseStatus.OK, mapOf(
+                        "code" to 0,
+                        "data" to pairs
+                    )
+                )
             }
         } catch (e: JsonSyntaxException) {
             context.fail(HttpResponseStatus.BAD_REQUEST.code(), CoVaException("invalid body"))

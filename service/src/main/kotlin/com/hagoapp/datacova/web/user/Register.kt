@@ -34,7 +34,7 @@ import javax.mail.internet.InternetAddress
 class Register {
 
     companion object {
-        private const val REGISTRATION_CODE_EXPIRE_SECONDS = 86400
+        private const val REGISTRATION_CODE_EXPIRE_SECONDS = 86400L
     }
 
     @WebEndPoint(
