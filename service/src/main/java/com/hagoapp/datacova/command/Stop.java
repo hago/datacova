@@ -10,6 +10,7 @@ package com.hagoapp.datacova.command;
 
 import com.hagoapp.datacova.CoVaException;
 import com.hagoapp.datacova.CoVaLogger;
+import com.hagoapp.datacova.ShutDownManager;
 import com.hagoapp.datacova.config.init.CoVaConfig;
 import org.slf4j.Logger;
 import picocli.CommandLine;
@@ -33,6 +34,7 @@ public class Stop extends CommandWithConfig {
         CoVaConfig.loadConfig(configFile);
         shutdownWeb();
         shutdownExecutor();
+        ShutDownManager.closeWatchers();
         return super.call();
     }
 

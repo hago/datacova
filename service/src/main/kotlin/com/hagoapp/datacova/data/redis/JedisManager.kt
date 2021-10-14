@@ -7,6 +7,8 @@
 
 package com.hagoapp.datacova.data.redis
 
+import com.hagoapp.datacova.ShutDownManager
+import com.hagoapp.datacova.ShutDownWatcher
 import redis.clients.jedis.Jedis
 import redis.clients.jedis.JedisPool
 import redis.clients.jedis.JedisSentinelPool
@@ -42,6 +44,21 @@ class JedisManager(private val config: RedisConfig) {
                 existed = internalPools.getValue(config)
             }
             return existed.resource
+        }
+
+        init {
+            ShutDownManager.watch(object : ShutDownWatcher {
+                override fun shutdown(): Boolean {
+                    internalPools.forEach { (_, pool) -> pool.close() }
+                    internalPools.clear()
+                    return true
+                }
+
+                override fun getName(): String {
+                    return JedisManager::class.java.canonicalName
+                }
+
+            })
         }
     }
 
