@@ -36,14 +36,12 @@ class JedisManager(private val config: RedisConfig) {
 
         @JvmStatic
         fun getJedis(config: RedisConfig): Jedis {
-            return internalPools.compute(config) { k, existed ->
-                if (existed == null) {
-                    JedisManager(k)
-                    internalPools.getValue(k)
-                } else {
-                    existed
-                }
-            }!!.resource
+            var existed = internalPools[config]
+            if (existed == null) {
+                JedisManager(config)
+                existed = internalPools.getValue(config)
+            }
+            return existed.resource
         }
     }
 
@@ -66,7 +64,9 @@ class JedisManager(private val config: RedisConfig) {
             true -> getJedisSentinelPool()
             false -> {
                 val pool = JedisPool(config.serverConfig.host, config.serverConfig.port)
-                config.password ?: pool.resource.client.auth(config.password)
+                if (config.password != null) {
+                    pool.resource.client.auth(config.password)
+                }
                 pool
             }
         }
