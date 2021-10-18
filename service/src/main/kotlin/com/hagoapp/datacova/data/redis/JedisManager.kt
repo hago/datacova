@@ -49,8 +49,7 @@ class JedisManager(private val config: RedisConfig) {
         init {
             ShutDownManager.watch(object : ShutDownWatcher {
                 override fun shutdown(): Boolean {
-                    internalPools.forEach { (_, pool) -> pool.close() }
-                    internalPools.clear()
+                    terminate()
                     return true
                 }
 
