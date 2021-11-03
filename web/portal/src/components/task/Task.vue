@@ -130,9 +130,7 @@ export default {
     }
   },
   created: function () {
-    this.$root.$emit('onNeedLogin', user => {
-      this.loadTask()
-    })
+    this.loadTask()
   },
   methods: {
     loadTask: function () {
