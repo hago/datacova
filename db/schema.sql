@@ -198,5 +198,5 @@ create table if not exists userroles(
 
 insert into permissions(name, description) values ('adminroot', 'Permission to enter admin');
 insert into userpermissions(userid, permissionid) 
-select u.id, p.name from users as u full outer join permissions as p on 1=1
+select u.id, p.id from users as u full outer join permissions as p on 1=1
 where u.userid = 'test' and p.name = 'adminroot';
