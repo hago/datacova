@@ -50,6 +50,13 @@
         <p></p>
         <#if result.isSucceeded()>
             <p>您的文件 ${execution.fileInfo.originalName} 已经成功处理完成, 耗时${calctime(duration)}</p>
+            <#if !result.isAllActionsPerformed()>
+              <p>部分后序操作因为前序操作的设置没有被执行。已执行的操作有：
+              <#list result.actionDetailMap as index, detail>
+                <li>操作 ${index}: ${detail.getAction().getName()}</li>
+              </#list>
+              </p>
+            </#if>
             <#include "/execution/complete/datamessage/zh_CN.ftl">
             <p>祝贺你!</p>
         <#else>
