@@ -12,7 +12,7 @@
                 <ul>
                 <#list detail.getDataMessages() as line, messages>
                     <#list messages as message>
-                    <p>字段 <span class="field">${message.field}</span> 的值是 <span class="value">${(message.value)!"null"}</span>，
+                    第${line}行：<p>字段 <span class="field">${message.field}</span> 的值是 <span class="value">${(message.value)!"null"}</span>，
                     期望是：<span class="expect">${message.descriptionExpected}</span></p>
                     </#list>
                 </#list>
