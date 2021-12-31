@@ -39,6 +39,10 @@ public class ExecutionDetail implements JsonStringify {
         return (dataLoadingError == null) && this.actionDetailMap.values().stream().allMatch(ExecutionActionDetail::isSucceeded);
     }
 
+    public boolean isAllActionsPerformed() {
+        return this.actionDetailMap.size() == this.getExecution().getTask().getActions().size();
+    }
+
     public static ExecutionDetail fromString(String s) {
         Gson gson = new GsonBuilder().create();
         return gson.fromJson(s, ExecutionDetail.class);

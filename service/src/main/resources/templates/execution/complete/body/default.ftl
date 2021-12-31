@@ -76,6 +76,13 @@
         <p></p>
         <#if result.isSucceeded()>
             <p>Processing of your file ${execution.fileInfo.originalName} is complete successfully in ${calctime(duration)}.</p>
+            <#if !result.isAllActionsPerformed()>
+              <p>Based on task setting, not all actions performed except:
+              <#list result.actionDetailMap as index, detail>
+                <li>action ${index}: ${detail.getAction().getName()}</li>
+              </#list>
+              </p>
+            </#if>
             <#include "/execution/complete/datamessage/default.ftl">
             <p>Congratulations!</p>
         <#else>
