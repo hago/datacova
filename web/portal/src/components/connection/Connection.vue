@@ -102,12 +102,10 @@ export default {
     }
   },
   created: function () {
-    this.$root.$emit('onNeedLogin', user => {
-      if (this.$route.params.id > 0) {
-        this.isNew = false
-        this.loadConnection()
-      }
-    })
+    if (this.$route.params.id > 0) {
+      this.isNew = false
+      this.loadConnection()
+    }
   },
   methods: {
     changeDbType: function () {

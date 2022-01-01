@@ -58,7 +58,10 @@ const route = new Router({
       path: '/connection/:workspaceId/:id',
       name: 'Connection',
       component: Connection,
-      props: true
+      props: true,
+      meta: {
+        requireAuth: true
+      }
     },
     {
       path: '/user/:workspaceId/:type/:id',
