@@ -144,12 +144,14 @@ export default {
     },
     appendAction: function () {
       this.task.actions.push({
-        extra: {}
+        extra: {},
+        enabled: true
       })
     },
     prependAction: function () {
       this.task.actions.unshift({
-        extra: {}
+        extra: {},
+        enabled: true
       })
     },
     removeAction: function (index) {

@@ -30,6 +30,14 @@
           </label>
         </div>
       </div>
+      <div class="form-group col-2">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" :id="'enable' + actionIndex" v-model="action.enabled">
+          <label class="form-check-label" :for="'enable' + actionIndex">
+            Enabled
+          </label>
+        </div>
+      </div>
       <div class="col-1 verifyArea">
         <img src="../../assets/gear-loading.gif" v-show="loading" />
       </div>
