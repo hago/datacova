@@ -63,7 +63,8 @@
     <div class="form-row">
       <h5 class="col-6">
         Actions
-        <span class="clickable" style="float: right" title="Add action" v-on:click="addAction()">+</span>
+        <button class="btn btn-info" v-on:click="prependAction()">prepend</button>
+        <button class="btn btn-info" v-on:click="appendAction()">append</button>
       </h5>
     </div>
     <div>
@@ -141,8 +142,13 @@ export default {
         this.task = rsp.data.data
       })
     },
-    addAction: function () {
+    appendAction: function () {
       this.task.actions.push({
+        extra: {}
+      })
+    },
+    prependAction: function () {
+      this.task.actions.unshift({
         extra: {}
       })
     },
