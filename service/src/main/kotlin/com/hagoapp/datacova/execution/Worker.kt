@@ -71,6 +71,10 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
             val action = taskExec.task.actions[i]
             currentActionDetail = detail.addActionDetail(i, action)
             observers.forEach { it.onActionStart(taskExec, i) }
+            if (!action.isEnabled) {
+                logger.info("action $i: ${action.name} is skipped because it's disabled")
+                continue
+            }
             try {
                 val executor = TaskActionExecutorFactory.createTaskActionExecutor(action)
                 executor.locale = taskExec.task.extra.locale

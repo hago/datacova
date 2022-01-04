@@ -18,6 +18,7 @@ public class TaskAction {
     private TaskActionExtra extra = new TaskActionExtra();
     private String name;
     private String description = "";
+    private boolean enabled = true;
 
     public TaskAction() {
         //
@@ -57,5 +58,13 @@ public class TaskAction {
 
     public void loadActualContent(Map<String, Object> content) throws CoVaException {
         //
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 }
