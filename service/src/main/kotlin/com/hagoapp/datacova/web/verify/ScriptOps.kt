@@ -46,9 +46,7 @@ class ScriptOps {
         val code = data.code.replace("\\r", "\r").replace("\\n", "\n")
         try {
             val chunk = JsePlatform.debugGlobals().load(code)
-            val arg = LuaValue.tableOf(data.fieldValues.map { kv ->
-                listOf(LuaHelper.simpleToLuaValue(kv.key), LuaHelper.simpleToLuaValue(kv.value))
-            }.flatten().toTypedArray())
+            val arg = LuaHelper.mapToLuaTable(data.fieldValues)
             val ret = chunk.call(arg)
             ResponseHelper.sendResponse(
                 context, OK, mapOf(
