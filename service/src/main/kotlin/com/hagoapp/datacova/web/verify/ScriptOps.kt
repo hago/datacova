@@ -9,6 +9,7 @@ package com.hagoapp.datacova.web.verify
 
 import com.google.gson.Gson
 import com.hagoapp.datacova.CoVaLogger
+import com.hagoapp.datacova.util.EmbedPythonHelper
 import com.hagoapp.datacova.util.LuaHelper
 import com.hagoapp.datacova.util.StackTraceWriter
 import com.hagoapp.datacova.util.http.ResponseHelper
@@ -66,4 +67,36 @@ class ScriptOps {
         val code: String,
         val fieldValues: Map<String, String>
     )
+
+    @WebEndPoint(
+        methods = [HttpMethod.POST],
+        path = "/api/python/evaluate",
+        authTypes = [AuthType.UserToken]
+    )
+    fun evaluatePython(context: RoutingContext) {
+        val data = Gson().fromJson(context.bodyAsString, EvaluateData::class.java)
+        if (data.code.isBlank()) {
+            ResponseHelper.sendResponse(
+                context, BAD_REQUEST, mapOf(
+                    "code" to BAD_REQUEST.code(),
+                    "error" to mapOf(
+                        "message" to "Empty code snippet"
+                    )
+                )
+            )
+            return
+        }
+        try {
+            val ret = EmbedPythonHelper.runCodeBlock(data.code, data.fieldValues)
+            ResponseHelper.sendResponse(
+                context, OK, mapOf(
+                    "code" to 0,
+                    "data" to ret
+                )
+            )
+        } catch (ex: Exception) {
+            StackTraceWriter.write(ex, logger)
+            ResponseHelper.respondError(context, BAD_REQUEST, ex.message)
+        }
+    }
 }
