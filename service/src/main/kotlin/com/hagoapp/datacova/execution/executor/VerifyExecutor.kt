@@ -8,11 +8,11 @@
 package com.hagoapp.datacova.execution.executor
 
 import com.hagoapp.datacova.CoVaException
+import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.entity.action.TaskAction
 import com.hagoapp.datacova.entity.action.verification.TaskActionVerify
 import com.hagoapp.datacova.entity.execution.DataMessage
 import com.hagoapp.datacova.entity.execution.TaskExecution
-import com.hagoapp.datacova.entity.task.Task
 import com.hagoapp.datacova.execution.executor.validator.ValidatorFactory
 import com.hagoapp.f2t.DataTable
 import com.hagoapp.f2t.ProgressNotify
@@ -21,6 +21,7 @@ import com.hagoapp.f2t.datafile.ParseResult
 class VerifyExecutor : BaseTaskActionExecutor(), ProgressNotify {
     private lateinit var taskAction: TaskActionVerify
     private var verificationFailed = false
+    private val logger = CoVaLogger.getLogger()
 
     override fun execute(taskExecution: TaskExecution, action: TaskAction, data: DataTable) {
         if (action !is TaskActionVerify) {
@@ -48,6 +49,13 @@ class VerifyExecutor : BaseTaskActionExecutor(), ProgressNotify {
                 }
             }
             this.onProgress(index.toFloat() / size)
+        }
+        validators.forEach {
+            try {
+                it.close()
+            } catch (e: Exception) {
+                logger.error("closing validator of type {} causes error: {}", it.supportedVerificationType, e)
+            }
         }
     }
 

@@ -13,10 +13,12 @@ import com.hagoapp.f2t.DataCell;
 import com.hagoapp.f2t.DataRow;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public abstract class Validator {
+public abstract class Validator implements Closeable {
 
     protected Configuration config;
     protected final Map<String, Integer> fieldIndexer = new HashMap<>();
@@ -87,4 +89,9 @@ public abstract class Validator {
      * @return A map contains all fields in this row which failed the verification, field name as key, field value as value
      */
     public abstract Map<String, Object> verify(@NotNull DataRow row);
+
+    @Override
+    public void close() throws IOException {
+        // do nothing
+    }
 }
