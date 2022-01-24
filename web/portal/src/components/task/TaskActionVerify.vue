@@ -71,6 +71,10 @@
         v-bind:config="configuration"
         v-bind:index="index"
         ></LuaScriptVerifier>
+      <PythonScriptVerifier v-if="configuration.type == 7"
+        v-bind:config="configuration"
+        v-bind:index="index"
+        ></PythonScriptVerifier>
       <RegexVerifier v-if="configuration.type == 1"
         v-bind:config="configuration"
         v-bind:index="index"
@@ -87,6 +91,7 @@ import OptionsVerifier from '@/components/verification/Options.vue'
 import LuaScriptVerifier from '@/components/verification/LuaScript.vue'
 import RegexVerifier from '@/components/verification/Regex.vue'
 import RelativeTimeRangeVerifier from '@/components/verification/RelativeTimeRange.vue'
+import PythonScriptVerifier from '@/components/verification/PythonScript.vue'
 
 export default {
   name: 'TaskActionVerify',
@@ -100,7 +105,8 @@ export default {
     OptionsVerifier,
     LuaScriptVerifier,
     RegexVerifier,
-    RelativeTimeRangeVerifier
+    RelativeTimeRangeVerifier,
+    PythonScriptVerifier
   },
   data () {
     return {
@@ -110,7 +116,8 @@ export default {
         'Optional Values Verification': 3,
         'Time Range Verification': 4,
         'Verification with Lua': 5,
-        'Time Range Verification Relative to A Point': 6
+        'Time Range Verification Relative to A Point': 6,
+        'Verification with Python': 7
       }
     }
   },

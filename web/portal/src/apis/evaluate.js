@@ -27,6 +27,18 @@ class EvaluateApiHelper {
     })
     return rsp
   }
+
+  async evaluatePython (code, fieldValues) {
+    let rsp = await axios({
+      url: `${this.urlprefix}/api/python/evaluate`,
+      method: 'POST',
+      data: {
+        code: code,
+        fieldValues: fieldValues
+      }
+    })
+    return rsp
+  }
 }
 
 export default EvaluateApiHelper
