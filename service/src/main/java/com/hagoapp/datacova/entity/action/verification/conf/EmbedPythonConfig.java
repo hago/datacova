@@ -14,7 +14,7 @@ import com.hagoapp.datacova.entity.action.verification.Configuration;
 import java.util.Locale;
 
 public class EmbedPythonConfig extends Configuration {
-    public static final int EMBED_Python_CONFIGURATION_TYPE = 6;
+    public static final int EMBED_Python_CONFIGURATION_TYPE = 7;
     private String snippet;
 
     public String getSnippet() {
