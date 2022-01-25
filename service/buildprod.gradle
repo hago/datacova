@@ -80,6 +80,14 @@ dependencies {
     testRuntimeOnly fileTree('libs') { include '*.jar' }
 }
 
+compileJava {
+    options.encoding("utf-8")
+}
+
+compileTestJava {
+    options.encoding("utf-8")
+}
+
 compileKotlin {
     kotlinOptions {
         jvmTarget = "1.8"
