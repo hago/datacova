@@ -34,7 +34,7 @@ public class ConfigurationFactory {
                 var instance = constructor.newInstance();
                 var existed = typeMap.put(instance.getType(), clz);
                 if (existed != null) {
-                    logger.warn("Verify action configuration type {} from {} is overwritten by {}", instance.getType(),
+                    logger.error("Verify action configuration type {} from {} is overwritten by {}", instance.getType(),
                             existed.getCanonicalName(), clz.getCanonicalName());
                 }
             } catch (NoSuchMethodException | InstantiationException
