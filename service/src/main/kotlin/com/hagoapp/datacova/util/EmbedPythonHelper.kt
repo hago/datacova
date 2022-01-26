@@ -8,8 +8,13 @@
 
 package com.hagoapp.datacova.util
 
+import org.apache.commons.net.ntp.TimeStamp
 import org.python.core.*
 import org.python.util.PythonInterpreter
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
 
 class EmbedPythonHelper {
     companion object {
@@ -23,23 +28,27 @@ class EmbedPythonHelper {
         }
 
         @Suppress("UNCHECKED_CAST")
-        @JvmStatic
         fun toPyObject(data: Any?): PyObject {
             return when (data) {
                 is PyObject -> data
                 null -> PyObject(PyNone.TYPE)
                 is Int -> PyInteger(data)
                 is Long -> PyLong(data)
-                is String -> PyString(data)
+                is String -> PyUnicode(data)
                 is Boolean -> PyBoolean(data)
                 is Float -> PyFloat(data)
                 is Double -> PyFloat(data)
                 is Map<*, *> -> mapToPythonDictionary(data as Map<out Any, Any?>)
+                is ZonedDateTime -> PyLong(data.toInstant().toEpochMilli())
+                is LocalDateTime -> PyLong(data.toInstant(ZoneOffset.of(ZoneId.systemDefault().id)).toEpochMilli())
+                is TimeStamp -> PyLong(data.ntpValue())
+                is Set<*> -> setToPythonTuple(data)
+                is List<*> -> listToPythonList(data)
                 else -> throw UnsupportedOperationException("type ${data::class.java} is not supported to be converted to PyObject")
             }
         }
 
-        @JvmStatic
+        @Suppress("UNCHECKED_CAST")
         fun fromPyObject(data: PyObject): Any? {
             return when (data.type) {
                 PyNone.TYPE -> null
@@ -48,11 +57,13 @@ class EmbedPythonHelper {
                 PyLong.TYPE -> data.asLong()
                 PyFloat.TYPE -> data.asDouble()
                 PyBoolean.TYPE -> data.asInt() > 0
+                PyTuple.TYPE -> data.asIterable().map { fromPyObject(it) }.toSet()
+                PyList.TYPE -> data.asIterable().map { fromPyObject(it) }.toList()
+                PyDictionary.TYPE -> pyDictionaryToMap(data as PyDictionary)
                 else -> throw UnsupportedOperationException("python type ${data.type.name} is not supported to be converted to Java type")
             }
         }
 
-        @JvmStatic
         fun runCodeBlock(codeBlock: String, vararg args: Any?): Any? {
             val keywords = listOf<String>().toTypedArray()
             val globals = PyObject(PyNone.TYPE)
@@ -77,6 +88,22 @@ class EmbedPythonHelper {
                 Pair(toPyObject(it.key), toPyObject(it.value))
             }.toMap()
             return PyDictionary(dict)
+        }
+
+        private fun pyDictionaryToMap(input: PyDictionary): Map<Any, Any?> {
+            return input.map.map { entry ->
+                Pair(fromPyObject(entry.key)!!, fromPyObject(entry.value))
+            }.toMap()
+        }
+
+        private fun listToPythonList(input: List<Any?>): PyList {
+            val l = input.map { elem -> toPyObject(elem) }
+            return PyList(l)
+        }
+
+        private fun setToPythonTuple(input: Set<Any?>): PyTuple {
+            val l = input.map { elem -> toPyObject(elem) }
+            return PyTuple(*l.toTypedArray())
         }
     }
 }
