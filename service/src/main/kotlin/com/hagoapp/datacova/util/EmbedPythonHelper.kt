@@ -11,16 +11,25 @@ package com.hagoapp.datacova.util
 import org.apache.commons.net.ntp.TimeStamp
 import org.python.core.*
 import org.python.util.PythonInterpreter
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import java.io.ByteArrayInputStream
+import java.io.Closeable
+import java.io.InputStream
+import java.nio.charset.Charset
+import java.nio.charset.StandardCharsets
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
-class EmbedPythonHelper {
+class EmbedPythonHelper : Closeable {
     companion object {
 
         private val pySystemState = PySystemState()
         private val threadState: ThreadState
+        private const val PEP_263_TEMPLATE = "# -*- coding: %s -*-"
+        private val logger: Logger = LoggerFactory.getLogger(EmbedPythonHelper::class.java)
 
         init {
             pySystemState.setdefaultencoding("utf-8")
@@ -104,6 +113,68 @@ class EmbedPythonHelper {
         private fun setToPythonTuple(input: Set<Any?>): PyTuple {
             val l = input.map { elem -> toPyObject(elem) }
             return PyTuple(*l.toTypedArray())
+        }
+
+        fun execCodeBlockOnce(
+            code: String,
+            presetVariables: Map<String, Any?>,
+            outVariables: Set<String>,
+            allowImportModules: Set<String> = setOf(),
+            sourceEncoding: Charset = StandardCharsets.UTF_8
+        ): Map<String, Any?> {
+            EmbedPythonHelper().use {
+                it.sourceEncode = sourceEncoding
+                it.allowedImportModules = allowImportModules
+                return it.execCodeBlock(code, presetVariables, outVariables)
+            }
+        }
+
+        private fun exec(interpreter: PythonInterpreter, code: String, encoding: Charset = StandardCharsets.UTF_8) {
+            logger.debug("jython execute: {}", code)
+            ByteArrayInputStream(code.toByteArray(encoding)).use { stream ->
+                interpreter.execfile(stream)
+            }
+        }
+
+        private val importRegex = Regex.fromLiteral("\\s*import\\s+(\\S+?)")
+        private fun isImportClauseShouldSkip(line: String, allowedImportModules: Set<String>): Boolean {
+            val m = importRegex.find(line) ?: return false
+            return allowedImportModules.contains(m.value)
+        }
+    }
+
+    private val interpreter = PythonInterpreter()
+    var sourceEncode: Charset = StandardCharsets.UTF_8
+    var allowedImportModules: Set<String> = setOf()
+
+    fun execCodeBlock(
+        code: String,
+        presetVariables: Map<String, Any?>,
+        outVariables: Set<String>
+    ): Map<String, Any?> {
+        interpreter.cleanup()
+        val pep263 = String.format(PEP_263_TEMPLATE, sourceEncode.name())
+        interpreter.exec(pep263)
+        presetVariables.forEach { (name, value) ->
+            interpreter.set(name, toPyObject(value))
+        }
+        val lines = code.split("\r\n").filter { it.isNotBlank() }
+        for (line in lines) {
+            if (isImportClauseShouldSkip(line, allowedImportModules)) {
+                continue
+            }
+            exec(interpreter, line, sourceEncode)
+        }
+        return outVariables.associateWith { name ->
+            fromPyObject(interpreter.get(name))
+        }
+    }
+
+    override fun close() {
+        try {
+            interpreter.close()
+        } catch (t: Throwable) {
+            //
         }
     }
 }
