@@ -15,6 +15,7 @@ import com.hagoapp.datacova.util.StackTraceWriter
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import com.hagoapp.datacova.web.authentication.AuthType
+import com.hagoapp.f2t.util.JDBCTypeUtils
 import io.netty.handler.codec.http.HttpResponseStatus.*
 import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.RoutingContext
@@ -68,13 +69,39 @@ class ScriptOps {
         val fieldValues: Map<String, String>
     )
 
+    enum class EvalDataType {
+        Number,
+        Boolean,
+        DateTime,
+        Text
+    }
+
+    data class EvalFieldData(
+        val value: String,
+        val type: EvalDataType
+    ) {
+        fun getTypedValue(): Any {
+            return when (type) {
+                EvalDataType.Number -> if (value.indexOf('.') > 0) value.toDouble() else value.toLong()
+                EvalDataType.Boolean -> value.toBoolean()
+                EvalDataType.DateTime -> JDBCTypeUtils.stringToDateTime(value)
+                EvalDataType.Text -> value
+            }
+        }
+    }
+
+    data class EvaluateData4Python(
+        val code: String,
+        val fieldValues: Map<String, EvalFieldData>
+    )
+
     @WebEndPoint(
         methods = [HttpMethod.POST],
         path = "/api/python/evaluate",
         authTypes = [AuthType.UserToken]
     )
     fun evaluatePython(context: RoutingContext) {
-        val data = Gson().fromJson(context.bodyAsString, EvaluateData::class.java)
+        val data = Gson().fromJson(context.bodyAsString, EvaluateData4Python::class.java)
         if (data.code.isBlank()) {
             ResponseHelper.sendResponse(
                 context, BAD_REQUEST, mapOf(
@@ -87,7 +114,13 @@ class ScriptOps {
             return
         }
         try {
-            val ret = EmbedPythonHelper.runCodeBlock(data.code, data.fieldValues)
+            val ret = EmbedPythonHelper.execCodeBlockOnce(
+                data.code, mapOf(
+                    "row" to data.fieldValues.map {
+                        Pair(it.key, it.value.getTypedValue())
+                    }.toMap()
+                ), setOf("ret")
+            )
             ResponseHelper.sendResponse(
                 context, OK, mapOf(
                     "code" to 0,
