@@ -73,7 +73,7 @@
           <TaskAction
             v-bind:action="action"
             v-bind:actionIndex="index"
-            v-bind:workspaceId="$route.params.workspaceId"
+            v-bind:workspaceId="parseInt(task.workspaceId)"
             v-on:onError="errorOccurred"
             v-on:removeAction="removeAction"
             ></TaskAction>
