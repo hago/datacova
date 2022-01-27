@@ -73,25 +73,6 @@ class EmbedPythonHelper : Closeable {
             }
         }
 
-        fun runCodeBlock(codeBlock: String, vararg args: Any?): Any? {
-            val keywords = listOf<String>().toTypedArray()
-            val globals = PyObject(PyNone.TYPE)
-            val defaults = listOf<PyObject>().toTypedArray()
-            val closure = PyObject(PyNone.TYPE)
-            PythonInterpreter().use { py ->
-                val code = py.compile(codeBlock)
-                val ret = code.call(
-                    threadState,
-                    args.map { toPyObject(it) }.toTypedArray(),
-                    keywords,
-                    globals,
-                    defaults,
-                    closure
-                )
-                return fromPyObject(ret)
-            }
-        }
-
         private fun mapToPythonDictionary(input: Map<out Any, Any?>): PyDictionary {
             val dict = input.map {
                 Pair(toPyObject(it.key), toPyObject(it.value))
@@ -165,6 +146,7 @@ class EmbedPythonHelper : Closeable {
             }
             exec(interpreter, line, sourceEncode)
         }
+        interpreter.
         return outVariables.associateWith { name ->
             fromPyObject(interpreter.get(name))
         }
