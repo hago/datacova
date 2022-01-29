@@ -2,17 +2,16 @@
   <div >
     <div style="margin: 0px 5px 10px 5px">
       <textarea class="col" v-model="snippet" rows="8" v-on:change="codesChange()" placeholder="example:
-row['col1'] + row['col2'] < row['col3']
+result=row[u'col1'] + row[u'col2'] < row[u'col3']
 
 explanation:
-1. The code is in Python language.
-2. The first line of code should be external argument declaration.
-  2.1 Values of fields will be passed into as a dict named 'row'.
-  2.2 Inside snippet, field can be referenced by name.
-3. The last line should return a value or be an expression. It will be treated as value of whole snippet.
-  3.1 It should be 'return ...' statement.
-  3.2 The value should be a boolean.
-  3.3 Any other type of value will be considered as False.
+1. The code is in Python language, using grammar v2.7.
+2. The value to be validated will be passed to your code as variable named 'row'
+  2.1 The variable 'row' is of type dict.
+  2.2 Field can be referenced by name, e.g, row[u'col'].
+  2.3 Key referenced in the dict is unicode type, do NOT forget prefix 'u'.
+3. The evaluate result should be stored into a variale named 'result'.
+4. Any import clause will be ignored.
       "></textarea>
     </div>
     <div class="form-row">
@@ -74,15 +73,16 @@ export default {
   },
   methods: {
     evalValueChange: function (fieldIndex) {
+      console.log('change ' + fieldIndex)
       let v = this.params[fieldIndex].value.toLowerCase().trim()
       if (!isNaN(Number(v))) {
-        this.params[fieldIndex].type = 'Number'
+        this.paramTypes[fieldIndex] = 'Number'
       } else if ((v === 'true') || (v === 'false')) {
-        this.params[fieldIndex].type = 'Boolean'
+        this.paramTypes[fieldIndex] = 'Boolean'
       } else if (this.isDateTime(v)) {
-        this.params[fieldIndex].type = 'DateTime'
+        this.paramTypes[fieldIndex] = 'DateTime'
       } else {
-        this.params[fieldIndex].type = 'Text'
+        this.paramTypes[fieldIndex] = 'Text'
       }
     },
     isDateTime: function (str) {
