@@ -14,53 +14,45 @@ import com.hagoapp.datacova.entity.action.verification.conf.EmbedPythonConfig
 import com.hagoapp.datacova.execution.Validator
 import com.hagoapp.datacova.util.EmbedPythonHelper
 import com.hagoapp.f2t.DataRow
-import org.python.core.*
-import org.python.util.PythonInterpreter
+import java.nio.charset.StandardCharsets
 
 class EmbedPythonValidator : Validator() {
 
     companion object {
-        private val ps = PySystemState()
+        const val ROW_VARIABLE = "row"
+        const val RESULT_VARIABLE = "result"
 
-        init {
-            ps.setdefaultencoding("utf-8")
-        }
+        private val logger = CoVaLogger.getLogger()
     }
 
     private lateinit var conf: EmbedPythonConfig
-    private val py = PythonInterpreter()
-    private lateinit var code: PyCode
-    private val pyDefaults = listOf<PyObject>()
-    private val pyGlobals: PyObject? = null
-    private val pyClosure: PyObject? = null
-    private val threadState = ThreadState(ps)
-    private val logger = CoVaLogger.getLogger()
+    private val py = EmbedPythonHelper()
+
+    init {
+        py.sourceEncode = StandardCharsets.UTF_8
+    }
 
     override fun prepare() {
         if (config !is EmbedPythonConfig) {
             throw CoVaException("Not a valid embed python config")
         }
-        code = py.compile(conf.snippet, "snippet")
+        conf = config as EmbedPythonConfig
     }
 
     override fun getSupportedVerificationType(): Int {
         return EmbedPythonConfig.EMBED_Python_CONFIGURATION_TYPE
     }
 
-    private fun check(paramMap: Map<PyObject, PyObject?>): Boolean {
-        val rowDict = PyDictionary(paramMap)
-        val result = code.call(threadState, rowDict, pyGlobals, pyDefaults.toTypedArray(), pyClosure)
-        val ret = EmbedPythonHelper.fromPyObject(result)
-        return if (ret is Boolean) ret else false
-    }
-
     override fun verify(row: DataRow): Map<String, Any?> {
-        val loaded = fieldLoader.loadField(row)
-        val dict = loaded.map {
-            Pair(EmbedPythonHelper.toPyObject(it.key), EmbedPythonHelper.toPyObject(it.value.data))
-        }.toMap()
-        return if (check(dict)) mapOf() else
-            loaded.map { Pair(it.key, it.value.data) }.toMap()
+        val rowLine = fieldLoader.loadField(row).map { Pair(it.key, it.value.data) }.toMap()
+        val out = py.execCodeBlock(
+            conf.snippet,
+            mapOf(ROW_VARIABLE to rowLine),
+            setOf(RESULT_VARIABLE)
+        )
+        logger.debug("eval: {} return {}", rowLine, out)
+        val ret = if (out[RESULT_VARIABLE] == null) false else out[RESULT_VARIABLE] as Boolean
+        return if (ret) mapOf() else rowLine
     }
 
     override fun close() {

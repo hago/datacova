@@ -9,6 +9,7 @@ package com.hagoapp.datacova.web.verify
 
 import com.google.gson.Gson
 import com.hagoapp.datacova.CoVaLogger
+import com.hagoapp.datacova.execution.executor.validator.EmbedPythonValidator
 import com.hagoapp.datacova.util.EmbedPythonHelper
 import com.hagoapp.datacova.util.LuaHelper
 import com.hagoapp.datacova.util.StackTraceWriter
@@ -116,10 +117,10 @@ class ScriptOps {
         try {
             val ret = EmbedPythonHelper.execCodeBlockOnce(
                 data.code, mapOf(
-                    "row" to data.fieldValues.map {
+                    EmbedPythonValidator.ROW_VARIABLE to data.fieldValues.map {
                         Pair(it.key, it.value.getTypedValue())
                     }.toMap()
-                ), setOf("ret")
+                ), setOf(EmbedPythonValidator.RESULT_VARIABLE)
             )
             ResponseHelper.sendResponse(
                 context, OK, mapOf(
