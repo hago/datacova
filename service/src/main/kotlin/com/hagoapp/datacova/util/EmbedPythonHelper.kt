@@ -111,7 +111,7 @@ class EmbedPythonHelper : Closeable {
         }
 
         private fun exec(interpreter: PythonInterpreter, code: String, encoding: Charset = StandardCharsets.UTF_8) {
-            logger.debug("jython execute: {}", code)
+            logger.debug("python execute: {}", code)
             ByteArrayInputStream(code.toByteArray(encoding)).use { stream ->
                 interpreter.execfile(stream)
             }
@@ -146,7 +146,6 @@ class EmbedPythonHelper : Closeable {
             }
             exec(interpreter, line, sourceEncode)
         }
-        interpreter.
         return outVariables.associateWith { name ->
             fromPyObject(interpreter.get(name))
         }
