@@ -68,7 +68,7 @@ export default {
   },
   watch: {
     snippet: function (newValue) {
-      this.config.snippet = newValue.replace('\r', '\\r').replace('\n', '\\n')
+      this.config.snippet = newValue
     }
   },
   methods: {
