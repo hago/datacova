@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory
 import java.io.ByteArrayInputStream
 import java.io.Closeable
 import java.io.InputStream
+import java.lang.NullPointerException
 import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 import java.time.LocalDateTime
@@ -61,7 +62,7 @@ class EmbedPythonHelper : Closeable {
         fun fromPyObject(data: PyObject): Any? {
             return when (data.type) {
                 PyNone.TYPE -> null
-                PyString.TYPE -> data.asString()
+                PyString.TYPE, PyUnicode.TYPE -> data.asString()
                 PyInteger.TYPE -> data.asInt()
                 PyLong.TYPE -> data.asLong()
                 PyFloat.TYPE -> data.asDouble()
@@ -147,8 +148,13 @@ class EmbedPythonHelper : Closeable {
             exec(interpreter, line, sourceEncode)
         }
         return outVariables.associateWith { name ->
-            fromPyObject(interpreter.get(name))
-        }
+            try {
+                val po = interpreter.get(name)
+                fromPyObject(po)
+            } catch (e: NullPointerException) {
+                null
+            }
+        }.filter { it.value != null }
     }
 
     override fun close() {
