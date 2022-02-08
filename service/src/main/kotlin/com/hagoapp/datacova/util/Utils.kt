@@ -42,7 +42,7 @@ class Utils {
             val path = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"))
             val md5 = MessageDigest.getInstance("MD5")
             md5.update(Random(Instant.now().epochSecond).nextBytes(1))
-            val name = BigInteger(1, md5.digest()).toString(16).toUpperCase()
+            val name = BigInteger(1, md5.digest()).toString(16).uppercase()
             return "$path/$name.${f.extension}"
         }
 

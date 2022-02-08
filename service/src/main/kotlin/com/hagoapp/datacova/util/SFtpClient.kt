@@ -19,7 +19,7 @@ class SFtpClient(
         fun isValidPrivateKeyFile(filename: String): Boolean {
             val content = FileInputStream(filename).use {
                 it.readAllBytes()
-            }.toString(StandardCharsets.UTF_8).toLowerCase()
+            }.toString(StandardCharsets.UTF_8).lowercase()
             return content.contains("begin rsa private key")
         }
 
