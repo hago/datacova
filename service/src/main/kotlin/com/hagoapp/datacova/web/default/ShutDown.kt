@@ -19,6 +19,7 @@ import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.RoutingContext
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.util.concurrent.atomic.AtomicBoolean
 
 class ShutDown {
@@ -42,8 +43,10 @@ class ShutDown {
             ResponseHelper.sendResponse(context, HttpResponseStatus.OK)
         }
         isShuttingDown.set(true)
-        GlobalScope.launch {
-            shutDown()
+        runBlocking {
+            launch {
+                shutDown()
+            }
         }
         ResponseHelper.sendResponse(context, HttpResponseStatus.OK)
     }
