@@ -1,5 +1,5 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.4.30'
+    id 'org.jetbrains.kotlin.jvm' version '1.6.0'
     id 'com.github.johnrengelman.shadow' version '6.1.0'
 }
 
@@ -26,10 +26,10 @@ sourceSets {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.4.30"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.30"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.4.30"
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.6.0'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.0'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-native-mt'
 
     implementation 'info.picocli:picocli:4.6.2'
     implementation 'com.google.code.gson:gson:2.8.9'
@@ -61,7 +61,7 @@ dependencies {
 
     implementation group: "org.luaj", name: "luaj-jse", version: "3.0.1"
     implementation group: 'org.python', name: 'jython-standalone', version: '2.7.2'
-    
+
     implementation group: 'com.github.felfert', name: 'cidrutils', version: '1.4'
 
     implementation group: 'com.jcraft', name: 'jsch', version: '0.1.55'
