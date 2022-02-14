@@ -23,8 +23,8 @@ import java.lang.Exception
 class AuthUtils {
     companion object {
         const val LOGIN_COOKIE = "MfIry5adA8UYJEYb"
-        const val IMPERSONATOR_COOKIE = "5fVDH0qFaHbrcJv5"
-        const val TOKEN_AUTH_NAME = "name"
+        private const val IMPERSONATOR_COOKIE = "5fVDH0qFaHbrcJv5"
+        private const val TOKEN_AUTH_NAME = "name"
         private const val IMPERSONATE_TOKEN_HEADER_NAME = "TmzSOsex"
         private val gson = GsonBuilder().serializeNulls().create()
 
@@ -108,7 +108,7 @@ class AuthUtils {
                 null -> null
                 else -> {
                     val parts = header.split(" ").map { it.trim() }
-                    if ((parts.size == 2) && (parts[0].compareTo(TOKEN_AUTH_NAME) == 0)) parts[1];
+                    if ((parts.size == 2) && (parts[0].compareTo(TOKEN_AUTH_NAME) == 0)) parts[1]
                     else null
                 }
             }
@@ -133,7 +133,7 @@ class AuthUtils {
             if (header != null) {
                 return header
             }
-            return null;
+            return null
         }
     }
 }
