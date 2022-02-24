@@ -17,8 +17,8 @@ dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.0'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-native-mt'
 
-    implementation 'info.picocli:picocli:4.6.2'
-    implementation 'com.google.code.gson:gson:2.8.9'
+    implementation 'info.picocli:picocli:4.6.3'
+    implementation 'com.google.code.gson:gson:2.9.0'
     implementation group: 'com.fasterxml.jackson.jr', name: 'jackson-jr-objects', version: '2.9.0'
     implementation 'com.github.albfernandez:juniversalchardet:2.4.0'
 
@@ -41,7 +41,7 @@ dependencies {
     implementation group: 'com.github.felfert', name: 'cidrutils', version: '1.4'
 
     implementation group: 'redis.clients', name: 'jedis', version: "3.7.0"
-    implementation group: "org.postgresql", name: "postgresql", version: "42.2.18"
+    implementation group: "org.postgresql", name: "postgresql", version: "42.3.3"
 
     implementation group: 'org.reflections', name: 'reflections', version: '0.9.11'
 
