@@ -14,6 +14,7 @@ import com.hagoapp.datacova.entity.action.verification.TaskActionVerify
 import com.hagoapp.datacova.entity.execution.DataMessage
 import com.hagoapp.datacova.entity.execution.TaskExecution
 import com.hagoapp.datacova.execution.executor.validator.ValidatorFactory
+import com.hagoapp.f2t.ColumnDefinition
 import com.hagoapp.f2t.DataTable
 import com.hagoapp.f2t.ProgressNotify
 import com.hagoapp.f2t.datafile.ParseResult
@@ -23,7 +24,7 @@ class VerifyExecutor : BaseTaskActionExecutor(), ProgressNotify {
     private var verificationFailed = false
     private val logger = CoVaLogger.getLogger()
 
-    override fun execute(taskExecution: TaskExecution, action: TaskAction, data: DataTable) {
+    override fun execute(taskExecution: TaskExecution, action: TaskAction, data: DataTable<out ColumnDefinition>) {
         if (action !is TaskActionVerify) {
             val ex = CoVaException("Not an TaskActionVerify: ${action.name}")
             watcher?.onError(action, ex)

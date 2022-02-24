@@ -19,6 +19,7 @@ import com.hagoapp.datacova.execution.datafile.ExcelXDataFileWriter
 import com.hagoapp.datacova.execution.distribute.DistributorFactory
 import com.hagoapp.datacova.util.FileStoreUtils
 import com.hagoapp.datacova.util.Utils
+import com.hagoapp.f2t.ColumnDefinition
 import com.hagoapp.f2t.DataTable
 import com.hagoapp.f2t.datafile.FileInfo
 import com.hagoapp.f2t.datafile.csv.FileInfoCsv
@@ -34,7 +35,7 @@ class DistributeExecutor : BaseTaskActionExecutor() {
 
     private lateinit var execution: TaskExecution
 
-    override fun execute(taskExecution: TaskExecution, action: TaskAction, data: DataTable) {
+    override fun execute(taskExecution: TaskExecution, action: TaskAction, data: DataTable<out ColumnDefinition>) {
         if (action !is TaskActionDistribute) {
             throw CoVaException("Invalid distribute action")
         }
@@ -45,7 +46,7 @@ class DistributeExecutor : BaseTaskActionExecutor() {
         DistributorFactory.getDistributor(action).distribute(filename)
     }
 
-    private fun prepareSourceFile(id: Int, conf: Configuration, data: DataTable, fileInfo: FileInfo): String {
+    private fun prepareSourceFile(id: Int, conf: Configuration, data: DataTable<out ColumnDefinition>, fileInfo: FileInfo): String {
         return if (conf.isCopyOriginal) fileInfo.filename!!
         else {
             val d = DateTimeFormatter.ofPattern("yyyy/MM/dd/yyyyMMddHHmmssSSS").withZone(ZoneId.of("UTC"))
@@ -55,17 +56,17 @@ class DistributeExecutor : BaseTaskActionExecutor() {
                     csvWriter.setHeader(data.columnDefinition.map { it.name })
                     csvWriter
                 }
-                is FileInfoExcel -> {
-                    val xlsWriter = ExcelDataFileWriter()
-                    xlsWriter.setHeader(data.columnDefinition.map { it.name })
-                    xlsWriter.setDataType(data.columnDefinition.map { it.inferredType!! })
-                    xlsWriter
-                }
                 is FileInfoExcelX -> {
                     val xlsxWriter = ExcelXDataFileWriter()
                     xlsxWriter.setHeader(data.columnDefinition.map { it.name })
-                    xlsxWriter.setDataType(data.columnDefinition.map { it.inferredType!! })
+                    xlsxWriter.setDataType(data.columnDefinition.map { it.dataType!! })
                     xlsxWriter
+                }
+                is FileInfoExcel -> {
+                    val xlsWriter = ExcelDataFileWriter()
+                    xlsWriter.setHeader(data.columnDefinition.map { it.name })
+                    xlsWriter.setDataType(data.columnDefinition.map { it.dataType!! })
+                    xlsWriter
                 }
                 else -> throw CoVaException(String.format("unsupported data file type: %s", fileInfo))
             }
@@ -87,6 +88,6 @@ class DistributeExecutor : BaseTaskActionExecutor() {
     }
 
     override fun getActionType(): Int {
-        return TASK_ACTION_TYPE_DISTRIBUTE;
+        return TASK_ACTION_TYPE_DISTRIBUTE
     }
 }

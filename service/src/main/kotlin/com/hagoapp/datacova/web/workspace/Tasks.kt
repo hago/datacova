@@ -236,13 +236,12 @@ class Tasks {
                     break
                 }
             }
-            val colIndex = cols.sortedBy { it.index }
             ResponseHelper.sendResponse(context, HttpResponseStatus.OK, mapOf(
                 "code" to 0,
                 "data" to mapOf(
                     "columns" to cols.map { it.name },
                     "rows" to rows.map { row ->
-                        row.cells.map { formatData(it.data, colIndex[it.index].inferredType) }
+                        row.cells.map { formatData(it.data, cols[it.index].dataType) }
                     },
                     "info" to info
                 )

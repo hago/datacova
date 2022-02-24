@@ -19,6 +19,7 @@ import com.hagoapp.datacova.executor.Executor
 import com.hagoapp.datacova.util.FileStoreUtils
 import com.hagoapp.datacova.util.StackTraceWriter
 import com.hagoapp.f2t.DataTable
+import com.hagoapp.f2t.FileColumnDefinition
 import com.hagoapp.f2t.FileParser
 
 class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExecutionWatcher {
@@ -46,7 +47,7 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
     fun execute() {
         detail.startTiming()
         observers.forEach { it.onStart(taskExec) }
-        val dt: DataTable
+        val dt: DataTable<FileColumnDefinition>
         try {
             observers.forEach { it.onDataLoadStart(taskExec) }
             taskExec.fileInfo.fileInfo.filename =

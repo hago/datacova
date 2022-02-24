@@ -11,6 +11,7 @@ package com.hagoapp.datacova.execution.executor
 import com.hagoapp.datacova.entity.action.TaskAction
 import com.hagoapp.datacova.entity.execution.TaskExecution
 import com.hagoapp.datacova.execution.TaskExecutionActionWatcher
+import com.hagoapp.f2t.ColumnDefinition
 import com.hagoapp.f2t.DataTable
 import java.util.*
 
@@ -27,7 +28,7 @@ abstract class BaseTaskActionExecutor {
             loc = value
         }
 
-    abstract fun execute(taskExecution: TaskExecution, action: TaskAction, data: DataTable)
+    abstract fun execute(taskExecution: TaskExecution, action: TaskAction, data: DataTable<out ColumnDefinition>)
 
     abstract fun getActionType(): Int
 
