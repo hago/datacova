@@ -16,6 +16,7 @@ import com.hagoapp.datacova.entity.execution.TaskExecution
 import com.hagoapp.f2t.ColumnDefinition
 import com.hagoapp.f2t.D2TProcess
 import com.hagoapp.f2t.DataTable
+import com.hagoapp.f2t.FileColumnDefinition
 import com.hagoapp.f2t.ProgressNotify
 import com.hagoapp.f2t.datafile.ParseResult
 
@@ -30,7 +31,12 @@ class IngestExecutor : BaseTaskActionExecutor(), ProgressNotify {
         taskAction = action
         val connection = ConnectionData().getWorkspaceConnection(action.connectionId)
             ?: throw CoVaException()
-        val d2t = D2TProcess(data, connection.configuration, action.ingestOptions)
+        val fileTable = DataTable(data.columnDefinition.mapIndexed { i, col ->
+            val fileCol = FileColumnDefinition(col.name, setOf(col.dataType), col.dataType)
+            fileCol.order = i
+            fileCol
+        }, data.rows)
+        val d2t = D2TProcess(fileTable, connection.configuration, action.ingestOptions)
         d2t.progressNotifier = this
         result = d2t.run()
     }

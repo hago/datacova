@@ -9,6 +9,7 @@
 package com.hagoapp.datacova.util.datetime;
 
 import com.hagoapp.datacova.CoVaException;
+import com.hagoapp.f2t.util.DateTimeTypeUtils;
 import com.hagoapp.f2t.util.JDBCTypeUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -158,7 +159,7 @@ public class DateUtils {
             return ((Float) src).longValue();
         } else if (src instanceof String) {
             try {
-                return Objects.requireNonNull(JDBCTypeUtils.Companion.stringToDateTimeOrNull((String) src))
+                return Objects.requireNonNull(DateTimeTypeUtils.stringToDateTimeOrNull((String) src))
                         .toInstant().toEpochMilli();
             } catch (Exception ex) {
                 throw new CoVaException(String.format("not a time compatible value %s", src), ex);

@@ -17,6 +17,7 @@ import com.hagoapp.datacova.util.StackTraceWriter
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import com.hagoapp.datacova.web.authentication.AuthType
+import com.hagoapp.f2t.util.DateTimeTypeUtils
 import com.hagoapp.f2t.util.JDBCTypeUtils
 import io.netty.handler.codec.http.HttpResponseStatus.*
 import io.vertx.core.http.HttpMethod
@@ -86,7 +87,7 @@ class ScriptOps {
             return when (type) {
                 EvalDataType.Number -> if (value.indexOf('.') > 0) value.toDouble() else value.toLong()
                 EvalDataType.Boolean -> value.toBoolean()
-                EvalDataType.DateTime -> JDBCTypeUtils.stringToDateTime(value)
+                EvalDataType.DateTime -> DateTimeTypeUtils.stringToDateTimeOrNull(value)!!
                 EvalDataType.Text -> value
             }
         }
