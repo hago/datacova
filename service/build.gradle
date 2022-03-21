@@ -102,3 +102,7 @@ jar {
     //duplicatesStrategy = DuplicatesStrategy.FAIL
     //from { configurations.runtimeClasspath.findAll { it.name.endsWith('jar')  }.collect { zipTree(it) } }
 }
+
+shadowJar {
+    zip64 true
+}
