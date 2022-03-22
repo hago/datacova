@@ -7,7 +7,7 @@
 
 package com.hagoapp.datacova.data.setting
 
-import com.hagoapp.datacova.config.indb.LdapConfig
+import com.hagoapp.datacova.config.ldap.LdapConfig
 import com.hagoapp.datacova.config.init.CoVaConfig
 import com.hagoapp.datacova.config.init.DatabaseConfig
 import com.hagoapp.datacova.data.CoVaDatabase
