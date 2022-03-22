@@ -15,7 +15,6 @@ import freemarker.template.Template
 import freemarker.template.TemplateExceptionHandler
 import java.io.File
 import java.io.IOException
-import java.lang.Exception
 import java.util.*
 
 abstract class TemplateManager private constructor(protected val conf: TemplateConfig) {

@@ -12,7 +12,6 @@ import com.hagoapp.datacova.web.websocket.IMessageHandler
 import com.hagoapp.datacova.web.websocket.ServerMessage
 import com.hagoapp.datacova.web.websocket.timing.TimingClientMessage.Companion.TIMING_CLIENT_MESSAGE_TYPE
 import io.vertx.core.http.ServerWebSocket
-import java.lang.UnsupportedOperationException
 
 class TimingMessageHandler : IMessageHandler {
     override fun getHandledMessageTypes(): MutableList<Int> {

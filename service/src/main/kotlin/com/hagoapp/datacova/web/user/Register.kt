@@ -20,10 +20,10 @@ import com.hagoapp.datacova.util.mail.MailHelper
 import com.hagoapp.datacova.util.text.TemplateManager
 import com.hagoapp.datacova.util.text.TextResourceManager
 import com.hagoapp.datacova.util.web.CaptchaUtils
+import com.hagoapp.datacova.web.MethodName
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import com.hagoapp.datacova.web.authentication.AuthType
 import io.netty.handler.codec.http.HttpResponseStatus
-import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.RoutingContext
 import java.io.StringWriter
 import java.time.ZonedDateTime
@@ -38,7 +38,7 @@ class Register {
     }
 
     @WebEndPoint(
-        methods = [HttpMethod.PUT],
+        methods = [MethodName.PUT],
         path = "/api/register/:captcha",
         authTypes = [AuthType.Anonymous]
     )
@@ -113,12 +113,12 @@ class Register {
 
     private fun calcExpireDate(): String {
         val fmt = DateTimeFormatter.ISO_DATE_TIME
-        return fmt.format(ZonedDateTime.now().plusSeconds(REGISTRATION_CODE_EXPIRE_SECONDS.toLong()))
+        return fmt.format(ZonedDateTime.now().plusSeconds(REGISTRATION_CODE_EXPIRE_SECONDS))
     }
 
     @WebEndPoint(
         path = "/api/user/activate/:code",
-        methods = [HttpMethod.GET],
+        methods = [MethodName.GET],
         authTypes = [AuthType.Anonymous]
     )
     fun activate(context: RoutingContext) {

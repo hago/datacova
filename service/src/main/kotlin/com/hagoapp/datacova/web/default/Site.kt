@@ -11,15 +11,15 @@ import com.hagoapp.datacova.user.ldap.LdapAuthProvider
 import com.hagoapp.datacova.user.ldap.LdapConfigManager
 import com.hagoapp.datacova.util.http.RequestHelper
 import com.hagoapp.datacova.util.http.ResponseHelper
+import com.hagoapp.datacova.web.MethodName
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import io.netty.handler.codec.http.HttpResponseStatus
-import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.RoutingContext
 
 class Site {
     @WebEndPoint(
         path = "/api/default/settings",
-        methods = [HttpMethod.GET]
+        methods = [MethodName.GET]
     )
     fun settings(context: RoutingContext) {
         ResponseHelper.sendResponse(

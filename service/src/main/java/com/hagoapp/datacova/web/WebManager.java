@@ -35,8 +35,7 @@ import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.CorsHandler;
 import org.reflections.Reflections;
-import org.reflections.scanners.MethodAnnotationsScanner;
-import org.reflections.scanners.SubTypesScanner;
+import org.reflections.scanners.Scanners;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -221,7 +220,6 @@ public class WebManager {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void createBlockHandler(WebHandler handler, Route route) {
         if (WebInterface.class.isAssignableFrom(handler.getInstanceClass())) {
             route.blockingHandler(context -> {
@@ -250,7 +248,6 @@ public class WebManager {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void createNonBlockHandler(WebHandler handler, Route route) {
         if (WebInterface.class.isAssignableFrom(handler.getInstanceClass())) {
             route.handler(context -> {
@@ -291,11 +288,11 @@ public class WebManager {
                 Authenticator authenticator = AuthenticatorFactory.createAuthenticator(authType);
                 return (authenticator != null) && authenticator.authenticate(context);
             })) {
-                logger.error("Authentication failed for {} {}", handler.getMethod().name(), handler.getPath());
+                logger.error("Authentication failed for {} {}", handler.getMethod(), handler.getPath());
                 ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, "Not authenticated");
             } else {
                 logger.debug("authentication passed for {} {}, execute next handler",
-                        handler.getMethod().name(), handler.getPath());
+                        handler.getMethod(), handler.getPath());
                 context.next();
             }
         });
@@ -306,11 +303,11 @@ public class WebManager {
             String pattern = String.join("|", webConfig.getCrossOriginSources());
             List<String> headers = getAllowedHeaders(handler);
             createRoute(router, handler)
-                    .handler(createCrossOriginHandler(List.of(handler.getMethod()), headers, pattern));
+                    .handler(createCrossOriginHandler(List.of(MethodName.GET), headers, pattern));
         }
     }
 
-    private CorsHandler createCrossOriginHandler(List<HttpMethod> methods, List<String> headers, String pattern) {
+    private CorsHandler createCrossOriginHandler(List<String> methods, List<String> headers, String pattern) {
         Set<String> allowHeaders = new HashSet<>();
         allowHeaders.addAll(headers);
         allowHeaders.addAll(List.of(
@@ -319,17 +316,20 @@ public class WebManager {
                 "Access-Control-Allow-Origin",
                 "Access-Control-Allow-Credentials"
         ));
-        Set<HttpMethod> allowedMethods = new HashSet<>();
-        allowedMethods.add(HttpMethod.OPTIONS);
+        Set<String> allowedMethods = new HashSet<>();
+        allowedMethods.add(MethodName.OPTIONS);
         allowedMethods.addAll(methods);
         logger.info("{} CORS allow: {} {} {}", webConfig.getIdentity(), allowedMethods, allowHeaders, pattern);
-        return CorsHandler.create(pattern).allowedMethods(allowedMethods).allowedHeaders(allowHeaders)
+        return CorsHandler.create(pattern)
+                .allowedMethods(allowedMethods.stream().map(HttpMethod::valueOf).collect(Collectors.toSet())).
+                allowedHeaders(allowHeaders)
                 .allowCredentials(true);
     }
 
     private Route createRoute(Router router, WebHandler handler) {
-        return handler.isPathAsRegex() ? router.routeWithRegex(handler.getMethod(), handler.getPath()) :
-                router.route(handler.getMethod(), handler.getPath());
+        var method = HttpMethod.valueOf(handler.getMethod());
+        return handler.isPathAsRegex() ? router.routeWithRegex(method, handler.getPath()) :
+                router.route(method, handler.getPath());
     }
 
     private List<String> getAllowedHeaders(WebHandler handler) {
@@ -345,7 +345,7 @@ public class WebManager {
 
     private void loadAnnotatedWebHandlers(String packageName) throws CoVaException {
         logger.info("{} searching WebEndPoint annotated methods in {}", webConfig.getIdentity(), packageName);
-        Reflections reflections = new Reflections(packageName, new MethodAnnotationsScanner());
+        Reflections reflections = new Reflections(packageName, Scanners.MethodsAnnotated);
         Set<Method> methods = reflections.getMethodsAnnotatedWith(WebEndPoint.class);
         for (Method method : methods) {
             Class<?> clz = method.getDeclaringClass();
@@ -362,7 +362,7 @@ public class WebManager {
                         clz.getPackageName(), method.getName());
             }
             WebEndPoint endPoint = method.getAnnotation(WebEndPoint.class);
-            for (HttpMethod httpMethod : endPoint.methods()) {
+            for (String httpMethod : endPoint.methods()) {
                 WebHandler handler = new WebHandler();
                 handler.setInstanceClass(clz);
                 handler.setAuthenticatorTypes(Arrays.stream(endPoint.authTypes()).collect(Collectors.toList()));
@@ -375,14 +375,14 @@ public class WebManager {
                 checkDuplicateHandler(handler, handlers);
                 handlers.put(handler.getKey(), handler);
                 logger.info("{} Annotated web handler found for {} {}", webConfig.getIdentity(),
-                        httpMethod.name(), endPoint.path());
+                        httpMethod, endPoint.path());
             }
         }
     }
 
     private void loadWebInterfaces(String packageName) throws CoVaException {
         logger.info("{} searching WebInterface descendants in {}", webConfig.getIdentity(), packageName);
-        Reflections reflections = new Reflections(packageName, new SubTypesScanner());
+        Reflections reflections = new Reflections(packageName, Scanners.SubTypes);
         Set<Class<? extends WebInterface>> types = reflections.getSubTypesOf(WebInterface.class);
         for (Class<? extends WebInterface> clz : types) {
             if ((packageName != null) && !clz.getPackageName().startsWith(packageName)) {
@@ -390,7 +390,7 @@ public class WebManager {
             }
             try {
                 WebInterface instance = clz.getDeclaredConstructor().newInstance();
-                for (Map.Entry<HttpMethod, WebInterface.Handler> entry : instance.requestHandlers().entrySet()) {
+                for (Map.Entry<String, WebInterface.Handler> entry : instance.requestHandlers().entrySet()) {
                     WebHandler handler = new WebHandler();
                     handler.setInstanceClass(clz);
                     handler.setAuthenticatorTypes(instance.getAuthTypes());
@@ -403,7 +403,7 @@ public class WebManager {
                     checkDuplicateHandler(handler, handlers);
                     handlers.put(handler.getKey(), handler);
                     logger.info("{} WebInterface descendant web handler found for {} {}", webConfig.getIdentity(),
-                            entry.getKey().name(), instance.getPath());
+                            entry.getKey(), instance.getPath());
                 }
             } catch (NoSuchMethodException e) {
                 logger.error("{} WebInterface descendant {} has no default constructor", webConfig.getIdentity(),
@@ -444,7 +444,7 @@ public class WebManager {
     private void generateDuplicateException(WebHandler handler1, WebHandler handler2) throws CoVaException {
         String error = String.format("%s duplicated handler for %s [%s, %s] between %s.%s and %s.%s",
                 webConfig.getIdentity(),
-                handler1.getMethod().name(), handler1.getPath(), handler2.getPath(),
+                handler1.getMethod(), handler1.getPath(), handler2.getPath(),
                 handler1.getInstanceClass().getCanonicalName(), handler1.getFunction().getName(),
                 handler2.getInstanceClass(), handler2.getFunction().getName());
         logger.error(error);

@@ -10,10 +10,10 @@ package com.hagoapp.datacova.web.default
 
 import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.util.http.ResponseHelper
+import com.hagoapp.datacova.web.MethodName
 import com.hagoapp.datacova.web.WebInterface
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.core.http.HttpHeaders
-import io.vertx.core.http.HttpMethod
 
 class FavIcon : WebInterface {
     private val logger = CoVaLogger.getLogger()
@@ -22,9 +22,9 @@ class FavIcon : WebInterface {
         return "/favicon.ico";
     }
 
-    override fun requestHandlers(): Map<HttpMethod, WebInterface.Handler> {
+    override fun requestHandlers(): Map<String, WebInterface.Handler> {
         return mapOf(
-            HttpMethod.GET to WebInterface.Handler { context ->
+            MethodName.GET to WebInterface.Handler { context ->
                 val stream = FavIcon::class.java.getResourceAsStream("/web/favicon.png")
                 if (stream == null) {
                     context.fail(404)

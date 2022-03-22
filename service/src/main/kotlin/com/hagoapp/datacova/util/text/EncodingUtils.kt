@@ -8,11 +8,11 @@
 
 package com.hagoapp.datacova.util.text
 
+import org.mozilla.universalchardet.UniversalDetector
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
-import org.mozilla.universalchardet.UniversalDetector
-import java.io.ByteArrayOutputStream
 import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 

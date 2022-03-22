@@ -14,7 +14,9 @@ import com.hagoapp.datacova.config.MailConfig
 import java.util.*
 import javax.activation.DataHandler
 import javax.activation.FileDataSource
-import javax.mail.*
+import javax.mail.Message
+import javax.mail.Session
+import javax.mail.Transport
 import javax.mail.internet.*
 
 class MailHelper(val config: MailConfig) {

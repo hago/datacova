@@ -15,9 +15,9 @@ import com.hagoapp.datacova.execution.Worker
 import com.hagoapp.datacova.executor.ExecuteResultMailer
 import com.hagoapp.datacova.executor.Executor
 import com.hagoapp.datacova.util.http.ResponseHelper
+import com.hagoapp.datacova.web.MethodName
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import io.netty.handler.codec.http.HttpResponseStatus
-import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.RoutingContext
 
 class ExecutorApi {
@@ -26,7 +26,7 @@ class ExecutorApi {
 
     @WebEndPoint(
         path = "/api/executor/execute/:id",
-        methods = [HttpMethod.POST]
+        methods = [MethodName.POST]
     )
     fun execute(context: RoutingContext) {
         val id = context.pathParam("id").toInt()
@@ -53,7 +53,7 @@ class ExecutorApi {
 
     @WebEndPoint(
         path = "/api/executor/execute/status",
-        methods = [HttpMethod.GET]
+        methods = [MethodName.GET]
     )
     fun status(context: RoutingContext) {
         val statuses = Executor.getExecutor()!!.getExecutionStatuses()

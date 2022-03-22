@@ -12,9 +12,7 @@ import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.RedisCacheReader
 import com.hagoapp.datacova.entity.workspace.WorkSpace
 import com.hagoapp.datacova.entity.workspace.WorkSpaceUserRole
-import com.hagoapp.datacova.entity.workspace.WorkSpaceUserRole.Admin
-import com.hagoapp.datacova.entity.workspace.WorkSpaceUserRole.Maintainer
-import com.hagoapp.datacova.entity.workspace.WorkSpaceUserRole.Loader
+import com.hagoapp.datacova.entity.workspace.WorkSpaceUserRole.*
 
 class WorkspaceCache {
     companion object {

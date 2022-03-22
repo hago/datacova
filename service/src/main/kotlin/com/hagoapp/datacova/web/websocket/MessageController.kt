@@ -10,16 +10,16 @@ package com.hagoapp.datacova.web.websocket
 import com.google.gson.Gson
 import com.hagoapp.datacova.data.user.UserCache
 import com.hagoapp.datacova.util.http.ResponseHelper
+import com.hagoapp.datacova.web.MethodName
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import com.hagoapp.datacova.web.authentication.AuthType
 import io.netty.handler.codec.http.HttpResponseStatus
-import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.RoutingContext
 
 class MessageController {
     @WebEndPoint(
         path = "/api/ws/send",
-        methods = [HttpMethod.POST],
+        methods = [MethodName.POST],
         authTypes = [AuthType.UserToken]
     )
     fun sendMessage(context: RoutingContext) {

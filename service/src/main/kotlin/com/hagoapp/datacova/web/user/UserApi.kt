@@ -13,17 +13,17 @@ import com.hagoapp.datacova.data.user.UserCache
 import com.hagoapp.datacova.user.UserFinder
 import com.hagoapp.datacova.user.UserSearchReq
 import com.hagoapp.datacova.util.http.ResponseHelper
+import com.hagoapp.datacova.web.MethodName
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import com.hagoapp.datacova.web.authentication.AuthType
 import io.netty.handler.codec.http.HttpResponseStatus
-import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.RoutingContext
 
 class UserApi {
 
     @WebEndPoint(
         path = "/api/user/search",
-        methods = [HttpMethod.POST],
+        methods = [MethodName.POST],
         authTypes = [AuthType.UserToken]
     )
     fun searchUser(context: RoutingContext) {
@@ -39,7 +39,7 @@ class UserApi {
 
     @WebEndPoint(
         path = "/api/user/batch",
-        methods = [HttpMethod.POST],
+        methods = [MethodName.POST],
         authTypes = [AuthType.UserToken]
     )
     fun batchGetUserInfo(context: RoutingContext) {
@@ -56,7 +56,7 @@ class UserApi {
     @WebEndPoint(
         path = "/api/user/(\\d+)",
         isPathRegex = true,
-        methods = [HttpMethod.GET],
+        methods = [MethodName.GET],
         authTypes = [AuthType.UserToken]
     )
     fun getUser(context: RoutingContext) {

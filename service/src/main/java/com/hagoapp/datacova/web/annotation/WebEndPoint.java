@@ -7,8 +7,8 @@
 
 package com.hagoapp.datacova.web.annotation;
 
+import com.hagoapp.datacova.web.MethodName;
 import com.hagoapp.datacova.web.authentication.AuthType;
-import io.vertx.core.http.HttpMethod;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -20,7 +20,7 @@ import java.lang.annotation.RetentionPolicy;
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface WebEndPoint {
-    HttpMethod[] methods() default {HttpMethod.GET};
+    String[] methods() default {MethodName.GET};
 
     String path();
 

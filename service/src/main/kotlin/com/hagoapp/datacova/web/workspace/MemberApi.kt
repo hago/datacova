@@ -10,24 +10,24 @@ package com.hagoapp.datacova.web.workspace
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.hagoapp.datacova.data.user.UserData
-import com.hagoapp.datacova.data.workspace.WorkspaceCache
 import com.hagoapp.datacova.data.workspace.WorkSpaceData
+import com.hagoapp.datacova.data.workspace.WorkspaceCache
 import com.hagoapp.datacova.entity.workspace.WorkSpaceUserRole
 import com.hagoapp.datacova.user.UserInfo
 import com.hagoapp.datacova.user.UserSearchResultItem
 import com.hagoapp.datacova.user.UserType
 import com.hagoapp.datacova.util.WorkspaceUserRoleUtil
 import com.hagoapp.datacova.util.http.ResponseHelper
+import com.hagoapp.datacova.web.MethodName
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import com.hagoapp.datacova.web.authentication.AuthType
 import com.hagoapp.datacova.web.authentication.Authenticator
 import io.netty.handler.codec.http.HttpResponseStatus
-import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.RoutingContext
 
 class MemberApi {
     @WebEndPoint(
-        methods = [HttpMethod.PUT],
+        methods = [MethodName.PUT],
         path = "/api/workspace/:id/member/:type/add",
         authTypes = [AuthType.UserToken]
     )
@@ -66,7 +66,7 @@ class MemberApi {
     }
 
     @WebEndPoint(
-        methods = [HttpMethod.DELETE],
+        methods = [MethodName.DELETE],
         path = "/api/workspace/:id/member/:type/remove/:uid",
         authTypes = [AuthType.UserToken]
     )

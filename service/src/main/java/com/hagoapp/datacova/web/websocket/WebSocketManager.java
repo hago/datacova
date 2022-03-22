@@ -10,7 +10,8 @@ package com.hagoapp.datacova.web.websocket;
 import com.hagoapp.datacova.user.UserInfo;
 import io.vertx.core.http.ServerWebSocket;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;

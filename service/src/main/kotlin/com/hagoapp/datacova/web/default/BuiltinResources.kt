@@ -9,15 +9,15 @@
 package com.hagoapp.datacova.web.default
 
 import com.hagoapp.datacova.CoVaException
+import com.hagoapp.datacova.web.MethodName
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.http.HttpHeaders
-import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.RoutingContext
 
 class BuiltinResources {
 
-    @WebEndPoint(methods = [HttpMethod.GET, HttpMethod.POST], path = "/resources/.+", isPathRegex = true)
+    @WebEndPoint(methods = [MethodName.GET, MethodName.POST], path = "/resources/.+", isPathRegex = true)
     fun getResource(context: RoutingContext) {
         val path = context.request().path()
         val localPath = path.replaceFirst("resources", "web", true)

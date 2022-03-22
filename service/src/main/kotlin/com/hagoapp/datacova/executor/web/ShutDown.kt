@@ -11,12 +11,12 @@ import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.executor.Executor
 import com.hagoapp.datacova.util.http.RequestHelper
 import com.hagoapp.datacova.util.http.ResponseHelper
+import com.hagoapp.datacova.web.MethodName
 import com.hagoapp.datacova.web.WebManager
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import com.hagoapp.datacova.web.authentication.AuthType
 import edazdarevic.commons.net.CIDRUtils
 import io.netty.handler.codec.http.HttpResponseStatus
-import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.RoutingContext
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -29,7 +29,7 @@ class ShutDown {
     }
 
     @WebEndPoint(
-        methods = [HttpMethod.GET],
+        methods = [MethodName.GET],
         authTypes = [AuthType.Anonymous],
         path = "/api/service/executor/shutdown",
         isBlocking = false
@@ -55,7 +55,7 @@ class ShutDown {
     }
 
     @WebEndPoint(
-        methods = [HttpMethod.GET],
+        methods = [MethodName.GET],
         authTypes = [AuthType.Anonymous],
         path = "/api/service/executor/shutdown/force",
         isBlocking = false

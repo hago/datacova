@@ -10,16 +10,16 @@ package com.hagoapp.datacova.web.auth
 
 import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.data.user.PermissionCache
-import com.hagoapp.datacova.user.UserInfo
-import com.hagoapp.datacova.util.http.ResponseHelper
-import com.hagoapp.datacova.util.web.AuthUtils
-import com.hagoapp.datacova.web.WebInterface
-import io.netty.handler.codec.http.HttpResponseStatus
-import io.vertx.core.http.HttpMethod
-import io.vertx.ext.web.RoutingContext
 import com.hagoapp.datacova.user.UserAuthFactory
 import com.hagoapp.datacova.user.UserAuthProvider
+import com.hagoapp.datacova.user.UserInfo
 import com.hagoapp.datacova.user.permission.UserPermissions
+import com.hagoapp.datacova.util.http.ResponseHelper
+import com.hagoapp.datacova.util.web.AuthUtils
+import com.hagoapp.datacova.web.MethodName
+import com.hagoapp.datacova.web.WebInterface
+import io.netty.handler.codec.http.HttpResponseStatus
+import io.vertx.ext.web.RoutingContext
 
 class Login : WebInterface {
 
@@ -29,9 +29,9 @@ class Login : WebInterface {
         return "/api/auth/login"
     }
 
-    override fun requestHandlers(): MutableMap<HttpMethod, WebInterface.Handler> {
+    override fun requestHandlers(): MutableMap<String, WebInterface.Handler> {
         return mutableMapOf(
-            HttpMethod.POST to respondFunc
+            MethodName.POST to respondFunc
         )
     }
 

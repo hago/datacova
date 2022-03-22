@@ -8,17 +8,17 @@
 package com.hagoapp.datacova.web;
 
 import com.hagoapp.datacova.web.authentication.AuthType;
-import io.vertx.core.http.HttpMethod;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class WebHandler {
     private String path;
-    private HttpMethod method;
+    private String method;
     private List<AuthType> authenticatorTypes;
-    private Class instanceClass;
+    private Class<?> instanceClass;
     private Method function;
     private List<String> headers;
     private boolean pathAsRegex;
@@ -32,11 +32,14 @@ public class WebHandler {
         this.path = path;
     }
 
-    public HttpMethod getMethod() {
+    public String getMethod() {
         return method;
     }
 
-    public void setMethod(HttpMethod method) {
+    public void setMethod(String method) {
+        if (!MethodName.isValidName(method)) {
+            throw new UnsupportedOperationException(String.format("%s is not a VALID http method.", method));
+        }
         this.method = method;
     }
 
@@ -48,11 +51,11 @@ public class WebHandler {
         this.authenticatorTypes = authenticatorTypes;
     }
 
-    public Class getInstanceClass() {
+    public Class<?> getInstanceClass() {
         return instanceClass;
     }
 
-    public void setInstanceClass(Class instanceClass) {
+    public void setInstanceClass(Class<?> instanceClass) {
         this.instanceClass = instanceClass;
     }
 
@@ -93,7 +96,7 @@ public class WebHandler {
             return false;
         }
         WebHandler wh = (WebHandler) other;
-        return (this.path == wh.path) && (this.method == wh.method);
+        return (Objects.equals(this.path, wh.path)) && (Objects.equals(this.method, wh.method));
     }
 
     public String getKey() {
@@ -102,7 +105,7 @@ public class WebHandler {
 
     public String toString() {
         return String.format("Method: %s, Path: %s, AuthTypes: %s, Class: %s, Method: %s",
-                method.name(),
+                method,
                 path,
                 authenticatorTypes.stream().map(Enum::name).collect(Collectors.joining(" | ")),
                 instanceClass.getCanonicalName(),

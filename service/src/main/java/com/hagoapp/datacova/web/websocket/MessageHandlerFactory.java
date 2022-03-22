@@ -12,7 +12,7 @@ import com.hagoapp.datacova.Application;
 import com.hagoapp.datacova.CoVaLogger;
 import com.hagoapp.datacova.MapSerializer;
 import org.reflections.Reflections;
-import org.reflections.scanners.SubTypesScanner;
+import org.reflections.scanners.Scanners;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -28,7 +28,7 @@ public class MessageHandlerFactory {
     private final static Logger logger = CoVaLogger.getLogger();
 
     static {
-        var ref = new Reflections(Application.class.getPackageName(), new SubTypesScanner());
+        var ref = new Reflections(Application.class.getPackageName(), Scanners.SubTypes);
         ref.getSubTypesOf(IMessageHandler.class).forEach(clz -> {
             try {
                 var constructor = clz.getConstructor();

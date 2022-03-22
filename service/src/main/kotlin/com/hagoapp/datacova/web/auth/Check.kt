@@ -12,9 +12,9 @@ import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.user.UserInfo
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.util.web.AuthUtils
+import com.hagoapp.datacova.web.MethodName
 import com.hagoapp.datacova.web.WebInterface
 import io.netty.handler.codec.http.HttpResponseStatus
-import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.RoutingContext
 
 class Check : WebInterface {
@@ -24,9 +24,9 @@ class Check : WebInterface {
 
     private val logger = CoVaLogger.getLogger()
 
-    override fun requestHandlers(): MutableMap<HttpMethod, WebInterface.Handler> {
+    override fun requestHandlers(): MutableMap<String, WebInterface.Handler> {
         return mutableMapOf(
-            HttpMethod.GET to WebInterface.Handler { context ->
+            MethodName.GET to WebInterface.Handler { context ->
                 val user = AuthUtils.getCurrentUser(context)
                 if (user == null) respondNotLogin(context) else respondLogin(context, user)
             }

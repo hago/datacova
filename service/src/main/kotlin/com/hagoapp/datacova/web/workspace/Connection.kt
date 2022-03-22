@@ -15,13 +15,13 @@ import com.hagoapp.datacova.entity.connection.WorkspaceConnection
 import com.hagoapp.datacova.entity.workspace.WorkSpaceUserRole
 import com.hagoapp.datacova.util.WorkspaceUserRoleUtil
 import com.hagoapp.datacova.util.http.ResponseHelper
+import com.hagoapp.datacova.web.MethodName
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import com.hagoapp.datacova.web.authentication.AuthType
 import com.hagoapp.datacova.web.authentication.Authenticator
 import com.hagoapp.f2t.database.DbConnectionFactory
 import com.hagoapp.f2t.database.config.DbConfigReader
 import io.netty.handler.codec.http.HttpResponseStatus
-import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.RoutingContext
 
 class Connection {
@@ -30,7 +30,7 @@ class Connection {
 
     @WebEndPoint(
         path = "/api/workspace/:id/connections",
-        methods = [HttpMethod.GET],
+        methods = [MethodName.GET],
         authTypes = [AuthType.UserToken]
     )
     fun getConnections(context: RoutingContext) {
@@ -69,7 +69,7 @@ class Connection {
 
     @WebEndPoint(
         path = "/api/connection/verify",
-        methods = [HttpMethod.POST],
+        methods = [MethodName.POST],
         authTypes = [AuthType.UserToken]
     )
     fun verifyConnection(context: RoutingContext) {
@@ -95,7 +95,7 @@ class Connection {
 
     @WebEndPoint(
         path = "/api/workspace/:id/connection/add",
-        methods = [HttpMethod.PUT],
+        methods = [MethodName.PUT],
         authTypes = [AuthType.UserToken]
     )
     fun addConnection(context: RoutingContext) {
@@ -135,7 +135,7 @@ class Connection {
 
     @WebEndPoint(
         path = "/api/workspace/:id/connection/update",
-        methods = [HttpMethod.PUT],
+        methods = [MethodName.PUT],
         authTypes = [AuthType.UserToken]
     )
     fun updateConnection(context: RoutingContext) {
@@ -179,7 +179,7 @@ class Connection {
 
     @WebEndPoint(
         path = "/api/workspace/:wkid/connection/:id/delete",
-        methods = [HttpMethod.DELETE],
+        methods = [MethodName.DELETE],
         authTypes = [AuthType.UserToken]
     )
     fun deleteConnection(context: RoutingContext) {
@@ -208,7 +208,7 @@ class Connection {
 
     @WebEndPoint(
         path = "/api/workspace/:wkid/connection/:id",
-        methods = [HttpMethod.GET],
+        methods = [MethodName.GET],
         authTypes = [AuthType.UserToken]
     )
     fun getConnection(context: RoutingContext) {
@@ -243,7 +243,7 @@ class Connection {
 
     @WebEndPoint(
         path = "/api/workspace/:wkid/connection/:id/tables",
-        methods = [HttpMethod.GET],
+        methods = [MethodName.GET],
         authTypes = [AuthType.UserToken]
     )
     fun listConnectionTables(context: RoutingContext) {

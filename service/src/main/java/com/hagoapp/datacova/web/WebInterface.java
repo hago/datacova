@@ -8,7 +8,6 @@
 package com.hagoapp.datacova.web;
 
 import com.hagoapp.datacova.web.authentication.AuthType;
-import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.web.RoutingContext;
 
 import java.util.ArrayList;
@@ -33,7 +32,7 @@ public interface WebInterface {
         return true;
     }
 
-    Map<HttpMethod, Handler> requestHandlers();
+    Map<String, Handler> requestHandlers();
 
     default List<AuthType> getAuthTypes() {
         return List.of(AuthType.Anonymous);

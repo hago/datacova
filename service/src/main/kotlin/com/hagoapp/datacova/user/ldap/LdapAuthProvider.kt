@@ -16,7 +16,6 @@ import com.hagoapp.datacova.user.UserSearchResultItem
 import com.hagoapp.datacova.user.UserType
 import com.hagoapp.datacova.util.ldap.LdapUtils
 import io.vertx.ext.web.RoutingContext
-import java.lang.UnsupportedOperationException
 
 class LdapAuthProvider : UserAuthProvider {
     companion object {

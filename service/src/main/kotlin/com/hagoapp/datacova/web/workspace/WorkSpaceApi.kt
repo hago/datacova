@@ -6,24 +6,24 @@ import com.hagoapp.datacova.data.execution.TaskExecutionCache.Companion.TASK_EXE
 import com.hagoapp.datacova.data.rules.ValidationRuleCache
 import com.hagoapp.datacova.data.rules.ValidationRuleData
 import com.hagoapp.datacova.data.user.UserCache
-import com.hagoapp.datacova.data.workspace.WorkspaceCache
 import com.hagoapp.datacova.data.workspace.WorkSpaceData
+import com.hagoapp.datacova.data.workspace.WorkspaceCache
 import com.hagoapp.datacova.entity.action.verification.Rule
 import com.hagoapp.datacova.entity.workspace.WorkSpace
 import com.hagoapp.datacova.entity.workspace.WorkSpaceUserRole
 import com.hagoapp.datacova.util.WorkspaceUserRoleUtil
 import com.hagoapp.datacova.util.http.ResponseHelper
+import com.hagoapp.datacova.web.MethodName
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import com.hagoapp.datacova.web.authentication.AuthType
 import com.hagoapp.datacova.web.authentication.Authenticator
 import io.netty.handler.codec.http.HttpResponseStatus
-import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.RoutingContext
 
 class WorkSpaceApi {
 
     @WebEndPoint(
-        methods = [HttpMethod.GET],
+        methods = [MethodName.GET],
         path = "/api/workspaces/mine",
         authTypes = [AuthType.UserToken]
     )
@@ -63,7 +63,7 @@ class WorkSpaceApi {
     }
 
     @WebEndPoint(
-        methods = [HttpMethod.GET],
+        methods = [MethodName.GET],
         path = "/api/workspace/:id",
         authTypes = [AuthType.UserToken]
     )
@@ -84,7 +84,7 @@ class WorkSpaceApi {
     }
 
     @WebEndPoint(
-        methods = [HttpMethod.PUT, HttpMethod.POST],
+        methods = [MethodName.PUT, MethodName.POST],
         path = "/api/workspace/add",
         authTypes = [AuthType.UserToken]
     )
@@ -116,7 +116,7 @@ class WorkSpaceApi {
     }
 
     @WebEndPoint(
-        methods = [HttpMethod.PUT],
+        methods = [MethodName.PUT],
         path = "/api/workspace/update",
         authTypes = [AuthType.UserToken]
     )
@@ -139,7 +139,7 @@ class WorkSpaceApi {
     }
 
     @WebEndPoint(
-        methods = [HttpMethod.GET],
+        methods = [MethodName.GET],
         path = "/api/workspace/:id/executions",
         authTypes = [AuthType.UserToken]
     )
@@ -149,7 +149,7 @@ class WorkSpaceApi {
     }
 
     @WebEndPoint(
-        methods = [HttpMethod.GET],
+        methods = [MethodName.GET],
         path = "/api/workspace/:id/executions/:size",
         authTypes = [AuthType.UserToken]
     )
@@ -160,7 +160,7 @@ class WorkSpaceApi {
     }
 
     @WebEndPoint(
-        methods = [HttpMethod.GET],
+        methods = [MethodName.GET],
         path = "/api/workspace/:id/executions/:start/:size",
         authTypes = [AuthType.UserToken]
     )
@@ -188,7 +188,7 @@ class WorkSpaceApi {
 
     @WebEndPoint(
         path = "/api/execution/:id",
-        methods = [HttpMethod.GET],
+        methods = [MethodName.GET],
         authTypes = [AuthType.UserToken]
     )
     fun getTaskExecution(context: RoutingContext) {
@@ -213,7 +213,7 @@ class WorkSpaceApi {
 
     @WebEndPoint(
         path = "/api/workspace/:wkid/rules/:start/:size",
-        methods = [HttpMethod.GET],
+        methods = [MethodName.GET],
         authTypes = [AuthType.UserToken]
     )
     fun getRules(context: RoutingContext) {
@@ -237,7 +237,7 @@ class WorkSpaceApi {
 
     @WebEndPoint(
         path = "/api/workspace/:wkid/rule",
-        methods = [HttpMethod.POST],
+        methods = [MethodName.POST],
         authTypes = [AuthType.UserToken]
     )
     fun saveRule(context: RoutingContext) {

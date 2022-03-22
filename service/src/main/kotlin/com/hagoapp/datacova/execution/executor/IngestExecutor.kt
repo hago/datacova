@@ -13,11 +13,7 @@ import com.hagoapp.datacova.entity.action.TaskAction
 import com.hagoapp.datacova.entity.action.ingest.TaskActionIngest
 import com.hagoapp.datacova.entity.action.ingest.TaskActionIngest.TASK_ACTION_TYPE_INGEST
 import com.hagoapp.datacova.entity.execution.TaskExecution
-import com.hagoapp.f2t.ColumnDefinition
-import com.hagoapp.f2t.D2TProcess
-import com.hagoapp.f2t.DataTable
-import com.hagoapp.f2t.FileColumnDefinition
-import com.hagoapp.f2t.ProgressNotify
+import com.hagoapp.f2t.*
 import com.hagoapp.f2t.datafile.ParseResult
 
 class IngestExecutor : BaseTaskActionExecutor(), ProgressNotify {

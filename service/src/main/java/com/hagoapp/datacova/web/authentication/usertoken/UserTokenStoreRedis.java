@@ -11,7 +11,6 @@ import com.google.gson.GsonBuilder;
 import com.hagoapp.datacova.data.redis.JedisManager;
 import com.hagoapp.datacova.data.redis.RedisConfig;
 import com.hagoapp.datacova.user.UserInfo;
-import redis.clients.jedis.Jedis;
 
 import java.util.Set;
 

@@ -8,10 +8,10 @@
 package com.hagoapp.datacova.web.verify
 
 import com.hagoapp.datacova.util.http.ResponseHelper
+import com.hagoapp.datacova.web.MethodName
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import com.hagoapp.datacova.web.authentication.AuthType
 import io.netty.handler.codec.http.HttpResponseStatus
-import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.RoutingContext
 import java.util.regex.Pattern
 import java.util.regex.PatternSyntaxException
@@ -20,7 +20,7 @@ class RegexOps {
 
     @WebEndPoint(
         path = "/api/regex/evaluate",
-        methods = [HttpMethod.POST],
+        methods = [MethodName.POST],
         authTypes = [AuthType.UserToken]
     )
     fun verifyRegex(context: RoutingContext) {

@@ -16,7 +16,6 @@ import com.hagoapp.datacova.util.Utils
 import com.hagoapp.datacova.util.web.CaptchaUtils
 import io.vertx.ext.web.RoutingContext
 import java.io.ByteArrayInputStream
-import java.lang.UnsupportedOperationException
 import java.util.*
 
 class LocalUserProvider : UserAuthProvider {

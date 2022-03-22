@@ -9,7 +9,9 @@ package com.hagoapp.datacova.web.workspace
 
 import com.hagoapp.datacova.data.execution.TaskExecutionCache
 import com.hagoapp.datacova.data.execution.TaskExecutionData
-import com.hagoapp.datacova.data.workspace.*
+import com.hagoapp.datacova.data.workspace.TaskCache
+import com.hagoapp.datacova.data.workspace.TaskData
+import com.hagoapp.datacova.data.workspace.WorkspaceCache
 import com.hagoapp.datacova.dispatcher.Dispatcher
 import com.hagoapp.datacova.entity.execution.ExecutionFileInfo
 import com.hagoapp.datacova.entity.execution.TaskExecution
@@ -17,6 +19,7 @@ import com.hagoapp.datacova.entity.task.Task
 import com.hagoapp.datacova.util.FileStoreUtils
 import com.hagoapp.datacova.util.WorkspaceUserRoleUtil
 import com.hagoapp.datacova.util.http.ResponseHelper
+import com.hagoapp.datacova.web.MethodName
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import com.hagoapp.datacova.web.authentication.AuthType
 import com.hagoapp.datacova.web.authentication.Authenticator
@@ -25,13 +28,10 @@ import com.hagoapp.f2t.datafile.FileInfoReader
 import com.hagoapp.f2t.datafile.ReaderFactory
 import com.hagoapp.f2t.datafile.excel.ExcelDataFileParser
 import com.hagoapp.f2t.datafile.excel.FileInfoExcel
-import com.hagoapp.f2t.datafile.excel.FileInfoExcelX
 import com.hagoapp.f2t.util.JDBCTypeUtils
 import io.netty.handler.codec.http.HttpResponseStatus
-import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.RoutingContext
 import java.sql.JDBCType
-import java.time.LocalDate
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
@@ -39,7 +39,7 @@ class Tasks {
 
     @WebEndPoint(
         path = "/api/workspace/:id/tasks",
-        methods = [HttpMethod.GET],
+        methods = [MethodName.GET],
         authTypes = [AuthType.UserToken]
     )
     fun listTasksOfWorkspace(context: RoutingContext) {
@@ -59,7 +59,7 @@ class Tasks {
 
     @WebEndPoint(
         path = "/api/workspace/:id/task/update",
-        methods = [HttpMethod.PUT],
+        methods = [MethodName.PUT],
         authTypes = [AuthType.UserToken]
     )
     fun updateTask(context: RoutingContext) {
@@ -93,7 +93,7 @@ class Tasks {
 
     @WebEndPoint(
         path = "/api/workspace/:wkid/task/:id",
-        methods = [HttpMethod.DELETE],
+        methods = [MethodName.DELETE],
         authTypes = [AuthType.UserToken]
     )
     fun deleteTask(context: RoutingContext) {
@@ -121,7 +121,7 @@ class Tasks {
 
     @WebEndPoint(
         path = "/api/workspace/:wkid/task/:id",
-        methods = [HttpMethod.GET],
+        methods = [MethodName.GET],
         authTypes = [AuthType.UserToken]
     )
     fun getTask(context: RoutingContext) {
@@ -147,7 +147,7 @@ class Tasks {
 
     @WebEndPoint(
         path = "/api/workspace/:wkid/task/:id/run",
-        methods = [HttpMethod.POST],
+        methods = [MethodName.POST],
         authTypes = [AuthType.UserToken]
     )
     fun runTask(context: RoutingContext) {
@@ -203,7 +203,7 @@ class Tasks {
 
     @WebEndPoint(
         path = "/api/file/preview",
-        methods = [HttpMethod.POST],
+        methods = [MethodName.POST],
         authTypes = [AuthType.UserToken]
     )
     fun preview(context: RoutingContext) {

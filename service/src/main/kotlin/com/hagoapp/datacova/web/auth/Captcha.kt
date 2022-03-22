@@ -11,9 +11,9 @@ package com.hagoapp.datacova.web.auth
 import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.util.web.CaptchaUtils
+import com.hagoapp.datacova.web.MethodName
 import com.hagoapp.datacova.web.WebInterface
 import io.netty.handler.codec.http.HttpResponseStatus
-import io.vertx.core.http.HttpMethod
 
 class Captcha : WebInterface {
 
@@ -23,9 +23,9 @@ class Captcha : WebInterface {
         return "/api/auth/captcha"
     }
 
-    override fun requestHandlers(): MutableMap<HttpMethod, WebInterface.Handler> {
+    override fun requestHandlers(): MutableMap<String, WebInterface.Handler> {
         return mutableMapOf(
-            HttpMethod.GET to WebInterface.Handler { context ->
+            MethodName.GET to WebInterface.Handler { context ->
                 val captchaInfo = CaptchaUtils.createCaptcha(context, CaptchaUtils.CaptchaConfig(200, 100, 6))
                 logger.debug("create captcha ${captchaInfo.first}")
                 ResponseHelper.sendResponse(

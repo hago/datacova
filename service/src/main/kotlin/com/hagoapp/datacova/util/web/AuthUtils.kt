@@ -18,7 +18,6 @@ import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.core.http.Cookie
 import io.vertx.core.http.HttpHeaders
 import io.vertx.ext.web.RoutingContext
-import java.lang.Exception
 
 class AuthUtils {
     companion object {
@@ -46,14 +45,14 @@ class AuthUtils {
                 jedis.setex(identity, 86400L, toJson(user))
             }
             val cookie = Cookie.cookie(LOGIN_COOKIE, identity).setPath("/")
-            context.addCookie(cookie)
+            context.response().addCookie(cookie)
             return identity
         }
 
         fun logoutCurrentUser(context: RoutingContext) {
             val token = getCurrentToken(context)
             JedisManager.getJedis(CoVaConfig.getConfig().redis).use { it.del(token) }
-            context.removeCookie(LOGIN_COOKIE)
+            context.response().removeCookie(LOGIN_COOKIE)
         }
 
         fun setImpersonator(context: RoutingContext, impersonatedUser: UserInfo) {
@@ -62,13 +61,13 @@ class AuthUtils {
                 it.setex(identity, 86400L, toJson(impersonatedUser))
             }
             val cookie = Cookie.cookie(IMPERSONATOR_COOKIE, identity).setPath("/")
-            context.addCookie(cookie)
+            context.response().addCookie(cookie)
         }
 
         fun clearImpersonator(context: RoutingContext) {
             val token = getCurrentToken(context)
             JedisManager.getJedis(CoVaConfig.getConfig().redis).use { it.del(token) }
-            context.removeCookie(IMPERSONATOR_COOKIE)
+            context.response().removeCookie(IMPERSONATOR_COOKIE)
         }
 
         fun getCurrentUser(context: RoutingContext, jumpPath: String? = null): UserInfo? {
@@ -95,7 +94,7 @@ class AuthUtils {
         }
 
         fun getCurrentToken(context: RoutingContext): String? {
-            val cookie = context.getCookie(LOGIN_COOKIE)
+            val cookie = context.request().getCookie(LOGIN_COOKIE)
             if (cookie != null) {
                 return cookie.value
             }
@@ -125,7 +124,7 @@ class AuthUtils {
         }
 
         fun getImpersonateToken(context: RoutingContext): String? {
-            val cookie = context.getCookie(IMPERSONATOR_COOKIE)
+            val cookie = context.request().getCookie(IMPERSONATOR_COOKIE)
             if (cookie != null) {
                 return cookie.value
             }

@@ -9,8 +9,8 @@
 package com.hagoapp.datacova.util.web
 
 import com.hagoapp.datacova.util.Utils
-import com.wf.captcha.base.Captcha
 import com.wf.captcha.SpecCaptcha
+import com.wf.captcha.base.Captcha
 import io.vertx.core.http.Cookie
 import io.vertx.ext.web.RoutingContext
 import java.io.ByteArrayOutputStream
@@ -58,7 +58,7 @@ class CaptchaUtils {
             val code = captcha.text()
             val cookie = Cookie.cookie(CAPTCHA_COOKIE, identity)
             cookie.path = "/"
-            routingContext.addCookie(cookie)
+            routingContext.response().addCookie(cookie)
             storage.storeAssociation(identity, code, CAPTCHA_EXPIRY)
             ByteArrayOutputStream().use { baos ->
                 captcha.out(baos)
@@ -73,7 +73,7 @@ class CaptchaUtils {
             caseInSensitive: Boolean = false,
             storage: CaptchaStorage = CaptchaStorageMemory()
         ): Boolean {
-            val cookie = routingContext.getCookie(CAPTCHA_COOKIE) ?: return false
+            val cookie = routingContext.request().getCookie(CAPTCHA_COOKIE) ?: return false
             val identity = cookie.value ?: return false
             val code = storage.findCode(identity) ?: return false
             return userInput.compareTo(code, caseInSensitive) == 0

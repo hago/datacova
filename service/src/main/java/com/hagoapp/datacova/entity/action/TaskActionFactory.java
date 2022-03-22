@@ -15,12 +15,14 @@ import com.hagoapp.datacova.MapSerializer;
 import com.hagoapp.datacova.util.StackTraceWriter;
 import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
-import org.reflections.scanners.SubTypesScanner;
+import org.reflections.scanners.Scanners;
 import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class TaskActionFactory {
 
@@ -29,7 +31,7 @@ public class TaskActionFactory {
     private static final Logger logger = CoVaLogger.getLogger();
 
     static {
-        Reflections r = new Reflections(Application.class.getPackageName(), new SubTypesScanner());
+        Reflections r = new Reflections(Application.class.getPackageName(), Scanners.SubTypes);
         Set<Class<? extends TaskAction>> actionClasses = r.getSubTypesOf(TaskAction.class);
         actionClasses.forEach(actionClass -> {
             try {

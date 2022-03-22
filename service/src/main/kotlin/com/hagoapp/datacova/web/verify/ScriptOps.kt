@@ -15,15 +15,13 @@ import com.hagoapp.datacova.util.EmbedPythonHelper
 import com.hagoapp.datacova.util.LuaHelper
 import com.hagoapp.datacova.util.StackTraceWriter
 import com.hagoapp.datacova.util.http.ResponseHelper
+import com.hagoapp.datacova.web.MethodName
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import com.hagoapp.datacova.web.authentication.AuthType
 import com.hagoapp.f2t.util.DateTimeTypeUtils
-import com.hagoapp.f2t.util.JDBCTypeUtils
 import io.netty.handler.codec.http.HttpResponseStatus.*
-import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.RoutingContext
 import org.luaj.vm2.LuaError
-import org.luaj.vm2.LuaValue
 import org.luaj.vm2.lib.jse.JsePlatform
 
 class ScriptOps {
@@ -31,7 +29,7 @@ class ScriptOps {
     private val logger = CoVaLogger.getLogger()
 
     @WebEndPoint(
-        methods = [HttpMethod.POST],
+        methods = [MethodName.POST],
         path = "/api/lua/evaluate",
         authTypes = [AuthType.UserToken]
     )
@@ -99,7 +97,7 @@ class ScriptOps {
     )
 
     @WebEndPoint(
-        methods = [HttpMethod.POST],
+        methods = [MethodName.POST],
         path = "/api/python/evaluate",
         authTypes = [AuthType.UserToken]
     )

@@ -17,16 +17,16 @@ import com.hagoapp.datacova.user.UserInfo
 import com.hagoapp.datacova.util.KeyValuePair
 import com.hagoapp.datacova.util.http.RequestHelper
 import com.hagoapp.datacova.util.http.ResponseHelper
+import com.hagoapp.datacova.web.MethodName
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import com.hagoapp.datacova.web.authentication.AuthType
 import com.hagoapp.datacova.web.authentication.Authenticator
 import io.netty.handler.codec.http.HttpResponseStatus
-import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.RoutingContext
 
 class KeyValue {
 
-    @WebEndPoint(methods = [HttpMethod.POST, HttpMethod.PUT], path = "/store/pair", authTypes = [AuthType.UserToken])
+    @WebEndPoint(methods = [MethodName.POST, MethodName.PUT], path = "/store/pair", authTypes = [AuthType.UserToken])
     fun storeKeyValue(context: RoutingContext) {
         val kv = RequestHelper.readBodyClass(context, KeyValuePair::class.java)
         if (kv != null) {
@@ -42,7 +42,7 @@ class KeyValue {
         }
     }
 
-    @WebEndPoint(methods = [HttpMethod.POST, HttpMethod.PUT], path = "/store/pairs", authTypes = [AuthType.UserToken])
+    @WebEndPoint(methods = [MethodName.POST, MethodName.PUT], path = "/store/pairs", authTypes = [AuthType.UserToken])
     fun storeKeyValues(context: RoutingContext) {
         val token = object : TypeToken<List<KeyValuePair>>() {}
         val json = RequestHelper.readBodyString(context)
@@ -70,7 +70,7 @@ class KeyValue {
         }
     }
 
-    @WebEndPoint(methods = [HttpMethod.GET], path = "/store/pair/:key", authTypes = [AuthType.UserToken])
+    @WebEndPoint(methods = [MethodName.GET], path = "/store/pair/:key", authTypes = [AuthType.UserToken])
     fun readKey(context: RoutingContext) {
         JedisManager.getJedis(CoVaConfig.getConfig().redis).use {
             val key = context.request().getParam("key")
@@ -87,7 +87,7 @@ class KeyValue {
         }
     }
 
-    @WebEndPoint(methods = [HttpMethod.POST], path = "/store/pairs/fetch", authTypes = [AuthType.UserToken])
+    @WebEndPoint(methods = [MethodName.POST], path = "/store/pairs/fetch", authTypes = [AuthType.UserToken])
     fun readMultipleKeys(context: RoutingContext) {
         val json = RequestHelper.readBodyString(context)
         val token = object : TypeToken<List<KeyValuePair>>() {}

@@ -10,15 +10,15 @@ package com.hagoapp.datacova.web.auth
 
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.util.web.AuthUtils
+import com.hagoapp.datacova.web.MethodName
 import com.hagoapp.datacova.web.WebInterface
 import io.netty.handler.codec.http.HttpResponseStatus
-import io.vertx.core.http.HttpMethod
 
 class Logout : WebInterface {
 
-    override fun requestHandlers(): Map<HttpMethod, WebInterface.Handler> {
+    override fun requestHandlers(): Map<String, WebInterface.Handler> {
         return mapOf(
-            HttpMethod.GET to WebInterface.Handler { context ->
+            MethodName.GET to WebInterface.Handler { context ->
                 AuthUtils.clearImpersonator(context)
                 AuthUtils.logoutCurrentUser(context)
                 ResponseHelper.sendResponse(context, HttpResponseStatus.OK, mapOf("code" to 0))

@@ -12,15 +12,15 @@ import com.hagoapp.datacova.ExecutorManager
 import com.hagoapp.datacova.config.ExecutorConfig
 import com.hagoapp.datacova.entity.internal.ExecutorStatus
 import com.hagoapp.datacova.util.http.ResponseHelper
+import com.hagoapp.datacova.web.MethodName
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import io.netty.handler.codec.http.HttpResponseStatus
-import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.RoutingContext
 
 class Dispatcher {
     @WebEndPoint(
         path = "/api/dispatcher/register",
-        methods = [HttpMethod.POST]
+        methods = [MethodName.POST]
     )
     fun register(context: RoutingContext) {
         val json = context.bodyAsString
@@ -38,7 +38,7 @@ class Dispatcher {
 
     @WebEndPoint(
         path = "/api/dispatcher/heartbeat",
-        methods = [HttpMethod.POST]
+        methods = [MethodName.POST]
     )
     fun heartbeat(context: RoutingContext) {
         val json = context.bodyAsString
@@ -53,7 +53,7 @@ class Dispatcher {
 
     @WebEndPoint(
         path = "/api/execute/status",
-        methods = [HttpMethod.GET]
+        methods = [MethodName.GET]
     )
     fun status(context: RoutingContext) {
         val executors = ExecutorManager.getManager().executors.values.sortedWith() { a, b ->

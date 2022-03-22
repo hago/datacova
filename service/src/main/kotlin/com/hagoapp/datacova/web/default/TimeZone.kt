@@ -8,10 +8,10 @@
 package com.hagoapp.datacova.web.default
 
 import com.hagoapp.datacova.util.http.ResponseHelper
+import com.hagoapp.datacova.web.MethodName
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import com.hagoapp.datacova.web.authentication.AuthType
 import io.netty.handler.codec.http.HttpResponseStatus
-import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.RoutingContext
 import java.time.Instant
 import java.time.ZoneId
@@ -19,7 +19,7 @@ import java.time.ZoneId
 class TimeZone {
     @WebEndPoint(
         path = "/api/default/timezones",
-        methods = [HttpMethod.GET],
+        methods = [MethodName.GET],
         authTypes = [AuthType.UserToken]
     )
     fun getTimeZones(context: RoutingContext) {
