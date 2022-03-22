@@ -10,7 +10,7 @@ package com.hagoapp.datacova.user
 
 import com.hagoapp.datacova.CoVaLogger
 import org.reflections.Reflections
-import org.reflections.scanners.SubTypesScanner
+import org.reflections.scanners.Scanners
 
 class UserAuthFactory private constructor() {
     companion object {
@@ -24,7 +24,7 @@ class UserAuthFactory private constructor() {
     private val providers: MutableMap<String, UserAuthProvider> = mutableMapOf()
 
     init {
-        val ref = Reflections("com.hagoapp.datacova", SubTypesScanner())
+        val ref = Reflections("com.hagoapp.datacova", Scanners.SubTypes)
         val logger = CoVaLogger.getLogger()
         ref.getSubTypesOf(UserAuthProvider::class.java).forEach { clz ->
             logger.debug("Authentication provider found: " + clz.canonicalName)

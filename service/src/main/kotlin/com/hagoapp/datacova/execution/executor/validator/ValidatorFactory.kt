@@ -13,7 +13,7 @@ import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.entity.action.verification.Configuration
 import com.hagoapp.datacova.execution.Validator
 import org.reflections.Reflections
-import org.reflections.scanners.SubTypesScanner
+import org.reflections.scanners.Scanners
 import java.lang.reflect.Constructor
 
 class ValidatorFactory {
@@ -23,7 +23,7 @@ class ValidatorFactory {
         private val logger = CoVaLogger.getLogger()
 
         init {
-            val r = Reflections(Application::class.java.packageName, SubTypesScanner())
+            val r = Reflections(Application::class.java.packageName, Scanners.SubTypes)
             r.getSubTypesOf(Validator::class.java).forEach { clz ->
                 try {
                     val constructor = clz.getConstructor()

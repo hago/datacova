@@ -13,7 +13,7 @@ import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.distribute.Distributor
 import com.hagoapp.datacova.entity.action.distribute.TaskActionDistribute
 import org.reflections.Reflections
-import org.reflections.scanners.SubTypesScanner
+import org.reflections.scanners.Scanners
 import java.lang.reflect.Constructor
 
 class DistributorFactory {
@@ -24,7 +24,7 @@ class DistributorFactory {
         private val distributorMap = mutableMapOf<Int, Constructor<out Distributor>>()
 
         init {
-            val r = Reflections(Application::class.java.packageName, SubTypesScanner())
+            val r = Reflections(Application::class.java.packageName, Scanners.SubTypes)
             r.getSubTypesOf(Distributor::class.java).forEach { clz ->
                 val constructor = clz.getConstructor()
                 val instance = constructor.newInstance()

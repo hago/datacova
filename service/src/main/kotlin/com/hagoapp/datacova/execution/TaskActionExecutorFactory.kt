@@ -14,7 +14,7 @@ import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.entity.action.TaskAction
 import com.hagoapp.datacova.execution.executor.BaseTaskActionExecutor
 import org.reflections.Reflections
-import org.reflections.scanners.SubTypesScanner
+import org.reflections.scanners.Scanners
 import java.lang.reflect.Constructor
 
 class TaskActionExecutorFactory {
@@ -24,7 +24,7 @@ class TaskActionExecutorFactory {
         private val logger = CoVaLogger.getLogger()
 
         init {
-            val r = Reflections(Application::class.java.packageName, SubTypesScanner())
+            val r = Reflections(Application::class.java.packageName, Scanners.SubTypes)
             r.getSubTypesOf(BaseTaskActionExecutor::class.java).forEach { executor ->
                 try {
                     val creator = executor.getConstructor()
