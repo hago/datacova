@@ -7,14 +7,28 @@
 
 package com.hagoapp.datacova.execution.distribute
 
+import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.distribute.Distributor
+import com.hagoapp.datacova.entity.action.distribute.TaskActionDistribute
+import com.hagoapp.datacova.entity.action.distribute.conf.AzureBlobConfig
 
 class AzureBlobDistributor: Distributor() {
-    override fun distribute(source: String?) {
-        TODO("Not yet implemented")
+
+    private lateinit var config: AzureBlobConfig
+
+    override fun init(action: TaskActionDistribute?) {
+        super.init(action)
+        if ((action == null) || action.configuration !is AzureBlobConfig) {
+            throw CoVaException("null distribute action!")
+        }
+        config = action.configuration as AzureBlobConfig
     }
 
-    override fun supportedDistributionType(): Int {
-        TODO("Not yet implemented")
+    override fun distribute(source: String) {
+        TODO()
+    }
+
+    override fun supportedDistributionType(): String {
+        return AzureBlobConfig.DISTRIBUTION_TYPE_AZURE_BLOB
     }
 }

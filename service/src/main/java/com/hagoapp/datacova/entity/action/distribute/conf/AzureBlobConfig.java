@@ -11,11 +11,12 @@ import com.hagoapp.datacova.entity.action.distribute.Configuration;
 
 public class AzureBlobConfig extends Configuration {
 
-    public static final int DISTRIBUTION_TYPE_AZURE_BLOB = 10;
+    public static final String DISTRIBUTION_TYPE_AZURE_BLOB = "blob";
 
     private String sourceFileName;
     private String endPoint;
     private String token;
+    private String containerName;
 
     public String getSourceFileName() {
         return sourceFileName;
@@ -41,8 +42,16 @@ public class AzureBlobConfig extends Configuration {
         this.token = token;
     }
 
+    public String getContainerName() {
+        return containerName;
+    }
+
+    public void setContainerName(String containerName) {
+        this.containerName = containerName;
+    }
+
     @Override
-    public int getType() {
+    public String getType() {
         return DISTRIBUTION_TYPE_AZURE_BLOB;
     }
 }
