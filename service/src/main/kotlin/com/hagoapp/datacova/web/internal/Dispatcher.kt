@@ -9,7 +9,7 @@ package com.hagoapp.datacova.web.internal
 
 import com.google.gson.Gson
 import com.hagoapp.datacova.ExecutorManager
-import com.hagoapp.datacova.config.init.ExecutorConfig
+import com.hagoapp.datacova.config.ExecutorConfig
 import com.hagoapp.datacova.entity.internal.ExecutorStatus
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.annotation.WebEndPoint

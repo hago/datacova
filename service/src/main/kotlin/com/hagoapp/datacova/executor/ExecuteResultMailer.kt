@@ -7,7 +7,7 @@
 
 package com.hagoapp.datacova.executor
 
-import com.hagoapp.datacova.config.init.CoVaConfig
+import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.user.UserCache
 import com.hagoapp.datacova.entity.execution.ExecutionDetail
 import com.hagoapp.datacova.entity.execution.TaskExecution

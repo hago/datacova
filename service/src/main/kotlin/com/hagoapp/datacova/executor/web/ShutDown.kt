@@ -7,7 +7,7 @@
 
 package com.hagoapp.datacova.executor.web
 
-import com.hagoapp.datacova.config.init.CoVaConfig
+import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.executor.Executor
 import com.hagoapp.datacova.util.http.RequestHelper
 import com.hagoapp.datacova.util.http.ResponseHelper

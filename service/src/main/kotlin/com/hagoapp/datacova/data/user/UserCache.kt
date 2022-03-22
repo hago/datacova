@@ -8,7 +8,7 @@
 package com.hagoapp.datacova.data.user
 
 import com.google.gson.Gson
-import com.hagoapp.datacova.config.init.CoVaConfig
+import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.RedisCacheReader
 import com.hagoapp.datacova.data.RedisCacheReader.GenericLoader
 import com.hagoapp.datacova.data.redis.JedisManager

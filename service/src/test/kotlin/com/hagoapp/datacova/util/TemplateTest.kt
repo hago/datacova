@@ -7,7 +7,7 @@
 
 package com.hagoapp.datacova.util
 
-import com.hagoapp.datacova.config.init.CoVaConfig
+import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.user.UserInfo
 import com.hagoapp.datacova.util.text.TemplateManager
 import org.junit.jupiter.api.Assertions

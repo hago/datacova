@@ -7,8 +7,8 @@
 
 package com.hagoapp.datacova.data.user
 
-import com.hagoapp.datacova.config.init.CoVaConfig
-import com.hagoapp.datacova.config.init.DatabaseConfig
+import com.hagoapp.datacova.config.CoVaConfig
+import com.hagoapp.datacova.config.DatabaseConfig
 import com.hagoapp.datacova.data.CoVaDatabase
 import com.hagoapp.datacova.user.UserInfo
 import com.hagoapp.datacova.user.permission.Permission

@@ -5,7 +5,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package com.hagoapp.datacova.config.init;
+package com.hagoapp.datacova.config;
 
 /**
  * This is the config to start executor service of application.

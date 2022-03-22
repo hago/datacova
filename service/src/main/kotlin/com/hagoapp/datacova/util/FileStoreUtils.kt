@@ -9,7 +9,7 @@
 package com.hagoapp.datacova.util
 
 import com.hagoapp.datacova.CoVaException
-import com.hagoapp.datacova.config.init.CoVaConfig
+import com.hagoapp.datacova.config.CoVaConfig
 import java.io.*
 import java.nio.charset.Charset
 import java.nio.file.Files
