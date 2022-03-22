@@ -51,6 +51,7 @@ dependencies {
     implementation group: 'com.github.felfert', name: 'cidrutils', version: '1.4'
 
     implementation group: 'com.jcraft', name: 'jsch', version: '0.1.55'
+    implementation group: 'com.azure', name: 'azure-storage-blob', version: '12.15.0'
 
     implementation group: 'com.sun.mail', name: 'javax.mail', version: '1.6.2'
 
