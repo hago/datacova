@@ -7,7 +7,7 @@
 
 package com.hagoapp.datacova.user.ldap
 
-import com.hagoapp.datacova.config.indb.LdapAttributes
+import com.hagoapp.datacova.config.ldap.LdapAttributes
 import com.hagoapp.datacova.data.user.UserCache
 import com.hagoapp.datacova.data.user.UserData
 import com.hagoapp.datacova.user.UserAuthProvider

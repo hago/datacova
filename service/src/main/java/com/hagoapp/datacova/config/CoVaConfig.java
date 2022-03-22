@@ -5,7 +5,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package com.hagoapp.datacova.config.init;
+package com.hagoapp.datacova.config;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;

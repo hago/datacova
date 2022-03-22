@@ -10,8 +10,8 @@ package com.hagoapp.datacova.web;
 
 import com.hagoapp.datacova.CoVaException;
 import com.hagoapp.datacova.CoVaLogger;
-import com.hagoapp.datacova.config.init.WebConfig;
-import com.hagoapp.datacova.config.init.WebSocketConfig;
+import com.hagoapp.datacova.config.WebConfig;
+import com.hagoapp.datacova.config.WebSocketConfig;
 import com.hagoapp.datacova.user.UserInfo;
 import com.hagoapp.datacova.util.StackTraceWriter;
 import com.hagoapp.datacova.util.http.RequestHelper;

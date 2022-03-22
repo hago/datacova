@@ -23,7 +23,7 @@ public class SFtpConfig extends Configuration implements IDistributeExtra {
     private String privateKeyFile;
     private String passPhrase;
 
-    public static final int DISTRIBUTE_TYPE_SFTP = 2;
+    public static final String DISTRIBUTE_TYPE_SFTP = "sftp";
 
     public SFtpConfig() {
         super();

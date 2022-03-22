@@ -62,7 +62,7 @@ class FtpDistributor() : Distributor() {
         }
     }
 
-    override fun supportedDistributionType(): Int {
+    override fun supportedDistributionType(): String {
         return FtpConfig.DISTRIBUTION_TYPE_FTP
     }
 }

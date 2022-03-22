@@ -7,7 +7,7 @@
 
 package com.hagoapp.datacova.data
 
-import com.hagoapp.datacova.config.init.CoVaConfig
+import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.RedisCacheReader.GenericLoader
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

@@ -2,8 +2,8 @@ package com.hagoapp.datacova.util.ldap;
 
 import com.hagoapp.datacova.CoVaException;
 import com.hagoapp.datacova.CoVaLogger;
-import com.hagoapp.datacova.config.indb.LdapAttributes;
-import com.hagoapp.datacova.config.indb.LdapConfig;
+import com.hagoapp.datacova.config.ldap.LdapAttributes;
+import com.hagoapp.datacova.config.ldap.LdapConfig;
 import org.apache.directory.api.ldap.model.cursor.SearchCursor;
 import org.apache.directory.api.ldap.model.entry.Attribute;
 import org.apache.directory.api.ldap.model.entry.Entry;

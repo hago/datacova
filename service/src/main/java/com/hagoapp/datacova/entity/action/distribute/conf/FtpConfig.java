@@ -5,7 +5,7 @@ import com.hagoapp.datacova.entity.action.distribute.Configuration;
 public class FtpConfig extends Configuration {
 
     public static final String ANONYMOUS_LOGIN = "anonymous";
-    public static final int DISTRIBUTION_TYPE_FTP = 1;
+    public static final String DISTRIBUTION_TYPE_FTP = "ftp";
 
     private String host;
     private int port = 21;

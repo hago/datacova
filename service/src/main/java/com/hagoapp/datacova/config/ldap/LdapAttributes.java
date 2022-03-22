@@ -5,7 +5,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package com.hagoapp.datacova.config.indb;
+package com.hagoapp.datacova.config.ldap;
 
 import com.hagoapp.datacova.JsonStringify;
 
