@@ -61,19 +61,19 @@
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-core</artifactId>
-      <version>3.9.4</version>
+      <version>4.2.5</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-lang-kotlin</artifactId>
-      <version>3.9.4</version>
+      <version>4.2.5</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-web</artifactId>
-      <version>3.9.4</version>
+      <version>4.2.5</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
@@ -145,7 +145,7 @@
     <dependency>
       <groupId>org.reflections</groupId>
       <artifactId>reflections</artifactId>
-      <version>0.9.11</version>
+      <version>0.10.2</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
@@ -164,6 +164,12 @@
       <groupId>com.jcraft</groupId>
       <artifactId>jsch</artifactId>
       <version>0.1.55</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.azure</groupId>
+      <artifactId>azure-storage-blob</artifactId>
+      <version>12.15.0</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
