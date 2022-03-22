@@ -14,12 +14,12 @@ import com.hagoapp.datacova.JsonStringify;
  * Configuration for distribution.
  */
 public class Configuration implements JsonStringify {
-    protected int type;
+    protected String type;
     protected boolean copyOriginal = false;
     protected boolean overwriteExisted = false;
     protected String targetFileName;
 
-    public int getType() {
+    public String getType() {
         return type;
     }
 

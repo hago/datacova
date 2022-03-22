@@ -27,5 +27,5 @@ abstract public class Distributor {
 
     abstract public void distribute(String source);
 
-    abstract public int supportedDistributionType();
+    abstract public String supportedDistributionType();
 }

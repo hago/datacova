@@ -21,7 +21,7 @@ class DistributorFactory {
 
         private val logger = CoVaLogger.getLogger()
 
-        private val distributorMap = mutableMapOf<Int, Constructor<out Distributor>>()
+        private val distributorMap = mutableMapOf<String, Constructor<out Distributor>>()
 
         init {
             val r = Reflections(Application::class.java.packageName, Scanners.SubTypes)

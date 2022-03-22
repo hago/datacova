@@ -14,7 +14,7 @@ import com.hagoapp.datacova.CoVaException;
 import com.hagoapp.datacova.CoVaLogger;
 import com.hagoapp.datacova.MapSerializer;
 import org.reflections.Reflections;
-import org.reflections.scanners.SubTypesScanner;
+import org.reflections.scanners.Scanners;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -24,16 +24,16 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ConfigurationFactory {
 
-    private static final Map<Integer, Class<? extends Configuration>> typeMap = new ConcurrentHashMap<>();
+    private static final Map<String, Class<? extends Configuration>> typeMap = new ConcurrentHashMap<String, Class<? extends Configuration>>();
     private static final Logger logger = CoVaLogger.getLogger();
 
     static {
-        Reflections r = new Reflections(Application.class.getPackageName(), new SubTypesScanner());
+        Reflections r = new Reflections(Application.class.getPackageName(), Scanners.SubTypes);
         r.getSubTypesOf(Configuration.class).forEach(clz -> {
             try {
                 var constructor = clz.getConstructor();
                 var instance = constructor.newInstance();
-                var existed = typeMap.put(instance.getType(), clz);
+                var existed = typeMap.put(instance.getType().toLowerCase(), clz);
                 if (existed != null) {
                     logger.warn("Distribute action configuration type {} from {} is overwritten by {}", instance.getType(),
                             existed.getCanonicalName(), clz.getCanonicalName());
@@ -61,18 +61,15 @@ public class ConfigurationFactory {
                 logger.error("No verify configuration type found: '{}'", json);
                 return null;
             }
-            var typeInt = Integer.valueOf(content.get("type").toString());
-            var clz = typeMap.get(typeInt);
+            var typeName = content.get("type").toString().toLowerCase();
+            var clz = typeMap.get(typeName);
             if (clz == null) {
-                logger.error("Corresponding class for distribute action configuration with type {} not found", typeInt);
+                logger.error("Corresponding class for distribute action configuration with type {} not found", typeName);
                 return null;
             }
             var conf = new Gson().fromJson(json, clz);
             conf.checkValidity();
             return conf;
-        } catch (NumberFormatException e) {
-            logger.error("Creation of distribute action configuration with type {} failed", content.get("type"));
-            return null;
         } catch (JsonSyntaxException e) {
             logger.error("Creation of distribute action configuration from '{}' failed", json);
             return null;

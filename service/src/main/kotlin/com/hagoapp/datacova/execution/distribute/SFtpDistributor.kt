@@ -85,7 +85,7 @@ class SFtpDistributor() : Distributor() {
         }
     }
 
-    override fun supportedDistributionType(): Int {
+    override fun supportedDistributionType(): String {
         return SFtpConfig.DISTRIBUTE_TYPE_SFTP
     }
 }
