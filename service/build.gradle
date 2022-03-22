@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.jetbrains.kotlin.jvm' version '1.6.10'
     id 'com.github.johnrengelman.shadow' version '6.1.0'
+    id 'maven-publish'
 }
 
 group 'com.hagoapp'
@@ -43,7 +44,7 @@ dependencies {
     implementation group: 'redis.clients', name: 'jedis', version: "3.7.0"
     implementation group: "org.postgresql", name: "postgresql", version: "42.3.3"
 
-    implementation group: 'org.reflections', name: 'reflections', version: '0.9.11'
+    implementation group: 'org.reflections', name: 'reflections', version: '0.10.2'
 
     implementation group: "org.luaj", name: "luaj-jse", version: "3.0.1"
     implementation group: 'org.python', name: 'jython-standalone', version: '2.7.2'
@@ -105,4 +106,15 @@ jar {
 
 shadowJar {
     zip64 true
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        mavenLocal()
+    }
 }
