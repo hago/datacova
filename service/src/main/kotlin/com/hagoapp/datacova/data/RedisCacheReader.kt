@@ -11,7 +11,6 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonSyntaxException
 import com.hagoapp.datacova.Application
-import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.redis.JedisManager
 import redis.clients.jedis.Jedis
 import java.lang.reflect.Type
@@ -163,6 +162,9 @@ class RedisCacheReader<T> private constructor() {
 
     interface GenericLoader<T> {
         fun perform(vararg params: Any?): T?
+        fun performBatch(paramsBatch: List<List<Any?>>): List<T?> {
+            return paramsBatch.map { params -> perform(*params.toTypedArray()) }
+        }
     }
 
     fun readData(vararg params: Any?): T? {
@@ -171,12 +173,32 @@ class RedisCacheReader<T> private constructor() {
         }
     }
 
-    fun readBatchData(params: List<List<Any?>>): List<T?> {
-        val keys = params.map { createKey(it.toTypedArray()) }
+    fun readBatchData(paramsBatch: List<List<Any?>>): List<T?> {
+        val keys = paramsBatch.map { createKey(it.toTypedArray()) }
+        val gson = GsonBuilder().create()
         JedisManager.getJedis().use { jedis ->
-            val ret = jedis.mget(*keys.toTypedArray())
-            val notFound = ret.mapIndexedNotNull { index, _ -> index }
-            TODO()
+            val current = if (skipCache) paramsBatch.map { null }
+            else jedis.mget(*keys.toTypedArray()).map { if (it == "nil") null else it }
+            val indexesOfNotFound = current.mapIndexed { i, s -> Pair(i, s) }
+                .filter { it.second == null }.map { it.first }
+            val missing = indexesOfNotFound.map { index -> Pair(index, paramsBatch[index]) }
+            val supplements = if (missing.isNotEmpty()) {
+                val paramsMissing = missing.map { it.second }
+                val fetchData = loadFunction?.performBatch(paramsMissing) ?: paramsBatch.map { null }
+                val batchSetSequence = fetchData.mapIndexedNotNull { i, item ->
+                    val k = createKey(*paramsMissing[i].toTypedArray())
+                    listOf(k, gson.toJson(item))
+                }.flatten()
+                jedis.mset(*batchSetSequence.toTypedArray())
+                missing.associate { (i, _) -> Pair(i, fetchData[i]) }
+            } else mapOf()
+            return current.mapIndexed { i, s ->
+                when {
+                    s != null -> gson.fromJson<T>(s, type)
+                    supplements.containsKey(i) -> supplements.getValue(i)
+                    else -> null
+                }
+            }
         }
     }
 

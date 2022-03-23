@@ -10,7 +10,8 @@ package com.hagoapp.datacova.data.redis
 import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.ShutDownManager
 import com.hagoapp.datacova.ShutDownWatcher
-import com.hagoapp.datacova.config.CoVaConfig
+import org.reflections.Reflections
+import org.reflections.scanners.Scanners
 import org.slf4j.Logger
 import redis.clients.jedis.Jedis
 import redis.clients.jedis.JedisPool
@@ -25,13 +26,16 @@ class JedisManager private constructor() {
     private class PortalRedisCloser : ShutDownWatcher {
 
         override fun shutdown(): Boolean {
-            return try {
-                pool.close()
-                true
-            } catch (e: Exception) {
-                logger.error("Closing internal redis pool error: {}", e.message)
-                false
+            val results = pools.map { (config, pool) ->
+                try {
+                    pool.first.close()
+                    true
+                } catch (ignored: Throwable) {
+                    logger.error("Closing internal redis pool {} error: {}", config, ignored.message)
+                    false
+                }
             }
+            return results.all { it }
         }
 
         override fun getName(): String {
@@ -41,15 +45,19 @@ class JedisManager private constructor() {
 
     companion object {
         private val logger: Logger = CoVaLogger.getLogger()
-        private var pool: Pool<Jedis>
-        private var dbIndex = 0
+        private val pools = mutableMapOf<RedisConfig, Pair<Pool<Jedis>, Int>>()
+        private val defaultConfig: RedisConfig?
+
+        interface ConfigProvider {
+            fun getConfig(): RedisConfig
+        }
 
         init {
-            val config = CoVaConfig.getConfig().redis
-            pool = if (config.isSentinel) createSentinelPool(config) else createServerPool(config)
-            dbIndex = config.database
             val closer = PortalRedisCloser()
             ShutDownManager.watch(closer)
+            defaultConfig = Reflections("", Scanners.SubTypes)
+                .getSubTypesOf(ConfigProvider::class.java).firstOrNull()
+                ?.getConstructor()?.newInstance()?.getConfig()
         }
 
         private fun createSentinelPool(config: RedisConfig): Pool<Jedis> {
@@ -82,9 +90,22 @@ class JedisManager private constructor() {
          *
          * @return jedis instance
          */
+        @JvmStatic
         fun getJedis(): Jedis {
-            val jedis = pool.resource
-            jedis.select(dbIndex)
+            defaultConfig ?: throw UnsupportedOperationException("no default redis config defined")
+            return getJedis(defaultConfig)
+        }
+
+        @JvmStatic
+        fun getJedis(config: RedisConfig): Jedis {
+            if (!pools.containsKey(config)) {
+                val pool0 = if (config.isSentinel) createSentinelPool(config) else createServerPool(config)
+                val dbIndex = config.database
+                pools[config] = Pair(pool0, dbIndex)
+            }
+            val pool = pools.getValue(config)
+            val jedis = pool.first.resource
+            jedis.select(pool.second)
             return jedis
         }
     }
