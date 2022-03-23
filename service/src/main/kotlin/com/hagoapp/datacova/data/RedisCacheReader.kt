@@ -166,8 +166,17 @@ class RedisCacheReader<T> private constructor() {
     }
 
     fun readData(vararg params: Any?): T? {
-        JedisManager.getJedis(CoVaConfig.getConfig().redis).use {
+        JedisManager.getJedis().use {
             return doRedisOps(it, *params)
+        }
+    }
+
+    fun readBatchData(params: List<List<Any?>>): List<T?> {
+        val keys = params.map { createKey(it.toTypedArray()) }
+        JedisManager.getJedis().use { jedis ->
+            val ret = jedis.mget(*keys.toTypedArray())
+            val notFound = ret.mapIndexedNotNull { index, _ -> index }
+            TODO()
         }
     }
 
@@ -222,6 +231,6 @@ class RedisCacheReader<T> private constructor() {
     fun clearData(vararg params: Any?) {
         actualKey = key ?: createKey(*params)
         //println("clear key $actualKey")
-        JedisManager.getJedis(CoVaConfig.getConfig().redis).use { it.del(actualKey) }
+        JedisManager.getJedis().use { it.del(actualKey) }
     }
 }
