@@ -46,7 +46,7 @@ class S3Distributor : Distributor() {
             .withCredentials(buildCredentialProvider(config))
         if (config.region != null) {
             val region = try {
-                val r = Regions.valueOf(config.region)
+                val r = Regions.fromName(config.region)
                 logger.debug("region {} is applied", config.region)
                 r
             } catch (e: IllegalArgumentException) {
