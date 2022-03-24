@@ -11,7 +11,9 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonSyntaxException
 import com.hagoapp.datacova.Application
+import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.redis.JedisManager
+import com.hagoapp.datacova.data.redis.RedisConfig
 import redis.clients.jedis.Jedis
 import java.lang.reflect.Type
 
@@ -115,6 +117,8 @@ class RedisCacheReader<T> private constructor() {
     private var skipCache: Boolean = false
     private var cacheName: String? = null
     private lateinit var actualKey: String
+    private var redisConfig: RedisConfig? = null
+        get() = field ?: CoVaConfig.getConfig().redis
 
     val lastKey: String
         get() = actualKey
@@ -155,6 +159,11 @@ class RedisCacheReader<T> private constructor() {
             return this
         }
 
+        fun withJedisConfig(redisConfig: RedisConfig): Builder<T> {
+            reader.redisConfig = redisConfig
+            return this
+        }
+
         fun create(): RedisCacheReader<T> {
             return reader
         }
@@ -167,16 +176,35 @@ class RedisCacheReader<T> private constructor() {
         }
     }
 
+    private fun createJedis(): Jedis {
+        return JedisManager.getJedis(redisConfig!!)
+    }
+
     fun readData(vararg params: Any?): T? {
-        JedisManager.getJedis().use {
-            return doRedisOps(it, *params)
+        actualKey = key ?: createKey(*params)
+        createJedis().use { jedis ->
+            return when {
+                loadFunction == null -> {
+                    val jsonStr = jedis.get(actualKey)
+                    if (jsonStr == null) null else Gson().fromJson<T>(jsonStr, type)
+                }
+                skipCache -> doDataLoadAndUpdateRedis(jedis, actualKey, *params)
+                else -> {
+                    val jsonStr = jedis.get(actualKey)
+                    if (jsonStr == null) {
+                        doDataLoadAndUpdateRedis(jedis, actualKey, *params)
+                    } else {
+                        Gson().fromJson<T>(jsonStr, type)
+                    }
+                }
+            }
         }
     }
 
     fun readBatchData(paramsBatch: List<List<Any?>>): List<T?> {
         val keys = paramsBatch.map { createKey(it.toTypedArray()) }
         val gson = GsonBuilder().create()
-        JedisManager.getJedis().use { jedis ->
+        createJedis().use { jedis ->
             val current = if (skipCache) paramsBatch.map { null }
             else jedis.mget(*keys.toTypedArray()).map { if (it == "nil") null else it }
             val indexesOfNotFound = current.mapIndexed { i, s -> Pair(i, s) }
@@ -197,25 +225,6 @@ class RedisCacheReader<T> private constructor() {
                     s != null -> gson.fromJson<T>(s, type)
                     supplements.containsKey(i) -> supplements.getValue(i)
                     else -> null
-                }
-            }
-        }
-    }
-
-    private fun doRedisOps(jedis: Jedis, vararg params: Any?): T? {
-        actualKey = key ?: createKey(*params)
-        return when {
-            loadFunction == null -> {
-                val jsonStr = jedis.get(actualKey)
-                if (jsonStr == null) null else Gson().fromJson<T>(jsonStr, type)
-            }
-            skipCache -> doDataLoadAndUpdateRedis(jedis, actualKey, *params)
-            else -> {
-                val jsonStr = jedis.get(actualKey)
-                if (jsonStr == null) {
-                    doDataLoadAndUpdateRedis(jedis, actualKey, *params)
-                } else {
-                    Gson().fromJson<T>(jsonStr, type)
                 }
             }
         }
@@ -253,6 +262,6 @@ class RedisCacheReader<T> private constructor() {
     fun clearData(vararg params: Any?) {
         actualKey = key ?: createKey(*params)
         //println("clear key $actualKey")
-        JedisManager.getJedis().use { it.del(actualKey) }
+        createJedis().use { it.del(actualKey) }
     }
 }
