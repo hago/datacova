@@ -1,10 +1,10 @@
-package com.hagoapp.datacova.entity.action.distribute.conf;
+package com.hagoapp.datacova.distribute.conf;
 
 import com.hagoapp.datacova.CoVaException;
 import com.hagoapp.datacova.distribute.sftp.HostKeyItem;
 import com.hagoapp.datacova.distribute.sftp.SFtpAuthType;
-import com.hagoapp.datacova.entity.action.distribute.Configuration;
-import com.hagoapp.datacova.entity.action.distribute.IDistributeExtra;
+import com.hagoapp.datacova.distribute.Configuration;
+import com.hagoapp.datacova.distribute.IDistributeExtra;
 import com.hagoapp.datacova.execution.distribute.sftp.KnownHostsStore;
 import com.hagoapp.datacova.util.FileStoreUtils;
 

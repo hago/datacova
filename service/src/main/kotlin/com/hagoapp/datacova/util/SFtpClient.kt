@@ -3,7 +3,7 @@ package com.hagoapp.datacova.util
 import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.distribute.sftp.SFtpAuthType
-import com.hagoapp.datacova.entity.action.distribute.conf.SFtpConfig
+import com.hagoapp.datacova.distribute.conf.SFtpConfig
 import com.hagoapp.datacova.execution.distribute.sftp.KnownHostsStore
 import com.jcraft.jsch.*
 import java.io.Closeable

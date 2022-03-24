@@ -10,7 +10,7 @@ package com.hagoapp.datacova.web.distribute
 import com.google.gson.Gson
 import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.distribute.sftp.SFtpAuthType
-import com.hagoapp.datacova.entity.action.distribute.conf.SFtpConfig
+import com.hagoapp.datacova.distribute.conf.SFtpConfig
 import com.hagoapp.datacova.execution.distribute.sftp.KnownHostsStore
 import com.hagoapp.datacova.util.FileStoreUtils
 import com.hagoapp.datacova.util.SFtpClient

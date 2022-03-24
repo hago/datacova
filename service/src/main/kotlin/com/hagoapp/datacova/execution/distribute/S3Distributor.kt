@@ -15,7 +15,7 @@ import com.amazonaws.regions.Regions
 import com.amazonaws.services.s3.AmazonS3ClientBuilder
 import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.distribute.Distributor
-import com.hagoapp.datacova.entity.action.distribute.conf.S3Config
+import com.hagoapp.datacova.distribute.conf.S3Config
 import java.io.File
 
 class S3Distributor : Distributor() {
