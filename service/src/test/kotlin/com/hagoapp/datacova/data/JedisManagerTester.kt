@@ -10,19 +10,29 @@ package com.hagoapp.datacova.data
 import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.redis.JedisManager
+import com.hagoapp.datacova.data.redis.RedisConfig
 import com.hagoapp.util.StackTraceWriter
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 
 class JedisManagerTester {
 
-    private val configFile: String = System.getProperty("cfg") ?: "./config.sample.json"
-    private val logger = CoVaLogger.getLogger()
+    companion object {
+        private val configFile: String = System.getProperty("cfg") ?: "./config.sample.json"
+        private val logger = CoVaLogger.getLogger()
+        private lateinit var redisConfig: RedisConfig
+
+        @BeforeAll
+        @JvmStatic
+        fun init() {
+            CoVaConfig.loadConfig(configFile)
+            redisConfig = CoVaConfig.getConfig().redis
+        }
+    }
 
     @Test
     fun testMassiveInvoking() {
-        CoVaConfig.loadConfig(configFile)
-        val redisConfig = CoVaConfig.getConfig().redis
         //println(redisConfig)
         val count = 1000
         var success = 0

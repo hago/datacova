@@ -10,8 +10,8 @@ package com.hagoapp.datacova.data.redis
 import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.ShutDownManager
 import com.hagoapp.datacova.ShutDownWatcher
-import org.reflections.Reflections
-import org.reflections.scanners.Scanners
+import com.hagoapp.datacova.config.CoVaConfig
+import com.hagoapp.datacova.data.CoVaRedisConfigProvider
 import org.slf4j.Logger
 import redis.clients.jedis.Jedis
 import redis.clients.jedis.JedisPool
@@ -46,7 +46,7 @@ class JedisManager private constructor() {
     companion object {
         private val logger: Logger = CoVaLogger.getLogger()
         private val pools = mutableMapOf<RedisConfig, Pair<Pool<Jedis>, Int>>()
-        private var defaultConfig: RedisConfig?
+        private val defaultConfig = CoVaConfig.getConfig().redis
 
         interface ConfigProvider {
             fun getConfig(): RedisConfig
@@ -55,9 +55,6 @@ class JedisManager private constructor() {
         init {
             val closer = PortalRedisCloser()
             ShutDownManager.watch(closer)
-            defaultConfig = Reflections(JedisManager::class.java.packageName, Scanners.SubTypes)
-                .getSubTypesOf(ConfigProvider::class.java).firstOrNull()
-                ?.getConstructor()?.newInstance()?.getConfig()
         }
 
         private fun createSentinelPool(config: RedisConfig): Pool<Jedis> {
@@ -92,8 +89,7 @@ class JedisManager private constructor() {
          */
         @JvmStatic
         fun getJedis(): Jedis {
-            defaultConfig ?: throw UnsupportedOperationException("no default redis config defined")
-            return getJedis(defaultConfig!!)
+            return getJedis(defaultConfig)
         }
 
         @JvmStatic
@@ -110,8 +106,8 @@ class JedisManager private constructor() {
         }
 
         @JvmStatic
-        fun registerDefaultConfig(config: RedisConfig) {
-            defaultConfig = config
+        fun getJedis(configProvider: CoVaRedisConfigProvider): Jedis {
+            return getJedis(configProvider.getConfig())
         }
     }
 }
