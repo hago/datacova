@@ -9,7 +9,7 @@
 package com.hagoapp.datacova.execution.executor.validator
 
 import com.hagoapp.datacova.CoVaException
-import com.hagoapp.datacova.entity.action.verification.conf.TimeRangeConfig
+import com.hagoapp.datacova.verification.conf.TimeRangeConfig
 import com.hagoapp.datacova.execution.Validator
 import com.hagoapp.f2t.DataRow
 import com.hagoapp.f2t.util.JDBCTypeUtils

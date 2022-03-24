@@ -6,10 +6,10 @@
  *
  */
 
-package com.hagoapp.datacova.entity.action.verification.conf;
+package com.hagoapp.datacova.verification.conf;
 
 import com.hagoapp.datacova.CoVaException;
-import com.hagoapp.datacova.entity.action.verification.Configuration;
+import com.hagoapp.datacova.verification.Configuration;
 import com.hagoapp.datacova.util.text.TextResourceManager;
 
 import java.util.List;

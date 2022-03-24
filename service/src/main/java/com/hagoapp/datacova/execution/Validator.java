@@ -7,7 +7,7 @@
 
 package com.hagoapp.datacova.execution;
 
-import com.hagoapp.datacova.entity.action.verification.Configuration;
+import com.hagoapp.datacova.verification.Configuration;
 import com.hagoapp.f2t.ColumnDefinition;
 import com.hagoapp.f2t.DataCell;
 import com.hagoapp.f2t.DataRow;

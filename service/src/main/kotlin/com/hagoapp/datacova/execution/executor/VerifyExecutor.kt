@@ -10,7 +10,7 @@ package com.hagoapp.datacova.execution.executor
 import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.entity.action.TaskAction
-import com.hagoapp.datacova.entity.action.verification.TaskActionVerify
+import com.hagoapp.datacova.verification.TaskActionVerify
 import com.hagoapp.datacova.entity.execution.DataMessage
 import com.hagoapp.datacova.entity.execution.TaskExecution
 import com.hagoapp.datacova.execution.executor.validator.ValidatorFactory
