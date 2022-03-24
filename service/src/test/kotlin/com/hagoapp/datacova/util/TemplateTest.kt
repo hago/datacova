@@ -12,7 +12,11 @@ import com.hagoapp.datacova.user.UserInfo
 import com.hagoapp.datacova.util.text.TemplateManager
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import java.io.File
+import java.io.FileNotFoundException
 import java.io.StringWriter
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 class TemplateTest {
@@ -32,7 +36,8 @@ class TemplateTest {
             mapOf(
                 "user" to user,
                 "homepage" to "https://abc.com",
-                "activateurl" to "https://def.com"
+                "activateurl" to "https://def.com",
+                "expire" to DateTimeFormatter.ISO_DATE_TIME.format(ZonedDateTime.now())
             ), sw
         )
         println(sw.toString())
@@ -41,6 +46,9 @@ class TemplateTest {
     @Test
     fun testTemplateInConf() {
         val conf = CoVaConfig.getConfig().template
+        if (!File(conf.directory).exists()) {
+            throw FileNotFoundException("template directory ${conf.directory} from config not found")
+        }
         val manager = TemplateManager.getManager(conf)
         val template = manager.getTemplate("user/register/activation", Locale.getDefault())
         Assertions.assertNotNull(template)
@@ -55,7 +63,8 @@ class TemplateTest {
             mapOf(
                 "user" to user,
                 "homepage" to "https://abc.com",
-                "activateurl" to "https://def.com"
+                "activateurl" to "https://def.com",
+                "expire" to DateTimeFormatter.ISO_DATE_TIME.format(ZonedDateTime.now())
             ), sw
         )
         println(sw.toString())
