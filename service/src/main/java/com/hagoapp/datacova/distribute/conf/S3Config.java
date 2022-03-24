@@ -5,9 +5,9 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package com.hagoapp.datacova.entity.action.distribute.conf;
+package com.hagoapp.datacova.distribute.conf;
 
-import com.hagoapp.datacova.entity.action.distribute.Configuration;
+import com.hagoapp.datacova.distribute.Configuration;
 
 public class S3Config extends Configuration {
     public static final String DISTRIBUTION_TYPE_S3 = "s3";

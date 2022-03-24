@@ -11,8 +11,8 @@ import com.hagoapp.datacova.MapSerializer
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.config.DatabaseConfig
 import com.hagoapp.datacova.data.CoVaDatabase
-import com.hagoapp.datacova.entity.action.verification.ConfigurationFactory
-import com.hagoapp.datacova.entity.action.verification.Rule
+import com.hagoapp.datacova.verification.ConfigurationFactory
+import com.hagoapp.datacova.verification.Rule
 import com.hagoapp.datacova.util.data.DatabaseFunctions
 import java.sql.ResultSet
 

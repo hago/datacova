@@ -10,7 +10,7 @@ package com.hagoapp.datacova.execution.executor.validator
 
 import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.CoVaLogger
-import com.hagoapp.datacova.entity.action.verification.conf.EmbedPythonConfig
+import com.hagoapp.datacova.verification.conf.EmbedPythonConfig
 import com.hagoapp.datacova.execution.Validator
 import com.hagoapp.datacova.util.EmbedPythonHelper
 import com.hagoapp.f2t.DataRow

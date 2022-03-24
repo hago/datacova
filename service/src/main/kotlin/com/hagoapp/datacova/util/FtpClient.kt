@@ -1,6 +1,6 @@
 package com.hagoapp.datacova.util
 
-import com.hagoapp.datacova.entity.action.distribute.conf.FtpConfig
+import com.hagoapp.datacova.distribute.conf.FtpConfig
 import org.apache.commons.net.ftp.FTP
 import org.apache.commons.net.ftp.FTPClient
 import java.io.*

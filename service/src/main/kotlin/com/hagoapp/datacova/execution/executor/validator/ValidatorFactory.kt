@@ -10,7 +10,7 @@ package com.hagoapp.datacova.execution.executor.validator
 import com.hagoapp.datacova.Application
 import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.CoVaLogger
-import com.hagoapp.datacova.entity.action.verification.Configuration
+import com.hagoapp.datacova.verification.Configuration
 import com.hagoapp.datacova.execution.Validator
 import org.reflections.Reflections
 import org.reflections.scanners.Scanners

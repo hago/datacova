@@ -7,95 +7,107 @@
 
 package com.hagoapp.datacova.data.redis
 
+import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.ShutDownManager
 import com.hagoapp.datacova.ShutDownWatcher
+import com.hagoapp.datacova.config.CoVaConfig
+import com.hagoapp.datacova.data.CoVaRedisConfigProvider
+import org.slf4j.Logger
 import redis.clients.jedis.Jedis
 import redis.clients.jedis.JedisPool
+import redis.clients.jedis.JedisPoolConfig
 import redis.clients.jedis.JedisSentinelPool
 import redis.clients.jedis.util.Pool
+import java.time.Duration
+import java.time.temporal.ChronoUnit
 
-class JedisManager(private val config: RedisConfig) {
+class JedisManager private constructor() {
 
-    companion object {
-        private var defaultPool: Pool<Jedis>? = null
-        private val internalPools = mutableMapOf<RedisConfig, Pool<Jedis>>()
+    private class PortalRedisCloser : ShutDownWatcher {
 
-        fun terminate() {
-            internalPools.forEach { (_, pool) ->
+        override fun shutdown(): Boolean {
+            val results = pools.map { (config, pool) ->
                 try {
-                    pool.close()
-                } catch (e: Throwable) {
-                    //
+                    pool.first.close()
+                    true
+                } catch (ignored: Throwable) {
+                    logger.error("Closing internal redis pool {} error: {}", config, ignored.message)
+                    false
                 }
             }
-            internalPools.clear()
+            return results.all { it }
         }
 
+        override fun getName(): String {
+            return "Jedis Manager"
+        }
+    }
+
+    companion object {
+        private val logger: Logger = CoVaLogger.getLogger()
+        private val pools = mutableMapOf<RedisConfig, Pair<Pool<Jedis>, Int>>()
+        private val defaultConfig = CoVaConfig.getConfig().redis
+
+        interface ConfigProvider {
+            fun getConfig(): RedisConfig
+        }
+
+        init {
+            val closer = PortalRedisCloser()
+            ShutDownManager.watch(closer)
+        }
+
+        private fun createSentinelPool(config: RedisConfig): Pool<Jedis> {
+            val sentinelConfig = config.sentinelConfig
+            val nodeSet = sentinelConfig.nodes.map { (host, port) ->
+                java.lang.String.format("%s:%d", host, port)
+            }.toSet()
+            return if (config.password == null) JedisSentinelPool(sentinelConfig.master, nodeSet)
+            else JedisSentinelPool(sentinelConfig.master, nodeSet, config.password)
+        }
+
+        private fun createServerPool(config: RedisConfig): Pool<Jedis> {
+            val jedisPoolConfig = JedisPoolConfig()
+            jedisPoolConfig.maxTotal = -1
+            jedisPoolConfig.maxIdle = 80
+            jedisPoolConfig.maxWaitMillis = 30000
+            jedisPoolConfig.timeBetweenEvictionRuns = Duration.of(1000, ChronoUnit.MILLIS)
+            jedisPoolConfig.softMinEvictableIdleTime = Duration.of(1000, ChronoUnit.MILLIS)
+            jedisPoolConfig.lifo = true
+            jedisPoolConfig.numTestsPerEvictionRun = 50
+            jedisPoolConfig.testOnBorrow = false
+            jedisPoolConfig.testOnCreate = false
+            jedisPoolConfig.minIdle = 10
+            val serverConfig = config.serverConfig
+            return JedisPool(jedisPoolConfig, serverConfig.host, serverConfig.port, 10000, config.password)
+        }
+
+        /**
+         * Fetch a jedis instance using default config, which should be closed explicitly.
+         *
+         * @return jedis instance
+         */
         @JvmStatic
-        fun getJedis(): Jedis? {
-            return defaultPool?.resource
+        fun getJedis(): Jedis {
+            return getJedis(defaultConfig)
         }
 
         @JvmStatic
         fun getJedis(config: RedisConfig): Jedis {
-            var existed = internalPools[config]
-            if (existed == null) {
-                JedisManager(config)
-                existed = internalPools.getValue(config)
+            if (!pools.containsKey(config)) {
+                val pool0 = if (config.isSentinel) createSentinelPool(config) else createServerPool(config)
+                val dbIndex = config.database
+                pools[config] = Pair(pool0, dbIndex)
             }
-            return existed.resource
+            val pool = pools.getValue(config)
+            val jedis = pool.first.resource
+            jedis.select(pool.second)
+            return jedis
         }
 
-        init {
-            ShutDownManager.watch(object : ShutDownWatcher {
-                override fun shutdown(): Boolean {
-                    terminate()
-                    return true
-                }
-
-                override fun getName(): String {
-                    return JedisManager::class.java.canonicalName
-                }
-
-            })
+        @JvmStatic
+        fun getJedis(configProvider: CoVaRedisConfigProvider): Jedis {
+            return getJedis(configProvider.getConfig())
         }
     }
-
-    init {
-        internalPools.compute(config) { _, existed ->
-            if (existed == null) {
-                val p = getJedisPool()
-                if (defaultPool == null) {
-                    defaultPool = p
-                }
-                p
-            } else {
-                existed
-            }
-        }
-    }
-
-    private fun getJedisPool(): Pool<Jedis> {
-        return when (config.isSentinel) {
-            true -> getJedisSentinelPool()
-            false -> {
-                val pool = JedisPool(config.serverConfig.host, config.serverConfig.port)
-                if (config.password != null) {
-                    pool.resource.client.auth(config.password)
-                }
-                pool
-            }
-        }
-    }
-
-    private fun getJedisSentinelPool(): Pool<Jedis> {
-        val nodes = config.sentinelConfig.nodes.map { node ->
-            "${node.key}:${node.value}"
-        }.toSet()
-        return when (config.password) {
-            null -> JedisSentinelPool(config.sentinelConfig.master, nodes)
-            else -> JedisSentinelPool(config.sentinelConfig.master, nodes, config.password)
-        }
-    }
-
 }

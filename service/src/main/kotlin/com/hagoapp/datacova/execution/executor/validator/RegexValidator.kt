@@ -8,8 +8,8 @@
 package com.hagoapp.datacova.execution.executor.validator
 
 import com.hagoapp.datacova.CoVaException
-import com.hagoapp.datacova.entity.action.verification.Configuration
-import com.hagoapp.datacova.entity.action.verification.conf.RegexConfig
+import com.hagoapp.datacova.verification.Configuration
+import com.hagoapp.datacova.verification.conf.RegexConfig
 import com.hagoapp.datacova.execution.Validator
 import com.hagoapp.f2t.DataRow
 import java.util.regex.Pattern

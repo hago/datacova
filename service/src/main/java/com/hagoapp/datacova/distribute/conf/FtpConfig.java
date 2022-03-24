@@ -1,6 +1,6 @@
-package com.hagoapp.datacova.entity.action.distribute.conf;
+package com.hagoapp.datacova.distribute.conf;
 
-import com.hagoapp.datacova.entity.action.distribute.Configuration;
+import com.hagoapp.datacova.distribute.Configuration;
 
 public class FtpConfig extends Configuration {
 

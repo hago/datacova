@@ -7,26 +7,39 @@
 
 package com.hagoapp.datacova.data
 
+import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.RedisCacheReader.GenericLoader
+import com.hagoapp.datacova.data.redis.RedisConfig
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 
 class RedisCacheReaderTester {
 
-    private val configFile: String = System.getProperty("cfg") ?: "./config.sample.json"
+    companion object {
+        private val configFile: String = System.getProperty("cfg") ?: "./config.sample.json"
+        private val logger = CoVaLogger.getLogger()
+        private var dataLoadCount: Int = 0
+        private lateinit var redisConfig: RedisConfig
 
-    private var dataLoadCount: Int = 0
+        @BeforeAll
+        @JvmStatic
+        fun init() {
+            CoVaConfig.loadConfig(configFile)
+            redisConfig = CoVaConfig.getConfig().redis
+        }
+    }
 
     @Test
     fun regularTest() {
         dataLoadCount = 0
-        CoVaConfig.loadConfig(configFile)
         val builder = RedisCacheReader.Builder<String>()
             .shouldSkipCache(false)
             .withLoadFunction(regularLoader)
             .withDataLifeTime(5)
             .withCacheName("RegularTest")
+            .withJedisConfig(redisConfig)
         val reader = builder.create()
         var x = reader.readData("a", "b", "c")
         Assertions.assertNotNull(x)

@@ -6,7 +6,7 @@
  *
  */
 
-package com.hagoapp.datacova.entity.action.verification.conf;
+package com.hagoapp.datacova.verification.conf;
 
 import java.time.ZonedDateTime;
 

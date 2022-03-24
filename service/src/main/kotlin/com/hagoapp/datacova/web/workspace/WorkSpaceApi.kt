@@ -8,7 +8,7 @@ import com.hagoapp.datacova.data.rules.ValidationRuleData
 import com.hagoapp.datacova.data.user.UserCache
 import com.hagoapp.datacova.data.workspace.WorkSpaceData
 import com.hagoapp.datacova.data.workspace.WorkspaceCache
-import com.hagoapp.datacova.entity.action.verification.Rule
+import com.hagoapp.datacova.verification.Rule
 import com.hagoapp.datacova.entity.workspace.WorkSpace
 import com.hagoapp.datacova.entity.workspace.WorkSpaceUserRole
 import com.hagoapp.datacova.util.WorkspaceUserRoleUtil
