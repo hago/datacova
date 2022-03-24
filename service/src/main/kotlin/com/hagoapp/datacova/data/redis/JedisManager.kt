@@ -46,7 +46,7 @@ class JedisManager private constructor() {
     companion object {
         private val logger: Logger = CoVaLogger.getLogger()
         private val pools = mutableMapOf<RedisConfig, Pair<Pool<Jedis>, Int>>()
-        private val defaultConfig: RedisConfig?
+        private var defaultConfig: RedisConfig?
 
         interface ConfigProvider {
             fun getConfig(): RedisConfig
@@ -55,7 +55,7 @@ class JedisManager private constructor() {
         init {
             val closer = PortalRedisCloser()
             ShutDownManager.watch(closer)
-            defaultConfig = Reflections("", Scanners.SubTypes)
+            defaultConfig = Reflections(JedisManager::class.java.packageName, Scanners.SubTypes)
                 .getSubTypesOf(ConfigProvider::class.java).firstOrNull()
                 ?.getConstructor()?.newInstance()?.getConfig()
         }
@@ -86,14 +86,14 @@ class JedisManager private constructor() {
         }
 
         /**
-         * Fetch a jedis instance, which should be closed explicitly.
+         * Fetch a jedis instance using default config, which should be closed explicitly.
          *
          * @return jedis instance
          */
         @JvmStatic
         fun getJedis(): Jedis {
             defaultConfig ?: throw UnsupportedOperationException("no default redis config defined")
-            return getJedis(defaultConfig)
+            return getJedis(defaultConfig!!)
         }
 
         @JvmStatic
@@ -107,6 +107,11 @@ class JedisManager private constructor() {
             val jedis = pool.first.resource
             jedis.select(pool.second)
             return jedis
+        }
+
+        @JvmStatic
+        fun registerDefaultConfig(config: RedisConfig) {
+            defaultConfig = config
         }
     }
 }
