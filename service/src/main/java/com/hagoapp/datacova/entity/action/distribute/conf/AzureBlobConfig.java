@@ -17,6 +17,7 @@ public class AzureBlobConfig extends Configuration {
     private String endPoint;
     private String token;
     private String containerName;
+    private String blobName;
 
     public String getSourceFileName() {
         return sourceFileName;
@@ -48,6 +49,14 @@ public class AzureBlobConfig extends Configuration {
 
     public void setContainerName(String containerName) {
         this.containerName = containerName;
+    }
+
+    public String getBlobName() {
+        return blobName;
+    }
+
+    public void setBlobName(String blobName) {
+        this.blobName = blobName;
     }
 
     @Override
