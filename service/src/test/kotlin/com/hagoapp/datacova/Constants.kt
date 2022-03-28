@@ -16,5 +16,9 @@ class Constants {
         const val S3_OBJECT_NAME = "dc.s3.obj.name"
         const val S3_SOURCE_NAME = "dc.s3.src"
         const val S3_REGION = "dc.s3.region"
+
+        const val BLOB_CONTAINER_NAME = "dc.azure.store.container"
+        const val BLOB_NAME = "dc.azure.store.blob"
+        const val BLOB_SAS_URL = "dc.azure.store.blobsasurl"
     }
 }
