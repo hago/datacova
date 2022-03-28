@@ -13,35 +13,9 @@ public class AzureBlobConfig extends Configuration {
 
     public static final String DISTRIBUTION_TYPE_AZURE_BLOB = "blob";
 
-    private String sourceFileName;
-    private String endPoint;
-    private String token;
     private String containerName;
     private String blobName;
-
-    public String getSourceFileName() {
-        return sourceFileName;
-    }
-
-    public void setSourceFileName(String sourceFileName) {
-        this.sourceFileName = sourceFileName;
-    }
-
-    public String getEndPoint() {
-        return endPoint;
-    }
-
-    public void setEndPoint(String endPoint) {
-        this.endPoint = endPoint;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
+    private String blobSasUrl;
 
     public String getContainerName() {
         return containerName;
@@ -57,6 +31,14 @@ public class AzureBlobConfig extends Configuration {
 
     public void setBlobName(String blobName) {
         this.blobName = blobName;
+    }
+
+    public String getBlobSasUrl() {
+        return blobSasUrl;
+    }
+
+    public void setBlobSasUrl(String blobSasUrl) {
+        this.blobSasUrl = blobSasUrl;
     }
 
     @Override

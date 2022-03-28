@@ -7,6 +7,7 @@
 
 package com.hagoapp.datacova.execution.distribute
 
+import com.azure.storage.blob.BlobClientBuilder
 import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.distribute.Distributor
 import com.hagoapp.datacova.distribute.TaskActionDistribute
@@ -25,7 +26,15 @@ class AzureBlobDistributor: Distributor() {
     }
 
     override fun distribute(source: String) {
-        TODO()
+        val blobClient = BlobClientBuilder()
+            .containerName(config.containerName)
+            .blobName(config.targetFileName)
+            .connectionString(config.blobSasUrl)
+            .buildClient()
+        if (!config.isOverwriteExisted && blobClient.exists()) {
+            throw UnsupportedOperationException("Blob ${config.blobName} existed and overwrite is forbidden")
+        }
+        blobClient.uploadFromFile(source, true)
     }
 
     override fun supportedDistributionType(): String {
