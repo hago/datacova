@@ -32,7 +32,7 @@ class IngestExecutor : BaseTaskActionExecutor(), ProgressNotify {
             fileCol.order = i
             fileCol
         }, data.rows)
-        val d2t = D2TProcess(fileTable, connection.configuration, action.ingestOptions)
+        val d2t = D2TProcess(fileTable, connection.configuration.createConnection(), action.ingestOptions)
         d2t.progressNotifier = this
         result = d2t.run()
     }
