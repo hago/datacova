@@ -91,6 +91,7 @@ public class WebManager {
             options.getFileSystemOptions().setFileCacheDir(config.getTempDirectory());
             vertx = Vertx.vertx(options);
             HttpServerOptions webOptions = new HttpServerOptions();
+            webOptions.setUseProxyProtocol(true);
             webServer = vertx.createHttpServer(webOptions);
             Router router = findRouter(vertx, packageNames);
             webServer.requestHandler(router);
@@ -230,7 +231,7 @@ public class WebManager {
                     theHandler.handle(context);
                     context.next();
                 } catch (NoSuchMethodException | InstantiationException |
-                        IllegalAccessException | InvocationTargetException e) {
+                         IllegalAccessException | InvocationTargetException e) {
                     context.fail(e);
                 }
             }).handler(logHandler);
@@ -241,7 +242,7 @@ public class WebManager {
                     handler.getFunction().invoke(instance, context);
                     context.next();
                 } catch (NoSuchMethodException | InstantiationException |
-                        IllegalAccessException | InvocationTargetException e) {
+                         IllegalAccessException | InvocationTargetException e) {
                     context.fail(e);
                 }
             }).blockingHandler(logHandler);
@@ -276,7 +277,7 @@ public class WebManager {
 
     private final Handler<RoutingContext> logHandler = context -> {
         logger.info("{} {} from {}\t{}", context.request().method().name(), context.request().path(),
-                context.request().remoteAddress().host(), context.response().getStatusCode());
+                context.request().remoteAddress(), context.response().getStatusCode());
         if (!context.response().ended()) {
             context.response().end();
         }
