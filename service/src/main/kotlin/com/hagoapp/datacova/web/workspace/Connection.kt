@@ -23,6 +23,8 @@ import com.hagoapp.f2t.database.DbConnectionFactory
 import com.hagoapp.f2t.database.config.DbConfigReader
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.ext.web.RoutingContext
+import java.io.IOException
+import java.sql.SQLException
 
 class Connection {
 
@@ -75,22 +77,41 @@ class Connection {
     fun verifyConnection(context: RoutingContext) {
         val json = context.bodyAsString
         val conf = DbConfigReader.json2DbConfig(json)
-        val con = DbConnectionFactory.createDbConnection(conf)
-        val result = con.canConnect(conf)
-        if (result.first) {
-            ResponseHelper.sendResponse(
-                context, HttpResponseStatus.OK, mapOf(
-                    "code" to 0,
-                    "data" to mapOf(
-                        "result" to result.first,
-                        "message" to result.second,
-                        "databases" to con.listDatabases(conf)
+        try {
+            conf.createConnection().use {
+                DbConnectionFactory.createDbConnection(it).use { con ->
+                    ResponseHelper.sendResponse(
+                        context, HttpResponseStatus.OK, mapOf(
+                            "code" to 0,
+                            "data" to mapOf(
+                                "result" to true,
+                                "message" to "",
+                                "databases" to con.listDatabases()
+                            )
+                        )
                     )
-                )
-            )
-        } else {
+                }
+            }
+        } catch (e: IOException) {
+            canNotConnect(context, e.message!!)
+        } catch (e: SQLException) {
+            canNotConnect(context, e.message!!)
+        } catch (e: Exception) {
             ResponseHelper.respondError(context, HttpResponseStatus.INTERNAL_SERVER_ERROR, "connection fail")
         }
+    }
+
+    private fun canNotConnect(context: RoutingContext, message: String) {
+        ResponseHelper.sendResponse(
+            context, HttpResponseStatus.OK, mapOf(
+                "code" to 0,
+                "data" to mapOf(
+                    "result" to false,
+                    "message" to message,
+                    "databases" to listOf<String>()
+                )
+            )
+        )
     }
 
     @WebEndPoint(
@@ -260,11 +281,14 @@ class Connection {
             ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, "connection access denied")
             return
         }
-        val db = DbConnectionFactory.createDbConnection(connection.configuration)
-        ResponseHelper.sendResponse(
-            context,
-            HttpResponseStatus.OK,
-            mapOf("code" to 0, "data" to db.getAvailableTables(connection.configuration))
-        )
+        connection.configuration.createConnection().use { sqlConn ->
+            DbConnectionFactory.createDbConnection(sqlConn).use { db ->
+                ResponseHelper.sendResponse(
+                    context,
+                    HttpResponseStatus.OK,
+                    mapOf("code" to 0, "data" to db.getAvailableTables())
+                )
+            }
+        }
     }
 }

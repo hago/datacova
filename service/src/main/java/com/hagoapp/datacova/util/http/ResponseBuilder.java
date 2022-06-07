@@ -122,7 +122,7 @@ public class ResponseBuilder {
         rsp.setStatusCode(this.statusCode.code());
         rsp.setStatusMessage(this.statusMessage);
         rsp.write(Buffer.buffer(this.responseBody));
-        rsp.end();
+        //rsp.end();
     }
 
     public ResponseBuilder useJson() {
