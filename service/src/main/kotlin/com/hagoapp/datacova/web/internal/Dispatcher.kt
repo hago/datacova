@@ -23,7 +23,7 @@ class Dispatcher {
         methods = [MethodName.POST]
     )
     fun register(context: RoutingContext) {
-        val json = context.bodyAsString
+        val json = context.body().asString()
         val config = Gson().fromJson(json, ExecutorConfig::class.java)
         if (config == null) {
             ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "invalid body");
@@ -41,7 +41,7 @@ class Dispatcher {
         methods = [MethodName.POST]
     )
     fun heartbeat(context: RoutingContext) {
-        val json = context.bodyAsString
+        val json = context.body().asString()
         val exe = ExecutorStatus.fromJson(json)
         if (exe == null) {
             ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "invalid body");

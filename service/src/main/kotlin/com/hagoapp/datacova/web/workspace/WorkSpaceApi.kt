@@ -108,7 +108,7 @@ class WorkSpaceApi {
 
     private fun parseWorkSpace(routeContext: RoutingContext): WorkSpace? {
         return try {
-            val load = routeContext.bodyAsString
+            val load = routeContext.body().asString()
             GsonBuilder().create().fromJson(load, WorkSpace::class.java)
         } catch (ex: Exception) {
             null
@@ -241,7 +241,7 @@ class WorkSpaceApi {
         authTypes = [AuthType.UserToken]
     )
     fun saveRule(context: RoutingContext) {
-        val json = context.bodyAsString
+        val json = context.body().asString()
         val rule = Rule.fromJson(json)
         val user = Authenticator.getUser(context)
         val workspace = WorkspaceCache.getWorkspace(rule.workspaceId)

@@ -45,7 +45,7 @@ class MemberApi {
             return
         }
         val token = object : TypeToken<List<UserSearchResultItem>>() {}
-        val users = Gson().fromJson<List<UserSearchResultItem>>(routeContext.bodyAsString, token.type)
+        val users = Gson().fromJson<List<UserSearchResultItem>>(routeContext.body().asString(), token.type)
         val idList = users.map {
             if (it.id != null) it.id else {
                 val u = UserInfo()

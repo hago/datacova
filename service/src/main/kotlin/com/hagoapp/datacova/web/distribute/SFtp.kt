@@ -35,7 +35,7 @@ class SFtp {
         path = "/api/distribute/verify/sftp"
     )
     fun verify(context: RoutingContext) {
-        val json = context.bodyAsString
+        val json = context.body().asString()
         val config = Gson().fromJson(json, SFtpConfig::class.java)
         if ((config == null) || (config.authType != SFtpAuthType.Password)) {
             ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "not valid sftp config json")

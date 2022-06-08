@@ -73,7 +73,7 @@ class Tasks {
             ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, "access denied")
             return
         }
-        val rawTask = Task.fromJson(context.bodyAsString)
+        val rawTask = Task.fromJson(context.body().asString())
         val task0 = TaskCache.listTasks(workspace.id).firstOrNull { it.id == rawTask.id }
         val task = if (task0 == null) {
             rawTask.addBy = user.id

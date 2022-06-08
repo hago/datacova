@@ -27,7 +27,7 @@ class UserApi {
         authTypes = [AuthType.UserToken]
     )
     fun searchUser(context: RoutingContext) {
-        val load = context.bodyAsString
+        val load = context.body().asString()
         val search = Gson().fromJson(load, UserSearchReq::class.java)
         val users = UserFinder.search(search)
         ResponseHelper.sendResponse(
@@ -44,7 +44,7 @@ class UserApi {
     )
     fun batchGetUserInfo(context: RoutingContext) {
         val token = object : TypeToken<List<Long>>() {}
-        val userIdList = Gson().fromJson<List<Long>>(context.bodyAsString, token.type)
+        val userIdList = Gson().fromJson<List<Long>>(context.body().asString(), token.type)
         val userInfoList = UserCache.batchGetUser(userIdList).map { it?.maskUserInfo() }
         ResponseHelper.sendResponse(
             context,

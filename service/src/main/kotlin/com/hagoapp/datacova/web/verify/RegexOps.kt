@@ -24,7 +24,7 @@ class RegexOps {
         authTypes = [AuthType.UserToken]
     )
     fun verifyRegex(context: RoutingContext) {
-        val pattern = context.bodyAsString
+        val pattern = context.body().asString()
         try {
             Pattern.compile(pattern)
             ResponseHelper.sendResponse(context, HttpResponseStatus.OK)

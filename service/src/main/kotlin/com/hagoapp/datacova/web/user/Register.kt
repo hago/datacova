@@ -48,7 +48,7 @@ class Register {
             ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "captcha error")
             return
         }
-        val json = context.bodyAsString
+        val json = context.body().asString()
         val user = Gson().fromJson(json, UserInfo::class.java)
         val dal = UserData()
         if (dal.isUserIdExisted(user.userId)) {

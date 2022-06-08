@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 public class RequestHelper {
 
     public static byte[] readBodyBytes(RoutingContext context) {
-        return context.getBody().getBytes();
+        return context.body().buffer().getBytes();
     }
 
     public static String readBodyString(RoutingContext context) {
@@ -57,7 +57,7 @@ public class RequestHelper {
         if (cs == null) {
             cs = StandardCharsets.UTF_8;
         }
-        return context.getBodyAsString(cs.name());
+        return context.body().asString(cs.name());
     }
 
     public static <T> T readBodyClass(RoutingContext context, Class<? extends T> clz) {

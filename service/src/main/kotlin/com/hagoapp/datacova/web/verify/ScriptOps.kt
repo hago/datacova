@@ -34,7 +34,7 @@ class ScriptOps {
         authTypes = [AuthType.UserToken]
     )
     fun evaluateLua(context: RoutingContext) {
-        val data = Gson().fromJson(context.bodyAsString, EvaluateData::class.java)
+        val data = Gson().fromJson(context.body().asString(), EvaluateData::class.java)
         if (data.code.isBlank()) {
             ResponseHelper.sendResponse(
                 context, BAD_REQUEST, mapOf(
@@ -102,7 +102,7 @@ class ScriptOps {
         authTypes = [AuthType.UserToken]
     )
     fun evaluatePython(context: RoutingContext) {
-        val data = Gson().fromJson(context.bodyAsString, EvaluateData4Python::class.java)
+        val data = Gson().fromJson(context.body().asString(), EvaluateData4Python::class.java)
         if (data.code.isBlank()) {
             ResponseHelper.sendResponse(
                 context, BAD_REQUEST, mapOf(

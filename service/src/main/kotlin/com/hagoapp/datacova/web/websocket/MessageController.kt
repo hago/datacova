@@ -23,7 +23,7 @@ class MessageController {
         authTypes = [AuthType.UserToken]
     )
     fun sendMessage(context: RoutingContext) {
-        val str = context.bodyAsString
+        val str = context.body().asString()
         val msg = Message.fromString(str)
         val recipient = UserCache.getUserByUserId(msg.recipient, msg.recipientType)
         if (recipient == null) {

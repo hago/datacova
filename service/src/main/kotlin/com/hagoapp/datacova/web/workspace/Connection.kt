@@ -75,7 +75,7 @@ class Connection {
         authTypes = [AuthType.UserToken]
     )
     fun verifyConnection(context: RoutingContext) {
-        val json = context.bodyAsString
+        val json = context.body().asString()
         val conf = DbConfigReader.json2DbConfig(json)
         try {
             conf.createConnection().use {
@@ -126,7 +126,7 @@ class Connection {
             ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "Invalid workspace")
             return
         }
-        val json = context.bodyAsString
+        val json = context.body().asString()
         val wsCon = WorkspaceConnection.load(json)
         if (wsCon == null) {
             ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "Invalid Connection")
@@ -166,7 +166,7 @@ class Connection {
             ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "Invalid workspace")
             return
         }
-        val json = context.bodyAsString
+        val json = context.body().asString()
         val wsCon = WorkspaceConnection.load(json)
         if (wsCon == null) {
             ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "Invalid Connection")

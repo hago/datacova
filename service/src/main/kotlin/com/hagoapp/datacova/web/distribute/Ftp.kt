@@ -29,7 +29,7 @@ class Ftp {
         path = "/api/distribute/verify/ftp"
     )
     fun verify(context: RoutingContext) {
-        val json = context.bodyAsString
+        val json = context.body().asString()
         val config = Gson().fromJson(json, FtpConfig::class.java)
         if (config == null) {
             ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "not valid ftp config json")
