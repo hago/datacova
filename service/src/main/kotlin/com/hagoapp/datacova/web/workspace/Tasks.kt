@@ -236,16 +236,18 @@ class Tasks {
                     break
                 }
             }
-            ResponseHelper.sendResponse(context, HttpResponseStatus.OK, mapOf(
-                "code" to 0,
-                "data" to mapOf(
-                    "columns" to cols.map { it.name },
-                    "rows" to rows.map { row ->
-                        row.cells.map { formatData(it.data, cols[it.index].dataType) }
-                    },
-                    "info" to info
+            ResponseHelper.sendResponse(
+                context, HttpResponseStatus.OK, mapOf(
+                    "code" to 0,
+                    "data" to mapOf(
+                        "columns" to cols.sortedBy { it.order }.map { it.name },
+                        "rows" to rows.map { row ->
+                            row.cells.map { formatData(it.data, cols.first { col -> col.order == it.index }.dataType) }
+                        },
+                        "info" to info
+                    )
                 )
-            ))
+            )
         }
     }
 
