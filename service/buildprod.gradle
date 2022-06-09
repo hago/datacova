@@ -42,7 +42,7 @@ dependencies {
     implementation 'io.vertx:vertx-lang-kotlin:4.2.6'
     implementation 'io.vertx:vertx-web:4.2.6'
 
-    implementation 'com.hagoapp:f2t:0.6'
+    implementation 'com.hagoapp:f2t:0.6.3'
 
     implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.30'
     implementation group: 'ch.qos.logback', name:'logback-classic', version: '1.2.3'
