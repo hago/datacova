@@ -7,19 +7,19 @@
 
 package com.hagoapp.datacova.data
 
-import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.RedisCacheReader.GenericLoader
 import com.hagoapp.datacova.data.redis.RedisConfig
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.slf4j.LoggerFactory
 
 class RedisCacheReaderTester {
 
     companion object {
         private val configFile: String = System.getProperty("cfg") ?: "./config.sample.json"
-        private val logger = CoVaLogger.getLogger()
+        private val logger = LoggerFactory.getLogger(RedisCacheReaderTester::class.java)
         private var dataLoadCount: Int = 0
         private lateinit var redisConfig: RedisConfig
 

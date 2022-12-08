@@ -1,7 +1,6 @@
 package com.hagoapp.datacova.util.ldap;
 
 import com.hagoapp.datacova.CoVaException;
-import com.hagoapp.datacova.CoVaLogger;
 import com.hagoapp.datacova.config.ldap.LdapAttributes;
 import com.hagoapp.datacova.config.ldap.LdapConfig;
 import org.apache.directory.api.ldap.model.cursor.SearchCursor;
@@ -17,6 +16,7 @@ import org.apache.directory.api.ldap.model.name.Dn;
 import org.apache.directory.ldap.client.api.ConnectionClosedEventListener;
 import org.apache.directory.ldap.client.api.LdapNetworkConnection;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -55,7 +55,7 @@ public class LdapUtils implements Closeable, ConnectionClosedEventListener {
             "ATTRIBUTE_DISTINGUISHED_NAME"
     );
 
-    private final Logger logger = CoVaLogger.getLogger();
+    private final Logger logger = LoggerFactory.getLogger(LdapUtils.class);
     private final LdapConfig conf;
 
     /**

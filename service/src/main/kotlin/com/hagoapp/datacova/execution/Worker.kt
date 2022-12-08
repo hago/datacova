@@ -8,7 +8,6 @@
 
 package com.hagoapp.datacova.execution
 
-import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.data.execution.TaskExecutionData
 import com.hagoapp.datacova.entity.action.TaskAction
 import com.hagoapp.datacova.entity.execution.DataMessage
@@ -21,10 +20,11 @@ import com.hagoapp.datacova.util.StackTraceWriter
 import com.hagoapp.f2t.DataTable
 import com.hagoapp.f2t.FileColumnDefinition
 import com.hagoapp.f2t.FileParser
+import org.slf4j.LoggerFactory
 
 class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExecutionWatcher {
 
-    private val logger = CoVaLogger.getLogger()
+    private val logger = LoggerFactory.getLogger(Worker::class.java)
     private val taskExec = taskExecution
     private val observers = mutableListOf<TaskExecutionWatcher>()
     private val detail = ExecutionDetail(taskExecution)

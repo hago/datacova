@@ -9,11 +9,11 @@
 package com.hagoapp.datacova.execution.executor.validator
 
 import com.hagoapp.datacova.CoVaException
-import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.verification.conf.EmbedPythonConfig
 import com.hagoapp.datacova.execution.Validator
 import com.hagoapp.datacova.util.EmbedPythonHelper
 import com.hagoapp.f2t.DataRow
+import org.slf4j.LoggerFactory
 import java.nio.charset.StandardCharsets
 
 class EmbedPythonValidator : Validator() {
@@ -22,7 +22,7 @@ class EmbedPythonValidator : Validator() {
         const val ROW_VARIABLE = "row"
         const val RESULT_VARIABLE = "result"
 
-        private val logger = CoVaLogger.getLogger()
+        private val logger = LoggerFactory.getLogger(EmbedPythonHelper::class.java)
     }
 
     private lateinit var conf: EmbedPythonConfig

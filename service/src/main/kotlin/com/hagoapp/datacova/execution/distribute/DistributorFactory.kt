@@ -9,17 +9,17 @@ package com.hagoapp.datacova.execution.distribute
 
 import com.hagoapp.datacova.Application
 import com.hagoapp.datacova.CoVaException
-import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.distribute.Distributor
 import com.hagoapp.datacova.distribute.TaskActionDistribute
 import org.reflections.Reflections
 import org.reflections.scanners.Scanners
+import org.slf4j.LoggerFactory
 import java.lang.reflect.Constructor
 
 class DistributorFactory {
     companion object {
 
-        private val logger = CoVaLogger.getLogger()
+        private val logger = LoggerFactory.getLogger(DistributorFactory::class.java)
 
         private val distributorMap = mutableMapOf<String, Constructor<out Distributor>>()
 

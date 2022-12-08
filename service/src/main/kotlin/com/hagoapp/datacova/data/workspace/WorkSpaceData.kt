@@ -6,12 +6,14 @@ import com.hagoapp.datacova.data.CoVaDatabase
 import com.hagoapp.datacova.entity.workspace.WorkSpace
 import com.hagoapp.datacova.entity.workspace.WorkSpaceUserRole
 import com.hagoapp.datacova.util.data.DatabaseFunctions
+import org.slf4j.LoggerFactory
 import java.sql.ResultSet
 import java.sql.Timestamp
 
 class WorkSpaceData(connectionConfig: DatabaseConfig) : CoVaDatabase(connectionConfig) {
 
     constructor() : this(CoVaConfig.getConfig().database)
+    private val logger = LoggerFactory.getLogger(WorkSpaceData::class.java)
 
     /**
      * get all work spaces owned by user

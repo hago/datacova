@@ -8,7 +8,6 @@
 package com.hagoapp.datacova.dispatcher
 
 import com.hagoapp.datacova.CoVaException
-import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.JsonStringify
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.config.ExecutorConfig
@@ -16,6 +15,7 @@ import com.hagoapp.datacova.entity.internal.ExecutorStatus
 import com.hagoapp.datacova.executor.Executor
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.core.http.HttpHeaders
+import org.slf4j.LoggerFactory
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -31,7 +31,7 @@ class DispatcherInvoker(val config: ExecutorConfig) {
 
     private val registerUrl = "${config.dispatcherUrl}/api/dispatcher/register"
     private val heartbeatUrl = "${config.dispatcherUrl}/api/dispatcher/heartbeat"
-    private val logger = CoVaLogger.getLogger()
+    private val logger = LoggerFactory.getLogger(DispatcherInvoker::class.java)
 
     fun register(): Boolean {
         return try {

@@ -10,18 +10,19 @@ package com.hagoapp.datacova.execution
 
 import com.hagoapp.datacova.Application
 import com.hagoapp.datacova.CoVaException
-import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.entity.action.TaskAction
+import com.hagoapp.datacova.entity.action.TaskActionFactory
 import com.hagoapp.datacova.execution.executor.BaseTaskActionExecutor
 import org.reflections.Reflections
 import org.reflections.scanners.Scanners
+import org.slf4j.LoggerFactory
 import java.lang.reflect.Constructor
 
 class TaskActionExecutorFactory {
     companion object {
 
         private val actionExecutorMap = mutableMapOf<Int, Constructor<out BaseTaskActionExecutor>>()
-        private val logger = CoVaLogger.getLogger()
+        private val logger = LoggerFactory.getLogger(TaskActionFactory::class.java)
 
         init {
             val r = Reflections(Application::class.java.packageName, Scanners.SubTypes)

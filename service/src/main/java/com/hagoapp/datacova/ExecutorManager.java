@@ -9,6 +9,7 @@ package com.hagoapp.datacova;
 
 import com.hagoapp.datacova.entity.internal.ExecutorStatus;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
 import java.util.*;
@@ -27,7 +28,7 @@ public class ExecutorManager {
      * name: executor name; value: executor info
      */
     private final ConcurrentHashMap<String, ExecutorInfo> executorMap = new ConcurrentHashMap<>();
-    private final Logger logger = CoVaLogger.getLogger();
+    private final Logger logger = LoggerFactory.getLogger(ExecutorManager.class);
 
     private ExecutorManager() {
         TimerTask checker = new TimerTask() {

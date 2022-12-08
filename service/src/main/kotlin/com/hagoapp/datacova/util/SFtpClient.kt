@@ -1,11 +1,11 @@
 package com.hagoapp.datacova.util
 
 import com.hagoapp.datacova.CoVaException
-import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.distribute.sftp.SFtpAuthType
 import com.hagoapp.datacova.distribute.conf.SFtpConfig
 import com.hagoapp.datacova.execution.distribute.sftp.KnownHostsStore
 import com.jcraft.jsch.*
+import org.slf4j.LoggerFactory
 import java.io.Closeable
 import java.io.FileInputStream
 import java.nio.charset.StandardCharsets
@@ -31,7 +31,7 @@ class SFtpClient(
     private val sshClient: JSch = JSch()
     private var channel: ChannelSftp? = null
     private var session: Session? = null
-    private val logger = CoVaLogger.getLogger()
+    private val logger = LoggerFactory.getLogger(SFtpClient::class.java)
 
     init {
         knownHostsStore.toStream().use { sshClient.setKnownHosts(it) }

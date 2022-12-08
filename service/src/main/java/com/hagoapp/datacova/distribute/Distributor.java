@@ -7,14 +7,14 @@
 
 package com.hagoapp.datacova.distribute;
 
-import com.hagoapp.datacova.CoVaLogger;
 import com.hagoapp.datacova.config.CoVaConfig;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 abstract public class Distributor {
 
     protected TaskActionDistribute distAction;
-    protected final Logger logger = CoVaLogger.getLogger();
+    protected final Logger logger = LoggerFactory.getLogger(Distributor.class);
     protected CoVaConfig cfg = CoVaConfig.getConfig();
 
     public void init(TaskActionDistribute action) {

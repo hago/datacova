@@ -9,7 +9,6 @@
 package com.hagoapp.datacova.web;
 
 import com.hagoapp.datacova.CoVaException;
-import com.hagoapp.datacova.CoVaLogger;
 import com.hagoapp.datacova.config.WebConfig;
 import com.hagoapp.datacova.config.WebSocketConfig;
 import com.hagoapp.datacova.user.UserInfo;
@@ -37,6 +36,7 @@ import io.vertx.ext.web.handler.CorsHandler;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -52,7 +52,7 @@ import java.util.stream.Collectors;
  */
 public class WebManager {
 
-    private final Logger logger = CoVaLogger.getLogger();
+    private final Logger logger = LoggerFactory.getLogger(WebManager.class);
     private WebConfig webConfig;
     private static final Map<String, WebManager> instances = new ConcurrentHashMap<>();
     private final Map<String, WebHandler> handlers = new HashMap<>();

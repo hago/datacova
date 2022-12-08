@@ -7,7 +7,6 @@
 
 package com.hagoapp.datacova.web.file
 
-import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.MethodName
 import com.hagoapp.datacova.web.annotation.WebEndPoint
@@ -15,9 +14,10 @@ import com.hagoapp.datacova.web.authentication.AuthType
 import com.hagoapp.f2t.datafile.excel.ExcelDataFileParser
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.ext.web.RoutingContext
+import org.slf4j.LoggerFactory
 
 class ExcelOperation {
-    private val logger = CoVaLogger.getLogger()
+    private val logger = LoggerFactory.getLogger(ExcelOperation::class.java)
 
     @WebEndPoint(
         methods = [MethodName.POST],

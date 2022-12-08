@@ -8,6 +8,7 @@
 package com.hagoapp.datacova;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.stream.Collectors;
 
 public class ShutDownManager {
     private static final List<ShutDownWatcher> watchers = new ArrayList<>();
-    private static final Logger logger = CoVaLogger.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger(ShutDownManager.class);
 
     public static void watch(ShutDownWatcher watcher) {
         watchers.add(watcher);

@@ -7,7 +7,6 @@
 
 package com.hagoapp.datacova.data
 
-import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.redis.JedisManager
 import com.hagoapp.datacova.data.redis.RedisConfig
@@ -15,12 +14,13 @@ import com.hagoapp.util.StackTraceWriter
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.slf4j.LoggerFactory
 
 class JedisManagerTester {
 
     companion object {
         private val configFile: String = System.getProperty("cfg") ?: "./config.sample.json"
-        private val logger = CoVaLogger.getLogger()
+        private val logger = LoggerFactory.getLogger(JedisManagerTester::class.java)
         private lateinit var redisConfig: RedisConfig
 
         @BeforeAll

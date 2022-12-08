@@ -9,12 +9,12 @@
 package com.hagoapp.datacova.command;
 
 import com.hagoapp.datacova.CoVaException;
-import com.hagoapp.datacova.CoVaLogger;
 import com.hagoapp.datacova.config.CoVaConfig;
 import com.hagoapp.datacova.dispatcher.Dispatcher;
 import com.hagoapp.datacova.executor.Executor;
 import com.hagoapp.datacova.web.WebManager;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 
 import java.util.List;
@@ -22,10 +22,11 @@ import java.util.List;
 @CommandLine.Command(name = "start", description = "start service")
 public class Start extends CommandWithConfig {
 
+    private final Logger logger = LoggerFactory.getLogger(Start.class);
+
     @Override
     public Integer call() throws CoVaException {
         CoVaConfig.loadConfig(configFile);
-        Logger logger = CoVaLogger.getLogger();
         var config = CoVaConfig.getConfig();
 
         boolean runDispatcher = config.getWeb() != null;

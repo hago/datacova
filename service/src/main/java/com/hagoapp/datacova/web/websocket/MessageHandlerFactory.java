@@ -9,11 +9,11 @@ package com.hagoapp.datacova.web.websocket;
 
 import com.google.gson.Gson;
 import com.hagoapp.datacova.Application;
-import com.hagoapp.datacova.CoVaLogger;
 import com.hagoapp.datacova.MapSerializer;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -25,7 +25,7 @@ public class MessageHandlerFactory {
 
     private final static Map<Integer, Constructor<? extends IMessageHandler>> handlerMap = new ConcurrentHashMap<>();
     private final static Map<Integer, Class<? extends ClientMessage>> typeMap = new ConcurrentHashMap<>();
-    private final static Logger logger = CoVaLogger.getLogger();
+    private final static Logger logger = LoggerFactory.getLogger(MessageHandlerFactory.class);
 
     static {
         var ref = new Reflections(Application.class.getPackageName(), Scanners.SubTypes);

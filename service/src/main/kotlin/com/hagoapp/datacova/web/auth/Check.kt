@@ -8,7 +8,6 @@
 
 package com.hagoapp.datacova.web.auth
 
-import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.user.UserInfo
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.util.web.AuthUtils
@@ -16,13 +15,14 @@ import com.hagoapp.datacova.web.MethodName
 import com.hagoapp.datacova.web.WebInterface
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.ext.web.RoutingContext
+import org.slf4j.LoggerFactory
 
 class Check : WebInterface {
     override fun getPath(): String {
         return "/api/auth/check"
     }
 
-    private val logger = CoVaLogger.getLogger()
+    private val logger = LoggerFactory.getLogger(Check::class.java)
 
     override fun requestHandlers(): MutableMap<String, WebInterface.Handler> {
         return mutableMapOf(

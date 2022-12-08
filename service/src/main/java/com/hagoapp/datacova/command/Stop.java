@@ -9,10 +9,10 @@
 package com.hagoapp.datacova.command;
 
 import com.hagoapp.datacova.CoVaException;
-import com.hagoapp.datacova.CoVaLogger;
 import com.hagoapp.datacova.ShutDownManager;
 import com.hagoapp.datacova.config.CoVaConfig;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 
 import java.io.IOException;
@@ -27,7 +27,7 @@ public class Stop extends CommandWithConfig {
     @CommandLine.Option(names = {"-f", "--force"}, description = "force service to stop", arity = "0")
     private boolean force = false;
 
-    private final Logger logger = CoVaLogger.getLogger();
+    private final Logger logger = LoggerFactory.getLogger(Stop.class);
 
     @Override
     public Integer call() throws CoVaException {

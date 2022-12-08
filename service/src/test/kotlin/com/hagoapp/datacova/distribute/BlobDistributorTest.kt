@@ -8,18 +8,18 @@
 package com.hagoapp.datacova.distribute
 
 import com.hagoapp.datacova.CoVaException
-import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.Constants
 import com.hagoapp.datacova.distribute.conf.AzureBlobConfig
 import com.hagoapp.datacova.execution.distribute.AzureBlobDistributor
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.slf4j.LoggerFactory
 
 class BlobDistributorTest {
     companion object {
         private val dist = TaskActionDistribute()
-        private val logger = CoVaLogger.getLogger()
+        private val logger = LoggerFactory.getLogger(BlobDistributorTest::class.java)
 
         @JvmStatic
         @BeforeAll

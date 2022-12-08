@@ -7,7 +7,6 @@
 
 package com.hagoapp.datacova.executor
 
-import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.dispatcher.DispatcherInvoker
 import com.hagoapp.datacova.entity.execution.ExecutionActionDetail
@@ -15,6 +14,7 @@ import com.hagoapp.datacova.entity.execution.ExecutionDetail
 import com.hagoapp.datacova.entity.execution.TaskExecution
 import com.hagoapp.datacova.execution.TaskExecutionWatcher
 import com.hagoapp.datacova.web.WebManager
+import org.slf4j.LoggerFactory
 import java.time.Instant
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -33,7 +33,7 @@ class Executor private constructor() : TaskExecutionWatcher {
 
     private val lock = ReentrantReadWriteLock()
     private val config = CoVaConfig.getConfig().executor
-    private val logger = CoVaLogger.getLogger()
+    private val logger = LoggerFactory.getLogger(Executor::class.java)
     private val statuses = ConcurrentHashMap<Int, Status>()
     private val runningWorkerCount: Int
         get() {

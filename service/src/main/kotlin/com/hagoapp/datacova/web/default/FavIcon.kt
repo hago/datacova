@@ -8,15 +8,15 @@
 
 package com.hagoapp.datacova.web.default
 
-import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.MethodName
 import com.hagoapp.datacova.web.WebInterface
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.core.http.HttpHeaders
+import org.slf4j.LoggerFactory
 
 class FavIcon : WebInterface {
-    private val logger = CoVaLogger.getLogger()
+    private val logger = LoggerFactory.getLogger(FavIcon::class.java)
 
     override fun getPath(): String {
         return "/favicon.ico";

@@ -8,16 +8,16 @@
 
 package com.hagoapp.datacova.web.auth
 
-import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.util.web.CaptchaUtils
 import com.hagoapp.datacova.web.MethodName
 import com.hagoapp.datacova.web.WebInterface
 import io.netty.handler.codec.http.HttpResponseStatus
+import org.slf4j.LoggerFactory
 
 class Captcha : WebInterface {
 
-    private val logger = CoVaLogger.getLogger()
+    private val logger = LoggerFactory.getLogger(Captcha::class.java)
 
     override fun getPath(): String {
         return "/api/auth/captcha"

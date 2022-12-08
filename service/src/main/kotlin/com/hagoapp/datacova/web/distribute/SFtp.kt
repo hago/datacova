@@ -8,7 +8,6 @@
 package com.hagoapp.datacova.web.distribute
 
 import com.google.gson.Gson
-import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.distribute.sftp.SFtpAuthType
 import com.hagoapp.datacova.distribute.conf.SFtpConfig
 import com.hagoapp.datacova.execution.distribute.sftp.KnownHostsStore
@@ -23,11 +22,12 @@ import com.jcraft.jsch.JSchException
 import com.jcraft.jsch.SftpException
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.ext.web.RoutingContext
+import org.slf4j.LoggerFactory
 import java.io.FileInputStream
 
 class SFtp {
 
-    private val logger = CoVaLogger.getLogger()
+    private val logger = LoggerFactory.getLogger(SFtp::class.java)
 
     @WebEndPoint(
         methods = [MethodName.POST],

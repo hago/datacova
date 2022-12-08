@@ -10,13 +10,13 @@ package com.hagoapp.datacova.entity.action;
 import com.google.gson.Gson;
 import com.hagoapp.datacova.Application;
 import com.hagoapp.datacova.CoVaException;
-import com.hagoapp.datacova.CoVaLogger;
 import com.hagoapp.datacova.MapSerializer;
 import com.hagoapp.datacova.util.StackTraceWriter;
 import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -28,7 +28,7 @@ public class TaskActionFactory {
 
     private static final Map<Integer, Class<? extends TaskAction>> typeActionMap = new HashMap<>();
 
-    private static final Logger logger = CoVaLogger.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger(TaskActionFactory.class);
 
     static {
         Reflections r = new Reflections(Application.class.getPackageName(), Scanners.SubTypes);

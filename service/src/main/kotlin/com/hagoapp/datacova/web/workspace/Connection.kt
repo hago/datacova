@@ -7,7 +7,6 @@
 
 package com.hagoapp.datacova.web.workspace
 
-import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.data.workspace.ConnectionCache
 import com.hagoapp.datacova.data.workspace.ConnectionData
 import com.hagoapp.datacova.data.workspace.WorkspaceCache
@@ -23,12 +22,13 @@ import com.hagoapp.f2t.database.DbConnectionFactory
 import com.hagoapp.f2t.database.config.DbConfigReader
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.ext.web.RoutingContext
+import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.sql.SQLException
 
 class Connection {
 
-    private val logger = CoVaLogger.getLogger()
+    private val logger = LoggerFactory.getLogger(Connection::class.java)
 
     @WebEndPoint(
         path = "/api/workspace/:id/connections",

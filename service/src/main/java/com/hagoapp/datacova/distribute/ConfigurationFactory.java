@@ -12,11 +12,11 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.hagoapp.datacova.Application;
 import com.hagoapp.datacova.CoVaException;
-import com.hagoapp.datacova.CoVaLogger;
 import com.hagoapp.datacova.MapSerializer;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -26,7 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ConfigurationFactory {
 
     private static final Map<String, Class<? extends Configuration>> typeMap = new ConcurrentHashMap<String, Class<? extends Configuration>>();
-    private static final Logger logger = CoVaLogger.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger(ConfigurationFactory.class);
 
     static {
         Reflections r = new Reflections(Application.class.getPackageName(), Scanners.SubTypes);

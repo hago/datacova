@@ -9,7 +9,6 @@ package com.hagoapp.datacova.web.verify
 
 import com.google.gson.Gson
 import com.hagoapp.datacova.CoVaException
-import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.execution.executor.validator.EmbedPythonValidator
 import com.hagoapp.datacova.util.EmbedPythonHelper
 import com.hagoapp.datacova.util.LuaHelper
@@ -23,10 +22,11 @@ import io.netty.handler.codec.http.HttpResponseStatus.*
 import io.vertx.ext.web.RoutingContext
 import org.luaj.vm2.LuaError
 import org.luaj.vm2.lib.jse.JsePlatform
+import org.slf4j.LoggerFactory
 
 class ScriptOps {
 
-    private val logger = CoVaLogger.getLogger()
+    private val logger = LoggerFactory.getLogger(ScriptOps::class.java)
 
     @WebEndPoint(
         methods = [MethodName.POST],

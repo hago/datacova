@@ -7,7 +7,6 @@
 
 package com.hagoapp.datacova.executor.web
 
-import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.execution.TaskExecutionData
 import com.hagoapp.datacova.entity.execution.ExecutionStatus
@@ -19,10 +18,11 @@ import com.hagoapp.datacova.web.MethodName
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.ext.web.RoutingContext
+import org.slf4j.LoggerFactory
 
 class ExecutorApi {
 
-    private val logger = CoVaLogger.getLogger()
+    private val logger = LoggerFactory.getLogger(ExecutorApi::class.java)
 
     @WebEndPoint(
         path = "/api/executor/execute/:id",

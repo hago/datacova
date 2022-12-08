@@ -8,7 +8,6 @@
 
 package com.hagoapp.datacova.web.auth
 
-import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.data.user.PermissionCache
 import com.hagoapp.datacova.user.UserAuthFactory
 import com.hagoapp.datacova.user.UserAuthProvider
@@ -20,10 +19,11 @@ import com.hagoapp.datacova.web.MethodName
 import com.hagoapp.datacova.web.WebInterface
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.ext.web.RoutingContext
+import org.slf4j.LoggerFactory
 
 class Login : WebInterface {
 
-    private val logger = CoVaLogger.getLogger()
+    private val logger = LoggerFactory.getLogger(Login::class.java)
 
     override fun getPath(): String {
         return "/api/auth/login"

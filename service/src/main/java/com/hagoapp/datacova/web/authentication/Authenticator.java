@@ -1,9 +1,9 @@
 package com.hagoapp.datacova.web.authentication;
 
-import com.hagoapp.datacova.CoVaLogger;
 import com.hagoapp.datacova.user.UserInfo;
 import io.vertx.ext.web.RoutingContext;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +13,7 @@ public abstract class Authenticator {
     public static final String AUTHENTICATION_EXTRA_PARAMS = "AUTHENTICATION_EXTRA_PARAMS";
 
     protected RoutingContext context;
-    protected Logger logger = CoVaLogger.getLogger();
+    protected Logger logger = LoggerFactory.getLogger(Authenticator.class);
 
     protected abstract boolean validateAuthentication(RoutingContext routingContext);
 

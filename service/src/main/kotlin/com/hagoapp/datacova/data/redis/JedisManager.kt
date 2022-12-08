@@ -7,12 +7,11 @@
 
 package com.hagoapp.datacova.data.redis
 
-import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.ShutDownManager
 import com.hagoapp.datacova.ShutDownWatcher
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.CoVaRedisConfigProvider
-import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import redis.clients.jedis.Jedis
 import redis.clients.jedis.JedisPool
 import redis.clients.jedis.JedisPoolConfig
@@ -44,7 +43,7 @@ class JedisManager private constructor() {
     }
 
     companion object {
-        private val logger: Logger = CoVaLogger.getLogger()
+        private val logger = LoggerFactory.getLogger(JedisManager::class.java)
         private val pools = mutableMapOf<RedisConfig, Pair<Pool<Jedis>, Int>>()
         private val defaultConfig = CoVaConfig.getConfig().redis
 

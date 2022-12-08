@@ -7,7 +7,6 @@
 
 package com.hagoapp.datacova.user
 
-import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.RedisCacheReader
 import com.hagoapp.datacova.data.user.UserData
@@ -15,6 +14,7 @@ import com.hagoapp.datacova.util.FileStoreUtils
 import com.hagoapp.datacova.util.Utils
 import com.hagoapp.datacova.util.web.CaptchaUtils
 import io.vertx.ext.web.RoutingContext
+import org.slf4j.LoggerFactory
 import java.io.ByteArrayInputStream
 import java.util.*
 
@@ -29,7 +29,7 @@ class LocalUserProvider : UserAuthProvider {
     }
 
     private val dbConfig = CoVaConfig.getConfig().database
-    private val logger = CoVaLogger.getLogger()
+    private val logger = LoggerFactory.getLogger(LocalUserProvider::class.java)
 
     override fun authenticate(context: RoutingContext): UserInfo? {
         val req = context.request()

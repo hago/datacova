@@ -9,10 +9,9 @@
 package com.hagoapp.datacova.data
 
 import com.hagoapp.datacova.CoVaException
-import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.config.DatabaseConfig
-import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.io.Closeable
 import java.sql.Connection
 import java.sql.DriverManager
@@ -34,7 +33,7 @@ abstract class CoVaDatabase(connectionConfig: DatabaseConfig) : Closeable {
 
     protected val connection: Connection
 
-    protected val logger: Logger = CoVaLogger.getLogger()
+    private val logger = LoggerFactory.getLogger(CoVaDatabase::class.java)
 
     init {
         if (config.databaseName.isNullOrBlank()) {

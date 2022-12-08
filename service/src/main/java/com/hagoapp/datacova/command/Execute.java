@@ -9,7 +9,6 @@
 package com.hagoapp.datacova.command;
 
 import com.hagoapp.datacova.CoVaException;
-import com.hagoapp.datacova.CoVaLogger;
 import com.hagoapp.datacova.config.CoVaConfig;
 import com.hagoapp.datacova.data.execution.TaskExecutionData;
 import com.hagoapp.datacova.entity.execution.ExecutionActionDetail;
@@ -20,6 +19,7 @@ import com.hagoapp.datacova.execution.Worker;
 import com.hagoapp.datacova.executor.ExecuteResultMailer;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 
 import java.util.Arrays;
@@ -35,7 +35,7 @@ public class Execute extends CommandWithConfig implements TaskExecutionWatcher {
     @CommandLine.Option(names = {"-l", "--l"}, description = "locale to be used", required = false)
     private String locale;
 
-    private final Logger logger = CoVaLogger.getLogger();
+    private final Logger logger = LoggerFactory.getLogger(Execute.class);
 
     @Override
     public Integer call() throws CoVaException {

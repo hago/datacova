@@ -8,7 +8,6 @@
 package com.hagoapp.datacova.web.distribute
 
 import com.google.gson.Gson
-import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.distribute.conf.FtpConfig
 import com.hagoapp.datacova.util.FtpClient
 import com.hagoapp.datacova.util.StackTraceWriter
@@ -18,10 +17,11 @@ import com.hagoapp.datacova.web.annotation.WebEndPoint
 import com.hagoapp.datacova.web.authentication.AuthType
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.ext.web.RoutingContext
+import org.slf4j.LoggerFactory
 
 class Ftp {
 
-    private val logger = CoVaLogger.getLogger()
+    private val logger = LoggerFactory.getLogger(Ftp::class.java)
 
     @WebEndPoint(
         methods = [MethodName.POST],

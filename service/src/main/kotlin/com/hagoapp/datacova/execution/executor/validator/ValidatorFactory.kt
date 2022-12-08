@@ -9,18 +9,18 @@ package com.hagoapp.datacova.execution.executor.validator
 
 import com.hagoapp.datacova.Application
 import com.hagoapp.datacova.CoVaException
-import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.verification.Configuration
 import com.hagoapp.datacova.execution.Validator
 import org.reflections.Reflections
 import org.reflections.scanners.Scanners
+import org.slf4j.LoggerFactory
 import java.lang.reflect.Constructor
 
 class ValidatorFactory {
     companion object {
 
         private val validatorMap = mutableMapOf<Int, Constructor<out Validator>>()
-        private val logger = CoVaLogger.getLogger()
+        private val logger = LoggerFactory.getLogger(ValidatorFactory::class.java)
 
         init {
             val r = Reflections(Application::class.java.packageName, Scanners.SubTypes)

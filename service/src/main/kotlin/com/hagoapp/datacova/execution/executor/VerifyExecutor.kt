@@ -8,7 +8,6 @@
 package com.hagoapp.datacova.execution.executor
 
 import com.hagoapp.datacova.CoVaException
-import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.entity.action.TaskAction
 import com.hagoapp.datacova.verification.TaskActionVerify
 import com.hagoapp.datacova.entity.execution.DataMessage
@@ -18,11 +17,12 @@ import com.hagoapp.f2t.ColumnDefinition
 import com.hagoapp.f2t.DataTable
 import com.hagoapp.f2t.ProgressNotify
 import com.hagoapp.f2t.datafile.ParseResult
+import org.slf4j.LoggerFactory
 
 class VerifyExecutor : BaseTaskActionExecutor(), ProgressNotify {
     private lateinit var taskAction: TaskActionVerify
     private var verificationFailed = false
-    private val logger = CoVaLogger.getLogger()
+    private val logger = LoggerFactory.getLogger(VerifyExecutor::class.java)
 
     override fun execute(taskExecution: TaskExecution, action: TaskAction, data: DataTable<out ColumnDefinition>) {
         if (action !is TaskActionVerify) {

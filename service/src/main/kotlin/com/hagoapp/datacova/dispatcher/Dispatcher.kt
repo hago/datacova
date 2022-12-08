@@ -8,10 +8,10 @@
 package com.hagoapp.datacova.dispatcher
 
 import com.hagoapp.datacova.CoVaException
-import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.ExecutorManager
 import com.hagoapp.datacova.data.execution.TaskExecutionData
 import com.hagoapp.datacova.entity.execution.TaskExecution
+import org.slf4j.LoggerFactory
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.TimeUnit
 
@@ -28,7 +28,7 @@ class Dispatcher {
         }
     }
 
-    private val logger = CoVaLogger.getLogger()
+    private val logger = LoggerFactory.getLogger(Dispatcher::class.java)
     private val queue = LinkedBlockingQueue<TaskExecution>(1000)
     private val runner = Thread {
         while (true) {

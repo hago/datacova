@@ -8,9 +8,9 @@
 
 package com.hagoapp.datacova.util.mail
 
-import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.config.MailConfig
+import org.slf4j.LoggerFactory
 import java.util.*
 import javax.activation.DataHandler
 import javax.activation.FileDataSource
@@ -21,7 +21,7 @@ import javax.mail.internet.*
 
 class MailHelper(val config: MailConfig) {
 
-    private val logger = CoVaLogger.getLogger()
+    private val logger = LoggerFactory.getLogger(MailHelper::class.java)
 
     private val recipients = mutableListOf<InternetAddress>()
     private val recipientsCC = mutableListOf<InternetAddress>()

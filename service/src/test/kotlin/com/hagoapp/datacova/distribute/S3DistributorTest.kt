@@ -8,7 +8,6 @@
 package com.hagoapp.datacova.distribute
 
 import com.hagoapp.datacova.CoVaException
-import com.hagoapp.datacova.CoVaLogger
 import com.hagoapp.datacova.Constants
 import com.hagoapp.datacova.distribute.conf.S3Config
 import com.hagoapp.datacova.execution.distribute.S3Distributor
@@ -17,6 +16,7 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledIfSystemProperties
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty
+import org.slf4j.LoggerFactory
 
 @EnabledIfSystemProperties(
     EnabledIfSystemProperty(named = Constants.S3_ACCESS_KEY, matches = ".*"),
@@ -28,7 +28,7 @@ class S3DistributorTest {
 
     companion object {
         private val dist = TaskActionDistribute()
-        private val logger = CoVaLogger.getLogger()
+        private val logger = LoggerFactory.getLogger(S3DistributorTest::class.java)
 
         @JvmStatic
         @BeforeAll

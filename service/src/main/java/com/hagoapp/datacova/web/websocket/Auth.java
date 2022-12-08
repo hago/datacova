@@ -7,7 +7,6 @@
 
 package com.hagoapp.datacova.web.websocket;
 
-import com.hagoapp.datacova.CoVaLogger;
 import com.hagoapp.datacova.data.RedisCacheReader;
 import com.hagoapp.datacova.user.UserInfo;
 import com.hagoapp.datacova.util.http.RequestHelper;
@@ -16,6 +15,7 @@ import io.netty.handler.codec.http.HttpHeaderNames;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.ServerWebSocket;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.HttpCookie;
 import java.util.List;
@@ -24,7 +24,7 @@ import static com.hagoapp.datacova.util.web.AuthUtils.LOGIN_COOKIE;
 
 public class Auth {
 
-    private final static Logger logger = CoVaLogger.getLogger();
+    private final static Logger logger = LoggerFactory.getLogger(Auth.class);
 
     public static UserInfo authenticate(ServerWebSocket serverWebSocket) {
         var token = authenticateCookie(serverWebSocket);
