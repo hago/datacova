@@ -17,18 +17,18 @@ import java.util.stream.Collectors;
 
 public class TaskActionVerify extends TaskAction {
     public static final int TASK_ACTION_TYPE_VERIFY = 2;
-    private List<Configuration> configurations;
+    private List<VerifyConfiguration> configurations;
 
     public TaskActionVerify() {
         super();
         type = TASK_ACTION_TYPE_VERIFY;
     }
 
-    public List<Configuration> getConfigurations() {
+    public List<VerifyConfiguration> getConfigurations() {
         return configurations;
     }
 
-    public void setConfigurations(List<Configuration> configurations) {
+    public void setConfigurations(List<VerifyConfiguration> configurations) {
         this.configurations = configurations;
     }
 
@@ -41,7 +41,7 @@ public class TaskActionVerify extends TaskAction {
     @SuppressWarnings("unchecked")
     public void loadActualContent(Map<String, Object> content) throws CoVaException {
         List<Map<String, Object>> list = (List<Map<String, Object>>) content.get("configurations");
-        configurations = list.stream().map(ConfigurationFactory::createConfiguration).collect(Collectors.toList());
+        configurations = list.stream().map(VerifyConfiguration::create).collect(Collectors.toList());
         for (var conf : configurations) {
             if (!conf.isValid()) {
                 throw new CoVaException(String.format("verify configuration is not valid: %s", conf.toJson()));
