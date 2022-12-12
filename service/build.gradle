@@ -10,7 +10,7 @@ version '0.1'
 
 repositories {
     mavenCentral()
-    //mavenLocal()
+    mavenLocal()
     //github()
 }
 
@@ -30,6 +30,7 @@ dependencies {
     implementation 'io.vertx:vertx-web:4.3.0'
 
     implementation 'com.hagoapp:f2t:0.7.5'
+    implementation 'com.hagoapp:surveyor:0.1'
 
     implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.30'
     implementation group: 'ch.qos.logback', name:'logback-classic', version: '1.2.3'
