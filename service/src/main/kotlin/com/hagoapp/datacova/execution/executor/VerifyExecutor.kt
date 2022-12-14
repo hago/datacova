@@ -12,11 +12,11 @@ import com.hagoapp.datacova.entity.action.TaskAction
 import com.hagoapp.datacova.verification.TaskActionVerify
 import com.hagoapp.datacova.entity.execution.DataMessage
 import com.hagoapp.datacova.entity.execution.TaskExecution
-import com.hagoapp.datacova.execution.executor.validator.ValidatorFactory
 import com.hagoapp.f2t.ColumnDefinition
 import com.hagoapp.f2t.DataTable
 import com.hagoapp.f2t.ProgressNotify
 import com.hagoapp.f2t.datafile.ParseResult
+import com.hagoapp.surveyor.SurveyorFactory
 import org.slf4j.LoggerFactory
 
 class VerifyExecutor : BaseTaskActionExecutor(), ProgressNotify {
@@ -33,29 +33,42 @@ class VerifyExecutor : BaseTaskActionExecutor(), ProgressNotify {
         taskAction = action
         val descriptions = mutableListOf<String>()
         val validators = action.configurations.map { conf ->
-            descriptions.add(conf.describe(taskExecution.task.extra.locale))
-            ValidatorFactory.createValidator(conf).withColumnDefinition(data.columnDefinition).setConfig(conf)
+            // descriptions.add(conf.describe(taskExecution.task.extra.locale))
+            // ValidatorFactory.createValidator(conf).withColumnDefinition(data.columnDefinition).setConfig(conf)
+            val validator = SurveyorFactory.createSurveyor(conf.ruleConfig)
+            val columnIndexes = conf.fields.map { f ->
+                data.columnDefinition.indexOfFirst { it.name == f }
+            }
+            Pair(validator, columnIndexes)
         }
         val size = data.rows.size.toFloat()
-        data.rows.forEachIndexed { index, row ->
+        data.rows.forEachIndexed { i, row ->
             validators.forEachIndexed { j, validator ->
                 try {
-                    validator.verify(row).forEach {
-                        val message = createDataMessage(it.key, it.value, descriptions[j])
-                        watcher?.onDataMessage(action, index, message)
+                    val r = validator.first.process(validator.second.map { row.cells[it] })
+                    logger.trace("""validate $row against validator "${action.configurations[j].ruleConfig.toString()}", result: $r""")
+                    if (!r) {
+                        verificationFailed = true
+                        validator.second.map { colIndex ->
+                            val col = data.columnDefinition[colIndex].name
+                            val v = row.cells[colIndex].data
+                            watcher?.onDataMessage(action, i, createDataMessage(col, v, ""))
+                        }
                     }
                 } catch (e: Exception) {
                     val message = createDataMessage(e.toString(), null, descriptions[j])
-                    watcher?.onDataMessage(action, index, message)
+                    watcher?.onDataMessage(action, i, message)
                 }
             }
-            this.onProgress(index.toFloat() / size)
         }
-        validators.forEach {
+        validators.forEachIndexed { i, it ->
             try {
-                it.close()
+                it.first.close()
             } catch (e: Exception) {
-                logger.error("closing validator of type {} causes error: {}", it.supportedVerificationType, e)
+                logger.error(
+                    "closing validator of type {} causes error: {}",
+                    action.configurations[i].ruleConfig.configType, e
+                )
             }
         }
     }
