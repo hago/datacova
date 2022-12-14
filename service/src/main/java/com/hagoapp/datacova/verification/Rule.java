@@ -20,7 +20,7 @@ public class Rule implements JsonStringify {
     private long id;
     private String name;
     private String description;
-    private Configuration ruleConfig;
+    private VerifyConfiguration ruleConfig;
     private Integer workspaceId;
     private long addBy;
     private long addTime;
@@ -51,11 +51,11 @@ public class Rule implements JsonStringify {
         this.description = description;
     }
 
-    public Configuration getRuleConfig() {
+    public VerifyConfiguration getRuleConfig() {
         return ruleConfig;
     }
 
-    public void setRuleConfig(Configuration ruleConfig) {
+    public void setRuleConfig(VerifyConfiguration ruleConfig) {
         this.ruleConfig = ruleConfig;
     }
 
@@ -105,7 +105,7 @@ public class Rule implements JsonStringify {
         Map<String, Object> map = MapSerializer.deserializeMap(json);
         Map<String, Object> configMap = (Map<String, Object>)map.get("ruleConfig");
         Rule rule = new Gson().fromJson(json, Rule.class);
-        rule.ruleConfig = ConfigurationFactory.createConfiguration(configMap);
+        rule.ruleConfig = VerifyConfiguration.create(configMap);
         return rule;
     }
 }

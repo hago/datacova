@@ -9,7 +9,6 @@ package com.hagoapp.datacova.web.verify
 
 import com.google.gson.Gson
 import com.hagoapp.datacova.CoVaException
-import com.hagoapp.datacova.execution.executor.validator.EmbedPythonValidator
 import com.hagoapp.datacova.util.EmbedPythonHelper
 import com.hagoapp.datacova.util.LuaHelper
 import com.hagoapp.datacova.util.StackTraceWriter
@@ -117,13 +116,13 @@ class ScriptOps {
         try {
             val ret = EmbedPythonHelper.execCodeBlockOnce(
                 data.code, mapOf(
-                    EmbedPythonValidator.ROW_VARIABLE to data.fieldValues.map {
+                    "row" to data.fieldValues.map {
                         Pair(it.key, it.value.getTypedValue())
                     }.toMap()
-                ), setOf(EmbedPythonValidator.RESULT_VARIABLE)
+                ), setOf("result")
             )
             println(ret)
-            val x = ret[EmbedPythonValidator.RESULT_VARIABLE] ?: throw CoVaException("no variable \"ret\" defined")
+            val x = ret["result"] ?: throw CoVaException("no variable \"ret\" defined")
             if (x !is Boolean) {
                 throw CoVaException("the variable \"ret\" should be boolean")
             }
