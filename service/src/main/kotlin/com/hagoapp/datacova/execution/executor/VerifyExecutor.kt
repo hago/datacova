@@ -12,6 +12,7 @@ import com.hagoapp.datacova.entity.action.TaskAction
 import com.hagoapp.datacova.verification.TaskActionVerify
 import com.hagoapp.datacova.entity.execution.DataMessage
 import com.hagoapp.datacova.entity.execution.TaskExecution
+import com.hagoapp.datacova.util.surveyor.RuleConfigDescriptor
 import com.hagoapp.f2t.ColumnDefinition
 import com.hagoapp.f2t.DataTable
 import com.hagoapp.f2t.ProgressNotify
@@ -31,7 +32,6 @@ class VerifyExecutor : BaseTaskActionExecutor(), ProgressNotify {
             throw ex
         }
         taskAction = action
-        val descriptions = mutableListOf<String>()
         val validators = action.configurations.map { conf ->
             // descriptions.add(conf.describe(taskExecution.task.extra.locale))
             // ValidatorFactory.createValidator(conf).withColumnDefinition(data.columnDefinition).setConfig(conf)
@@ -41,18 +41,20 @@ class VerifyExecutor : BaseTaskActionExecutor(), ProgressNotify {
             }
             Pair(validator, columnIndexes)
         }
-        val size = data.rows.size.toFloat()
+        val descriptions = action.configurations.map { conf ->
+            RuleConfigDescriptor.create(conf.ruleConfig).describe(conf.ruleConfig, taskExecution.task.extra.locale)
+        }
         data.rows.forEachIndexed { i, row ->
             validators.forEachIndexed { j, validator ->
                 try {
                     val r = validator.first.process(validator.second.map { row.cells[it] })
-                    logger.trace("""validate $row against validator "${action.configurations[j].ruleConfig.toString()}", result: $r""")
+                    logger.trace("""validate $row against validator "${action.configurations[j].ruleConfig}", result: $r""")
                     if (!r) {
                         verificationFailed = true
                         validator.second.map { colIndex ->
                             val col = data.columnDefinition[colIndex].name
                             val v = row.cells[colIndex].data
-                            watcher?.onDataMessage(action, i, createDataMessage(col, v, ""))
+                            watcher?.onDataMessage(action, i, createDataMessage(col, v, descriptions[j]))
                         }
                     }
                 } catch (e: Exception) {
