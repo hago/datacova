@@ -42,7 +42,7 @@ class VerifyExecutor : BaseTaskActionExecutor(), ProgressNotify {
             Pair(validator, columnIndexes)
         }
         val descriptions = action.configurations.map { conf ->
-            RuleConfigDescriptor.create(conf.ruleConfig).describe(conf.ruleConfig, taskExecution.task.extra.locale)
+            RuleConfigDescriptor.create(conf.ruleConfig).describe(conf, taskExecution.task.extra.locale)
         }
         data.rows.forEachIndexed { i, row ->
             validators.forEachIndexed { j, validator ->

@@ -8,9 +8,10 @@
 
 package com.hagoapp.datacova.util.surveyor
 
+import com.hagoapp.datacova.verification.VerifyConfiguration
 import com.hagoapp.surveyor.RuleConfig
 import com.hagoapp.surveyor.rule.EmbedJythonRuleConfig
-import org.stringtemplate.v4.ST
+import java.util.*
 
 class EmbedJythonRuleConfigDescriptor internal constructor() : RuleConfigDescriptor() {
 
@@ -21,11 +22,15 @@ class EmbedJythonRuleConfigDescriptor internal constructor() : RuleConfigDescrip
     override val templateDirName: String
         get() = EMBED_PYTHON_TEMPLATE_DIR
 
-    override fun getExpectActualRuleConfigType(): Class<out RuleConfig> {
+    override fun expectActualRuleConfigType(): Class<out RuleConfig> {
         return EmbedJythonRuleConfig::class.java
     }
 
-    override fun doDescribe(st: ST, config: RuleConfig): String {
-        TODO("Not yet implemented")
+    override fun doDescribe(dt: DescriptionTemplate, config: VerifyConfiguration, locale: Locale): String {
+        val st = dt.templateObject
+        st.add("fields", config.fields);
+        val jythonConfig = config.ruleConfig as EmbedJythonRuleConfig
+        st.add("snippet", jythonConfig.snippet);
+        return st.render();
     }
 }

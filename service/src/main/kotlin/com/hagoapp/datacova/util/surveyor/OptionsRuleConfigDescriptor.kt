@@ -8,9 +8,10 @@
 
 package com.hagoapp.datacova.util.surveyor
 
+import com.hagoapp.datacova.verification.VerifyConfiguration
 import com.hagoapp.surveyor.RuleConfig
 import com.hagoapp.surveyor.rule.OptionsRuleConfig
-import org.stringtemplate.v4.ST
+import java.util.*
 
 class OptionsRuleConfigDescriptor internal constructor() : RuleConfigDescriptor() {
 
@@ -21,11 +22,21 @@ class OptionsRuleConfigDescriptor internal constructor() : RuleConfigDescriptor(
     override val templateDirName: String
         get() = OPTIONS_RULE_TEMPLATE_DIR
 
-    override fun getExpectActualRuleConfigType(): Class<out RuleConfig> {
+    override fun expectActualRuleConfigType(): Class<out RuleConfig> {
         return OptionsRuleConfig::class.java
     }
 
-    override fun doDescribe(st: ST, config: RuleConfig): String {
-        TODO("Not yet implemented")
+    override fun doDescribe(dt: DescriptionTemplate, config: VerifyConfiguration, locale: Locale): String {
+        if (config.fields.isEmpty()) {
+            throw UnsupportedOperationException("No field defined for rule")
+        }
+        val fieldString = config.fields.joinToString(", ") { """'${it.replace("'", "''")}'""" }
+        val optConfig = config.ruleConfig as OptionsRuleConfig
+        val optionString = optConfig.options.joinToString(", ") {
+            if (it == null) "null"
+            else """"${it.replace("\"", "\"\"")}""""
+        }
+        return dt.rawTemplate.format(locale, fieldString, optionString)
+        // return String.format(dt.rawTemplate, fieldString, optionString)
     }
 }

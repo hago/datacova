@@ -8,9 +8,10 @@
 
 package com.hagoapp.datacova.util.surveyor
 
+import com.hagoapp.datacova.verification.VerifyConfiguration
 import com.hagoapp.surveyor.RuleConfig
 import com.hagoapp.surveyor.rule.RegexRuleConfig
-import org.stringtemplate.v4.ST
+import java.util.*
 
 class RegexRuleConfigDescriptor internal constructor() : RuleConfigDescriptor() {
 
@@ -21,11 +22,16 @@ class RegexRuleConfigDescriptor internal constructor() : RuleConfigDescriptor() 
     override val templateDirName: String
         get() = REGEX_RULE_TEMPLATE_DIR
 
-    override fun getExpectActualRuleConfigType(): Class<out RuleConfig> {
+    override fun expectActualRuleConfigType(): Class<out RuleConfig> {
         return RegexRuleConfig::class.java
     }
 
-    override fun doDescribe(st: ST, config: RuleConfig): String {
-        TODO("Not yet implemented")
+    override fun doDescribe(dt: DescriptionTemplate, config: VerifyConfiguration, locale: Locale): String {
+        val regexConfig = config.ruleConfig as RegexRuleConfig
+        val params = mutableListOf("")
+            .plus(if (config.fields.isEmpty()) listOf("") else config.fields).plus(regexConfig.pattern)
+            .toTypedArray()
+        return dt.rawTemplate.format(locale, params)
+        // return String.format(dt.rawTemplate, params)
     }
 }

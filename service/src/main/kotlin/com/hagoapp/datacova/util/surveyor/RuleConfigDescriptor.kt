@@ -10,6 +10,7 @@ package com.hagoapp.datacova.util.surveyor
 
 import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.util.text.TextResourceManager
+import com.hagoapp.datacova.verification.VerifyConfiguration
 import com.hagoapp.surveyor.RuleConfig
 import com.hagoapp.surveyor.rule.*
 import org.stringtemplate.v4.ST
@@ -21,7 +22,7 @@ abstract class RuleConfigDescriptor {
     companion object {
 
         fun create(config: RuleConfig): RuleConfigDescriptor {
-            return when (config) {
+            val instance = when (config) {
                 is RegexRuleConfig -> regexDescriptor
                 is OptionsRuleConfig -> optionsDescriptor
                 is EmbedJythonRuleConfig -> embedJythonDescriptor
@@ -29,6 +30,7 @@ abstract class RuleConfigDescriptor {
                 is TimeRangeRuleConfig -> timeRangeDescriptor
                 else -> throw Exception()
             }
+            return instance
         }
 
         private val regexDescriptor: RegexRuleConfigDescriptor = RegexRuleConfigDescriptor()
@@ -36,29 +38,35 @@ abstract class RuleConfigDescriptor {
         private val timeRangeDescriptor: TimerRangeRuleConfigDescriptor = TimerRangeRuleConfigDescriptor()
         private val numberRangeDescriptor: NumberRangeRuleConfigDescriptor = NumberRangeRuleConfigDescriptor()
         private val embedJythonDescriptor: EmbedJythonRuleConfigDescriptor = EmbedJythonRuleConfigDescriptor()
+
     }
 
-    private val localizedTemplates = mutableMapOf<Locale, ST?>()
+    protected data class DescriptionTemplate(
+        val rawTemplate: String,
+        val templateObject: ST
+    )
+
+    private val localizedTemplates = mutableMapOf<Locale, DescriptionTemplate?>()
     protected abstract val templateDirName: String
 
     @JvmOverloads
-    fun describe(config: RuleConfig, locale: Locale = Locale.getDefault()): String {
-        val expect = getExpectActualRuleConfigType()
-        val actual = config::class.java
+    open fun describe(config: VerifyConfiguration, locale: Locale = Locale.getDefault()): String {
+        val expect = expectActualRuleConfigType()
+        val actual = config.ruleConfig::class.java
         if (actual != expect) {
             throw CoVaException("config in $expect is expected, while $actual instance is given")
         }
         val template = localizedTemplates.compute(locale) { loc, st ->
             if (st != null) st else {
                 val template = TextResourceManager.getManager().getString(loc)
-                if (template != null) ST(template) else null
+                if (template != null) DescriptionTemplate(template, ST(template)) else null
             }
         }
             ?: throw UnsupportedOperationException("template for ${config::class.java.canonicalName} with locale ${locale.displayName} not found")
-        return doDescribe(template, config)
+        return doDescribe(template, config, locale)
     }
 
-    protected abstract fun getExpectActualRuleConfigType(): Class<out RuleConfig>
+    protected abstract fun expectActualRuleConfigType(): Class<out RuleConfig>
 
-    protected abstract fun doDescribe(st: ST, config: RuleConfig): String
+    protected abstract fun doDescribe(dt: DescriptionTemplate, config: VerifyConfiguration, locale: Locale): String
 }

@@ -8,9 +8,10 @@
 
 package com.hagoapp.datacova.util.surveyor
 
+import com.hagoapp.datacova.verification.VerifyConfiguration
 import com.hagoapp.surveyor.RuleConfig
 import com.hagoapp.surveyor.rule.NumberRangeRuleConfig
-import org.stringtemplate.v4.ST
+import java.util.Locale
 
 class NumberRangeRuleConfigDescriptor internal constructor() : RuleConfigDescriptor() {
 
@@ -21,11 +22,16 @@ class NumberRangeRuleConfigDescriptor internal constructor() : RuleConfigDescrip
     override val templateDirName: String
         get() = NUMBER_RANGE_RULE_TEMPLATE_DIR
 
-    override fun getExpectActualRuleConfigType(): Class<out RuleConfig> {
+    override fun expectActualRuleConfigType(): Class<out RuleConfig> {
         return NumberRangeRuleConfig::class.java
     }
 
-    override fun doDescribe(st: ST, config: RuleConfig): String {
-        TODO("Not yet implemented")
+    override fun doDescribe(dt: DescriptionTemplate, config: VerifyConfiguration, locale: Locale): String {
+        val st = dt.templateObject
+        st.add("fields", config.fields)
+        val nrConfig = config.ruleConfig as NumberRangeRuleConfig
+        st.add("lowerBound", nrConfig.lowerBoundary)
+        st.add("upperBound", nrConfig.upperBoundary)
+        return st.render();
     }
 }

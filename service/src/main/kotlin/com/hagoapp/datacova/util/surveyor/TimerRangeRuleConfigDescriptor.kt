@@ -8,9 +8,13 @@
 
 package com.hagoapp.datacova.util.surveyor
 
+import com.hagoapp.datacova.verification.VerifyConfiguration
 import com.hagoapp.surveyor.RuleConfig
 import com.hagoapp.surveyor.rule.TimeRangeRuleConfig
-import org.stringtemplate.v4.ST
+import java.time.Instant
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.util.*
 
 class TimerRangeRuleConfigDescriptor internal constructor() : RuleConfigDescriptor() {
 
@@ -21,11 +25,23 @@ class TimerRangeRuleConfigDescriptor internal constructor() : RuleConfigDescript
     override val templateDirName: String
         get() = TIME_RANGE_RULE_TEMPLATE_DIR
 
-    override fun getExpectActualRuleConfigType(): Class<out RuleConfig> {
+    override fun expectActualRuleConfigType(): Class<out RuleConfig> {
         return TimeRangeRuleConfig::class.java
     }
 
-    override fun doDescribe(st: ST, config: RuleConfig): String {
-        TODO("Not yet implemented")
+    override fun doDescribe(dt: DescriptionTemplate, config: VerifyConfiguration, locale: Locale): String {
+        val st = dt.templateObject
+        st.add("fields", config.fields);
+        val trConfig = config.ruleConfig as TimeRangeRuleConfig
+        st.add("lowerBound", trConfig.lowerBoundary)
+        st.add("upperBound", trConfig.upperBoundary)
+        st.add("lowerTime", getEpochMilliString(trConfig.lowerBoundary?.timeStamp))
+        st.add("upperTime", getEpochMilliString(trConfig.upperBoundary?.timeStamp))
+        return st.render()
+    }
+
+    private fun getEpochMilliString(epochMilli: Long?): String? {
+        epochMilli ?: return null
+        return ZonedDateTime.ofInstant(Instant.ofEpochMilli(epochMilli), ZoneId.systemDefault()).toString()
     }
 }
