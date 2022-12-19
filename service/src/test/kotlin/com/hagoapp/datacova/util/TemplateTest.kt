@@ -46,6 +46,7 @@ class TemplateTest {
     @Test
     fun testTemplateInConf() {
         val conf = CoVaConfig.getConfig().template
+            ?: throw FileNotFoundException("template directory configuration from config not found")
         if (!File(conf.directory).exists()) {
             throw FileNotFoundException("template directory ${conf.directory} from config not found")
         }

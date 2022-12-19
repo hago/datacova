@@ -13,8 +13,10 @@ import com.hagoapp.datacova.data.redis.RedisConfig
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty
 import org.slf4j.LoggerFactory
 
+@EnabledIfSystemProperty(named = JedisManagerTester.ENABLE_REDIS_TEST_FLAG, matches = ".*")
 class RedisCacheReaderTester {
 
     companion object {

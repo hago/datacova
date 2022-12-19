@@ -8,17 +8,21 @@
 package com.hagoapp.datacova.data
 
 import com.hagoapp.datacova.config.CoVaConfig
+import com.hagoapp.datacova.data.JedisManagerTester.Companion.ENABLE_REDIS_TEST_FLAG
 import com.hagoapp.datacova.data.redis.JedisManager
 import com.hagoapp.datacova.data.redis.RedisConfig
 import com.hagoapp.util.StackTraceWriter
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty
 import org.slf4j.LoggerFactory
 
+@EnabledIfSystemProperty(named = ENABLE_REDIS_TEST_FLAG, matches = ".*")
 class JedisManagerTester {
 
     companion object {
+        const val ENABLE_REDIS_TEST_FLAG = "cova.redis.test"
         private val configFile: String = System.getProperty("cfg") ?: "./config.sample.json"
         private val logger = LoggerFactory.getLogger(JedisManagerTester::class.java)
         private lateinit var redisConfig: RedisConfig
