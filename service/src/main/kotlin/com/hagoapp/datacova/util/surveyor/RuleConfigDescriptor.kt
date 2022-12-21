@@ -28,6 +28,7 @@ abstract class RuleConfigDescriptor {
                 is EmbedJythonRuleConfig -> embedJythonDescriptor
                 is NumberRangeRuleConfig -> numberRangeDescriptor
                 is TimeRangeRuleConfig -> timeRangeDescriptor
+                is RelativeTimeRangeConfig -> relativeTimeRangeDescriptor
                 else -> throw Exception()
             }
             return instance
@@ -38,7 +39,7 @@ abstract class RuleConfigDescriptor {
         private val timeRangeDescriptor: TimerRangeRuleConfigDescriptor = TimerRangeRuleConfigDescriptor()
         private val numberRangeDescriptor: NumberRangeRuleConfigDescriptor = NumberRangeRuleConfigDescriptor()
         private val embedJythonDescriptor: EmbedJythonRuleConfigDescriptor = EmbedJythonRuleConfigDescriptor()
-
+        private val relativeTimeRangeDescriptor = RelativeTimeRangeRuleConfigDescriptor()
     }
 
     protected data class DescriptionTemplate(
