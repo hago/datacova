@@ -12,8 +12,11 @@ import com.google.gson.JsonSyntaxException;
 import com.hagoapp.datacova.CoVaException;
 import com.hagoapp.datacova.JsonStringify;
 import com.hagoapp.datacova.data.redis.RedisConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -24,13 +27,14 @@ import java.nio.charset.StandardCharsets;
 public class CoVaConfig implements JsonStringify {
     private static CoVaConfig config;
     private static final String DEFAULT_CONFIG = "config.json";
+    private static final Logger logger = LoggerFactory.getLogger(CoVaConfig.class);
 
     public synchronized static CoVaConfig getConfig() {
         if (config == null) {
             try {
                 loadConfig(DEFAULT_CONFIG);
             } catch (CoVaException e) {
-                System.err.println(e.getMessage());
+                logger.error("CoVa config init error: {}", e.getMessage());
             }
         }
         return config;
@@ -49,6 +53,8 @@ public class CoVaConfig implements JsonStringify {
                 }
                 String json = bos.toString(StandardCharsets.UTF_8);
                 config = new Gson().fromJson(json, CoVaConfig.class);
+                logger.debug("Loading config from {}", new File(configFile).getAbsolutePath());
+                logger.trace("CoVa config loaded: {}", config.toJson());
             }
         } catch (IOException | JsonSyntaxException e) {
             throw new CoVaException(String.format("parse config file %s failed", configFile), e);
