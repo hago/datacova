@@ -47,9 +47,6 @@ class TemplateTest {
     fun testTemplateInConf() {
         val conf = CoVaConfig.getConfig().template
             ?: throw FileNotFoundException("template directory configuration from config not found")
-        if (!File(conf.directory).exists()) {
-            throw FileNotFoundException("template directory ${conf.directory} from config not found")
-        }
         val manager = TemplateManager.getManager(conf)
         val template = manager.getTemplate("user/register/activation", Locale.getDefault())
         Assertions.assertNotNull(template)
