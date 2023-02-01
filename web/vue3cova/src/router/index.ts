@@ -1,7 +1,9 @@
 import { identityStore } from '@/stores/identity'
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import RouteErrorView from '@/components/auth/RouteErrorView.vue'
+import RouteErrorView from '@/views/auth/RouteErrorView.vue'
+import LoginView from '@/views/auth/LoginView.vue'
+import ContentView from '@/views/ContentView.vue'
 
 declare module 'vue-router' {
   interface RouteMeta {
@@ -12,13 +14,24 @@ declare module 'vue-router' {
   }
 }
 
-const DEFAULT_LOGIN_URL = "/login"
-const DEFAULT_ROUTE_ERROR_URL = "/error/route"
+const DEFAULT_LOGIN_ROUTE = "/login"
+const DEFAULT_ROUTE_ERROR_ROUTE = "/error/route"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
 
   routes: [
+    {
+      path: '/login',
+      name: 'login',
+      component: LoginView,
+      meta: {
+        login: {
+          requireLogin: false,
+          jumpToLogin: false
+        }
+      }
+    },
     {
       path: '/error/route',
       name: 'route_error',
@@ -31,12 +44,23 @@ const router = createRouter({
       }
     },
     {
+      path: '/content',
+      name: 'content',
+      component: ContentView,
+      meta: {
+        login: {
+          requireLogin: false,
+          jumpToLogin: false
+        }
+      }
+    },    
+    {
       path: '/',
       name: 'home',
       component: HomeView,
       meta: {
         login: {
-          requireLogin: false,
+          requireLogin: true,
           jumpToLogin: false
         }
       }
@@ -68,10 +92,10 @@ router.beforeEach((to, from) => {
     console.log('user login status is not found')
     if (to.meta.login.jumpToLogin) {
       console.log('redirect to default login page')
-      return DEFAULT_LOGIN_URL
+      return DEFAULT_LOGIN_ROUTE
     } else {
       console.log('stop routing')
-      return DEFAULT_ROUTE_ERROR_URL
+      return DEFAULT_ROUTE_ERROR_ROUTE
     }
   }
   console.log('user login status found')
