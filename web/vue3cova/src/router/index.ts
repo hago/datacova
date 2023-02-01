@@ -44,23 +44,23 @@ const router = createRouter({
       }
     },
     {
-      path: '/content',
-      name: 'content',
+      path: '/',
+      name: 'root',
       component: ContentView,
       meta: {
         login: {
-          requireLogin: false,
-          jumpToLogin: false
+          requireLogin: true,
+          jumpToLogin: true
         }
       }
     },    
     {
-      path: '/',
+      path: '/home',
       name: 'home',
       component: HomeView,
       meta: {
         login: {
-          requireLogin: true,
+          requireLogin: false,
           jumpToLogin: false
         }
       }
