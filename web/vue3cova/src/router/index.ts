@@ -88,7 +88,7 @@ router.beforeEach((to, from) => {
   }
   console.log('login is required')
   let user = identityStore().current
-  if (!user.isValidIdentity(user)) {
+  if (!user.isValidIdentity()) {
     console.log('user login status is not found')
     if (to.meta.login.jumpToLogin) {
       console.log('redirect to default login page')

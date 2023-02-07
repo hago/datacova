@@ -3,8 +3,8 @@ export default class Identity {
     name: string | null = null;
     token: string | null = null;
 
-    isValidIdentity(identity: Identity) {
-        return (identity.id !== undefined) && (identity.id != null)
+    isValidIdentity() {
+        return (this.id !== undefined) && (this.id != null)
     }
 }
 
