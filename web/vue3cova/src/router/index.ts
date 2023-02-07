@@ -99,7 +99,7 @@ router.beforeEach((to, from) => {
     }
   }
   console.log('user login status found')
-  return to
+  return true
 })
 
 export default router
