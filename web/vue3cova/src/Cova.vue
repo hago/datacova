@@ -1,5 +1,50 @@
-<script setup lang="ts">
+<script lang="ts">
+import { defineComponent, h, reactive, ref } from "vue";
 import { RouterLink, RouterView } from "vue-router";
+import {
+  currentActualIdentity,
+  currentIdentity,
+  identityStore,
+} from "./stores/identity";
+
+const anonymousMenu = [
+  {
+    label: "Anonymous",
+    key: "user-name-display",
+  },
+];
+let createMenu = () => {
+  let id = identityStore();
+  if (!currentIdentity(id).isValidIdentity()) {
+    return anonymousMenu;
+  } else {
+    let u = currentIdentity(id);
+    let u0 = currentActualIdentity(id);
+    return [
+      {
+        label: u.name,
+        key: u0.id,
+        children: [
+          {
+            label: () =>
+              h(RouterLink, { to: "/logout" }, { default: () => "Logout" }),
+          },
+        ],
+      },
+    ];
+  }
+};
+
+export default defineComponent({
+  setup() {
+    let id = currentIdentity(identityStore());
+    return reactive({
+      userIdentity: id,
+      activeKey: ref<string | null>(null),
+      userMenu: createMenu(),
+    });
+  },
+});
 </script>
 
 <template>
@@ -10,7 +55,12 @@ import { RouterLink, RouterView } from "vue-router";
       <span class="tmVa">VA</span><span>lidate</span>
     </n-gi>
     <n-gi class="userarea">
-      <div>User Profile</div>
+      <n-menu
+        :options="userMenu"
+        v-model:value="activeKey"
+        mode="vertical"
+        class="userprofile"
+      ></n-menu>
     </n-gi>
   </n-grid>
   <n-grid>
@@ -42,5 +92,9 @@ import { RouterLink, RouterView } from "vue-router";
 
 .userarea {
   text-align: right;
+}
+
+.userprofile {
+  color: aqua;
 }
 </style>

@@ -4,6 +4,7 @@ export default class Identity {
     token: string | null = null;
 
     isValidIdentity() {
+        console.log(`isValidIdentity ${this.id}`)
         return (this.id !== undefined) && (this.id != null)
     }
 }
