@@ -8,4 +8,12 @@ export default class Identity {
     }
 }
 
+export function newIdentity(id: string, name: string, token: string): Identity {
+    let i = new Identity()
+    i.id = id
+    i.name = name
+    i.token = token
+    return i
+}
+
 export const emptyIdentity: Identity = new Identity()
