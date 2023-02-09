@@ -10,7 +10,7 @@ type LogonStatus = {
 }
 
 export function currentIdentity(status: LogonStatus): Identity {
-    return (status.impersonated != emptyIdentity) ? status.impersonated : status.current
+    return (status.impersonated !== null) && (status.impersonated.id !== null) ? status.impersonated : status.current
 }
 
 export function currentActualIdentity(status: LogonStatus): Identity {
