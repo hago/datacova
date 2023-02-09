@@ -47,7 +47,8 @@ export default defineComponent({
       switch (key) {
         case "logout":
           identityStore().logout()
-          router.push("/")
+          this.userIdentity = anonymousIdentity()
+          router.push("/login")
           break
         default:
           return
