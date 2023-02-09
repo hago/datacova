@@ -1,35 +1,27 @@
 <script lang="ts">
 import { defineComponent, h, reactive, ref } from "vue";
-import { RouterLink, RouterView } from "vue-router";
 import {
   currentActualIdentity,
   currentIdentity,
   identityStore,
 } from "./stores/identitystore";
 
-const anonymousMenu = [
-  {
-    label: "Anonymous",
-    key: "user-name-display",
-  },
-];
-let createMenu = () => {
+let createOptions = () => {
   let id = identityStore();
   if (!currentIdentity(id).isValidIdentity()) {
-    return anonymousMenu;
+    return [];
   } else {
     let u = currentIdentity(id);
     let u0 = currentActualIdentity(id);
     return [
       {
-        label: u.name,
-        key: u0.id,
-        children: [
-          {
-            label: () =>
-              h(RouterLink, { to: "/logout" }, { default: () => "Logout" }),
-          },
-        ],
+        label: `User Id: ${u.id}`,
+        key: "userid",
+        disabled: true,
+      },
+      {
+        label: "Logout",
+        key: "logout",
       },
     ];
   }
@@ -41,7 +33,7 @@ export default defineComponent({
     return reactive({
       userIdentity: id,
       activeKey: ref<string | null>(null),
-      userMenu: createMenu(),
+      options: createOptions(),
     });
   },
 });
@@ -55,12 +47,15 @@ export default defineComponent({
       <span class="tmVa">VA</span><span>lidate</span>
     </n-gi>
     <n-gi class="userarea">
-      <n-menu
+      <!--<n-menu
         :options="userMenu"
         v-model:value="activeKey"
         mode="vertical"
         class="userprofile"
-      ></n-menu>
+      ></n-menu>-->
+      <n-dropdown trigger="click" :options="options">
+        <n-button style="color: aqua">{{ userIdentity.name }}</n-button>
+      </n-dropdown>
     </n-gi>
   </n-grid>
   <n-grid>
@@ -92,9 +87,6 @@ export default defineComponent({
 
 .userarea {
   text-align: right;
-}
-
-.userprofile {
   color: aqua;
 }
 </style>
