@@ -47,7 +47,7 @@ export interface LoginResponseHanlder {
     fail: (status: number, reason: string, data?: any) => any
 }
 
-export class UserAuth {
+export class UserAuthApi {
     constructor() {
         //
     }
@@ -85,5 +85,5 @@ export class UserAuth {
     }
 }
 
-const loginHelper: UserAuth = new UserAuth()
+const loginHelper: UserAuthApi = new UserAuthApi()
 export default loginHelper
