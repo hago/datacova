@@ -58,7 +58,7 @@
 <script lang="ts">
 import { random } from "lodash";
 import { defineComponent, reactive } from "vue";
-import loginHelper from "@/api/userauth";
+import loginHelper from "@/api/userauthapi";
 import { identityStore } from "@/stores/identity";
 import { newIdentity } from "@/entities/identity";
 import router from "@/router";
