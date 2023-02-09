@@ -49,5 +49,8 @@ export const identityStore = defineStore('identity', {
         keepActive() {
             this.lastActiveTime = new Date().getTime()
         }
+    },
+    persist: {
+        storage: sessionStorage
     }
 })
