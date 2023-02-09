@@ -1,5 +1,8 @@
 <script lang="ts">
+import type { DropdownOption } from "naive-ui";
 import { defineComponent, h, reactive, ref } from "vue";
+import { anonymousIdentity } from "./entities/identity";
+import router from "./router";
 import {
   currentActualIdentity,
   currentIdentity,
@@ -30,12 +33,27 @@ let createOptions = () => {
 export default defineComponent({
   setup() {
     let id = currentIdentity(identityStore());
+    if (!id.isValidIdentity()) {
+      id = anonymousIdentity()
+    }
     return reactive({
       userIdentity: id,
       activeKey: ref<string | null>(null),
       options: createOptions(),
     });
   },
+  methods: {
+    dropdownClick(key: string | number, option: DropdownOption) {
+      switch (key) {
+        case "logout":
+          identityStore().logout()
+          router.push("/")
+          break
+        default:
+          return
+      }
+    }
+  }
 });
 </script>
 
@@ -53,7 +71,7 @@ export default defineComponent({
         mode="vertical"
         class="userprofile"
       ></n-menu>-->
-      <n-dropdown trigger="click" :options="options">
+      <n-dropdown trigger="click" :options="options" @select="dropdownClick">
         <n-button style="color: aqua">{{ userIdentity.name }}</n-button>
       </n-dropdown>
     </n-gi>

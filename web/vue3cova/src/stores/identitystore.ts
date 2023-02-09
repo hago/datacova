@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import Identity from '@/entities/identity'
+import Identity, { anonymousIdentity } from '@/entities/identity'
 import { emptyIdentity } from '@/entities/identity'
 
 type LogonStatus = {
@@ -23,8 +23,8 @@ export function isImpersonating(status: LogonStatus): boolean {
 
 export const identityStore = defineStore('identity', {
     state: (): LogonStatus => ({
-        current: new Identity(),
-        impersonated: new Identity(),
+        current: anonymousIdentity(),
+        impersonated: anonymousIdentity(),
         loginTime: 0,
         lastActiveTime: 0
     }),
