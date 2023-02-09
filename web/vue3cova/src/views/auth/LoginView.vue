@@ -59,7 +59,7 @@
 import { random } from "lodash";
 import { defineComponent, reactive } from "vue";
 import loginHelper from "@/api/userauthapi";
-import { identityStore } from "@/stores/identity";
+import { identityStore } from "@/stores/identitystore";
 import { newIdentity } from "@/entities/identity";
 import router from "@/router";
 

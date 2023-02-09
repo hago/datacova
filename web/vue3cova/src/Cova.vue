@@ -5,7 +5,7 @@ import {
   currentActualIdentity,
   currentIdentity,
   identityStore,
-} from "./stores/identity";
+} from "./stores/identitystore";
 
 const anonymousMenu = [
   {

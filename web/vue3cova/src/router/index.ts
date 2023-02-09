@@ -1,4 +1,4 @@
-import { identityStore } from '@/stores/identity'
+import { identityStore } from '@/stores/identitystore'
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import RouteErrorView from '@/views/auth/RouteErrorView.vue'
