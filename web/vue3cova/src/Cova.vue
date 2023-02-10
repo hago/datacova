@@ -31,6 +31,9 @@ let createOptions = () => {
 };
 
 export default defineComponent({
+  emits: [
+    'loginStatusChanged'
+  ],
   setup() {
     let id = currentIdentity(identityStore());
     if (!id.isValidIdentity()) {
@@ -52,6 +55,14 @@ export default defineComponent({
           break
         default:
           return
+      }
+    },
+    logonChanged() {
+      console.log("logonChanged triggered")
+      let logst = identityStore()
+      this.userIdentity = currentIdentity(logst)
+      if (!this.userIdentity.isValidIdentity()) {
+        this.userIdentity = anonymousIdentity()
       }
     }
   }
@@ -79,7 +90,7 @@ export default defineComponent({
   </n-grid>
   <n-grid>
     <n-gi :span="24">
-      <RouterView />
+      <RouterView  @loginStatusChanged="logonChanged" />
     </n-gi>
   </n-grid>
 </template>

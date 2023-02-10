@@ -112,7 +112,8 @@ export default defineComponent({
                 rsp.data.token
               )
             );
-            router.push("/")
+            this.$emit("loginStatusChanged");
+            router.push("/");
           },
           fail: (status, reason, data?) => {
             console.log("login view failed");
