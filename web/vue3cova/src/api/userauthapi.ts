@@ -1,26 +1,5 @@
-export interface BasicLoginInfo {
-    userId: string,
-    password: string,
-    captcha: string
-}
-
-export interface User {
-    userId: string,
-    provider: string,
-    name: string,
-    description: string | null,
-    email: string | null,
-    mobile: string | null,
-    status: string
-}
-
-export interface Permission {
-    id: number,
-    name: string,
-    description: string | null,
-    parentId: number,
-    parent: Permission | null
-}
+import type { User, Permission, BasicLoginInfo } from "@/entities/user"
+import type FailResponse from "./failresponse"
 
 export interface LoginResponse {
     code: number,
@@ -31,14 +10,6 @@ export interface LoginResponse {
             userInfo: User,
             permissions: Permission[]
         }
-    }
-}
-
-export interface LoginFailResponse {
-    code: number,
-    error: {
-        message: string,
-        data: any
     }
 }
 
@@ -71,7 +42,7 @@ export class UserAuthApi {
                     if (rsp.status === 200) {
                         handler.success(JSON.parse(s))
                     } else {
-                        let rsperr = JSON.parse(s) as LoginFailResponse
+                        let rsperr = JSON.parse(s) as FailResponse
                         handler.fail(rsperr.code, rsperr.error.message, rsperr.error)
                     }
                 })
