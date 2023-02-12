@@ -11,8 +11,14 @@
         <div class="col-5">{{ session.deviceIdentity }}</div>
         <div class="col-2">{{ session.userInfo.name }}</div>
         <div class="col-2">{{ session.remoteIp }}</div>
-        <div class="col-3"><button class="btn btn-info">Message</button></div>
+        <div class="col-3"><button class="btn btn-info" v-on:click="composeMessage()">Message</button></div>
       </div>
+    </div>
+    <div>
+      <textarea>
+
+      </textarea>
+      <button class="btn btn_info">send</button>
     </div>
   </div>
 </template>
