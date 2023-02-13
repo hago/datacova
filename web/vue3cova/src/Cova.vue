@@ -1,7 +1,7 @@
 <script lang="ts">
 import type { DropdownOption } from "naive-ui";
 import { defineComponent, h, reactive, ref } from "vue";
-import workspaceApiHelper, { type Workspace } from "./api/workspaceapi";
+import workspaceApiHelper, { type Workspace, type WorkspaceWithUser } from "./api/workspaceapi";
 import { anonymousIdentity } from "./entities/identity";
 import router from "./router";
 import {
@@ -46,14 +46,14 @@ export default defineComponent({
       activeKey: ref<string | null>(null),
       options: createOptions(),
       workspaceId: ref<number | null>(null),
-      workspaces: emptySpaces
+      workspaces: emptySpaces,
     });
   },
   mounted() {
     this.loadWorkspaces()
   },
   methods: {
-    dropdownClick(key: string | number, option: DropdownOption) {
+    dropdownClick(key: string | number) {
       switch (key) {
         case "logout":
           identityStore().logout()
@@ -81,7 +81,7 @@ export default defineComponent({
       } else {
         workspaceApiHelper.userWorksapces(currentIdentity(id), {
           success: (rsp) => {
-            this.workspaces = rsp.data.map(wu => wu.workspace)
+            this.workspaces = rsp.data.map(wk => wk.workspace)
             this.workspaceId = rsp.data.length > 0 ? rsp.data[0].workspace.id : null
           },
           fail: () => { }
