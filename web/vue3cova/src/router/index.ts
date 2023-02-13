@@ -1,6 +1,5 @@
 import { identityStore } from '@/stores/identitystore'
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 import RouteErrorView from '@/views/auth/RouteErrorView.vue'
 import LoginView from '@/views/auth/LoginView.vue'
 import ContentView from '@/views/ContentView.vue'
@@ -53,25 +52,6 @@ const router = createRouter({
           jumpToLogin: true
         }
       }
-    },    
-    {
-      path: '/home',
-      name: 'home',
-      component: HomeView,
-      meta: {
-        login: {
-          requireLogin: false,
-          jumpToLogin: false
-        }
-      }
-    },
-    {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue')
     }
   ]
 })
