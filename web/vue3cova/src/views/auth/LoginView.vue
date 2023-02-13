@@ -28,7 +28,7 @@
         <n-input
           v-model:value="captcha"
           type="text"
-          placeholder="input id"
+          placeholder="input captcha"
         ></n-input>
       </n-gi>
       <n-gi class="dockright vcenter">
