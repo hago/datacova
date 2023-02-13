@@ -23,7 +23,7 @@ class AuthUtils {
     companion object {
         const val LOGIN_COOKIE = "MfIry5adA8UYJEYb"
         private const val IMPERSONATOR_COOKIE = "5fVDH0qFaHbrcJv5"
-        private const val TOKEN_AUTH_NAME = "name"
+        private const val TOKEN_AUTH_NAME = "token"
         private const val IMPERSONATE_TOKEN_HEADER_NAME = "TmzSOsex"
         private val gson = GsonBuilder().serializeNulls().create()
 
