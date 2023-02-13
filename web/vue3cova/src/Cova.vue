@@ -9,6 +9,7 @@ import {
   currentIdentity,
   identityStore,
 } from "./stores/identitystore";
+import { workspaceStore } from "./stores/workspacestore";
 
 let createOptions = () => {
   let id = identityStore();
@@ -81,7 +82,10 @@ export default defineComponent({
       } else {
         workspaceApiHelper.userWorksapces(currentIdentity(id), {
           success: (rsp) => {
-            this.workspaces = rsp.data.map(wk => wk.workspace)
+            this.workspaces = rsp.data.map(wk => {
+              workspaceStore().setWorkspace(wk)
+              return wk.workspace
+            })
             this.workspaceId = rsp.data.length > 0 ? rsp.data[0].workspace.id : null
           },
           fail: () => { }
