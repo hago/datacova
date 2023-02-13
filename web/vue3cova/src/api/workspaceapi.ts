@@ -1,5 +1,7 @@
 import type Identity from "@/entities/identity";
 import type { User } from "@/entities/user";
+import { addTokenHeader } from "./credential";
+import type FailResponse from "./failresponse";
 
 export interface Workspace {
     id: number
@@ -31,7 +33,7 @@ export interface WorkspaceResponse {
 }
 
 export interface WorkspacesResponseHanlder {
-    success: (workspaces: WorkspaceWithUser[]) => any
+    success: (response: WorkspaceResponse) => any
     fail: (status: number, reason: string, data?: any) => any
 }
 
@@ -41,7 +43,28 @@ export class UserAuthApi {
     }
 
     async userWorksapces(user: Identity, handler?: WorkspacesResponseHanlder) {
-
+        let headers = addTokenHeader(user)
+        let p = fetch("/api/workspaces/mine", {
+            headers: headers,
+            method: "GET"
+        })
+        if (handler === undefined) {
+            return p
+        } else {
+            p.then(rsp => {
+                rsp.text().then(s => {
+                    if (rsp.status === 200) {
+                        handler.success(JSON.parse(s))
+                    } else {
+                        let rsperr = JSON.parse(s) as FailResponse
+                        handler.fail(rsperr.code, rsperr.error.message, rsperr.error)
+                    }
+                })
+            }).catch(err => {
+                console.log("login fail: ", err)
+                handler.fail(-1, "fetch error", err)
+            })
+        }
     }
 }
 
