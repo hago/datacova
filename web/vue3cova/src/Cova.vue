@@ -87,6 +87,7 @@ export default defineComponent({
               return wk.workspace
             })
             this.workspaceId = rsp.data.length > 0 ? rsp.data[0].workspace.id : null
+            workspaceStore().selectWorkspace(rsp.data[0])
           },
           fail: () => { }
         })
