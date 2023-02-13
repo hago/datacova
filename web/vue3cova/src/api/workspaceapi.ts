@@ -37,7 +37,7 @@ export interface WorkspacesResponseHanlder {
     fail: (status: number, reason: string, data?: any) => any
 }
 
-export class UserAuthApi {
+export class WorkspaceApi {
     constructor() {
         //
     }
@@ -68,5 +68,5 @@ export class UserAuthApi {
     }
 }
 
-const workspaceApiHelper: UserAuthApi = new UserAuthApi()
+const workspaceApiHelper: WorkspaceApi = new WorkspaceApi()
 export default workspaceApiHelper
