@@ -37,6 +37,16 @@ export interface WorkspacesListResponseHanlder {
     fail: (status: number, reason: string, data?: any) => any
 }
 
+export interface WorkspaceResponse {
+    code: number,
+    data: WorkspaceWithUser
+}
+
+export interface WorkspaceResponseHanlder {
+    success: (response: WorkspaceResponse) => any
+    fail: (status: number, reason: string, data?: any) => any
+}
+
 export class WorkspaceApi {
     constructor() {
         //
@@ -45,6 +55,31 @@ export class WorkspaceApi {
     async userWorksapces(user: Identity, handler?: WorkspacesListResponseHanlder) {
         let headers = addTokenHeader(user)
         let p = fetch("/api/workspaces/mine", {
+            headers: headers,
+            method: "GET"
+        })
+        if (handler === undefined) {
+            return p
+        } else {
+            p.then(rsp => {
+                rsp.text().then(s => {
+                    if (rsp.status === 200) {
+                        handler.success(JSON.parse(s))
+                    } else {
+                        let rsperr = JSON.parse(s) as FailResponse
+                        handler.fail(rsperr.code, rsperr.error.message, rsperr.error)
+                    }
+                })
+            }).catch(err => {
+                console.log("login fail: ", err)
+                handler.fail(-1, "fetch error", err)
+            })
+        }
+    }
+
+    async getWorksapce(user: Identity, id: number, handler?: WorkspaceResponseHanlder) {
+        let headers = addTokenHeader(user)
+        let p = fetch(`/api/workspace/${id}`, {
             headers: headers,
             method: "GET"
         })
