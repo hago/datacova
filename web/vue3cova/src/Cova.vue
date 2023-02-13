@@ -1,7 +1,7 @@
 <script lang="ts">
 import type { DropdownOption } from "naive-ui";
 import { defineComponent, h, reactive, ref } from "vue";
-import workspaceApiHelper from "./api/workspaceapi";
+import workspaceApiHelper, { type Workspace } from "./api/workspaceapi";
 import { anonymousIdentity } from "./entities/identity";
 import router from "./router";
 import {
@@ -31,11 +31,6 @@ let createOptions = () => {
   }
 };
 
-interface SelectOption {
-  label: string,
-  value: string | number
-}
-
 export default defineComponent({
   emits: [
     'loginStatusChanged'
@@ -45,7 +40,7 @@ export default defineComponent({
     if (!id.isValidIdentity()) {
       id = anonymousIdentity()
     }
-    let emptySpaces: SelectOption[] = []
+    let emptySpaces: Workspace[] = []
     return reactive({
       userIdentity: id,
       activeKey: ref<string | null>(null),
@@ -86,12 +81,7 @@ export default defineComponent({
       } else {
         workspaceApiHelper.userWorksapces(currentIdentity(id), {
           success: (rsp) => {
-            this.workspaces = rsp.data.map(wk => {
-              return {
-                label: wk.workspace.name,
-                value: wk.workspace.id
-              }
-            })
+            this.workspaces = rsp.data.map(wu => wu.workspace)
             this.workspaceId = rsp.data.length > 0 ? rsp.data[0].workspace.id : null
           },
           fail: () => { }
@@ -110,7 +100,10 @@ export default defineComponent({
       <span class="tmVa">VA</span><span>lidate</span>
     </n-gi>
     <n-gi class="tm">
-      <n-select v-model:value="workspaceId" :options="workspaces" class="workspaceselect"
+      <n-select
+        label-field="name"
+        value-field="id"
+        v-model:value="workspaceId" :options="workspaces" class="workspaceselect"
         v-if="(userIdentity !== null) && userIdentity.isValidIdentity()" />
     </n-gi>
     <n-gi class="userarea">
