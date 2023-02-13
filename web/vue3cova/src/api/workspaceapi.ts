@@ -27,13 +27,13 @@ export interface WorkspaceWithUser {
     users: WorkspaceUser[]
 }
 
-export interface WorkspaceResponse {
+export interface WorkspaceListResponse {
     code: number,
     data: WorkspaceWithUser[]
 }
 
-export interface WorkspacesResponseHanlder {
-    success: (response: WorkspaceResponse) => any
+export interface WorkspacesListResponseHanlder {
+    success: (response: WorkspaceListResponse) => any
     fail: (status: number, reason: string, data?: any) => any
 }
 
@@ -42,7 +42,7 @@ export class WorkspaceApi {
         //
     }
 
-    async userWorksapces(user: Identity, handler?: WorkspacesResponseHanlder) {
+    async userWorksapces(user: Identity, handler?: WorkspacesListResponseHanlder) {
         let headers = addTokenHeader(user)
         let p = fetch("/api/workspaces/mine", {
             headers: headers,
