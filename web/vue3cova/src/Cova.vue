@@ -88,19 +88,18 @@ export default defineComponent({
             })
             this.workspaceId = rsp.data.length > 0 ? rsp.data[0].workspace.id : null
             // workspaceStore().selectWorkspace(rsp.data[0])
-            this.workspaceSelect()
+            this.workspaceSelect(this.workspaceId)
           },
           fail: () => { }
         })
       }
     },
-    workspaceSelect() {
-      console.log(`selected ${this.workspaceId}`)
-      if (this.workspaceId === null) {
-        workspaceStore().clearSelectedWorkspace()
+    workspaceSelect(value: number | null) {
+      console.log(`selected ${value}`)
+      if ((value === undefined) || (value === null)) {
+        //this.$emit('errorOccurred', `select workspace ${value} not applicable`)
       } else {
-        workspaceStore().selectWorkspaceId(this.workspaceId)
-        router.push({name: 'workspace', params: { id: this.workspaceId }});
+        router.push({name: 'workspace', params: { id: value }});
       }
     }
   }

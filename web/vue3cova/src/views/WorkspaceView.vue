@@ -12,26 +12,21 @@ export default defineComponent({
       workspace: ref<WorkspaceWithUser | null>(wk)
     });
   },
-  computed: {
-    workspaceName() {
-      console.log('computed')
-      return this.workspace === null ? "" : this.workspace.workspace.name;
-    }
-  },
   mounted() {
-    console.log(`mounted`)
+    console.log(`mounted WorkspaceView`)
     this.loadWorkspace()
   },
   updated() {
-    console.log('updated')
+    console.log('updated WorkspaceView')
     this.loadWorkspace()
   },
   methods: {
     loadWorkspace() {
       let workspaceId = this.$route.params.id
+      console.log(`WorkspaceView.id: ${workspaceId}`)
       if (typeof workspaceId === 'string') {
-        workspaceStore().selectWorkspaceId(parseInt(workspaceId))
-        this.workspace = workspaceStore().getSelectedWorkspace()
+        this.workspace = workspaceStore().getWorkspace(parseInt(workspaceId))
+        console.log(`WorkspaceView.workspace: ${this.workspace}`)
       } else {
         this.$emit('errorOccurs', `workspace id "${workspaceId}" is not a value`)
       }
