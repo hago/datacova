@@ -26,6 +26,18 @@ export const workspaceStore = defineStore("workspaces", {
         },
         selectWorkspace(w: WorkspaceWithUser) {
             this.selectedWorkspace = w
+        },
+        selectWorkspaceId(id: number) {
+            let w = this.workspaces.get(id)
+            if (w == undefined) {
+                console.log(`error: workspace with id ${id} not found in store`)
+                this.selectedWorkspace = null
+            } else {
+                this.selectedWorkspace = w
+            }
+        },
+        clearSelectedWorkspace() {
+            this.selectedWorkspace = null
         }
     }
 })

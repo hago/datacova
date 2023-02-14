@@ -2,19 +2,23 @@ import { identityStore } from '@/stores/identitystore'
 import { createRouter, createWebHistory } from 'vue-router'
 import RouteErrorView from '@/views/auth/RouteErrorView.vue'
 import LoginView from '@/views/auth/LoginView.vue'
-import ContentView from '@/views/ContentView.vue'
+import type { WorkspaceWithUser } from '@/api/workspaceapi'
+import WorkspaceView from '@/views/WorkspaceView.vue'
 
 declare module 'vue-router' {
   interface RouteMeta {
     login: {
       requireLogin: boolean,
       jumpToLogin: boolean
-    }
+    },
+    data?: any[]
+    prerequisiteCheck?: (data?: any[]) => boolean
   }
 }
 
 const DEFAULT_LOGIN_ROUTE = "/login"
 const DEFAULT_ROUTE_ERROR_ROUTE = "/error/route"
+const DEFAULT_ROUTE_ERROR_ROUTE_LACK_PARAM = "/error/route/lackparam"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -43,13 +47,20 @@ const router = createRouter({
       }
     },
     {
-      path: '/',
-      name: 'root',
-      component: ContentView,
+      path: '/workspace/:id',
+      name: 'workspace',
+      component: WorkspaceView,
+      props: true,
       meta: {
         login: {
           requireLogin: true,
           jumpToLogin: true
+        },
+        prerequisiteCheck: (data) => {
+          if (data === undefined) {
+            return false
+          }
+          return true
         }
       }
     }
@@ -79,6 +90,9 @@ router.beforeEach((to, from) => {
     }
   }
   console.log('user login status found')
+  // if ((to.meta.prerequisiteCheck !== undefined) && !to.meta.prerequisiteCheck(to.meta.data)) {
+  //   return DEFAULT_ROUTE_ERROR_ROUTE_LACK_PARAM
+  // }
   return true
 })
 

@@ -113,7 +113,6 @@ export default defineComponent({
               )
             );
             this.$emit("loginStatusChanged");
-            router.push("/");
           },
           fail: (status, reason, data?) => {
             console.log("login view failed");

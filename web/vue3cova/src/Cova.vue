@@ -87,10 +87,20 @@ export default defineComponent({
               return wk.workspace
             })
             this.workspaceId = rsp.data.length > 0 ? rsp.data[0].workspace.id : null
-            workspaceStore().selectWorkspace(rsp.data[0])
+            // workspaceStore().selectWorkspace(rsp.data[0])
+            this.workspaceSelect()
           },
           fail: () => { }
         })
+      }
+    },
+    workspaceSelect() {
+      console.log(`selected ${this.workspaceId}`)
+      if (this.workspaceId === null) {
+        workspaceStore().clearSelectedWorkspace()
+      } else {
+        workspaceStore().selectWorkspaceId(this.workspaceId)
+        router.push({name: 'workspace', params: { id: this.workspaceId }});
       }
     }
   }
@@ -105,16 +115,14 @@ export default defineComponent({
       <span class="tmVa">VA</span><span>lidate</span>
     </n-gi>
     <n-gi class="tm">
-      <n-select
-        label-field="name"
-        value-field="id"
-        v-model:value="workspaceId" :options="workspaces" class="workspaceselect"
+      <n-select label-field="name" value-field="id" @update:value="workspaceSelect" v-model:value="workspaceId"
+        :options="workspaces" class="workspaceselect"
         v-if="(userIdentity !== null) && userIdentity.isValidIdentity()" />
     </n-gi>
     <n-gi class="userarea">
       <!--<n-menu
         :options="userMenu"
-        v-model:value="activeKey"
+        v-model:value="activeKeyworkspaceSelect"
         mode="vertical"
         class="userprofile"
       ></n-menu>-->
