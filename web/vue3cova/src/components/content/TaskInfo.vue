@@ -1,9 +1,6 @@
 <script lang="ts">
-import taskApiHelper from '@/api/taskapi';
-import { defineComponent, reactive, ref, type PropType } from 'vue';
-import type { WorkspaceWithUser } from '@/api/workspaceapi'
+import { defineComponent, type PropType } from 'vue';
 import type { Task } from '@/entities/task/task';
-import { currentIdentity, identityStore } from '@/stores/identitystore';
 
 export default defineComponent({
     name: "TaskInfo",
