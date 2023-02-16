@@ -41,7 +41,18 @@ export default defineComponent({
 </script>
 
 <template>
-  <div>Task</div>
+  <n-grid cols="5">
+    <n-gi span="2">
+      <n-list>
+        <n-thing v-for="task in tasks" v-bind:key="task.id">
+          {{ task.name }}
+        </n-thing>
+      </n-list>
+    </n-gi>
+    <n-gi span="3">
+      content
+    </n-gi>
+  </n-grid>
 </template>
 
 <style scoped>
