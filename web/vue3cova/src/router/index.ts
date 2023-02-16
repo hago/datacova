@@ -2,7 +2,6 @@ import { identityStore } from '@/stores/identitystore'
 import { createRouter, createWebHistory } from 'vue-router'
 import RouteErrorView from '@/views/auth/RouteErrorView.vue'
 import LoginView from '@/views/auth/LoginView.vue'
-import type { WorkspaceWithUser } from '@/api/workspaceapi'
 import WorkspaceView from '@/views/WorkspaceView.vue'
 import WelcomeView from '@/views/WelcomeView.vue'
 

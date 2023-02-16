@@ -61,11 +61,11 @@ import { defineComponent, reactive } from "vue";
 import loginHelper from "@/api/userauthapi";
 import { identityStore } from "@/stores/identitystore";
 import { newIdentity } from "@/entities/identity";
-import router from "@/router";
 
 const CAPTCHA_URL = "/api/auth/captcha";
 
 export default defineComponent({
+  name: "LoginView",
   setup() {
     return reactive({
       name: "",
