@@ -37,7 +37,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <n-card :v-if="workspace !== null" :title="workspace === null ? '' : workspace.workspace.name"
+  <n-card v-if="workspace !== null" :title="workspace === null ? '' : workspace.workspace.name"
     style="margin-bottom: 16px">
     <n-tabs type="bar" animated>
       <n-tab-pane name="Tasks" tab="tasks">
