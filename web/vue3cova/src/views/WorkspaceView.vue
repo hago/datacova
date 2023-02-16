@@ -42,7 +42,7 @@ export default defineComponent({
   <n-config-provider :theme="darkTheme">
     <n-card v-if="workspace !== null" :title="workspace === null ? '' : workspace.workspace.name"
       style="margin-bottom: 16px">
-      <n-tabs type="bar" animated v-if="workspace !== null" :title="workspace === null ? '' : workspace.workspace.name">
+      <n-tabs type="bar" animated v-if="workspace !== null">
         <n-tab-pane name="Tasks" tab="tasks">
           <TaskList :workspace="workspace"></TaskList>
         </n-tab-pane>
