@@ -1,5 +1,6 @@
 import type Identity from "@/entities/identity";
 import type { User } from "@/entities/user";
+import type BaseResponseHandler from "./basehandler";
 import { addTokenHeader } from "./credential";
 import type FailResponse from "./failresponse";
 
@@ -32,9 +33,8 @@ export interface WorkspaceListResponse {
     data: WorkspaceWithUser[]
 }
 
-export interface WorkspacesListResponseHanlder {
+export interface WorkspacesListResponseHanlder extends BaseResponseHandler {
     success: (response: WorkspaceListResponse) => any
-    fail: (status: number, reason: string, data?: any) => any
 }
 
 export interface WorkspaceResponse {
@@ -42,9 +42,8 @@ export interface WorkspaceResponse {
     data: WorkspaceWithUser
 }
 
-export interface WorkspaceResponseHanlder {
+export interface WorkspaceResponseHanlder extends BaseResponseHandler {
     success: (response: WorkspaceResponse) => any
-    fail: (status: number, reason: string, data?: any) => any
 }
 
 export class WorkspaceApi {

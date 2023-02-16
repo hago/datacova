@@ -1,4 +1,5 @@
 import type { User, Permission, BasicLoginInfo } from "@/entities/user"
+import type BaseResponseHandler from "./basehandler"
 import type FailResponse from "./failresponse"
 
 export interface LoginResponse {
@@ -13,9 +14,8 @@ export interface LoginResponse {
     }
 }
 
-export interface LoginResponseHanlder {
+export interface LoginResponseHanlder extends BaseResponseHandler {
     success: (user: LoginResponse) => any
-    fail: (status: number, reason: string, data?: any) => any
 }
 
 export class UserAuthApi {
