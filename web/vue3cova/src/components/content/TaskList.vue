@@ -17,6 +17,9 @@ export default defineComponent({
       tasks: [] as Task[]
     })
   },
+  mounted() {
+    this.loadTasks()
+  },
   updated() {
     this.loadTasks()
   },

@@ -131,7 +131,7 @@ export default defineComponent({
     </n-gi>
   </n-grid>
   <n-grid>
-    <n-gi :span="24">
+    <n-gi span="24">
       <RouterView @loginStatusChanged="logonChanged" />
     </n-gi>
   </n-grid>
