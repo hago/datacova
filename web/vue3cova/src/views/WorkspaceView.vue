@@ -2,6 +2,7 @@
 import type { WorkspaceWithUser } from '@/api/workspaceapi';
 import TaskList from '@/components/content/TaskList.vue';
 import { workspaceStore } from '@/stores/workspacestore';
+import { darkTheme } from 'naive-ui';
 import { defineComponent, reactive, ref } from 'vue';
 
 export default defineComponent({
@@ -9,6 +10,7 @@ export default defineComponent({
   setup() {
     let wk: WorkspaceWithUser | null = null;
     return reactive({
+      darkTheme,
       workspace: ref<WorkspaceWithUser | null>(wk)
     });
   },
@@ -37,20 +39,22 @@ export default defineComponent({
 </script>
 
 <template>
-  <n-card v-if="workspace !== null" :title="workspace === null ? '' : workspace.workspace.name"
-    style="margin-bottom: 16px">
-    <n-tabs type="bar" animated>
-      <n-tab-pane name="Tasks" tab="tasks">
-        <TaskList :workspace="workspace"></TaskList>
-      </n-tab-pane>
-      <n-tab-pane name="Connections" tab="connections">
-        Hey Jude
-      </n-tab-pane>
-      <n-tab-pane name="Execution Log" tab="executes">
-        七里香
-      </n-tab-pane>
-    </n-tabs>
-  </n-card>
+  <n-config-provider :theme="darkTheme">
+    <n-card v-if="workspace !== null" :title="workspace === null ? '' : workspace.workspace.name"
+      style="margin-bottom: 16px">
+      <n-tabs type="bar" animated v-if="workspace !== null" :title="workspace === null ? '' : workspace.workspace.name">
+        <n-tab-pane name="Tasks" tab="tasks">
+          <TaskList :workspace="workspace"></TaskList>
+        </n-tab-pane>
+        <n-tab-pane name="Connections" tab="connections">
+          Hey Jude
+        </n-tab-pane>
+        <n-tab-pane name="Execution Log" tab="executes">
+          七里香
+        </n-tab-pane>
+      </n-tabs>
+    </n-card>
+  </n-config-provider>
 </template>
 
 <style scoped>
