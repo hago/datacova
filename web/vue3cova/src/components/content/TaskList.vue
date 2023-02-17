@@ -57,7 +57,7 @@ export default defineComponent({
 <template>
   <n-grid cols="5">
     <n-gi span="2">
-      <n-list>
+      <n-list style="width: 90%">
         <n-space v-for="task in tasks" v-bind:key="task.id" class="taskitem">
           <div @click="selectTask(task.id)" :title="task.description">{{ task.name }}</div>
         </n-space>
