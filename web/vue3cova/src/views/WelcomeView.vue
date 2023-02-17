@@ -24,7 +24,7 @@ export default defineComponent({
 
 <template>
     <h1>Welcome</h1>
-    <n-button @click="gotoWorkspace()">Enter</n-button>
+    <n-button @click="gotoWorkspace()" type="primary">Enter</n-button>
 </template>
 
 <style scoped>
