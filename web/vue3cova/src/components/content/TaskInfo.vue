@@ -68,6 +68,7 @@ export default defineComponent({
 <template>
     <n-grid cols="2">
         <n-gi>
+            <span class="field">name</span>
             <input class="taskname" v-model="task.name" type="text" placeholder="Task Name" v-bind:readonly="!canModify" />
         </n-gi>
         <n-gi style="text-align: right;">
@@ -84,5 +85,13 @@ export default defineComponent({
     font-weight: bold;
     font-size: larger;
     color: orange;
+}
+
+.field {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: large;
+    color: ivory;
+    padding-left: 5px;
+    padding-right: 5px;
 }
 </style>
