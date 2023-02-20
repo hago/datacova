@@ -20,7 +20,11 @@ export default defineComponent({
     setup() {
         return reactive({
             canModify: false,
-            canDelete: false
+            canDelete: false,
+            locales: [
+                { label: '中文', value: 'zh_CN' },
+                { label: 'English', value: 'en_US' }
+            ]
         })
     },
     mounted() {
@@ -60,6 +64,9 @@ export default defineComponent({
             }).catch((reason) => {
                 this.$emit(EVENT_REMOTE_API_ERROR, reason)
             })
+        },
+        localeSelect() {
+
         }
     }
 })
@@ -74,8 +81,18 @@ export default defineComponent({
         <n-gi style="text-align: right;">
             <n-button type="error" v-if="canDelete" @click="deleteTask(task)">Delete</n-button>
         </n-gi>
+        <n-gi :span="2">
+            <n-card title="Description">
+                <n-input v-model:value="task.description" type="textarea" placeholder="Task Description" />
+            </n-card>
+        </n-gi>
         <n-gi>
-            <h2>{{ `Workspace ${task?.name}` }}</h2>
+            <span class="field">locale</span>
+            <n-select :options="locales" @select="localeSelect" v-model:value="task.extra.locale" readonly="!canModify"  />
+        </n-gi>
+        <n-gi>
+            <span class="field">updated: </span>
+            <div class="updatetime">{{ new Date(task.modifyTime).toLocaleString() }}</div>
         </n-gi>
     </n-grid>
 </template>
@@ -91,6 +108,11 @@ export default defineComponent({
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: large;
     color: ivory;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.updatetime {
     padding-left: 5px;
     padding-right: 5px;
 }
