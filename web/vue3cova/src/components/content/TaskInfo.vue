@@ -36,12 +36,11 @@ export default defineComponent({
                 this.updateTask(w)
             } else {
                 let user = identityStore().currentIdentity()
-                workspaceApiHelper.getWorksapce(user, this.task.workspaceId, {
-                    success: (rsp) => {
-                        workspaceStore().setWorkspace(rsp.data)
-                        this.updateTask(rsp.data)
-                    },
-                    fail: () => { }
+                workspaceApiHelper.getWorksapce(user, this.task.workspaceId).then(rsp => {
+                    workspaceStore().setWorkspace(rsp.data)
+                    this.updateTask(rsp.data)
+                }).catch(err => {
+                    this.$emit(EVENT_REMOTE_API_ERROR, err)
                 })
             }
         },

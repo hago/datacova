@@ -1,8 +1,7 @@
 import type Identity from "@/entities/identity";
 import type { User } from "@/entities/user";
-import type BaseResponseHandler from "./basehandler";
 import { addTokenHeader } from "./credential";
-import type FailResponse from "./failresponse";
+import { stringifyFailResponseBody } from "./failresponse";
 
 export interface Workspace {
     id: number
@@ -33,17 +32,9 @@ export interface WorkspaceListResponse {
     data: WorkspaceWithUser[]
 }
 
-export interface WorkspacesListResponseHanlder extends BaseResponseHandler {
-    success: (response: WorkspaceListResponse) => any
-}
-
 export interface WorkspaceResponse {
     code: number,
     data: WorkspaceWithUser
-}
-
-export interface WorkspaceResponseHanlder extends BaseResponseHandler {
-    success: (response: WorkspaceResponse) => any
 }
 
 export class WorkspaceApi {
@@ -51,53 +42,33 @@ export class WorkspaceApi {
         //
     }
 
-    async userWorksapces(user: Identity, handler?: WorkspacesListResponseHanlder) {
+    async userWorksapces(user: Identity): Promise<WorkspaceListResponse> {
         let headers = addTokenHeader(user)
-        let p = fetch("/api/workspaces/mine", {
+        let p = await fetch("/api/workspaces/mine", {
             headers: headers,
             method: "GET"
         })
-        if (handler === undefined) {
-            return p
+        let s = await p.text()
+        if (p.status === 200) {
+            let rsp: WorkspaceListResponse = JSON.parse(s)
+            return Promise.resolve(rsp)
         } else {
-            p.then(rsp => {
-                rsp.text().then(s => {
-                    if (rsp.status === 200) {
-                        handler.success(JSON.parse(s))
-                    } else {
-                        let rsperr = JSON.parse(s) as FailResponse
-                        handler.fail(rsperr.code, rsperr.error.message, rsperr.error)
-                    }
-                })
-            }).catch(err => {
-                console.log("login fail: ", err)
-                handler.fail(-1, "fetch error", err)
-            })
+            throw new Error(stringifyFailResponseBody(s))
         }
     }
 
-    async getWorksapce(user: Identity, id: number, handler?: WorkspaceResponseHanlder) {
+    async getWorksapce(user: Identity, id: number): Promise<WorkspaceResponse> {
         let headers = addTokenHeader(user)
-        let p = fetch(`/api/workspace/${id}`, {
+        let p = await fetch(`/api/workspace/${id}`, {
             headers: headers,
             method: "GET"
         })
-        if (handler === undefined) {
-            return p
+        let s = await p.text()
+        if (p.status === 200) {
+            let rsp: WorkspaceResponse = JSON.parse(s)
+            return Promise.resolve(rsp)
         } else {
-            p.then(rsp => {
-                rsp.text().then(s => {
-                    if (rsp.status === 200) {
-                        handler.success(JSON.parse(s))
-                    } else {
-                        let rsperr = JSON.parse(s) as FailResponse
-                        handler.fail(rsperr.code, rsperr.error.message, rsperr.error)
-                    }
-                })
-            }).catch(err => {
-                console.log("login fail: ", err)
-                handler.fail(-1, "fetch error", err)
-            })
+            throw new Error(stringifyFailResponseBody(s))
         }
     }
 }

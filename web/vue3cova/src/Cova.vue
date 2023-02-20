@@ -2,7 +2,7 @@
 import type { DropdownOption } from "naive-ui";
 import { defineComponent, h, reactive, ref } from "vue";
 import workspaceApiHelper, { type Workspace, type WorkspaceWithUser } from "./api/workspaceapi";
-import { EVENT_LOGIN_STATUS_CHANGED } from "./entities/events";
+import { EVENT_LOGIN_STATUS_CHANGED, EVENT_REMOTE_API_ERROR } from "./entities/events";
 import { anonymousIdentity } from "./entities/identity";
 import router from "./router";
 import { identityStore } from "./stores/identitystore";
@@ -31,7 +31,8 @@ let createOptions = () => {
 
 export default defineComponent({
   emits: [
-    EVENT_LOGIN_STATUS_CHANGED
+    EVENT_LOGIN_STATUS_CHANGED,
+    EVENT_REMOTE_API_ERROR
   ],
   setup() {
     let id = identityStore().currentIdentity();
@@ -77,17 +78,16 @@ export default defineComponent({
         this.workspaces = []
         this.workspaceId = null
       } else {
-        workspaceApiHelper.userWorksapces(id.currentIdentity(), {
-          success: (rsp) => {
-            this.workspaces = rsp.data.map(wk => {
-              workspaceStore().setWorkspace(wk)
-              return wk.workspace
-            })
-            this.workspaceId = rsp.data.length > 0 ? rsp.data[0].workspace.id : null
-            // workspaceStore().selectWorkspace(rsp.data[0])
-            this.workspaceSelect(this.workspaceId)
-          },
-          fail: () => { }
+        workspaceApiHelper.userWorksapces(id.currentIdentity()).then(rsp => {
+          this.workspaces = rsp.data.map(wk => {
+            workspaceStore().setWorkspace(wk)
+            return wk.workspace
+          })
+          this.workspaceId = rsp.data.length > 0 ? rsp.data[0].workspace.id : null
+          // workspaceStore().selectWorkspace(rsp.data[0])
+          this.workspaceSelect(this.workspaceId)
+        }).catch(err => {
+          this.$emit(EVENT_REMOTE_API_ERROR, err)
         })
       }
     },
