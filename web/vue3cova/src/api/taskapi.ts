@@ -1,6 +1,6 @@
 import type Identity from "@/entities/identity"
 import type { Task } from "@/entities/task/task"
-import type { BaseResponse } from "./basehandler"
+import type { BaseResponse } from "./baseresponse"
 import { addTokenHeader } from "./credential"
 import { stringifyFailResponseBody } from "./failresponse"
 
