@@ -54,7 +54,8 @@ export default defineComponent({
   <n-grid cols="5">
     <n-gi span="2">
       <n-list style="width: 90%">
-        <n-space v-for="task in tasks" v-bind:key="task.id" class="taskitem">
+        <n-space v-for="task in tasks" v-bind:key="task.id" 
+        :class="(selectedTask !== null) && (task.id === selectedTask.id) ? 'taskitem selectedtaskitem' : 'taskitem'">
           <div @click="selectTask(task.id)" :title="task.description">{{ task.name }}</div>
         </n-space>
       </n-list>
@@ -80,5 +81,9 @@ export default defineComponent({
 .taskitem:hover {
   cursor: pointer;
   color: aqua;
+}
+.selectedtaskitem {
+  color: aqua;
+  background-color: green;
 }
 </style>
