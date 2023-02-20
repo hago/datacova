@@ -7,6 +7,7 @@ import { identityStore } from '@/stores/identitystore';
 import TaskInfo from '@/components/content/TaskInfo.vue';
 import EmptyTaskInfo from '@/components/content/EmptyTaskInfo.vue';
 import { EVENT_REMOTE_API_ERROR } from '@/entities/events';
+import { eventBus } from '@/util/eventbus';
 
 export default defineComponent({
   props: {
@@ -34,7 +35,7 @@ export default defineComponent({
         taskApiHelper.getTasksOfWorkspace(user, this.workspace.workspace.id).then(tr => {
           this.tasks = tr.data.tasks
         }).catch(reason => {
-          this.$emit(EVENT_REMOTE_API_ERROR, reason)
+          eventBus.send(EVENT_REMOTE_API_ERROR, reason)
         })
       }
     },

@@ -8,6 +8,7 @@ import { workspaceStore } from '@/stores/workspacestore';
 import type { WorkspaceWithUser } from "@/api/workspaceapi";
 import taskApiHelper from '@/api/taskapi';
 import { EVENT_REMOTE_API_ERROR, EVENT_TASK_DELETED } from '@/entities/events';
+import { eventBus } from '@/util/eventbus';
 
 export default defineComponent({
     name: "TaskInfo",
@@ -44,7 +45,7 @@ export default defineComponent({
                     workspaceStore().setWorkspace(rsp.data)
                     this.updateTask(rsp.data)
                 }).catch(err => {
-                    this.$emit(EVENT_REMOTE_API_ERROR, err)
+                    eventBus.send(EVENT_REMOTE_API_ERROR, err)
                 })
             }
         },
@@ -62,7 +63,7 @@ export default defineComponent({
             taskApiHelper.deleteTask(user, this.task).then(() => {
                 this.$emit(EVENT_TASK_DELETED, task.id)
             }).catch((reason) => {
-                this.$emit(EVENT_REMOTE_API_ERROR, reason)
+                eventBus.send(EVENT_REMOTE_API_ERROR, reason)
             })
         },
         localeSelect() {
