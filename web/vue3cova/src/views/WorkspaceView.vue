@@ -3,6 +3,7 @@ import type { WorkspaceWithUser } from '@/api/workspaceapi';
 import TaskList from '@/components/content/TaskList.vue';
 import { EVENT_REMOTE_API_ERROR } from '@/entities/events';
 import { workspaceStore } from '@/stores/workspacestore';
+import { eventBus } from '@/util/eventbus';
 import { darkTheme } from 'naive-ui';
 import { defineComponent, reactive, ref } from 'vue';
 
@@ -31,7 +32,7 @@ export default defineComponent({
         this.workspace = workspaceStore().getWorkspace(parseInt(workspaceId))
         console.log(`WorkspaceView.workspace: ${this.workspace}`)
       } else {
-        this.$emit(EVENT_REMOTE_API_ERROR, `workspace id "${workspaceId}" is not a value`)
+        eventBus.send(EVENT_REMOTE_API_ERROR, `workspace id "${workspaceId}" is not a value`)
       }
     }
   },
