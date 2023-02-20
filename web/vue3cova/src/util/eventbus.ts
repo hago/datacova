@@ -33,8 +33,16 @@ class EventBus {
             return
         }
         console.log(this.eventsMap)
+        let corrupted = false
         for (let h of handlers) {
-            h.call(null, ...args)
+            if (!corrupted && ((h === undefined) || (h === null))) {
+                corrupted = true
+            } else {
+                h.call(null, ...args)
+            }
+        }
+        if (corrupted) {
+            handlers = handlers.filter(h => h !== undefined && h !== null)
         }
     }
 }
