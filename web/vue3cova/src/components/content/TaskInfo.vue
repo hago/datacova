@@ -6,6 +6,8 @@ import { isAdmin, isMaintainer } from '@/util/permission';
 import workspaceApiHelper from '@/api/workspaceapi';
 import { workspaceStore } from '@/stores/workspacestore';
 import type { WorkspaceWithUser } from "@/api/workspaceapi";
+import taskApiHelper from '@/api/taskapi';
+import { EVENT_REMOTE_API_ERROR, EVENT_TASK_DELETED } from '@/entities/events';
 
 export default defineComponent({
     name: "TaskInfo",
@@ -48,6 +50,17 @@ export default defineComponent({
             let user = currentIdentity(identityStore())
             this.canModify = isAdmin(user, workspace) || isMaintainer(user, workspace)
             this.canDelete = isAdmin(user, workspace)
+        },
+        deleteTask(task: Task) {
+            if (!confirm(`Are you sure to delete the task "${task.name}"?`)) {
+                return
+            }
+            let user = currentIdentity(identityStore())
+            taskApiHelper.deleteTask(user, this.task).then(() => {
+                this.$emit(EVENT_TASK_DELETED, task.id)
+            }).catch((reason) => {
+                this.$emit(EVENT_REMOTE_API_ERROR, reason)
+            })
         }
     }
 })
@@ -59,12 +72,12 @@ export default defineComponent({
             <input class="taskname" v-model="task.name" type="text" placeholder="Task Name" v-bind:readonly="!canModify" />
         </n-gi>
         <n-gi style="text-align: right;">
-            <n-button type="error" v-if="canDelete">Delete</n-button>
+            <n-button type="error" v-if="canDelete" @click="deleteTask(task)">Delete</n-button>
         </n-gi>
         <n-gi>
             <h2>{{ `Workspace ${task?.name}` }}</h2>
         </n-gi>
-</n-grid>
+    </n-grid>
 </template>
 
 <style scoped>

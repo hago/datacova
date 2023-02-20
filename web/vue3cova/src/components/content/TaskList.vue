@@ -65,7 +65,7 @@ export default defineComponent({
     </n-gi>
     <n-gi span="3">
       <TaskInfo v-if="selectedTask !== null" :task="selectedTask"></TaskInfo>
-      <EmptyTaskInfo v-if="selectedTask === null" :task="selectedTask"></EmptyTaskInfo>
+      <EmptyTaskInfo v-if="selectedTask === null"></EmptyTaskInfo>
     </n-gi>
 </n-grid>
 </template>

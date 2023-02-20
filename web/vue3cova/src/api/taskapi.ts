@@ -1,5 +1,6 @@
 import type Identity from "@/entities/identity"
 import type { Task } from "@/entities/task/task"
+import type { BaseResponse } from "./basehandler"
 import type BaseResponseHandler from "./basehandler"
 import { addTokenHeader } from "./credential"
 import type FailResponse from "./failresponse"
@@ -42,6 +43,22 @@ export class TaskApi {
                 console.log("login fail: ", err)
                 handler.fail(-1, "fetch error", err)
             })
+        }
+    }
+
+    async deleteTask(user: Identity, task: Task): Promise<number> {
+        let headers = addTokenHeader(user)
+        let rsp = await fetch(`/api/workspace/${task.workspaceId}/task/${task.id}`, {
+            headers: headers,
+            method: "DELETE"
+        })
+        let s = await rsp.text()
+        if (rsp.status === 200) {
+            let r: BaseResponse = JSON.parse(s)
+            return Promise.resolve(r.code)
+        } else {
+            let rsperr = JSON.parse(s) as FailResponse
+            throw new Error(`error: ${rsperr.error.message}, data: ${rsperr.error.data}`)
         }
     }
 }
