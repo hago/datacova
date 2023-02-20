@@ -6,6 +6,7 @@ import type { Task } from '@/entities/task/task';
 import { identityStore } from '@/stores/identitystore';
 import TaskInfo from '@/components/content/TaskInfo.vue';
 import EmptyTaskInfo from '@/components/content/EmptyTaskInfo.vue';
+import { EVENT_REMOTE_API_ERROR } from '@/entities/events';
 
 export default defineComponent({
   props: {
@@ -30,15 +31,10 @@ export default defineComponent({
     loadTasks() {
       if (this.workspace !== null) {
         let user = identityStore().currentIdentity()
-        taskApiHelper.getTasksOfWorkspace(user, this.workspace.workspace.id, {
-          success: (rsp) => {
-            if (rsp.code !== 0) {
-              // error
-            } else {
-              this.tasks = rsp.data.tasks
-            }
-          },
-          fail: () => { }
+        taskApiHelper.getTasksOfWorkspace(user, this.workspace.workspace.id).then(tr => {
+          this.tasks = tr.data.tasks
+        }).catch(reason => {
+          this.$emit(EVENT_REMOTE_API_ERROR, reason)
         })
       }
     },
@@ -67,7 +63,7 @@ export default defineComponent({
       <TaskInfo v-if="selectedTask !== null" :task="selectedTask"></TaskInfo>
       <EmptyTaskInfo v-if="selectedTask === null"></EmptyTaskInfo>
     </n-gi>
-</n-grid>
+  </n-grid>
 </template>
 
 <style scoped>
