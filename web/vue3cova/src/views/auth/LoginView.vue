@@ -5,36 +5,22 @@
         <span>User ID</span>
       </n-gi>
       <n-gi>
-        <n-input
-          v-model:value="name"
-          type="text"
-          placeholder="input id"
-        ></n-input>
+        <n-input v-model:value="name" type="text" placeholder="input id"></n-input>
       </n-gi>
       <n-gi class="dockright">
         <span>Password</span>
       </n-gi>
       <n-gi>
-        <n-input
-          v-model:value="password"
-          type="password"
-          placeholder="input password"
-        ></n-input>
+        <n-input v-model:value="password" type="password" placeholder="input password"></n-input>
       </n-gi>
       <n-gi class="dockright">
         <span>Captcha</span>
       </n-gi>
       <n-gi>
-        <n-input
-          v-model:value="captcha"
-          type="text"
-          placeholder="input captcha"
-        ></n-input>
+        <n-input v-model:value="captcha" type="text" placeholder="input captcha"></n-input>
       </n-gi>
       <n-gi class="dockright vcenter">
-        <n-button type="info" size="tiny" v-on:click="refreshCaptcha()"
-          >refresh</n-button
-        >
+        <n-button type="info" size="tiny" v-on:click="refreshCaptcha()">refresh</n-button>
       </n-gi>
       <n-gi>
         <n-image width="300" v-model:src="captcha_url" preview-disabled />
@@ -44,12 +30,7 @@
         <n-button type="primary" @click="login()">Login</n-button>
       </n-gi>
     </n-grid>
-    <n-alert
-      v-if="errormessage != ''"
-      title="Error"
-      type="error"
-      class="dockright"
-    >
+    <n-alert v-if="errormessage != ''" title="Error" type="error" class="dockright">
       {{ errormessage }}
     </n-alert>
   </div>
@@ -61,6 +42,7 @@ import { defineComponent, reactive } from "vue";
 import loginHelper from "@/api/userauthapi";
 import { identityStore } from "@/stores/identitystore";
 import { newIdentity } from "@/entities/identity";
+import { EVENT_LOGIN_STATUS_CHANGED } from "@/entities/events";
 
 const CAPTCHA_URL = "/api/auth/captcha";
 
@@ -96,30 +78,22 @@ export default defineComponent({
         return;
       }
       this.errormessage = "";
-      loginHelper.login(
-        {
-          userId: u,
-          password: p,
-          captcha: c,
-        },
-        {
-          success: (rsp) => {
-            console.log(`${rsp.data.user.name} logged`);
-            identityStore().login(
-              newIdentity(
-                rsp.data.user.userId,
-                rsp.data.user.name,
-                rsp.data.token
-              )
-            );
-            this.$emit("loginStatusChanged");
-          },
-          fail: (status, reason, data?) => {
-            console.log("login view failed");
-            this.errormessage = `login failed: ${reason}`;
-          },
-        }
-      );
+      loginHelper.login({
+        userId: u,
+        password: p,
+        captcha: c,
+      }).then(rsp => {
+        identityStore().login(
+          newIdentity(
+            rsp.data.user.userId,
+            rsp.data.user.name,
+            rsp.data.token
+          )
+        )
+        this.$emit(EVENT_LOGIN_STATUS_CHANGED)
+      }).catch(err => {
+        this.errormessage = err;
+      });
     },
   },
 });
@@ -140,6 +114,7 @@ export default defineComponent({
 .formtext {
   font-size: x-large;
 }
+
 .dockright {
   text-align: right;
   margin-right: 10px;

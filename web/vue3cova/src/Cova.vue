@@ -2,6 +2,7 @@
 import type { DropdownOption } from "naive-ui";
 import { defineComponent, h, reactive, ref } from "vue";
 import workspaceApiHelper, { type Workspace, type WorkspaceWithUser } from "./api/workspaceapi";
+import { EVENT_LOGIN_STATUS_CHANGED } from "./entities/events";
 import { anonymousIdentity } from "./entities/identity";
 import router from "./router";
 import { identityStore } from "./stores/identitystore";
@@ -30,7 +31,7 @@ let createOptions = () => {
 
 export default defineComponent({
   emits: [
-    'loginStatusChanged'
+    EVENT_LOGIN_STATUS_CHANGED
   ],
   setup() {
     let id = identityStore().currentIdentity();
@@ -114,12 +115,6 @@ export default defineComponent({
         :options="workspaces" class="workspaceselect" v-if="(userIdentity !== null) && userIdentity.isValidIdentity()" />
     </n-gi>
     <n-gi class="userarea">
-      <!--<n-menu
-              :options="userMenu"
-              v-model:value="activeKeyworkspaceSelect"
-              mode="vertical"
-              class="userprofile"
-            ></n-menu>-->
       <n-dropdown trigger="click" :options="options" @select="dropdownClick">
         <n-button style="color: aqua">{{ userIdentity.name }}</n-button>
       </n-dropdown>
