@@ -1,5 +1,6 @@
 import type Identity from "@/entities/identity";
 import type { User } from "@/entities/user";
+import type { BaseResponse } from "./baseresponse";
 import { addTokenHeader } from "./credential";
 import { stringifyFailResponseBody } from "./failresponse";
 
@@ -27,13 +28,11 @@ export interface WorkspaceWithUser {
     users: WorkspaceUser[]
 }
 
-export interface WorkspaceListResponse {
-    code: number,
+export interface WorkspaceListResponse extends BaseResponse {
     data: WorkspaceWithUser[]
 }
 
-export interface WorkspaceResponse {
-    code: number,
+export interface WorkspaceResponse extends BaseResponse {
     data: WorkspaceWithUser
 }
 

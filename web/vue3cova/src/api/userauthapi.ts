@@ -1,8 +1,8 @@
 import type { User, Permission, BasicLoginInfo } from "@/entities/user"
+import type { BaseResponse } from "./baseresponse"
 import { stringifyFailResponseBody } from "./failresponse"
 
-export interface LoginResponse {
-    code: number,
+export interface LoginResponse extends BaseResponse {
     data: {
         user: User,
         token: string,

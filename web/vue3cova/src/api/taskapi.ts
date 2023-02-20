@@ -4,8 +4,7 @@ import type { BaseResponse } from "./baseresponse"
 import { addTokenHeader } from "./credential"
 import { stringifyFailResponseBody } from "./failresponse"
 
-export interface TasksResponse {
-    code: number
+export interface TasksResponse extends BaseResponse {
     data: {
         tasks: Task[]
     }
