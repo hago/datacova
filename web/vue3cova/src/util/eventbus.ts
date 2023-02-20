@@ -34,7 +34,7 @@ class EventBus {
         }
         console.log(this.eventsMap)
         for (let h of handlers) {
-            h.apply(args)
+            h.call(null, ...args)
         }
     }
 }
