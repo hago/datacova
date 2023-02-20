@@ -4,20 +4,16 @@ import { defineComponent, h, reactive, ref } from "vue";
 import workspaceApiHelper, { type Workspace, type WorkspaceWithUser } from "./api/workspaceapi";
 import { anonymousIdentity } from "./entities/identity";
 import router from "./router";
-import {
-  currentActualIdentity,
-  currentIdentity,
-  identityStore,
-} from "./stores/identitystore";
+import { identityStore } from "./stores/identitystore";
 import { workspaceStore } from "./stores/workspacestore";
 
 let createOptions = () => {
   let id = identityStore();
-  if (!currentIdentity(id).isValidIdentity()) {
+  if (!id.currentIdentity().isValidIdentity()) {
     return [];
   } else {
-    let u = currentIdentity(id);
-    let u0 = currentActualIdentity(id);
+    let u = id.currentIdentity();
+    // let u0 = id.currentActualIdentity();
     return [
       {
         label: `User Id: ${u.id}`,
@@ -37,7 +33,7 @@ export default defineComponent({
     'loginStatusChanged'
   ],
   setup() {
-    let id = currentIdentity(identityStore());
+    let id = identityStore().currentIdentity();
     if (!id.isValidIdentity()) {
       id = anonymousIdentity()
     }
@@ -68,7 +64,7 @@ export default defineComponent({
     logonChanged() {
       console.log("logonChanged triggered")
       let logst = identityStore()
-      this.userIdentity = currentIdentity(logst)
+      this.userIdentity = logst.currentIdentity()
       if (!this.userIdentity.isValidIdentity()) {
         this.userIdentity = anonymousIdentity()
       }
@@ -76,11 +72,11 @@ export default defineComponent({
     },
     loadWorkspaces() {
       let id = identityStore();
-      if (!currentIdentity(id).isValidIdentity()) {
+      if (!id.currentIdentity().isValidIdentity()) {
         this.workspaces = []
         this.workspaceId = null
       } else {
-        workspaceApiHelper.userWorksapces(currentIdentity(id), {
+        workspaceApiHelper.userWorksapces(id.currentIdentity(), {
           success: (rsp) => {
             this.workspaces = rsp.data.map(wk => {
               workspaceStore().setWorkspace(wk)
@@ -99,7 +95,7 @@ export default defineComponent({
       if ((value === undefined) || (value === null)) {
         //this.$emit('errorOccurred', `select workspace ${value} not applicable`)
       } else {
-        router.push({name: 'workspace', params: { id: value }});
+        router.push({ name: 'workspace', params: { id: value } });
       }
     }
   }
@@ -115,16 +111,15 @@ export default defineComponent({
     </n-gi>
     <n-gi class="tm">
       <n-select label-field="name" value-field="id" @update:value="workspaceSelect" v-model:value="workspaceId"
-        :options="workspaces" class="workspaceselect"
-        v-if="(userIdentity !== null) && userIdentity.isValidIdentity()" />
+        :options="workspaces" class="workspaceselect" v-if="(userIdentity !== null) && userIdentity.isValidIdentity()" />
     </n-gi>
     <n-gi class="userarea">
       <!--<n-menu
-        :options="userMenu"
-        v-model:value="activeKeyworkspaceSelect"
-        mode="vertical"
-        class="userprofile"
-      ></n-menu>-->
+              :options="userMenu"
+              v-model:value="activeKeyworkspaceSelect"
+              mode="vertical"
+              class="userprofile"
+            ></n-menu>-->
       <n-dropdown trigger="click" :options="options" @select="dropdownClick">
         <n-button style="color: aqua">{{ userIdentity.name }}</n-button>
       </n-dropdown>

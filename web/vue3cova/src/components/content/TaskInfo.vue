@@ -1,7 +1,7 @@
 <script lang="ts">
 import { defineComponent, reactive, type PropType } from 'vue';
 import type { Task } from '@/entities/task/task';
-import { currentIdentity, identityStore } from '@/stores/identitystore';
+import { identityStore } from '@/stores/identitystore';
 import { isAdmin, isMaintainer } from '@/util/permission';
 import workspaceApiHelper from '@/api/workspaceapi';
 import { workspaceStore } from '@/stores/workspacestore';
@@ -35,7 +35,7 @@ export default defineComponent({
             if (w !== null) {
                 this.updateTask(w)
             } else {
-                let user = currentIdentity(identityStore())
+                let user = identityStore().currentIdentity()
                 workspaceApiHelper.getWorksapce(user, this.task.workspaceId, {
                     success: (rsp) => {
                         workspaceStore().setWorkspace(rsp.data)
@@ -47,7 +47,7 @@ export default defineComponent({
         },
         updateTask(workspace: WorkspaceWithUser) {
             console.log(workspace)
-            let user = currentIdentity(identityStore())
+            let user = identityStore().currentIdentity()
             this.canModify = isAdmin(user, workspace) || isMaintainer(user, workspace)
             this.canDelete = isAdmin(user, workspace)
         },
@@ -55,7 +55,7 @@ export default defineComponent({
             if (!confirm(`Are you sure to delete the task "${task.name}"?`)) {
                 return
             }
-            let user = currentIdentity(identityStore())
+            let user = identityStore().currentIdentity()
             taskApiHelper.deleteTask(user, this.task).then(() => {
                 this.$emit(EVENT_TASK_DELETED, task.id)
             }).catch((reason) => {

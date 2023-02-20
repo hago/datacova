@@ -9,18 +9,6 @@ type LogonStatus = {
     lastActiveTime: number
 }
 
-export function currentIdentity(status: LogonStatus): Identity {
-    return (status.impersonated !== null) && (status.impersonated.id !== null) ? status.impersonated : status.current
-}
-
-export function currentActualIdentity(status: LogonStatus): Identity {
-    return status.current
-}
-
-export function isImpersonating(status: LogonStatus): boolean {
-    return status.current.id != status.impersonated.id
-}
-
 export const identityStore = defineStore('identity', {
     state: (): LogonStatus => ({
         current: anonymousIdentity(),
@@ -48,6 +36,15 @@ export const identityStore = defineStore('identity', {
         },
         keepActive() {
             this.lastActiveTime = new Date().getTime()
+        },
+        currentIdentity() {
+            return (this.impersonated !== null) && (this.impersonated.id !== null) ? this.impersonated : this.current
+        },
+        currentActualIdentity() {
+            return this.current
+        },
+        isImpersonating() {
+            return (this.current.id !== null) && (this.current.id != this.impersonated.id)
         }
     },
     persist: {

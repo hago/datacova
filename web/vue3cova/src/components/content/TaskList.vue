@@ -3,7 +3,7 @@ import taskApiHelper from '@/api/taskapi';
 import { defineComponent, reactive, ref, type PropType } from 'vue';
 import type { WorkspaceWithUser } from '@/api/workspaceapi'
 import type { Task } from '@/entities/task/task';
-import { currentIdentity, identityStore } from '@/stores/identitystore';
+import { identityStore } from '@/stores/identitystore';
 import TaskInfo from '@/components/content/TaskInfo.vue';
 import EmptyTaskInfo from '@/components/content/EmptyTaskInfo.vue';
 
@@ -29,7 +29,7 @@ export default defineComponent({
   methods: {
     loadTasks() {
       if (this.workspace !== null) {
-        let user = currentIdentity(identityStore())
+        let user = identityStore().currentIdentity()
         taskApiHelper.getTasksOfWorkspace(user, this.workspace.workspace.id, {
           success: (rsp) => {
             if (rsp.code !== 0) {

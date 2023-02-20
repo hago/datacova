@@ -1,6 +1,6 @@
 <script lang="ts">
 import router from '@/router';
-import { currentIdentity, identityStore } from '@/stores/identitystore';
+import { identityStore } from '@/stores/identitystore';
 import { defineComponent, reactive, ref } from 'vue';
 
 export default defineComponent({
@@ -9,7 +9,7 @@ export default defineComponent({
         return reactive({});
     },
     mounted() {
-        let id = currentIdentity(identityStore())
+        let id = identityStore().currentIdentity()
         if (id.isValidIdentity()) {
             this.$emit("loginStatusChanged");
         }
