@@ -1,12 +1,13 @@
 <script lang="ts">
-import type { DropdownOption } from "naive-ui";
+import { darkTheme, type DrawerPlacement } from "naive-ui";
 import { defineComponent, h, reactive, ref } from "vue";
-import workspaceApiHelper, { type Workspace, type WorkspaceWithUser } from "./api/workspaceapi";
+import workspaceApiHelper, { type Workspace } from "./api/workspaceapi";
 import { EVENT_LOGIN_STATUS_CHANGED, EVENT_REMOTE_API_ERROR } from "./entities/events";
 import { anonymousIdentity } from "./entities/identity";
 import router from "./router";
 import { identityStore } from "./stores/identitystore";
 import { workspaceStore } from "./stores/workspacestore";
+import { eventBus } from "./util/eventbus";
 
 let createOptions = () => {
   let id = identityStore();
@@ -46,9 +47,14 @@ export default defineComponent({
       options: createOptions(),
       workspaceId: ref<number | null>(null),
       workspaces: emptySpaces,
+      showErrorDrawer: false,
+      errorMessage: '',
+      topPlacement: ref<DrawerPlacement>('top'),
+      darkTheme
     });
   },
   mounted() {
+    eventBus.register(EVENT_REMOTE_API_ERROR, this.errorMessageReceived)
     this.loadWorkspaces()
   },
   methods: {
@@ -72,6 +78,14 @@ export default defineComponent({
       }
       this.loadWorkspaces()
     },
+    errorMessageReceived(...message: string[]) {
+      console.log('show drawer', message)
+      this.errorMessage = message[0]
+      this.showErrorDrawer = true
+      setTimeout(() => {
+        this.showErrorDrawer = false
+      }, 5000)
+    },
     loadWorkspaces() {
       let id = identityStore();
       if (!id.currentIdentity().isValidIdentity()) {
@@ -87,7 +101,7 @@ export default defineComponent({
           // workspaceStore().selectWorkspace(rsp.data[0])
           this.workspaceSelect(this.workspaceId)
         }).catch(err => {
-          this.$emit(EVENT_REMOTE_API_ERROR, err)
+          eventBus.send(EVENT_REMOTE_API_ERROR, err)
         })
       }
     },
@@ -104,6 +118,13 @@ export default defineComponent({
 </script>
 
 <template>
+  <n-config-provider :theme="darkTheme">
+    <n-drawer v-model:show="showErrorDrawer" :placement="topPlacement">
+      <n-drawer-content title="Error">
+        <span class="error">{{ errorMessage }}</span>
+      </n-drawer-content>
+    </n-drawer>
+  </n-config-provider>
   <n-grid :cols="3" class="navbar">
     <n-gi class="tm">
       <span class="tmData">Data </span>
@@ -122,7 +143,7 @@ export default defineComponent({
   </n-grid>
   <n-grid>
     <n-gi span="24">
-      <RouterView @loginStatusChanged="logonChanged" />
+      <RouterView @loginStatusChanged="logonChanged" @apiErrorOccurred="errorMessageReceived" />
     </n-gi>
   </n-grid>
 </template>
@@ -158,5 +179,15 @@ export default defineComponent({
 
 .workspaceselect {
   padding-top: 10px;
+}
+
+.errorbox {
+  color: red;
+  font-size: xx-large;
+}
+
+.error {
+  color: red;
+  font-size: x-large;
 }
 </style>
