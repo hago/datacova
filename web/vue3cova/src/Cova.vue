@@ -78,13 +78,14 @@ export default defineComponent({
       }
       this.loadWorkspaces()
     },
-    errorMessageReceived(...message: string[]) {
+    async errorMessageReceived(...message: string[]): Promise<any> {
       console.log('show drawer', message)
       this.errorMessage = message[0]
       this.showErrorDrawer = true
       setTimeout(() => {
         this.showErrorDrawer = false
       }, 5000)
+      return Promise.resolve()
     },
     loadWorkspaces() {
       let id = identityStore();

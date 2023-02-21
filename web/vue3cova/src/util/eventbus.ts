@@ -1,6 +1,6 @@
 import { assert } from "@vue/compiler-core"
 
-type EventHandler = (...args: any[]) => any
+type EventHandler = (...args: any[]) => Promise<any>
 
 class EventBus {
     private eventsMap = new Map<string, EventHandler[]>()
@@ -38,7 +38,9 @@ class EventBus {
             if (!corrupted && ((h === undefined) || (h === null))) {
                 corrupted = true
             } else {
-                h.call(null, ...args)
+                h.call(null, ...args).then().catch(err => {
+                    console.log(`error in ${h} when dealing message ${event} with args: ${args}`)
+                })
             }
         }
         if (corrupted) {
