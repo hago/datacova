@@ -9,7 +9,9 @@ function joinRecipients(list: string[] | null) {
 }
 
 function parseRecipients(s: string): string[] {
-    return []
+    let l = s.split(';').map(s => s.trim())
+    
+    return l
 }
 
 export default defineComponent({
@@ -22,15 +24,15 @@ export default defineComponent({
     setup(props) {
         const toText = computed({
             get() { return joinRecipients(props.extra.mailRecipients) },
-            set(value: string) { }
+            set(value: string) { props.extra.mailRecipients = parseRecipients(value) }
         })
         const ccText = computed({
             get() { return joinRecipients(props.extra.mailCCRecipients) },
-            set(value: string) { }
+            set(value: string) { props.extra.mailCCRecipients = parseRecipients(value) }
         })
         const bccText = computed({
             get() { return joinRecipients(props.extra.mailBCCRecipients) },
-            set(value: string) { }
+            set(value: string) { props.extra.mailBCCRecipients = parseRecipients(value) }
         })
         return reactive({
             toText,
@@ -57,13 +59,13 @@ export default defineComponent({
     <n-modal :show="show">
         <n-card style="width: 600px" title="" size="small" :bordered="false" role="dialog" aria-modal="true">
             <n-card title="To" :bordered="true">
-                <n-text :v-bind:value="toText"></n-text>
+                <n-input v-bind:value="toText" type="textarea"></n-input>
             </n-card>
             <n-card title="CC" :bordered="true">
-                <n-text :v-bind:value="ccText"></n-text>
+                <n-input v-bind:value="ccText" type="textarea"></n-input>
             </n-card>
             <n-card title="BCC" :bordered="true">
-                <n-text :v-bind:value="bccText"></n-text>
+                <n-input v-bind:value="bccText" type="textarea"></n-input>
             </n-card>
             <div style="margin-top: 5px;">
                 <n-button type="error" style="float: right;" @click="cancel">Cancel</n-button>
