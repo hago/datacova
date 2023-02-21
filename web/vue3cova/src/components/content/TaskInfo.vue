@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, reactive, type PropType } from 'vue';
+import { computed, defineComponent, reactive, ref, type PropType } from 'vue';
 import type { Task } from '@/entities/task/task';
 import { identityStore } from '@/stores/identitystore';
 import { isAdmin, isMaintainer } from '@/util/permission';
@@ -7,28 +7,50 @@ import workspaceApiHelper from '@/api/workspaceapi';
 import { workspaceStore } from '@/stores/workspacestore';
 import type { WorkspaceWithUser } from "@/api/workspaceapi";
 import taskApiHelper from '@/api/taskapi';
-import { EVENT_REMOTE_API_ERROR, EVENT_TASK_DELETED } from '@/entities/events';
+import { EVENT_REMOTE_API_ERROR, EVENT_TASKINFO_CLOSE_RECIPIENTS_EDITOR, EVENT_TASK_DELETED } from '@/entities/events';
 import { eventBus } from '@/util/eventbus';
+import RecipientsEditor from '../task/RecipientsEditor.vue';
 
 export default defineComponent({
     name: "TaskInfo",
+    components: {
+        RecipientsEditor
+    },
     props: {
         task: {
             type: Object as PropType<Task>,
             required: true
         }
     },
-    setup() {
+    setup(props) {
+        const recipientsText = computed(() => {
+            let n = 3
+            let l = props.task.extra.mailRecipients.slice(0, n)
+            if (l.length < n) {
+                l = l.concat(props.task.extra.mailCCRecipients.slice(0, l.length - n))
+                if (l.length < n) {
+                    l = l.concat(props.task.extra.mailBCCRecipients.slice(0, l.length - n))
+                }
+            }
+            return l.join(', ')
+        })
         return reactive({
             canModify: false,
             canDelete: false,
             locales: [
                 { label: '中文', value: 'zh_CN' },
                 { label: 'English', value: 'en_US' }
-            ]
+            ],
+            recipientsText,
+            editRecipients: false
         })
     },
     mounted() {
+        eventBus.register(EVENT_TASKINFO_CLOSE_RECIPIENTS_EDITOR, async (): Promise<any> => {
+            console.log('close editrecp')
+            this.editRecipients = false
+            return Promise.resolve()
+        })
         this.updateWorkspaceTask()
     },
     update() {
@@ -76,7 +98,7 @@ export default defineComponent({
 <template>
     <n-grid cols="2">
         <n-gi>
-            <span class="field">name</span>
+            <span class="field">Name</span>
             <input class="taskname" v-model="task.name" type="text" placeholder="Task Name" v-bind:readonly="!canModify" />
         </n-gi>
         <n-gi style="text-align: right;">
@@ -88,14 +110,20 @@ export default defineComponent({
             </n-card>
         </n-gi>
         <n-gi>
-            <span class="field">locale</span>
-            <n-select :options="locales" @select="localeSelect" v-model:value="task.extra.locale" readonly="!canModify"  />
+            <span class="field">Locale</span>
+            <n-select :options="locales" v-model:value="task.extra.locale" readonly="!canModify" />
         </n-gi>
         <n-gi>
-            <span class="field">updated: </span>
-            <div class="updatetime">{{ new Date(task.modifyTime).toLocaleString() }}</div>
+            <div class="field right">Updated: </div>
+            <div class="updatetime right">{{ new Date(task.modifyTime).toLocaleString() }}</div>
+        </n-gi>
+        <n-gi span="2">
+            <div class="field">Notification recipients</div>
+            <span>{{ recipientsText }}</span>
+            <span style="float: right"><n-button type="info" @click="editRecipients = true">Edit</n-button></span>
         </n-gi>
     </n-grid>
+    <RecipientsEditor v-if="editRecipients" :extra="task.extra"></RecipientsEditor>
 </template>
 
 <style scoped>
@@ -111,10 +139,15 @@ export default defineComponent({
     color: ivory;
     padding-left: 5px;
     padding-right: 5px;
+    margin-top: 3px;
 }
 
 .updatetime {
     padding-left: 5px;
     padding-right: 5px;
+}
+
+.right {
+    text-align: right;
 }
 </style>
