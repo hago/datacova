@@ -38,7 +38,7 @@ class EventBus {
             if ((h === undefined) || (h === null)) {
                 corrupted = true
             } else {
-                console.log(`call ${h}`)
+                //console.log(`call ${h}`)
                 h(...args).then().catch(err => {
                     console.log(`error in ${h} when dealing message ${event} with args: ${args}`)
                 })
