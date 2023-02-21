@@ -11,7 +11,7 @@ class EventBus {
         } else {
             let handlers = this.eventsMap.get(event) as EventHandler[]
             if (handlers.indexOf(handler) < 0) {
-                handlers.concat(handler)
+                handlers = handlers.concat(handler)
             }
         }
     }
@@ -32,13 +32,14 @@ class EventBus {
         if (handlers === undefined) {
             return
         }
-        console.log(this.eventsMap)
+        // console.log(this.eventsMap)
         let corrupted = false
         for (let h of handlers) {
-            if (!corrupted && ((h === undefined) || (h === null))) {
+            if ((h === undefined) || (h === null)) {
                 corrupted = true
             } else {
-                h.call(null, ...args).then().catch(err => {
+                console.log(`call ${h}`)
+                h(...args).then().catch(err => {
                     console.log(`error in ${h} when dealing message ${event} with args: ${args}`)
                 })
             }
