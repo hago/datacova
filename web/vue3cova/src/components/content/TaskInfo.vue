@@ -1,6 +1,6 @@
 <script lang="ts">
 import { computed, defineComponent, reactive, ref, type PropType } from 'vue';
-import type { Task } from '@/entities/task/task';
+import type { Task, TaskAction } from '@/entities/task/task';
 import { identityStore } from '@/stores/identitystore';
 import { isAdmin, isMaintainer } from '@/util/permission';
 import workspaceApiHelper from '@/api/workspaceapi';
@@ -10,11 +10,14 @@ import taskApiHelper from '@/api/taskapi';
 import { EVENT_REMOTE_API_ERROR, EVENT_TASKINFO_CLOSE_RECIPIENTS_EDITOR, EVENT_TASK_DELETED } from '@/entities/events';
 import { eventBus } from '@/util/eventbus';
 import RecipientsEditor from '../task/RecipientsEditor.vue';
+import ActionIngest from '@/components/task/ActionIngest.vue';
+import ActionDistribute from '@/components/task/ActionDistribute.vue';
+import ActionVerify from '@/components/task/ActionVerify.vue';
 
 export default defineComponent({
     name: "TaskInfo",
     components: {
-        RecipientsEditor
+        RecipientsEditor, ActionIngest, ActionDistribute, ActionVerify
     },
     props: {
         task: {
@@ -90,7 +93,17 @@ export default defineComponent({
         },
         localeSelect() {
 
+        },
+        isIngestAction(action: TaskAction): boolean {
+            return action.type === 1
+        },
+        isDistributeAction(action: TaskAction): boolean {
+            return action.type === 3
+        },
+        isVerifyAction(action: TaskAction): boolean {
+            return action.type === 2
         }
+
     }
 })
 </script>
@@ -120,10 +133,13 @@ export default defineComponent({
         <n-gi span="2">
             <div class="field">Notification recipients</div>
             <span>{{ recipientsText }}</span>
-            <span style="float: right"><n-button type="info" @click="editRecipients = true">Edit Recipients</n-button></span>
+            <span style="float: right"><n-button type="info" @click="editRecipients = true">Edit
+                    Recipients</n-button></span>
         </n-gi>
         <n-gi span="2" v-for="(act, index) in task.actions" v-bind:key="index">
-            {{  act.name }}
+            <ActionIngest :action="act" :task="task" v-if="isIngestAction(act)"></ActionIngest>
+            <ActionDistribute :action="act" :task="task" v-if="isDistributeAction(act)"></ActionDistribute>
+            <ActionVerify :action="act" :task="task" v-if="isVerifyAction(act)"></ActionVerify>
         </n-gi>
     </n-grid>
     <RecipientsEditor v-if="editRecipients" :extra="task.extra"></RecipientsEditor>
