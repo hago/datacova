@@ -26,6 +26,7 @@ hs_err_pid*
 .gradle/
 .idea/
 build/
+gradle/
 
 config.json
 testconfig.json
