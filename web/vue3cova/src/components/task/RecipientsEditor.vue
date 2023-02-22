@@ -1,17 +1,33 @@
 <script lang="ts">
-import { EVENT_TASKINFO_CLOSE_RECIPIENTS_EDITOR } from '@/entities/events';
+import { EVENT_REMOTE_API_ERROR, EVENT_TASKINFO_CLOSE_RECIPIENTS_EDITOR } from '@/entities/events';
 import type { TaskExtra } from '@/entities/task/task';
 import { eventBus } from '@/util/eventbus';
 import { computed, defineComponent, reactive, type PropType } from 'vue';
+
+interface EmailParseResult {
+    emails: string[]
+    invalidItems: string[]
+}
 
 function joinRecipients(list: string[] | null) {
     return null === list ? '' : list.join(';')
 }
 
-function parseRecipients(s: string): string[] {
-    let l = s.split(';').map(s => s.trim())
-    
-    return l
+function parseEmailString(s: string, delimiter: string = ';'): EmailParseResult {
+    let l = s.split(';').map(s => s.trim()).filter(s => s !== '')
+    let emails = [] as string[]
+    let invalids = [] as string[]
+    for (let i of l) {
+        if (i.match(/[^@]+@[^@\s]/) === null) {
+            invalids.push(i)
+        } else {
+            emails.push(i)
+        }
+    }
+    return {
+        emails: emails,
+        invalidItems: invalids
+    }
 }
 
 export default defineComponent({
@@ -22,22 +38,10 @@ export default defineComponent({
         }
     },
     setup(props) {
-        const toText = computed({
-            get() { return joinRecipients(props.extra.mailRecipients) },
-            set(value: string) { props.extra.mailRecipients = parseRecipients(value) }
-        })
-        const ccText = computed({
-            get() { return joinRecipients(props.extra.mailCCRecipients) },
-            set(value: string) { props.extra.mailCCRecipients = parseRecipients(value) }
-        })
-        const bccText = computed({
-            get() { return joinRecipients(props.extra.mailBCCRecipients) },
-            set(value: string) { props.extra.mailBCCRecipients = parseRecipients(value) }
-        })
         return reactive({
-            toText,
-            ccText,
-            bccText,
+            toText: joinRecipients(props.extra.mailRecipients),
+            ccText: joinRecipients(props.extra.mailCCRecipients),
+            bccText: joinRecipients(props.extra.mailBCCRecipients),
             show: true
         })
     },
@@ -48,7 +52,39 @@ export default defineComponent({
             eventBus.send(EVENT_TASKINFO_CLOSE_RECIPIENTS_EDITOR)
         },
         update() {
-
+            if (this.doneTo() && this.doneCc() && this.doneBcc()) {
+                this.cancel()
+            }
+        },
+        doneTo(): boolean {
+            let r = parseEmailString(this.toText)
+            this.extra.mailRecipients = r.emails
+            if (r.invalidItems.length > 0) {
+                eventBus.send(EVENT_REMOTE_API_ERROR, `Not valid email addresses: ${r.invalidItems}`)
+                return false
+            } else {
+                return true
+            }
+        },
+        doneCc(): boolean {
+            let r = parseEmailString(this.ccText)
+            this.extra.mailCCRecipients = r.emails
+            if (r.invalidItems.length > 0) {
+                eventBus.send(EVENT_REMOTE_API_ERROR, `Not valid email addresses: ${r.invalidItems}`)
+                return false
+            } else {
+                return true
+            }
+        },
+        doneBcc(): boolean {
+            let r = parseEmailString(this.bccText)
+            this.extra.mailBCCRecipients = r.emails
+            if (r.invalidItems.length > 0) {
+                eventBus.send(EVENT_REMOTE_API_ERROR, `Not valid email addresses: ${r.invalidItems}`)
+                return false
+            } else {
+                return true
+            }
         }
     }
 })
@@ -59,13 +95,13 @@ export default defineComponent({
     <n-modal :show="show">
         <n-card style="width: 600px" title="" size="small" :bordered="false" role="dialog" aria-modal="true">
             <n-card title="To" :bordered="true">
-                <n-input v-bind:value="toText" type="textarea"></n-input>
+                <n-input v-model:value="toText" type="textarea" @blur="doneTo"></n-input>
             </n-card>
             <n-card title="CC" :bordered="true">
-                <n-input v-bind:value="ccText" type="textarea"></n-input>
+                <n-input :value="ccText" type="textarea" @blur="doneCc"></n-input>
             </n-card>
             <n-card title="BCC" :bordered="true">
-                <n-input v-bind:value="bccText" type="textarea"></n-input>
+                <n-input :value="bccText" type="textarea" @blur="doneBcc"></n-input>
             </n-card>
             <div style="margin-top: 5px;">
                 <n-button type="error" style="float: right;" @click="cancel">Cancel</n-button>
