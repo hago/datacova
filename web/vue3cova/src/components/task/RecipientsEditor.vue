@@ -35,6 +35,10 @@ export default defineComponent({
         extra: {
             type: Object as PropType<TaskExtra>,
             required: true
+        },
+        readonly: {
+            type: Boolean,
+            required: true
         }
     },
     setup(props) {
@@ -95,13 +99,13 @@ export default defineComponent({
     <n-modal :show="show">
         <n-card style="width: 600px" title="" size="small" :bordered="false" role="dialog" aria-modal="true">
             <n-card title="To" :bordered="true">
-                <n-input v-model:value="toText" type="textarea" @blur="doneTo"></n-input>
+                <n-input v-model:value="toText" type="textarea" @blur="doneTo" :readonly="readonly"></n-input>
             </n-card>
             <n-card title="CC" :bordered="true">
-                <n-input :value="ccText" type="textarea" @blur="doneCc"></n-input>
+                <n-input :value="ccText" type="textarea" @blur="doneCc" :readonly="readonly"></n-input>
             </n-card>
             <n-card title="BCC" :bordered="true">
-                <n-input :value="bccText" type="textarea" @blur="doneBcc"></n-input>
+                <n-input :value="bccText" type="textarea" @blur="doneBcc" :readonly="readonly"></n-input>
             </n-card>
             <div style="margin-top: 5px;">
                 <n-button type="error" style="float: right;" @click="cancel">Cancel</n-button>
