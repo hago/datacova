@@ -137,12 +137,13 @@ export default defineComponent({
                     Recipients</n-button></span>
         </n-gi>
         <n-gi span="2" v-for="(act, index) in task.actions" v-bind:key="index">
-            <ActionIngest :action="act" :task="task" v-if="isIngestAction(act)"></ActionIngest>
-            <ActionDistribute :action="act" :task="task" v-if="isDistributeAction(act)"></ActionDistribute>
-            <ActionVerify :action="act" :task="task" v-if="isVerifyAction(act)"></ActionVerify>
+            <ActionIngest :action="act" :task="task" v-if="isIngestAction(act)" :readonly="!canModify"></ActionIngest>
+            <ActionDistribute :action="act" :task="task" v-if="isDistributeAction(act)" :readonly="!canModify">
+            </ActionDistribute>
+            <ActionVerify :action="act" :task="task" v-if="isVerifyAction(act)" :readonly="!canModify"></ActionVerify>
         </n-gi>
     </n-grid>
-    <RecipientsEditor v-if="editRecipients" :extra="task.extra"></RecipientsEditor>
+    <RecipientsEditor v-if="editRecipients" :extra="task.extra" :readonly="!canModify"></RecipientsEditor>
 </template>
 
 <style scoped>
