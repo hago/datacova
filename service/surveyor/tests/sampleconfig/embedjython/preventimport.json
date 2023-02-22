@@ -1,0 +1,6 @@
+{
+  "configType": "com.hagoapp.embed.jython",
+  "nullable": false,
+  "snippet": "import re\nre.T",
+  "allowedImports": []
+}

@@ -1,0 +1,12 @@
+{
+  "configType": "com.hagoapp.number.range",
+  "nullable": false,
+  "lowerBoundary": {
+    "value": -2.00,
+    "inclusive": true
+  },
+  "upperBoundary": {
+    "value": 99.123,
+    "inclusive": true
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "configType": "com.hagoapp.embed.jython",
+  "nullable": false,
+  "snippet": "ret = (input + 1) > 0",
+  "allowedImports": []
+}

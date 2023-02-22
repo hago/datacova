@@ -1,0 +1,8 @@
+{
+  "configType": "com.hagoapp.time.range",
+  "nullable": false,
+  "upperBoundary": {
+    "timeStamp": 1670662320000,
+    "inclusive": false
+  }
+}

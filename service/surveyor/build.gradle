@@ -1,0 +1,58 @@
+plugins {
+    id 'java'
+    id 'org.jetbrains.kotlin.jvm' version '1.7.20'
+    id "org.jetbrains.dokka" version "1.7.20"
+}
+
+group 'com.hagoapp'
+version '0.1'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.7.20'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.20'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.20'
+
+    implementation group: 'org.python', name: 'jython-standalone', version: '2.7.2'
+
+    implementation 'com.google.code.gson:gson:2.9.0'
+    implementation group: 'org.reflections', name: 'reflections', version: '0.10.2'
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.30'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+    testRuntimeOnly group: 'ch.qos.logback', name:'logback-classic', version: '1.2.3'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = "UTF-8"
+}
+tasks.withType(Javadoc).configureEach {
+    options.encoding = "UTF-8"
+}
+
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "11"
+        freeCompilerArgs = ['-Xjvm-default=all-compatibility']
+    }
+}
+
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+}
+
+test {
+    useJUnitPlatform()
+    systemProperties = System.properties as Map<String, ?>
+}

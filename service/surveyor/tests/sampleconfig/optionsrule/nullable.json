@@ -1,0 +1,8 @@
+{
+  "configType": "com.hagoapp.options",
+  "nullable": true,
+  "options": [
+    "abc",
+    "DEF"
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "configType": "com.hagoapp.regex",
+  "nullable": false,
+  "pattern": "\\d+",
+  "caseSensitive": true
+}
