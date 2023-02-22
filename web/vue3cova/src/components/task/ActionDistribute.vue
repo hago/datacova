@@ -13,6 +13,10 @@ export default defineComponent({
         task: {
             type: Object as PropType<Task>,
             required: true
+        },
+        readonly: {
+            type: Boolean,
+            required: true
         }
     },
     setup(props) {
