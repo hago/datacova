@@ -6,7 +6,7 @@ import type { Task } from '@/entities/task/task';
 import { identityStore } from '@/stores/identitystore';
 import TaskInfo from '@/components/content/TaskInfo.vue';
 import EmptyTaskInfo from '@/components/content/EmptyTaskInfo.vue';
-import { EVENT_REMOTE_API_ERROR } from '@/entities/events';
+import { EVENT_REMOTE_API_ERROR, EVENT_TASK_SELECTED } from '@/entities/events';
 import { eventBus } from '@/util/eventbus';
 
 export default defineComponent({
@@ -42,6 +42,7 @@ export default defineComponent({
     selectTask(id: number) {
       let found = this.tasks.find(t => t.id === id)
       this.selectedTask = found as Task
+      eventBus.send(EVENT_TASK_SELECTED, found)
     }
   },
   components: {
@@ -52,20 +53,12 @@ export default defineComponent({
 </script>
 
 <template>
-  <n-grid cols="5">
-    <n-gi span="2">
-      <n-list style="width: 90%">
-        <n-space v-for="task in tasks" v-bind:key="task.id" 
-        :class="(selectedTask !== null) && (task.id === selectedTask.id) ? 'taskitem selectedtaskitem' : 'taskitem'">
-          <div @click="selectTask(task.id)" :title="task.description">{{ task.name }}</div>
-        </n-space>
-      </n-list>
-    </n-gi>
-    <n-gi span="3">
-      <TaskInfo v-if="selectedTask !== null" :task="selectedTask"></TaskInfo>
-      <EmptyTaskInfo v-if="selectedTask === null"></EmptyTaskInfo>
-    </n-gi>
-  </n-grid>
+  <n-list style="width: 90%">
+    <n-space v-for="task in tasks" v-bind:key="task.id"
+      :class="(selectedTask !== null) && (task.id === selectedTask.id) ? 'taskitem selectedtaskitem' : 'taskitem'">
+      <div @click="selectTask(task.id)" :title="task.description">{{ task.name }}</div>
+    </n-space>
+  </n-list>
 </template>
 
 <style scoped>
@@ -83,6 +76,7 @@ export default defineComponent({
   cursor: pointer;
   color: aqua;
 }
+
 .selectedtaskitem {
   color: aqua;
   background-color: green;

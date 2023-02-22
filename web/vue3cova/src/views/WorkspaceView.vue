@@ -1,11 +1,16 @@
 <script lang="ts">
+import taskApiHelper from '@/api/taskapi';
 import type { WorkspaceWithUser } from '@/api/workspaceapi';
 import TaskList from '@/components/content/TaskList.vue';
-import { EVENT_REMOTE_API_ERROR } from '@/entities/events';
+import { EVENT_REMOTE_API_ERROR, EVENT_TASK_SELECTED } from '@/entities/events';
+import type { Task } from '@/entities/task/task';
+import { identityStore } from '@/stores/identitystore';
 import { workspaceStore } from '@/stores/workspacestore';
 import { eventBus } from '@/util/eventbus';
 import { darkTheme } from 'naive-ui';
 import { defineComponent, reactive, ref } from 'vue';
+import TaskInfo from '@/components/content/TaskInfo.vue';
+import EmptyTaskInfo from '@/components/content/EmptyTaskInfo.vue';
 
 export default defineComponent({
   name: 'WorkspaceView',
@@ -13,11 +18,17 @@ export default defineComponent({
     let wk: WorkspaceWithUser | null = null;
     return reactive({
       darkTheme,
-      workspace: ref<WorkspaceWithUser | null>(wk)
+      workspace: ref<WorkspaceWithUser | null>(wk),
+      tasks: [] as Task[],
+      selectedTask: null as Task | null
     });
   },
   mounted() {
     console.log(`mounted WorkspaceView`)
+    eventBus.register(EVENT_TASK_SELECTED, (t: Task): Promise<any> => {
+      this.selectedTask = t
+      return Promise.resolve()
+    })
     this.loadWorkspace()
   },
   updated() {
@@ -34,9 +45,23 @@ export default defineComponent({
       } else {
         eventBus.send(EVENT_REMOTE_API_ERROR, `workspace id "${workspaceId}" is not a value`)
       }
+    },
+    loadTasks() {
+      if (this.workspace !== null) {
+        let user = identityStore().currentIdentity()
+        taskApiHelper.getTasksOfWorkspace(user, this.workspace.workspace.id).then(tr => {
+          this.tasks = tr.data.tasks
+        }).catch(reason => {
+          eventBus.send(EVENT_REMOTE_API_ERROR, reason)
+        })
+      }
+    },
+    selectTask(id: number) {
+      let found = this.tasks.find(t => t.id === id)
+      this.selectedTask = found as Task
     }
   },
-  components: { TaskList }
+  components: { TaskList, EmptyTaskInfo, TaskInfo }
 })
 </script>
 
@@ -46,7 +71,15 @@ export default defineComponent({
       style="margin-bottom: 16px">
       <n-tabs type="bar" animated v-if="workspace !== null">
         <n-tab-pane name="Tasks" tab="tasks">
-          <TaskList :workspace="workspace"></TaskList>
+          <n-grid cols="5">
+            <n-gi span="2">
+              <TaskList :workspace="workspace"></TaskList>
+            </n-gi>
+            <n-gi span="3">
+              <TaskInfo v-if="selectedTask !== null" :task="selectedTask"></TaskInfo>
+              <EmptyTaskInfo v-if="selectedTask === null"></EmptyTaskInfo>
+            </n-gi>
+          </n-grid>
         </n-tab-pane>
         <n-tab-pane name="Connections" tab="connections">
           Hey Jude
@@ -59,6 +92,4 @@ export default defineComponent({
   </n-config-provider>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

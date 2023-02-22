@@ -120,7 +120,10 @@ export default defineComponent({
         <n-gi span="2">
             <div class="field">Notification recipients</div>
             <span>{{ recipientsText }}</span>
-            <span style="float: right"><n-button type="info" @click="editRecipients = true">Edit</n-button></span>
+            <span style="float: right"><n-button type="info" @click="editRecipients = true">Edit Recipients</n-button></span>
+        </n-gi>
+        <n-gi span="2" v-for="(act, index) in task.actions" v-bind:key="index">
+            {{  act.name }}
         </n-gi>
     </n-grid>
     <RecipientsEditor v-if="editRecipients" :extra="task.extra"></RecipientsEditor>
