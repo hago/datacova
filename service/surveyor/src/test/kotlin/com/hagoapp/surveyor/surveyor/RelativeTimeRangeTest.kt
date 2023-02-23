@@ -61,7 +61,7 @@ class RelativeTimeRangeTest {
     fun testWithinOneWeekAgoAndOneWeekLater() {
         val nowMilli = Instant.now().toEpochMilli()
         val random = Random(nowMilli)
-        val sometimeYesterday = nowMilli + random.nextInt(86400 * 14) * (if (random.nextBoolean()) 1 else -1)
+        val sometimeYesterday = nowMilli + random.nextInt(86400 * 7) * (if (random.nextBoolean()) 1 else -1)
         val config = RelativeTimeRangeConfig(
             RelativeTimeBoundary(
                 TimeAnchor.BeginOfThisWeek, TimeDiff(
