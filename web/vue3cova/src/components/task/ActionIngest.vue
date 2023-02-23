@@ -52,10 +52,22 @@ export default defineComponent({
 
 <template>
     <n-grid cols="2">
-        <n-gi span="2">
+        <n-gi>
             <span class="field">Connection</span>
             <n-select :options="connections" v-model:value="act.connectionId" :readonly="readonly" />
+        </n-gi>
+        <n-gi>
+            <div>&nbsp;</div>
+            <n-button type="info" class="connedit">Edit Connection</n-button>
         </n-gi>
     </n-grid>
     <div>{{ action.name }} action ingest</div>
 </template>
+
+<style scoped>
+.connedit {
+    vertical-align: bottom;
+    float: right;
+    width: 120px;
+}
+</style>

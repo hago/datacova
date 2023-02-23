@@ -133,8 +133,9 @@ export default defineComponent({
         <n-gi span="2">
             <div class="field">Notification recipients</div>
             <span>{{ recipientsText }}</span>
-            <span style="float: right"><n-button type="info" @click="editRecipients = true">Edit
-                    Recipients</n-button></span>
+            <n-button type="info" @click="editRecipients = true" class="rcptedit">
+                Edit Recipients
+            </n-button>
         </n-gi>
         <n-gi span="2" v-for="(act, index) in task.actions" v-bind:key="index">
             <ActionIngest :action="act" :task="task" v-if="isIngestAction(act)" :readonly="!canModify"></ActionIngest>
@@ -169,5 +170,10 @@ export default defineComponent({
 
 .right {
     text-align: right;
+}
+
+.rcptedit {
+    float: right;
+    width: 120px;
 }
 </style>
