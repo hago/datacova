@@ -20,4 +20,9 @@ data class TimeDiff(
             .plusMinutes(minute * direction)
             .plusSeconds(second * direction)
     }
+
+    companion object {
+        @JvmStatic
+        val ZeroDiff = TimeDiff(0, 0, 0, 0)
+    }
 }
