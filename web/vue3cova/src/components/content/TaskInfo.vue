@@ -13,11 +13,12 @@ import RecipientsEditor from '../task/RecipientsEditor.vue';
 import ActionIngest from '@/components/task/ActionIngest.vue';
 import ActionDistribute from '@/components/task/ActionDistribute.vue';
 import ActionVerify from '@/components/task/ActionVerify.vue';
+import ActionTypeSelect from '@/components/task/ActionTypeSelect.vue'
 
 export default defineComponent({
     name: "TaskInfo",
     components: {
-        RecipientsEditor, ActionIngest, ActionDistribute, ActionVerify
+        RecipientsEditor, ActionIngest, ActionDistribute, ActionVerify, ActionTypeSelect
     },
     props: {
         task: {
@@ -103,7 +104,6 @@ export default defineComponent({
         isVerifyAction(action: TaskAction): boolean {
             return action.type === 2
         }
-
     }
 })
 </script>
@@ -115,7 +115,7 @@ export default defineComponent({
             <input class="taskname" v-model="task.name" type="text" placeholder="Task Name" v-bind:readonly="!canModify" />
         </n-gi>
         <n-gi style="text-align: right;">
-            <n-button type="error" v-if="canDelete" @click="deleteTask(task)">Delete</n-button>
+            <n-button seconday type="error" v-if="canDelete" @click="deleteTask(task)">Delete</n-button>
         </n-gi>
         <n-gi :span="2">
             <n-card title="Description">
@@ -130,24 +130,38 @@ export default defineComponent({
             <div class="field right">Updated: </div>
             <div class="updatetime right">{{ new Date(task.modifyTime).toLocaleString() }}</div>
         </n-gi>
-        <n-gi span="2">
+        <n-gi span="2"  style="margin-bottom: 5px">
             <div class="field">Notification recipients</div>
             <span>{{ recipientsText }}</span>
-            <n-button type="info" @click="editRecipients = true" class="rcptedit">
+            <n-button seconday type="tertiary" @click="editRecipients = true" class="rightbutton">
                 Edit Recipients
             </n-button>
         </n-gi>
+        <n-gi class="actionheader">
+            <div class="field">Task Actions</div>
+        </n-gi>
+        <n-gi class="actionheader">
+            <n-button secondary type="warning" @click="editRecipients = true" class="rightbutton">
+                Add New Action
+            </n-button>
+        </n-gi>
         <n-gi span="2" v-for="(act, index) in task.actions" v-bind:key="index">
+            <ActionTypeSelect :action="act" :task="task" :readonly="!canModify"></ActionTypeSelect>
             <ActionIngest :action="act" :task="task" v-if="isIngestAction(act)" :readonly="!canModify"></ActionIngest>
             <ActionDistribute :action="act" :task="task" v-if="isDistributeAction(act)" :readonly="!canModify">
             </ActionDistribute>
             <ActionVerify :action="act" :task="task" v-if="isVerifyAction(act)" :readonly="!canModify"></ActionVerify>
+            <div style="border-bottom-style: dotted"></div>
         </n-gi>
     </n-grid>
     <RecipientsEditor v-if="editRecipients" :extra="task.extra" :readonly="!canModify"></RecipientsEditor>
 </template>
 
 <style scoped>
+.actionheader {
+    margin-bottom: 5px;
+    border-bottom-style: groove;
+}
 .taskname {
     font-weight: bold;
     font-size: larger;
@@ -172,7 +186,7 @@ export default defineComponent({
     text-align: right;
 }
 
-.rcptedit {
+.rightbutton {
     float: right;
     width: 120px;
 }

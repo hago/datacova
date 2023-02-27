@@ -10,7 +10,7 @@ export interface TaskExtra {
 }
 
 export interface TaskAction {
-    type: number
+    type: -1 | 1 | 2 | 3
     name: string
     description: string
     enabled: boolean
