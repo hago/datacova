@@ -103,6 +103,14 @@ export default defineComponent({
         },
         isVerifyAction(action: TaskAction): boolean {
             return action.type === 2
+        },
+        addAction() {
+            this.task.actions.push({
+                type: -1,
+                name: 'New Action',
+                description: '',
+                enabled: true
+            })
         }
     }
 })
@@ -141,7 +149,7 @@ export default defineComponent({
             <div class="field">Task Actions</div>
         </n-gi>
         <n-gi class="actionheader">
-            <n-button secondary type="warning" @click="editRecipients = true" class="rightbutton">
+            <n-button secondary type="warning" @click="addAction" class="rightbutton">
                 Add New Action
             </n-button>
         </n-gi>
