@@ -1,8 +1,7 @@
 <script lang="ts">
 import type { Task, TaskAction } from '@/entities/task/task';
-import type { TaskActionIngest } from '@/entities/task/taskingest';
+import type { TaskActionDistribute } from '@/entities/task/taskdist';
 import { defineComponent, reactive, type PropType } from 'vue';
-
 
 export default defineComponent({
     props: {
@@ -20,7 +19,7 @@ export default defineComponent({
         }
     },
     setup(props) {
-        let act = props.action as TaskActionIngest
+        let act = props.action as TaskActionDistribute
         return reactive({
             act
         })
