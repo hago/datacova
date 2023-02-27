@@ -23,7 +23,7 @@ export interface Task {
     description: string
     workspaceId: number
     extra: TaskExtra
-    actions: (TaskActionIngest | TaskActionIdle)[],
+    actions: (TaskAction | TaskActionIngest | TaskActionIdle)[],
     addTime: number,
     addBy: number,
     modifyTime: number,
