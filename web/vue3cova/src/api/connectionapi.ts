@@ -13,10 +13,12 @@ interface ConnectionsResponse extends BaseResponse {
 }
 
 interface TableListResponse extends Response {
-    data: Map<string, {
-        schema: string,
-        tableName: string
-    }[]>
+    data: {
+        [key: string]: {
+            schema: string,
+            tableName: string
+        }[]
+    }
 }
 
 export class ConnectionApi {
@@ -35,11 +37,10 @@ export class ConnectionApi {
 
     async listTables(user: Identity, workspaceId: number, connectionId: number): Promise<TableListResponse> {
         let headers = addTokenHeader(user)
-        let rsp = await fetch(`/api/workspace/${workspaceId}/connections`, {
+        let rsp = await fetch(`/api/workspace/${workspaceId}/connection/${connectionId}/tables`, {
             headers: headers,
             method: "GET"
         })
-        let s = await rsp.text()
         return fromFetchResponse(rsp)
     }
 }
