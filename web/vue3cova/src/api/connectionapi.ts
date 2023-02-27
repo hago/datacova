@@ -1,8 +1,7 @@
 import type { WorkspaceConnection } from "@/entities/connection/workspaceconnection"
 import type Identity from "@/entities/identity"
-import type { BaseResponse } from "./baseresponse"
+import { fromFetchResponse, type BaseResponse } from "./baseresponse"
 import { addTokenHeader } from "./credential"
-import { stringifyFailResponseBody } from "./failresponse"
 
 interface ConnectionsResponse extends BaseResponse {
     data: {
@@ -11,6 +10,13 @@ interface ConnectionsResponse extends BaseResponse {
         canModify: boolean
         connections: WorkspaceConnection[]
     }
+}
+
+interface TableListResponse extends Response {
+    data: Map<string, {
+        schema: string,
+        tableName: string
+    }[]>
 }
 
 export class ConnectionApi {
@@ -24,15 +30,18 @@ export class ConnectionApi {
             headers: headers,
             method: "GET"
         })
-        let s = await rsp.text()
-        if (rsp.status === 200) {
-            let connections = JSON.parse(s) as ConnectionsResponse
-            return Promise.resolve(connections)
-        } else {
-            throw new Error(stringifyFailResponseBody(s))
-        }
+        return fromFetchResponse(rsp)
     }
 
+    async listTables(user: Identity, workspaceId: number, connectionId: number): Promise<TableListResponse> {
+        let headers = addTokenHeader(user)
+        let rsp = await fetch(`/api/workspace/${workspaceId}/connections`, {
+            headers: headers,
+            method: "GET"
+        })
+        let s = await rsp.text()
+        return fromFetchResponse(rsp)
+    }
 }
 
 const connApiHelper: ConnectionApi = new ConnectionApi()

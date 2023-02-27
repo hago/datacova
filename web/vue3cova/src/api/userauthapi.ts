@@ -1,6 +1,5 @@
 import type { User, Permission, BasicLoginInfo } from "@/entities/user"
-import type { BaseResponse } from "./baseresponse"
-import { stringifyFailResponseBody } from "./failresponse"
+import { fromFetchResponse, type BaseResponse } from "./baseresponse"
 
 export interface LoginResponse extends BaseResponse {
     data: {
@@ -31,13 +30,7 @@ export class UserAuthApi {
             body: data,
             cache: 'no-cache'
         })
-        let s = await p.text()
-        if (p.status === 200) {
-            let loginrsp: LoginResponse = JSON.parse(s)
-            return Promise.resolve(loginrsp)
-        } else {
-            throw new Error(stringifyFailResponseBody(s))
-        }
+        return fromFetchResponse(p)
     }
 }
 

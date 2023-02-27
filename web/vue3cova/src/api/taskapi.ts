@@ -1,8 +1,7 @@
 import type Identity from "@/entities/identity"
 import type { Task } from "@/entities/task/task"
-import type { BaseResponse } from "./baseresponse"
+import { fromFetchResponse, type BaseResponse } from "./baseresponse"
 import { addTokenHeader } from "./credential"
-import { stringifyFailResponseBody } from "./failresponse"
 
 export interface TasksResponse extends BaseResponse {
     data: {
@@ -21,13 +20,7 @@ export class TaskApi {
             headers: headers,
             method: "GET"
         })
-        let s = await rsp.text()
-        if (rsp.status === 200) {
-            let tasks = JSON.parse(s) as TasksResponse
-            return Promise.resolve(tasks)
-        } else {
-            throw new Error(stringifyFailResponseBody(s))
-        }
+        return fromFetchResponse(rsp)
     }
 
     async deleteTask(user: Identity, task: Task): Promise<number> {
@@ -36,13 +29,7 @@ export class TaskApi {
             headers: headers,
             method: "DELETE"
         })
-        let s = await rsp.text()
-        if (rsp.status === 200) {
-            let r: BaseResponse = JSON.parse(s)
-            return Promise.resolve(r.code)
-        } else {
-            throw new Error(stringifyFailResponseBody(s))
-        }
+        return fromFetchResponse(rsp)
     }
 }
 

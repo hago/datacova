@@ -1,8 +1,7 @@
 import type Identity from "@/entities/identity";
 import type { User } from "@/entities/user";
-import type { BaseResponse } from "./baseresponse";
+import { fromFetchResponse, type BaseResponse } from "./baseresponse";
 import { addTokenHeader } from "./credential";
-import { stringifyFailResponseBody } from "./failresponse";
 
 export interface Workspace {
     id: number
@@ -47,13 +46,7 @@ export class WorkspaceApi {
             headers: headers,
             method: "GET"
         })
-        let s = await p.text()
-        if (p.status === 200) {
-            let rsp: WorkspaceListResponse = JSON.parse(s)
-            return Promise.resolve(rsp)
-        } else {
-            throw new Error(stringifyFailResponseBody(s))
-        }
+        return fromFetchResponse(p)
     }
 
     async getWorksapce(user: Identity, id: number): Promise<WorkspaceResponse> {
@@ -62,13 +55,7 @@ export class WorkspaceApi {
             headers: headers,
             method: "GET"
         })
-        let s = await p.text()
-        if (p.status === 200) {
-            let rsp: WorkspaceResponse = JSON.parse(s)
-            return Promise.resolve(rsp)
-        } else {
-            throw new Error(stringifyFailResponseBody(s))
-        }
+        return fromFetchResponse(p)
     }
 }
 
