@@ -63,7 +63,8 @@ export default defineComponent({
             <n-button quaternary type="warning" @click="changeActionType" style="float: right;">Change Type</n-button>
         </n-gi>
         <n-gi>
-            <n-select :options="typeOptions" v-model:value="action.type" v-if="showSelect" :readonly="readonly"></n-select>
+            <n-select :options="typeOptions" v-model:value="action.type" v-if="showSelect" :readonly="readonly"
+                :fallback-option="(v: any) => ({ label: 'Select a Type', value: v })"></n-select>
         </n-gi>
     </n-grid>
 </template>
