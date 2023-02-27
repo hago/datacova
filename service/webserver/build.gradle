@@ -64,6 +64,8 @@ dependencies {
 
     implementation group: 'com.github.whvcse', name: 'easy-captcha', version: '1.6.2'
 
+    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client:3.0.6'
+
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
     testImplementation group: 'ch.qos.logback', name:'logback-classic', version: '1.2.3'
 
