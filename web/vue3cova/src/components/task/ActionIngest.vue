@@ -118,7 +118,24 @@ export default defineComponent({
                 <n-button>Table: {{ act.ingestOptions.targetTable }}</n-button>
             </n-popselect>
         </n-gi>
+        <n-gi></n-gi>
         <n-gi>
+            <n-checkbox v-model:checked="act.ingestOptions.addBatch" :disabled="readonly">Add batch column automatically if
+                absent</n-checkbox>
+        </n-gi>
+        <n-gi>
+            <n-input :value="act.ingestOptions.batchColumnName" type="text" :readonly="readonly"
+                v-if="act.ingestOptions.addBatch" />
+        </n-gi>
+        <n-gi>
+            <n-checkbox v-model:checked="act.ingestOptions.clearTable" :disabled="readonly">
+                Clear existing data
+            </n-checkbox>
+        </n-gi>
+        <n-gi>
+            <n-checkbox v-model:checked="act.ingestOptions.createTableIfNeeded" :disabled="readonly">
+                Create table if not existed
+            </n-checkbox>
         </n-gi>
     </n-grid>
 </template>
