@@ -55,8 +55,6 @@ export default defineComponent({
     <n-grid cols="2">
         <n-gi span="2">
             <n-input v-model:value="action.name" type="text" :readonly="readonly" placeholder="action name"></n-input>
-            <n-input v-model:value="action.description" type="textarea" :readonly="readonly" placeholder="description"
-                style="margin-top: 5px"></n-input>
         </n-gi>
         <n-gi style="margin-right: 10px;">
             <span class="field">Type: </span>
@@ -66,6 +64,10 @@ export default defineComponent({
         <n-gi>
             <n-select :options="typeOptions" v-model:value="action.type" v-if="showSelect" :readonly="readonly"
                 :fallback-option="(v: any) => ({ label: 'Select a Type', value: v })"></n-select>
+        </n-gi>
+        <n-gi span="2">
+            <n-input v-model:value="action.description" type="textarea" :readonly="readonly" placeholder="description"
+                style="margin-top: 5px"></n-input>
         </n-gi>
     </n-grid>
 </template>
