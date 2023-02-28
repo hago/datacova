@@ -13,6 +13,22 @@ interface SelectOption {
     label: string
 }
 
+function initNewTaskActionIngest(task: TaskActionIngest) {
+    if (task.connectionId === undefined) {
+        task.connectionId = -1
+    }
+    if (task.ingestOptions === undefined) {
+        task.ingestOptions = {
+            targetSchema: "",
+            targetTable: "",
+            addBatch: false,
+            clearTable: false,
+            createTableIfNeeded: true,
+            batchColumnName: "batchId"
+        }
+    }
+}
+
 export default defineComponent({
     props: {
         action: {
@@ -30,6 +46,7 @@ export default defineComponent({
     },
     setup(props) {
         let act = props.action as TaskActionIngest;
+        initNewTaskActionIngest(act)
         let tablesMeta = {} as {
             [key: string]: {
                 schema: string
@@ -84,7 +101,7 @@ export default defineComponent({
             })
         },
         calcTables() {
-            let found = this.tablesMeta[(this.act.ingestOptions.targetSchema)]
+            let found = this.tablesMeta[(this.act.ingestOptions!.targetSchema)]
             if (found === undefined) {
                 return []
             } else {
@@ -104,36 +121,38 @@ export default defineComponent({
     <n-grid cols="2">
         <n-gi>
             <span class="field">Connection</span>
-            <n-select :options="connections" v-model:value="act.connectionId" :readonly="readonly" />
+            <n-select :options="connections" v-model:value="act.connectionId" :readonly="readonly"
+                :fallback-option="(v: any) => ({ label: 'Select a Connection', value: v })" />
         </n-gi>
         <n-gi>
             <div>&nbsp;</div>
             <n-button type="info" class="connedit">Edit Connection</n-button>
         </n-gi>
         <n-gi>
-            <n-popselect :options="schemas" v-model:value="act.ingestOptions.targetSchema" :readonly="readonly">
-                <n-button>Schema: {{ act.ingestOptions.targetSchema }}</n-button>
+            <n-popselect :options="schemas" v-model:value="act.ingestOptions!.targetSchema" :readonly="readonly">
+                <n-button>Schema: {{ act.ingestOptions!.targetSchema }}</n-button>
             </n-popselect>
-            <n-popselect :options="tables" v-model:value="act.ingestOptions.targetTable" :readonly="readonly">
-                <n-button>Table: {{ act.ingestOptions.targetTable }}</n-button>
+            <n-popselect :options="tables" v-model:value="act.ingestOptions!.targetTable" :readonly="readonly">
+                <n-button>Table: {{ act.ingestOptions!.targetTable }}</n-button>
             </n-popselect>
         </n-gi>
         <n-gi></n-gi>
         <n-gi>
-            <n-checkbox v-model:checked="act.ingestOptions.addBatch" :disabled="readonly">Add batch column automatically if
-                absent</n-checkbox>
+            <n-checkbox v-model:checked="act.ingestOptions!.addBatch" :disabled="readonly">
+                Add batch column automatically if absent
+            </n-checkbox>
         </n-gi>
         <n-gi>
-            <n-input :value="act.ingestOptions.batchColumnName" type="text" :readonly="readonly"
-                v-if="act.ingestOptions.addBatch" />
+            <n-input :value="act.ingestOptions!.batchColumnName" type="text" :readonly="readonly"
+                v-if="act.ingestOptions!.addBatch" />
         </n-gi>
         <n-gi>
-            <n-checkbox v-model:checked="act.ingestOptions.clearTable" :disabled="readonly">
+            <n-checkbox v-model:checked="act.ingestOptions!.clearTable" :disabled="readonly">
                 Clear existing data
             </n-checkbox>
         </n-gi>
         <n-gi>
-            <n-checkbox v-model:checked="act.ingestOptions.createTableIfNeeded" :disabled="readonly">
+            <n-checkbox v-model:checked="act.ingestOptions!.createTableIfNeeded" :disabled="readonly">
                 Create table if not existed
             </n-checkbox>
         </n-gi>

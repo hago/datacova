@@ -10,6 +10,6 @@ export interface IngestOptions {
 }
 
 export interface TaskActionIngest extends TaskAction {
-    connectionId: number
-    ingestOptions: IngestOptions
+    connectionId?: number
+    ingestOptions?: IngestOptions
 }
