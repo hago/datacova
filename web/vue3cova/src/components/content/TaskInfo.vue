@@ -14,11 +14,12 @@ import ActionIngest from '@/components/task/ActionIngest.vue';
 import ActionDistribute from '@/components/task/ActionDistribute.vue';
 import ActionVerify from '@/components/task/ActionVerify.vue';
 import ActionTypeSelect from '@/components/task/ActionTypeSelect.vue'
+import ActionBasicInfo from '@/components/task/ActionBasicInfo.vue'
 
 export default defineComponent({
     name: "TaskInfo",
     components: {
-        RecipientsEditor, ActionIngest, ActionDistribute, ActionVerify, ActionTypeSelect
+        ActionBasicInfo, RecipientsEditor, ActionIngest, ActionDistribute, ActionVerify, ActionTypeSelect
     },
     props: {
         task: {
@@ -111,6 +112,9 @@ export default defineComponent({
                 description: '',
                 enabled: true
             })
+        },
+        shouldExpand(action: TaskAction) {
+            return action.expand === undefined || action.expand
         }
     }
 })
@@ -138,7 +142,7 @@ export default defineComponent({
             <div class="field right">Updated: </div>
             <div class="updatetime right">{{ new Date(task.modifyTime).toLocaleString() }}</div>
         </n-gi>
-        <n-gi span="2"  style="margin-bottom: 5px">
+        <n-gi span="2" style="margin-bottom: 5px">
             <div class="field">Notification recipients</div>
             <span>{{ recipientsText }}</span>
             <n-button seconday type="tertiary" @click="editRecipients = true" class="rightbutton">
@@ -154,11 +158,15 @@ export default defineComponent({
             </n-button>
         </n-gi>
         <n-gi span="2" v-for="(act, index) in task.actions" v-bind:key="index">
-            <ActionTypeSelect :action="act" :task="task" :readonly="!canModify"></ActionTypeSelect>
-            <ActionIngest :action="act" :task="task" v-if="isIngestAction(act)" :readonly="!canModify"></ActionIngest>
-            <ActionDistribute :action="act" :task="task" v-if="isDistributeAction(act)" :readonly="!canModify">
+            <ActionBasicInfo :action="act" :readonly="!canModify"> </ActionBasicInfo>
+            <ActionTypeSelect :action="act" :task="task" :readonly="!canModify" v-if="shouldExpand(act)"></ActionTypeSelect>
+            <ActionIngest :action="act" :task="task" v-if="isIngestAction(act) && shouldExpand(act)" :readonly="!canModify">
+            </ActionIngest>
+            <ActionDistribute :action="act" :task="task" v-if="isDistributeAction(act) && shouldExpand(act)"
+                :readonly="!canModify">
             </ActionDistribute>
-            <ActionVerify :action="act" :task="task" v-if="isVerifyAction(act)" :readonly="!canModify"></ActionVerify>
+            <ActionVerify :action="act" :task="task" v-if="isVerifyAction(act) && shouldExpand(act)" :readonly="!canModify">
+            </ActionVerify>
             <div style="border-bottom-style: dotted"></div>
         </n-gi>
     </n-grid>
@@ -170,6 +178,7 @@ export default defineComponent({
     margin-bottom: 5px;
     border-bottom-style: groove;
 }
+
 .taskname {
     font-weight: bold;
     font-size: larger;

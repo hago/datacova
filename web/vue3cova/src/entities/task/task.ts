@@ -14,6 +14,7 @@ export interface TaskAction {
     name: string
     description: string
     enabled: boolean
+    expand?: boolean
 }
 
 

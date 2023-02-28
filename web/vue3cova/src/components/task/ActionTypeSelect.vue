@@ -54,8 +54,9 @@ export default defineComponent({
 <template>
     <n-grid cols="2">
         <n-gi span="2">
-            <span class="actionheader">Action:&nbsp;</span>
-            <span class="actionname">{{ action.name }}</span>
+            <n-input v-model:value="action.name" type="text" :readonly="readonly" placeholder="action name"></n-input>
+            <n-input v-model:value="action.description" type="textarea" :readonly="readonly" placeholder="description"
+                style="margin-top: 5px"></n-input>
         </n-gi>
         <n-gi style="margin-right: 10px;">
             <span class="field">Type: </span>
