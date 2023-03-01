@@ -4,7 +4,16 @@ export interface DistributeConfiguraton  {
     type: string
     copyOriginal: boolean
     overwriteExisted: boolean
-    targetFileName: string
+    targetFileName: string | null
+}
+
+export const emptyDistConfiguration = (): DistributeConfiguraton => {
+    return {
+        type: "",
+        copyOriginal: true,
+        overwriteExisted: true,
+        targetFileName: null
+    }
 }
 
 export interface TaskActionDistribute extends TaskAction {
