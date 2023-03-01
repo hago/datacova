@@ -12,5 +12,5 @@ export function stringifyFailResponse(rsp: FailResponse): string {
 
 export function stringifyFailResponseBody(body: string): string {
     let rsp = JSON.parse(body) as FailResponse
-    return `error: ${rsp.error.message}; data: ${rsp.error.data.toString()}`
+    return `error: ${rsp.error?.message}; data: ${rsp.error.data?.toString()}`
 }
