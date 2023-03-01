@@ -4,7 +4,9 @@ import { fromFetchResponse, type BaseResponse } from "./baseresponse"
 import { addTokenHeader } from "./credential"
 
 export interface FtpVerificationResponse extends BaseResponse {
-    pwd: string
+    data: {
+        pwd: string
+    }
 }
 
 export class VerificationApi {
