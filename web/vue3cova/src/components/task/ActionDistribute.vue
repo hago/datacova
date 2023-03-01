@@ -57,8 +57,10 @@ export default defineComponent({
                 label: 'Select a Distribution Method', value: v
             })"></n-select>
         </n-gi>
-        <ActionDistFtp :action="act" :task="task" :readonly="readonly" v-if="act.configuration.type === 'ftp'" />
-        <ActionDistSFtp :action="act" :task="task" :readonly="readonly" v-if="act.configuration.type === 'sftp'" />
+        <n-gi span="2">
+            <ActionDistFtp :action="act" :task="task" :readonly="readonly" v-if="act.configuration.type === 'ftp'" />
+            <ActionDistSFtp :action="act" :task="task" :readonly="readonly" v-if="act.configuration.type === 'sftp'" />
+        </n-gi>
     </n-grid>
 </template>
 
