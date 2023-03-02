@@ -93,17 +93,8 @@ export default defineComponent({
                 eventBus.send(EVENT_REMOTE_API_ERROR, reason)
             })
         },
-        localeSelect() {
-
-        },
-        isIngestAction(action: TaskAction): boolean {
-            return action.type === 1
-        },
-        isDistributeAction(action: TaskAction): boolean {
-            return action.type === 3
-        },
-        isVerifyAction(action: TaskAction): boolean {
-            return action.type === 2
+        isActionOfType(action: TaskAction, type: number): boolean {
+            return action.type === type
         },
         addAction() {
             this.task.actions.push({
@@ -115,6 +106,9 @@ export default defineComponent({
         },
         shouldExpand(action: TaskAction) {
             return action.expand === undefined || action.expand
+        },
+        saveTask(task: Task) {
+
         }
     }
 })
@@ -127,6 +121,8 @@ export default defineComponent({
             <input class="taskname" v-model="task.name" type="text" placeholder="Task Name" v-bind:readonly="!canModify" />
         </n-gi>
         <n-gi style="text-align: right;">
+            <n-button seconday type="primary" v-if="canDelete" @click="saveTask(task)" style="margin-right: 5px;">{{
+                (task.id > 0) ? 'Update' : 'Save' }}</n-button>
             <n-button seconday type="error" v-if="canDelete" @click="deleteTask(task)">Delete</n-button>
         </n-gi>
         <n-gi :span="2">
@@ -160,12 +156,12 @@ export default defineComponent({
         <n-gi span="2" v-for="(act, index) in task.actions" v-bind:key="index">
             <ActionBasicInfo :action="act" :readonly="!canModify"> </ActionBasicInfo>
             <ActionTypeSelect :action="act" :task="task" :readonly="!canModify" v-if="shouldExpand(act)"></ActionTypeSelect>
-            <ActionIngest :action="act" :task="task" v-if="isIngestAction(act) && shouldExpand(act)" :readonly="!canModify">
+            <ActionIngest :action="act" :task="task" v-if="isActionOfType(act, 1) && shouldExpand(act)" :readonly="!canModify">
             </ActionIngest>
-            <ActionDistribute :action="act" :task="task" v-if="isDistributeAction(act) && shouldExpand(act)"
+            <ActionDistribute :action="act" :task="task" v-if="isActionOfType(act, 3) && shouldExpand(act)"
                 :readonly="!canModify">
             </ActionDistribute>
-            <ActionVerify :action="act" :task="task" v-if="isVerifyAction(act) && shouldExpand(act)" :readonly="!canModify">
+            <ActionVerify :action="act" :task="task" v-if="isActionOfType(act, 2) && shouldExpand(act)" :readonly="!canModify">
             </ActionVerify>
             <div style="border-bottom-style: dotted"></div>
         </n-gi>
