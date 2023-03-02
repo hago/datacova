@@ -108,7 +108,12 @@ export default defineComponent({
             return action.expand === undefined || action.expand
         },
         saveTask(task: Task) {
-
+            let user = identityStore().currentIdentity()
+            taskApiHelper.saveTask(user, task).then(rsp => {
+                //
+            }).catch(err => {
+                eventBus.send(EVENT_REMOTE_API_ERROR, err)
+            })
         }
     }
 })

@@ -9,6 +9,11 @@ export interface TasksResponse extends BaseResponse {
     }
 }
 
+export interface TaskResponse extends BaseResponse {
+    data: Task
+}
+
+
 export class TaskApi {
     constructor() {
         //
@@ -28,6 +33,17 @@ export class TaskApi {
         let rsp = await fetch(`/api/workspace/${task.workspaceId}/task/${task.id}`, {
             headers: headers,
             method: "DELETE"
+        })
+        return fromFetchResponse(rsp)
+    }
+
+    async saveTask(user: Identity, task: Task): Promise<TaskResponse> {
+        let headers = addTokenHeader(user)
+        headers.append('content-type', 'application/json')
+        let rsp = await fetch(`/api/workspace/${task.workspaceId}/task/update`, {
+            headers: headers,
+            method: "PUT",
+            body: JSON.stringify(task)
         })
         return fromFetchResponse(rsp)
     }
