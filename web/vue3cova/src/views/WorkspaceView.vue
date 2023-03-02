@@ -1,10 +1,8 @@
 <script lang="ts">
-import taskApiHelper from '@/api/taskapi';
 import type { WorkspaceWithUser } from '@/api/workspaceapi';
 import TaskList from '@/components/content/TaskList.vue';
 import { EVENT_REMOTE_API_ERROR, EVENT_TASK_SELECTED } from '@/entities/events';
 import type { Task } from '@/entities/task/task';
-import { identityStore } from '@/stores/identitystore';
 import { workspaceStore } from '@/stores/workspacestore';
 import { eventBus } from '@/util/eventbus';
 import { darkTheme } from 'naive-ui';
@@ -44,16 +42,6 @@ export default defineComponent({
         console.log(`WorkspaceView.workspace: ${this.workspace}`)
       } else {
         eventBus.send(EVENT_REMOTE_API_ERROR, `workspace id "${workspaceId}" is not a value`)
-      }
-    },
-    loadTasks() {
-      if (this.workspace !== null) {
-        let user = identityStore().currentIdentity()
-        taskApiHelper.getTasksOfWorkspace(user, this.workspace.workspace.id).then(tr => {
-          this.tasks = tr.data.tasks
-        }).catch(reason => {
-          eventBus.send(EVENT_REMOTE_API_ERROR, reason)
-        })
       }
     },
     selectTask(id: number) {

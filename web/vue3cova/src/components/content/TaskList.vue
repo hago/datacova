@@ -2,7 +2,7 @@
 import taskApiHelper from '@/api/taskapi';
 import { defineComponent, reactive, ref, type PropType } from 'vue';
 import type { WorkspaceWithUser } from '@/api/workspaceapi'
-import type { Task } from '@/entities/task/task';
+import { newEmptyTask, type Task } from '@/entities/task/task';
 import { identityStore } from '@/stores/identitystore';
 import TaskInfo from '@/components/content/TaskInfo.vue';
 import EmptyTaskInfo from '@/components/content/EmptyTaskInfo.vue';
@@ -16,7 +16,7 @@ export default defineComponent({
       required: true
     }
   },
-  setup() {
+  setup(props) {
     return reactive({
       tasks: [] as Task[],
       selectedTask: ref<Task | null>(null)
@@ -43,6 +43,11 @@ export default defineComponent({
       let found = this.tasks.find(t => t.id === id)
       this.selectedTask = found as Task
       eventBus.send(EVENT_TASK_SELECTED, found)
+    },
+    newTask() {
+      console.log('newTask')
+      const task: Task = newEmptyTask(this.workspace!.workspace.id)
+      this.tasks.push(task)
     }
   },
   components: {
@@ -53,6 +58,7 @@ export default defineComponent({
 </script>
 
 <template>
+  <n-button type="primary" @click="newTask">New Task</n-button>
   <n-list style="width: 90%">
     <n-space v-for="task in tasks" v-bind:key="task.id"
       :class="(selectedTask !== null) && (task.id === selectedTask.id) ? 'taskitem selectedtaskitem' : 'taskitem'">
