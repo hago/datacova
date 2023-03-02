@@ -88,7 +88,7 @@ export default defineComponent({
         </n-gi>
         <n-gi>
             <span>Port</span>
-            <n-input type="number" v-model:value="conf.port" placeholder="Server port" :disabled="readonly"
+            <n-input type="number" v-model:value.number="conf.port" placeholder="Server port" :disabled="readonly"
                 ref="port"></n-input>
         </n-gi>
         <n-gi>
