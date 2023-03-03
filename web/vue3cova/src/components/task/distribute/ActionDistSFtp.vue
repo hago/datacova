@@ -1,7 +1,7 @@
 <script lang="ts">
 import verificationApi from '@/api/verificationapi';
-import type DistSFtpConfiguration from '@/entities/task/dist/distconfigsftp';
-import { newDistSFtpConfiguration } from '@/entities/task/dist/distconfigsftp';
+import type DistSFtpConfiguration from '@/entities/task/distribute/distconfigsftp';
+import { newDistSFtpConfiguration } from '@/entities/task/distribute/distconfigsftp';
 import type { Task } from '@/entities/task/task';
 import type { TaskActionDistribute } from '@/entities/task/taskdist';
 import { identityStore } from '@/stores/identitystore';

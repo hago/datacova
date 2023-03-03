@@ -1,6 +1,6 @@
 import type Identity from "@/entities/identity"
-import type DistFtpConfiguration from "@/entities/task/dist/distconfigftp"
-import type DistSFtpConfiguration from "@/entities/task/dist/distconfigsftp"
+import type DistFtpConfiguration from "@/entities/task/distribute/distconfigftp"
+import type DistSFtpConfiguration from "@/entities/task/distribute/distconfigsftp"
 import { fromFetchResponse, type BaseResponse } from "./baseresponse"
 import { addTokenHeader } from "./credential"
 
