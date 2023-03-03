@@ -1,8 +1,9 @@
 <script lang="ts">
-import { darkTheme, type DrawerPlacement } from "naive-ui";
-import { defineComponent, h, reactive, ref } from "vue";
+import { darkTheme } from "naive-ui";
+import { defineComponent, reactive, ref } from "vue";
 import workspaceApiHelper, { type Workspace } from "./api/workspaceapi";
-import { EVENT_LOGIN_STATUS_CHANGED, EVENT_REMOTE_API_ERROR } from "./entities/events";
+import { EVENT_GLOBAL_DRAWER_NOTIFY, EVENT_LOGIN_STATUS_CHANGED, EVENT_REMOTE_API_ERROR } from "./entities/events";
+import { buildErrorDrawerConfig, defaultDrawerConfig, type GlobalDrawerConfig } from "./entities/globaldrawercfg";
 import { anonymousIdentity } from "./entities/identity";
 import router from "./router";
 import { identityStore } from "./stores/identitystore";
@@ -47,14 +48,13 @@ export default defineComponent({
       options: createOptions(),
       workspaceId: ref<number | null>(null),
       workspaces: emptySpaces,
-      showErrorDrawer: false,
-      errorMessage: '',
-      topPlacement: ref<DrawerPlacement>('top'),
+      drawerConfig: defaultDrawerConfig,
       darkTheme
     });
   },
   mounted() {
     eventBus.register(EVENT_REMOTE_API_ERROR, this.errorMessageReceived)
+    eventBus.register(EVENT_GLOBAL_DRAWER_NOTIFY, this.showGlobalDrawer)
     this.loadWorkspaces()
   },
   methods: {
@@ -78,13 +78,26 @@ export default defineComponent({
       }
       this.loadWorkspaces()
     },
-    async errorMessageReceived(...message: string[]): Promise<any> {
+    async errorMessageReceived(...message: string[]): Promise<void> {
       console.log('show drawer', message)
-      this.errorMessage = message[0]
-      this.showErrorDrawer = true
+      this.drawerConfig = buildErrorDrawerConfig(message[0], 'top')
       setTimeout(() => {
-        this.showErrorDrawer = false
-      }, 5000)
+        if (this.drawerConfig.timer !== undefined) {
+          this.drawerConfig.timer(this.drawerConfig)
+        }
+        this.drawerConfig.whetherShow = false
+      }, this.drawerConfig.milliSeconds)
+      return Promise.resolve()
+    },
+    async showGlobalDrawer(...message: any[]): Promise<void> {
+      console.log('show drawer notify', message)
+      this.drawerConfig = message[0] as GlobalDrawerConfig
+      setTimeout(() => {
+        if (this.drawerConfig.timer !== undefined) {
+          this.drawerConfig.timer(this.drawerConfig)
+        }
+        this.drawerConfig.whetherShow = false
+      }, this.drawerConfig.milliSeconds)
       return Promise.resolve()
     },
     loadWorkspaces() {
@@ -120,9 +133,9 @@ export default defineComponent({
 
 <template>
   <n-config-provider :theme="darkTheme">
-    <n-drawer v-model:show="showErrorDrawer" :placement="topPlacement">
-      <n-drawer-content title="Error">
-        <span class="error">{{ errorMessage }}</span>
+    <n-drawer v-model:show="drawerConfig.whetherShow" :placement="drawerConfig.position">
+      <n-drawer-content :title="drawerConfig.title">
+        <span :class="drawerConfig.className">{{ drawerConfig.message }}</span>
       </n-drawer-content>
     </n-drawer>
   </n-config-provider>
