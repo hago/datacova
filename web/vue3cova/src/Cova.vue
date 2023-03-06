@@ -135,7 +135,7 @@ export default defineComponent({
   <n-config-provider :theme="darkTheme">
     <n-drawer v-model:show="drawerConfig.whetherShow" :placement="drawerConfig.position">
       <n-drawer-content :title="drawerConfig.title">
-        <span :class="drawerConfig.className">{{ drawerConfig.message }}</span>
+        <span :style="`color: ${drawerConfig.color}`">{{ drawerConfig.message }}</span>
       </n-drawer-content>
     </n-drawer>
   </n-config-provider>

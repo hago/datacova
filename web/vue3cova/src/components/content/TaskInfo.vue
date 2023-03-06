@@ -7,7 +7,7 @@ import workspaceApiHelper from '@/api/workspaceapi';
 import { workspaceStore } from '@/stores/workspacestore';
 import type { WorkspaceWithUser } from "@/api/workspaceapi";
 import taskApiHelper from '@/api/taskapi';
-import { EVENT_REMOTE_API_ERROR, EVENT_TASKINFO_CLOSE_RECIPIENTS_EDITOR, EVENT_TASK_DELETED } from '@/entities/events';
+import { EVENT_GLOBAL_DRAWER_NOTIFY, EVENT_REMOTE_API_ERROR, EVENT_TASKINFO_CLOSE_RECIPIENTS_EDITOR, EVENT_TASK_DELETED } from '@/entities/events';
 import { eventBus } from '@/util/eventbus';
 import RecipientsEditor from '../task/RecipientsEditor.vue';
 import ActionIngest from '@/components/task/ActionIngest.vue';
@@ -15,6 +15,7 @@ import ActionDistribute from '@/components/task/ActionDistribute.vue';
 import ActionVerify from '@/components/task/ActionVerify.vue';
 import ActionTypeSelect from '@/components/task/ActionTypeSelect.vue'
 import ActionBasicInfo from '@/components/task/ActionBasicInfo.vue'
+import { buildSuccessDrawerConfig, type GlobalDrawerConfig } from '@/entities/globaldrawercfg';
 
 export default defineComponent({
     name: "TaskInfo",
@@ -110,7 +111,10 @@ export default defineComponent({
         saveTask(task: Task) {
             let user = identityStore().currentIdentity()
             taskApiHelper.saveTask(user, task).then(rsp => {
-                //
+                if (task.id <= 0) {
+                    this.task.id = rsp.data.id
+                }
+                eventBus.send(EVENT_GLOBAL_DRAWER_NOTIFY, buildSuccessDrawerConfig(`Task ${rsp.data.name} saved`, "top"))
             }).catch(err => {
                 eventBus.send(EVENT_REMOTE_API_ERROR, err)
             })
@@ -141,7 +145,7 @@ export default defineComponent({
         </n-gi>
         <n-gi>
             <div class="field right">Updated: </div>
-            <div class="updatetime right">{{ new Date(task.modifyTime).toLocaleString() }}</div>
+            <div class="updatetime right">{{ task.modifyTime > 0 ? new Date(task.modifyTime).toLocaleString() : "" }}</div>
         </n-gi>
         <n-gi span="2" style="margin-bottom: 5px">
             <div class="field">Notification recipients</div>
@@ -161,12 +165,14 @@ export default defineComponent({
         <n-gi span="2" v-for="(act, index) in task.actions" v-bind:key="index">
             <ActionBasicInfo :action="act" :readonly="!canModify"> </ActionBasicInfo>
             <ActionTypeSelect :action="act" :task="task" :readonly="!canModify" v-if="shouldExpand(act)"></ActionTypeSelect>
-            <ActionIngest :action="act" :task="task" v-if="isActionOfType(act, 1) && shouldExpand(act)" :readonly="!canModify">
+            <ActionIngest :action="act" :task="task" v-if="isActionOfType(act, 1) && shouldExpand(act)"
+                :readonly="!canModify">
             </ActionIngest>
             <ActionDistribute :action="act" :task="task" v-if="isActionOfType(act, 3) && shouldExpand(act)"
                 :readonly="!canModify">
             </ActionDistribute>
-            <ActionVerify :action="act" :task="task" v-if="isActionOfType(act, 2) && shouldExpand(act)" :readonly="!canModify">
+            <ActionVerify :action="act" :task="task" v-if="isActionOfType(act, 2) && shouldExpand(act)"
+                :readonly="!canModify">
             </ActionVerify>
             <div style="border-bottom-style: dotted"></div>
         </n-gi>
