@@ -134,8 +134,8 @@ export default defineComponent({
 <template>
   <n-config-provider :theme="darkTheme">
     <n-drawer v-model:show="drawerConfig.whetherShow" :placement="drawerConfig.position">
-      <n-drawer-content :title="drawerConfig.title">
-        <span :style="`color: ${drawerConfig.color}`">{{ drawerConfig.message }}</span>
+      <n-drawer-content :title="drawerConfig.title" class="drawertitle">
+        <span class="drawercontent" :style="`color: ${drawerConfig.color}`">{{ drawerConfig.message }}</span>
       </n-drawer-content>
     </n-drawer>
   </n-config-provider>
@@ -200,8 +200,11 @@ export default defineComponent({
   font-size: xx-large;
 }
 
-.error {
-  color: red;
+.drawertitle {
   font-size: x-large;
+}
+
+.drawercontent {
+  font-size: xx-large;
 }
 </style>
