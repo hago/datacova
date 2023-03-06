@@ -5,7 +5,7 @@ import { newDistFtpConfiguration } from '@/entities/task/distribute/distconfigft
 import type { Task } from '@/entities/task/task';
 import type { TaskActionDistribute } from '@/entities/task/taskdist';
 import { identityStore } from '@/stores/identitystore';
-import { defineComponent, reactive, type PropType } from 'vue';
+import { computed, defineComponent, reactive, type PropType } from 'vue';
 
 export default defineComponent({
     props: {
@@ -30,7 +30,17 @@ export default defineComponent({
                 success: false,
                 text: ""
             },
-            ftpmsgstyle: "ftpsuccess"
+            ftpmsgstyle: "ftpsuccess",
+            port: computed({
+                get: () => (conf.port.toString()),
+                set: (v: any) => {
+                    //console.log(typeof v, JSON.stringify(v))
+                    if (typeof v !== 'string') {
+                        return
+                    }
+                    conf.port = parseInt(v)
+                }
+            })
         })
     },
     methods: {
@@ -88,7 +98,7 @@ export default defineComponent({
         </n-gi>
         <n-gi>
             <span>Port</span>
-            <n-input type="number" v-model:value.number="conf.port" placeholder="Server port" :disabled="readonly"
+            <n-input type="number" v-model:value.number="port" placeholder="Server port" :disabled="readonly"
                 ref="port"></n-input>
         </n-gi>
         <n-gi>
