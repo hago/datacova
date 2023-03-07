@@ -42,7 +42,7 @@ class FileStoreUtils private constructor() {
                         Files.createDirectory(Path.of(f.toURI()))
                     }
                     val fsu = FileStoreUtils()
-                    fsu.rootPath = File(k).path
+                    fsu.rootPath = File(k).absolutePath
                     fsu
                 }
             }
@@ -114,9 +114,11 @@ class FileStoreUtils private constructor() {
         val f = File(rootPath, partialFileName)
         val p = File(f.parent)
         if (!p.exists()) {
+            logger.debug("create parent directory {}", p.absolutePath)
             Files.createDirectories(p.toPath())
         }
         val target = f.path
+        logger.debug("write file {} to {}", target, f.absolutePath)
         FileOutputStream(target).use { fo ->
             val size = 1024 * 1024
             val buffer = ByteArray(size)

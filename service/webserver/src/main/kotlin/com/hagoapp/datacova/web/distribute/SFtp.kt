@@ -92,7 +92,8 @@ class SFtp {
             )
             return
         }
-        config.privateKeyFile = keyFullName
+        config.privateKeyFile = target
+        logger.debug("private key file is {}", config.privateKeyFile)
         try {
             val pwd = SFtpClient(config, KnownHostsStore.getStore()).use {
                 val ftp = it.getClient()
