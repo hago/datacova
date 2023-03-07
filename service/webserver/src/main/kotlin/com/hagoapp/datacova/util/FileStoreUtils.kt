@@ -10,6 +10,7 @@ package com.hagoapp.datacova.util
 
 import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.config.CoVaConfig
+import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -28,13 +29,16 @@ class FileStoreUtils private constructor() {
 
     companion object {
         private val instances = mutableMapOf<String, FileStoreUtils>()
+        private val logger = LoggerFactory.getLogger(FileStoreUtils::class.java)
 
         private fun getFileStore(root: String): FileStoreUtils {
-            val instance = instances.compute(root) { k: String, existed: FileStoreUtils? ->
+            val key = File(root).absolutePath
+            val instance = instances.compute(key) { k: String, existed: FileStoreUtils? ->
                 if (existed != null) existed
                 else {
                     val f = File(k)
                     if (!f.exists()) {
+                        logger.debug("create directory {}", f.absolutePath)
                         Files.createDirectory(Path.of(f.toURI()))
                     }
                     val fsu = FileStoreUtils()
