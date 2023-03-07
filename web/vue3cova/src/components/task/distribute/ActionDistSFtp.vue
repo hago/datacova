@@ -64,7 +64,7 @@ export default defineComponent({
                 success: r,
                 text: t
             }
-            this.sftpmsgstyle = r ? "ftpsuccess" : "ftpfail"
+            this.sftpmsgstyle = r ? "sftpsuccess" : "sftpfail"
         },
         ftpParamsCheck(config: DistSFtpConfiguration): boolean {
             if ((config.host === undefined) || (config.host === null) || (config.host.trim() === "")) {
