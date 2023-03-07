@@ -23,17 +23,21 @@ export default defineComponent({
   },
   mounted() {
     console.log(`mounted WorkspaceView`)
-    eventBus.register(EVENT_TASK_SELECTED, (t: Task): Promise<any> => {
-      this.selectedTask = t
-      return Promise.resolve()
-    })
+    eventBus.register(EVENT_TASK_SELECTED, this.onTaskSelected)
     this.loadWorkspace()
+  },
+  unmounted() {
+    eventBus.unregister(EVENT_TASK_SELECTED, this.onTaskSelected)
   },
   updated() {
     console.log('updated WorkspaceView')
     this.loadWorkspace()
   },
   methods: {
+    async onTaskSelected(t: Task): Promise<any> {
+      this.selectedTask = t
+      return Promise.resolve()
+    },
     loadWorkspace() {
       let workspaceId = this.$route.params.id
       console.log(`WorkspaceView.id: ${workspaceId}`)

@@ -52,12 +52,11 @@ export default defineComponent({
         })
     },
     mounted() {
-        eventBus.register(EVENT_TASKINFO_CLOSE_RECIPIENTS_EDITOR, async (): Promise<any> => {
-            console.log('close editrecp')
-            this.editRecipients = false
-            return Promise.resolve()
-        })
+        eventBus.register(EVENT_TASKINFO_CLOSE_RECIPIENTS_EDITOR, this.closeRpctEditor)
         this.updateWorkspaceTask()
+    },
+    unmounted() {
+        eventBus.unregister(EVENT_TASKINFO_CLOSE_RECIPIENTS_EDITOR, this.closeRpctEditor)
     },
     update() {
         this.updateWorkspaceTask()
@@ -118,6 +117,11 @@ export default defineComponent({
             }).catch(err => {
                 eventBus.send(EVENT_REMOTE_API_ERROR, err)
             })
+        },
+        async closeRpctEditor(): Promise<any> {
+            console.log('close editrecp')
+            this.editRecipients = false
+            return Promise.resolve()
         }
     }
 })
