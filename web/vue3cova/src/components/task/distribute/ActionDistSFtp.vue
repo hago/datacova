@@ -5,6 +5,7 @@ import { newDistSFtpConfiguration } from '@/entities/task/distribute/distconfigs
 import type { Task } from '@/entities/task/task';
 import type { TaskActionDistribute } from '@/entities/task/taskdist';
 import { identityStore } from '@/stores/identitystore';
+import type { UploadCustomRequestOptions } from 'naive-ui/es/upload';
 import { computed, defineComponent, reactive, type PropType } from 'vue';
 
 export default defineComponent({
@@ -44,12 +45,23 @@ export default defineComponent({
                     }
                     conf.port = parseInt(v)
                 }
-            })
+            }),
+            privateKeyUpload: null as UploadCustomRequestOptions | null
         })
     },
+    unmounted() {
+        this.sFtpMessage.text = ""
+    },
     methods: {
-        verifyFtp() {
-            if (!this.ftpParamsCheck(this.conf)) {
+        verifySFtp() {
+            if (this.conf.authType === 'Password') {
+                this.verifySFtpPassword()
+            } else {
+                this.verifySFtpPrivateKey()
+            }
+        },
+        verifySFtpPassword() {
+            if (!this.sFtpParamsCheck(this.conf)) {
                 return
             }
             let user = identityStore().currentIdentity()
@@ -66,7 +78,7 @@ export default defineComponent({
             }
             this.sftpmsgstyle = r ? "sftpsuccess" : "sftpfail"
         },
-        ftpParamsCheck(config: DistSFtpConfiguration): boolean {
+        sFtpParamsCheck(config: DistSFtpConfiguration): boolean {
             if ((config.host === undefined) || (config.host === null) || (config.host.trim() === "")) {
                 (this.$refs["host"] as HTMLInputElement).focus()
                 this.showMessage(false, "Host information missing")
@@ -77,17 +89,43 @@ export default defineComponent({
                 this.showMessage(false, "Port information missing")
                 return false
             }
-            if ((config.login === undefined) || (config.login === null) || (config.login.trim() === "")) {
-                (this.$refs["login"] as HTMLInputElement).focus()
-                this.showMessage(false, "Login name missing")
-                return false
-            }
-            if ((config.password === undefined) || (config.password === null)) {
-                (this.$refs["password"] as HTMLInputElement).focus()
-                this.showMessage(false, "password missing")
-                return false
+            if (config.authType === 'Password') {
+                if ((config.login === undefined) || (config.login === null) || (config.login.trim() === "")) {
+                    (this.$refs["login"] as HTMLInputElement).focus()
+                    this.showMessage(false, "Login name missing")
+                    return false
+                }
+                if ((config.password === undefined) || (config.password === null)) {
+                    (this.$refs["password"] as HTMLInputElement).focus()
+                    this.showMessage(false, "password missing")
+                    return false
+                }
+            } else {
+                if ((config.privateKeyFile === undefined) || (config.privateKeyFile === null)) {
+                    this.showMessage(false, "private key is missing")
+                    return false
+                }
             }
             return true
+        },
+        sslectPrivateKey(uploadOptions: UploadCustomRequestOptions) {
+            this.privateKeyUpload = uploadOptions
+        },
+        verifySFtpPrivateKey() {
+            let user = identityStore().currentIdentity()
+            if (this.privateKeyUpload === null) {
+                this.showMessage(false, "Private Key file Not selected")
+                return
+            }
+            let up = this.privateKeyUpload!
+            verificationApi.verifySFtpWithKey(user, this.conf, up.file.file!).then(rsp => {
+                this.conf.privateKeyFile = rsp.data.keyStored
+                this.showMessage(true, `Verification with private key success, SFtp working directory is ${rsp.data.pwd}`)
+                up.onFinish()
+            }).catch(err => {
+                this.showMessage(false, err)
+                up.onError()
+            })
         }
     }
 })
@@ -116,15 +154,14 @@ export default defineComponent({
                 ref="password"></n-input>
         </n-gi>
         <n-gi span="2">
-            <n-select :options="authOptions" v-model:value="conf.authType"></n-select>
+            <span style="margin-right: 5px">AuthType</span>
+            <n-popselect :options="authOptions" v-model:value="conf.authType">
+                <n-button>{{ conf.authType }}</n-button>
+            </n-popselect>
         </n-gi>
         <n-gi v-if="conf.authType === 'PrivateKey'">
             <span>Private Key File</span>
-            <n-upload action="https://www.mocky.io/v2/5e4bafc63100007100d8b70f" :headers="{
-                'naive-info': 'hello!'
-            }" :data="{
-    'naive-data': 'cool! naive!'
-}">
+            <n-upload :custom-request="sslectPrivateKey">
                 <n-button>上传文件</n-button>
             </n-upload>
         </n-gi>
@@ -143,7 +180,7 @@ export default defineComponent({
                 :disabled="readonly"></n-input>
         </n-gi>
         <n-gi>
-            <n-button type="primary" :disabled="readonly" @click="verifyFtp">Verify</n-button>
+            <n-button type="primary" :disabled="readonly" @click="verifySFtp">Verify</n-button>
         </n-gi>
         <n-gi>
             <span :class="sftpmsgstyle">{{ sFtpMessage.text }}</span>
