@@ -74,10 +74,10 @@ export default defineComponent({
           </n-grid>
         </n-tab-pane>
         <n-tab-pane name="Connections" tab="connections">
-          Hey Jude
+          <ConnectionView :workspace="workspace"></ConnectionView>
         </n-tab-pane>
         <n-tab-pane name="Execution Log" tab="executes">
-          七里香
+          Executions
         </n-tab-pane>
       </n-tabs>
     </n-card>
