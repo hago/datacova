@@ -12,6 +12,7 @@ export interface FtpVerificationResponse extends BaseResponse {
 
 export interface SFtpVerificationResponse extends BaseResponse {
     data: {
+        keyStored?: string
         pwd: string
     }
 }
@@ -39,6 +40,19 @@ export class VerificationApi {
             headers: headers,
             method: "POST",
             body: JSON.stringify(config)
+        })
+        return fromFetchResponse(p)
+    }
+
+    async verifySFtpWithKey(user: Identity, sFtpConfig: DistSFtpConfiguration, file: File): Promise<SFtpVerificationResponse> {
+        let form = new FormData()
+        form.append('file', file, file.name)
+        form.append('config', JSON.stringify(sFtpConfig))
+        let headers = addTokenHeader(user)
+        let p = await fetch("/api/distribute/verify/sftp/keyfile", {
+            headers: headers,
+            method: "POST",
+            body: form
         })
         return fromFetchResponse(p)
     }
