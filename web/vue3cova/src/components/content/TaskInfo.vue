@@ -166,7 +166,7 @@ export default defineComponent({
                 Add New Action
             </n-button>
         </n-gi>
-        <n-gi span="2" v-for="(act, index) in task.actions" v-bind:key="index">
+        <n-gi span="2" v-for="(act, index) in task.actions" v-bind:key="task.id * 100 + index">
             <ActionBasicInfo :action="act" :readonly="!canModify"> </ActionBasicInfo>
             <ActionTypeSelect :action="act" :task="task" :readonly="!canModify" v-if="shouldExpand(act)"></ActionTypeSelect>
             <ActionIngest :action="act" :task="task" v-if="isActionOfType(act, 1) && shouldExpand(act)"
