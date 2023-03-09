@@ -6,8 +6,8 @@ import { addTokenHeader } from "./credential"
 interface ConnectionsResponse extends BaseResponse {
     data: {
         owner: boolean
-        canDelete: boolean
-        canModify: boolean
+        canDelete: number[]
+        canModify: number[]
         connections: WorkspaceConnection[]
     }
 }
