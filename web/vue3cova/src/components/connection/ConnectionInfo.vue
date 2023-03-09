@@ -23,7 +23,8 @@ export default defineComponent({
                 { label: 'MariaDB / MySql', value: 'MariaDB' },
                 { label: 'PostgreSQL', value: 'PostgreSQL' },
                 { label: 'Microsoft SQL Sever', value: 'Microsoft SQL Sever' }
-            ]
+            ],
+            dbNameOptions: [] as { label: string, value: string }[]
         })
     },
     methods: {
@@ -67,13 +68,34 @@ export default defineComponent({
                 "" }}</div>
         </n-gi>
         <n-gi span="2">
-            <MariaDbComponent :config="connection.configuration" v-if="connection.configuration.dbType === 'MariaDB'">
+            <MariaDbComponent :config="connection.configuration" :editable="editable"
+                v-if="connection.configuration.dbType === 'MariaDB'">
             </MariaDbComponent>
-            <PostgreSqlComponent :config="connection.configuration" v-if="connection.configuration.dbType === 'PostgreSQL'">
+            <PostgreSqlComponent :config="connection.configuration" :editable="editable"
+                v-if="connection.configuration.dbType === 'PostgreSQL'">
             </PostgreSqlComponent>
-            <MsSqlComponent :config="connection.configuration"
+            <MsSqlComponent :config="connection.configuration" :editable="editable"
                 v-if="connection.configuration.dbType === 'Microsoft SQL Sever'">
             </MsSqlComponent>
+        </n-gi>
+        <n-gi>
+            <span style="margin-right: 5px;">Database</span>
+            <n-popselect :options="dbNameOptions" v-model:value="connection.configuration.databaseName">
+                <n-button>{{ connection.configuration.databaseName }}</n-button>
+            </n-popselect>
+        </n-gi>
+        <n-gi>
+            <n-button prinary class="rightbutton">Refresh</n-button>
+        </n-gi>
+        <n-gi>
+            <span>Login</span>
+            <n-input type="text" v-model:value="connection.configuration.username" placeholder="user name"
+                :disabled="!editable" ref="username"></n-input>
+        </n-gi>
+        <n-gi>
+            <span>Password</span>
+            <n-input type="password" v-model:value="connection.configuration.password" placeholder="Password"
+                :disabled="!editable" ref="password"></n-input>
         </n-gi>
     </n-grid>
 </template>
