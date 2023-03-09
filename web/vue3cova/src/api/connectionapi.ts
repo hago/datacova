@@ -1,3 +1,4 @@
+import type { BaseDbConfig } from "@/entities/connection/dbconfigbase"
 import type { WorkspaceConnection } from "@/entities/connection/workspaceconnection"
 import type Identity from "@/entities/identity"
 import { fromFetchResponse, type BaseResponse } from "./baseresponse"
@@ -21,6 +22,14 @@ interface TableListResponse extends Response {
     }
 }
 
+interface VerifyConnectionResponse extends Response {
+    data: {
+        result: boolean
+        message?: string
+        databases: string[]
+    }
+}
+
 export class ConnectionApi {
     constructor() {
         //
@@ -40,6 +49,17 @@ export class ConnectionApi {
         let rsp = await fetch(`/api/workspace/${workspaceId}/connection/${connectionId}/tables`, {
             headers: headers,
             method: "GET"
+        })
+        return fromFetchResponse(rsp)
+    }
+
+    async verifyConnection(user: Identity, config: BaseDbConfig): Promise<VerifyConnectionResponse> {
+        let headers = addTokenHeader(user)
+        headers.append('content-type', 'application/json')
+        let rsp = await fetch(`/api/connection/verify`, {
+            headers: headers,
+            method: "POST",
+            body: JSON.stringify(config)
         })
         return fromFetchResponse(rsp)
     }

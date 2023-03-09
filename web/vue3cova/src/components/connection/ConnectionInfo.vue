@@ -4,6 +4,10 @@ import { defineComponent, reactive, type PropType } from 'vue';
 import MariaDbComponent from './dbconfig/MariaDbComponent.vue';
 import PostgreSqlComponent from './dbconfig/PostgreSqlComponent.vue';
 import MsSqlComponent from './dbconfig/MsSqlComponent.vue';
+import connApiHelper from '@/api/connectionapi';
+import { identityStore } from '@/stores/identitystore';
+import { eventBus } from '@/util/eventbus';
+import { EVENT_REMOTE_API_ERROR } from '@/entities/events';
 
 export default defineComponent({
     props: {
@@ -33,6 +37,18 @@ export default defineComponent({
         },
         deleteconnection(conn: WorkspaceConnection) {
 
+        },
+        listDatabase() {
+            let user = identityStore().currentIdentity()
+            connApiHelper.verifyConnection(user, this.connection.configuration).then(rsp => {
+                if (rsp.data.result) {
+                    this.dbNameOptions = rsp.data.databases.map(d => ({ label: d, value: d }))
+                } else {
+                    eventBus.send(EVENT_REMOTE_API_ERROR, rsp.data.message)
+                }
+            }).catch(err => {
+                eventBus.send(EVENT_REMOTE_API_ERROR, err)
+            })
         }
     }
 })
@@ -85,7 +101,7 @@ export default defineComponent({
             </n-popselect>
         </n-gi>
         <n-gi>
-            <n-button prinary class="rightbutton">Refresh</n-button>
+            <n-button prinary class="rightbutton" @click="listDatabase">Refresh</n-button>
         </n-gi>
         <n-gi>
             <span>Login</span>
