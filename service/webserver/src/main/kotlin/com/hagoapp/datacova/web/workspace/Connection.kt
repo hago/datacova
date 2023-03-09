@@ -12,6 +12,7 @@ import com.hagoapp.datacova.data.workspace.ConnectionData
 import com.hagoapp.datacova.data.workspace.WorkspaceCache
 import com.hagoapp.datacova.entity.connection.WorkspaceConnection
 import com.hagoapp.datacova.entity.workspace.WorkSpaceUserRole
+import com.hagoapp.datacova.util.StackTraceWriter
 import com.hagoapp.datacova.util.WorkspaceUserRoleUtil
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.MethodName
@@ -92,12 +93,19 @@ class Connection {
                     )
                 }
             }
-        } catch (e: IOException) {
-            canNotConnect(context, e.message!!)
-        } catch (e: SQLException) {
-            canNotConnect(context, e.message!!)
         } catch (e: Exception) {
-            ResponseHelper.respondError(context, HttpResponseStatus.INTERNAL_SERVER_ERROR, "connection fail")
+            when (e) {
+                is IOException, is SQLException -> {
+                    StackTraceWriter.write(e, logger)
+                    canNotConnect(context, e.message!!)
+                }
+
+                else -> ResponseHelper.respondError(
+                    context,
+                    HttpResponseStatus.INTERNAL_SERVER_ERROR,
+                    e.message
+                )
+            }
         }
     }
 
