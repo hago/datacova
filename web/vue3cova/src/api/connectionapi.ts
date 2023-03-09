@@ -63,6 +63,16 @@ export class ConnectionApi {
         })
         return fromFetchResponse(rsp)
     }
+
+    async deleteConnection(user: Identity, connection: WorkspaceConnection): Promise<BaseResponse> {
+        let headers = addTokenHeader(user)
+        headers.append('content-type', 'application/json')
+        let rsp = await fetch(`/api/workspace/${connection.workspaceId}/connection/${connection.id}`, {
+            headers: headers,
+            method: "DELETE"
+        })
+        return fromFetchResponse(rsp)
+    }
 }
 
 const connApiHelper: ConnectionApi = new ConnectionApi()
