@@ -3,16 +3,14 @@ import type { WorkspaceConnection } from '@/entities/connection/workspaceconnect
 import { defineComponent, reactive, type PropType } from 'vue';
 
 export default defineComponent({
-    props: {
-        connection: {
-            type: Object as PropType<WorkspaceConnection>,
-            required: true
-        }
-    },
     setup(props) {
         return reactive({})
     }
 })
 </script>
 
-<template></template>
+<template>
+    <div>
+        No Connection Selected
+    </div>
+</template>

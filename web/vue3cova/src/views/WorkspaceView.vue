@@ -9,6 +9,7 @@ import { darkTheme } from 'naive-ui';
 import { defineComponent, reactive, ref } from 'vue';
 import TaskInfo from '@/components/content/TaskInfo.vue';
 import EmptyTaskInfo from '@/components/content/EmptyTaskInfo.vue';
+import ConnectionView from '@/views/ConnectionView.vue'
 
 export default defineComponent({
   name: 'WorkspaceView',
@@ -53,7 +54,7 @@ export default defineComponent({
       this.selectedTask = found as Task
     }
   },
-  components: { TaskList, EmptyTaskInfo, TaskInfo }
+  components: { TaskList, EmptyTaskInfo, TaskInfo, ConnectionView }
 })
 </script>
 
