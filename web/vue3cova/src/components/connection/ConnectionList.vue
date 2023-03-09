@@ -20,8 +20,8 @@ export default defineComponent({
             selectedConnection: null as WorkspaceConnection | null,
             permissions: {
                 isOwner: false,
-                canModify: false,
-                canDelete: false
+                deletables: [] as number[],
+                editables: [] as number[]
             }
         })
     },
@@ -30,8 +30,8 @@ export default defineComponent({
         connApiHelper.workspaceConnections(user, this.workspace.workspace.id).then(rsp => {
             this.connections = rsp.data.connections
             this.permissions.isOwner = rsp.data.owner
-            this.permissions.canDelete = rsp.data.canDelete
-            this.permissions.canModify = rsp.data.canModify
+            this.permissions.deletables = rsp.data.canDelete
+            this.permissions.editables = rsp.data.canModify
         }).catch(err => {
             eventBus.send(EVENT_REMOTE_API_ERROR, err)
         })
@@ -43,7 +43,9 @@ export default defineComponent({
         selectConnection(connectionId: number) {
             let conn = this.connections.find(c => c.id === connectionId)
             this.selectedConnection = conn === undefined ? null : conn
-            eventBus.send(EVENT_CONNECTION_SELECTED, conn)
+            eventBus.send(EVENT_CONNECTION_SELECTED, conn,
+                this.permissions.editables.indexOf(connectionId) >= 0,
+                this.permissions.deletables.indexOf(connectionId) >= 0)
         }
     }
 })

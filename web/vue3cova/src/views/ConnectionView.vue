@@ -20,7 +20,9 @@ export default defineComponent({
     },
     setup(props) {
         return reactive({
-            selectedConnection: null as WorkspaceConnection | null
+            selectedConnection: null as WorkspaceConnection | null,
+            editable: false,
+            deletable: false
         })
     },
     mounted() {
@@ -30,8 +32,10 @@ export default defineComponent({
         eventBus.unregister(EVENT_CONNECTION_SELECTED, this.onConnectionSelected)
     },
     methods: {
-        onConnectionSelected(connection: WorkspaceConnection): Promise<any> {
+        onConnectionSelected(connection: WorkspaceConnection, edit: boolean, deletable: boolean): Promise<any> {
             this.selectedConnection = connection
+            this.editable = edit
+            this.deletable = deletable
             return Promise.resolve()
         }
     }
@@ -44,7 +48,8 @@ export default defineComponent({
             <ConnectionList :workspace="workspace"></ConnectionList>
         </n-gi>
         <n-gi span="3">
-            <ConnectionInfo v-if="selectedConnection !== null" :connection="selectedConnection"></ConnectionInfo>
+            <ConnectionInfo v-if="selectedConnection !== null" :connection="selectedConnection" :editable="editable"
+                :deletable="deletable"></ConnectionInfo>
             <EmptyConnectionInfo v-if="selectedConnection === null"></EmptyConnectionInfo>
         </n-gi>
     </n-grid>
