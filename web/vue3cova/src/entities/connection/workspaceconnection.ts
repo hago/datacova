@@ -7,9 +7,9 @@ export interface WorkspaceConnection {
     name: string
     description: string
     workspaceId: number
-    addBy: string
+    addBy: number
     addTime: number
-    modifyBy: string
+    modifyBy: number
     modifyTime: number
     configuration: PostgreSqlConfig | MariaDBConfig | MsSqlConfig
 }
