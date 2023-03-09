@@ -7,7 +7,7 @@ import MsSqlComponent from './dbconfig/MsSqlComponent.vue';
 import connApiHelper from '@/api/connectionapi';
 import { identityStore } from '@/stores/identitystore';
 import { eventBus } from '@/util/eventbus';
-import { EVENT_REMOTE_API_ERROR } from '@/entities/events';
+import { EVENT_CONNECTION_DELETED, EVENT_REMOTE_API_ERROR } from '@/entities/events';
 
 export default defineComponent({
     props: {
@@ -36,7 +36,14 @@ export default defineComponent({
 
         },
         deleteconnection(conn: WorkspaceConnection) {
-
+            if (confirm(`Are you sure to delete connection "${this.connection.name}"?`)) {
+                let user = identityStore().currentIdentity()
+                connApiHelper.deleteConnection(user, this.connection).then(rsp => {
+                    eventBus.send(EVENT_CONNECTION_DELETED, this.connection)
+                }).catch(err => {
+                    eventBus.send(EVENT_REMOTE_API_ERROR, err)
+                })
+            }
         },
         listDatabase() {
             let user = identityStore().currentIdentity()
