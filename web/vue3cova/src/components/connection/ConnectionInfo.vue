@@ -1,6 +1,6 @@
 <script lang="ts">
 import type { WorkspaceConnection } from '@/entities/connection/workspaceconnection';
-import { defineComponent, reactive, type PropType } from 'vue';
+import { computed, defineComponent, reactive, type PropType } from 'vue';
 import MariaDbComponent from './dbconfig/MariaDbComponent.vue';
 import PostgreSqlComponent from './dbconfig/PostgreSqlComponent.vue';
 import MsSqlComponent from './dbconfig/MsSqlComponent.vue';
@@ -8,6 +8,8 @@ import connApiHelper from '@/api/connectionapi';
 import { identityStore } from '@/stores/identitystore';
 import { eventBus } from '@/util/eventbus';
 import { EVENT_CONNECTION_DELETED, EVENT_REMOTE_API_ERROR } from '@/entities/events';
+
+const verifiedIcon = '/src/assets/images/success.png'
 
 export default defineComponent({
     props: {
@@ -28,7 +30,8 @@ export default defineComponent({
                 { label: 'PostgreSQL', value: 'PostgreSQL' },
                 { label: 'Microsoft SQL Sever', value: 'Microsoft SQL Sever' }
             ],
-            dbNameOptions: [] as { label: string, value: string }[]
+            dbNameOptions: [] as { label: string, value: string }[],
+            verified: null as boolean | null
         })
     },
     methods: {
@@ -50,12 +53,22 @@ export default defineComponent({
             connApiHelper.verifyConnection(user, this.connection.configuration).then(rsp => {
                 if (rsp.data.result) {
                     this.dbNameOptions = rsp.data.databases.map(d => ({ label: d, value: d }))
+                    this.verified = true
                 } else {
                     eventBus.send(EVENT_REMOTE_API_ERROR, rsp.data.message)
+                    this.verified = false
                 }
             }).catch(err => {
                 eventBus.send(EVENT_REMOTE_API_ERROR, err)
+                this.verified = false
             })
+        },
+        getStatusIcon(): string {
+            if (this.verified === null) {
+                return ""
+            } else {
+                return this.verified ? "/src/assets/images/success.png" : "/src/assets/images/oops.png"
+            }
         }
     }
 })
@@ -108,7 +121,7 @@ export default defineComponent({
             </n-popselect>
         </n-gi>
         <n-gi>
-            <n-button prinary class="rightbutton" @click="listDatabase">Refresh</n-button>
+            <n-button prinary class="rightbutton" @click="listDatabase">Select Database</n-button>
         </n-gi>
         <n-gi>
             <span>Login</span>
@@ -119,6 +132,9 @@ export default defineComponent({
             <span>Password</span>
             <n-input type="password" v-model:value="connection.configuration.password" placeholder="Password"
                 :disabled="!editable" ref="password"></n-input>
+        </n-gi>
+        <n-gi>
+            <n-image :src="getStatusIcon()" width="50" />
         </n-gi>
     </n-grid>
 </template>
