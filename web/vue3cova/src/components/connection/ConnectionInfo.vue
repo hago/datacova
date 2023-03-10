@@ -23,6 +23,10 @@ export default defineComponent({
     components: {
         MariaDbComponent, PostgreSqlComponent, MsSqlComponent
     },
+    updated(){
+        this.verified = null
+        this.dbNameOptions = []
+    },
     setup(props) {
         return reactive({
             dbTypeOptions: [
