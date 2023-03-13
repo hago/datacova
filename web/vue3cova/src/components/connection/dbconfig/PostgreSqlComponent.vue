@@ -1,6 +1,6 @@
 <script lang="ts">
 import type { BaseDbConfig } from '@/entities/connection/dbconfigbase';
-import type { PostgreSqlConfig } from '@/entities/connection/pgconfig';
+import { fromBaseConfig } from '@/entities/connection/pgconfig';
 import { computed, defineComponent, reactive, type PropType } from 'vue';
 
 export default defineComponent({
@@ -12,7 +12,7 @@ export default defineComponent({
         editable: Boolean
     },
     setup(props) {
-        let conf = props.config as PostgreSqlConfig
+        let conf = fromBaseConfig(props.config)
         return reactive({
             conf,
             port: computed({

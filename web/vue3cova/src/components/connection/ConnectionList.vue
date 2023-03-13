@@ -1,7 +1,7 @@
 <script lang="ts">
 import connApiHelper from '@/api/connectionapi';
 import type { WorkspaceWithUser } from '@/api/workspaceapi';
-import type { WorkspaceConnection } from '@/entities/connection/workspaceconnection';
+import { newWorkspaceConnection, type WorkspaceConnection } from '@/entities/connection/workspaceconnection';
 import { EVENT_CONNECTION_SELECTED, EVENT_REMOTE_API_ERROR } from '@/entities/events';
 import { identityStore } from '@/stores/identitystore';
 import { eventBus } from '@/util/eventbus';
@@ -38,7 +38,10 @@ export default defineComponent({
     },
     methods: {
         newConnection() {
-
+            let con: WorkspaceConnection = newWorkspaceConnection(this.workspace.workspace.id)
+            this.connections = [con].concat(this.connections)
+            this.permissions.deletables.push(con.id)
+            this.permissions.editables.push(con.id)
         },
         selectConnection(connectionId: number) {
             let conn = this.connections.find(c => c.id === connectionId)
@@ -52,7 +55,7 @@ export default defineComponent({
 </script>
 
 <template>
-    <n-button type="primary" @click="newConnection">New Task</n-button>
+    <n-button type="primary" @click="newConnection">New Connection</n-button>
     <n-list style="width: 90%">
         <n-space v-for="conn in connections" v-bind:key="conn.id"
             :class="(selectedConnection !== null) && (conn.id === selectedConnection.id) ? 'taskitem selectedtaskitem' : 'taskitem'">

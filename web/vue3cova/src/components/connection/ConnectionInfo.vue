@@ -40,7 +40,12 @@ export default defineComponent({
     },
     methods: {
         saveConnection(conn: WorkspaceConnection) {
-
+            let user = identityStore().currentIdentity()
+            connApiHelper.saveConnection(user, conn).then(rsp => {
+                //
+            }).catch(err => {
+                eventBus.send(EVENT_REMOTE_API_ERROR, err)
+            })
         },
         deleteconnection(conn: WorkspaceConnection) {
             if (confirm(`Are you sure to delete connection "${this.connection.name}"?`)) {
