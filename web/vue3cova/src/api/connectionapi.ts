@@ -30,6 +30,10 @@ interface VerifyConnectionResponse extends Response {
     }
 }
 
+interface WorkspaceConnectionResponse extends Response {
+    data: WorkspaceConnection
+}
+
 export class ConnectionApi {
     constructor() {
         //
@@ -70,6 +74,32 @@ export class ConnectionApi {
         let rsp = await fetch(`/api/workspace/${connection.workspaceId}/connection/${connection.id}/delete`, {
             headers: headers,
             method: "DELETE"
+        })
+        return fromFetchResponse(rsp)
+    }
+
+    async saveConnection(user: Identity, connection: WorkspaceConnection): Promise<WorkspaceConnectionResponse> {
+        return connection.id > 0 ? this.updateConnection(user, connection) : this.addConnection(user, connection)
+    }
+
+    async addConnection(user: Identity, connection: WorkspaceConnection): Promise<WorkspaceConnectionResponse> {
+        let headers = addTokenHeader(user)
+        headers.append('content-type', 'application/json')
+        let rsp = await fetch(`/api/workspace/${connection.workspaceId}/connection/add`, {
+            headers: headers,
+            method: "PUT",
+            body: JSON.stringify(connection)
+        })
+        return fromFetchResponse(rsp)
+    }
+
+    async updateConnection(user: Identity, connection: WorkspaceConnection): Promise<WorkspaceConnectionResponse> {
+        let headers = addTokenHeader(user)
+        headers.append('content-type', 'application/json')
+        let rsp = await fetch(`/api/workspace/${connection.workspaceId}/connection/update`, {
+            headers: headers,
+            method: "PUT",
+            body: JSON.stringify(connection)
         })
         return fromFetchResponse(rsp)
     }
