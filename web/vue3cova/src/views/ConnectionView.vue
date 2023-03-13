@@ -41,6 +41,7 @@ export default defineComponent({
             return Promise.resolve()
         },
         onConnectionDeleted(connection: WorkspaceConnection): Promise<any> {
+            console.log(`Connection ${connection.name} (${connection.id}) deleted!!`)
             this.selectedConnection = null
             return Promise.resolve()
         }
