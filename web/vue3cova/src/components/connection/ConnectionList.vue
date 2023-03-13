@@ -2,7 +2,7 @@
 import connApiHelper from '@/api/connectionapi';
 import type { WorkspaceWithUser } from '@/api/workspaceapi';
 import { newWorkspaceConnection, type WorkspaceConnection } from '@/entities/connection/workspaceconnection';
-import { EVENT_CONNECTION_SELECTED, EVENT_REMOTE_API_ERROR } from '@/entities/events';
+import { EVENT_CONNECTION_DELETED, EVENT_CONNECTION_SELECTED, EVENT_REMOTE_API_ERROR } from '@/entities/events';
 import { identityStore } from '@/stores/identitystore';
 import { eventBus } from '@/util/eventbus';
 import { defineComponent, reactive, type PropType } from 'vue';
@@ -26,17 +26,24 @@ export default defineComponent({
         })
     },
     mounted() {
-        let user = identityStore().currentIdentity()
-        connApiHelper.workspaceConnections(user, this.workspace.workspace.id).then(rsp => {
-            this.connections = rsp.data.connections
-            this.permissions.isOwner = rsp.data.owner
-            this.permissions.deletables = rsp.data.canDelete
-            this.permissions.editables = rsp.data.canModify
-        }).catch(err => {
-            eventBus.send(EVENT_REMOTE_API_ERROR, err)
-        })
+        this.loadConnections()
+        eventBus.register(EVENT_CONNECTION_DELETED, this.connectionDeleted)
+    },
+    unmounted() {
+        eventBus.unregister(EVENT_CONNECTION_DELETED, this.connectionDeleted)
     },
     methods: {
+        loadConnections() {
+            let user = identityStore().currentIdentity()
+            connApiHelper.workspaceConnections(user, this.workspace.workspace.id).then(rsp => {
+                this.connections = rsp.data.connections
+                this.permissions.isOwner = rsp.data.owner
+                this.permissions.deletables = rsp.data.canDelete
+                this.permissions.editables = rsp.data.canModify
+            }).catch(err => {
+                eventBus.send(EVENT_REMOTE_API_ERROR, err)
+            })
+        },
         newConnection() {
             let con: WorkspaceConnection = newWorkspaceConnection(this.workspace.workspace.id)
             this.connections = [con].concat(this.connections)
@@ -49,6 +56,10 @@ export default defineComponent({
             eventBus.send(EVENT_CONNECTION_SELECTED, conn,
                 this.permissions.editables.indexOf(connectionId) >= 0,
                 this.permissions.deletables.indexOf(connectionId) >= 0)
+        },
+        async connectionDeleted(conn: WorkspaceConnection): Promise<any> {
+            this.loadConnections()
+            return Promise.resolve()
         }
     }
 })
