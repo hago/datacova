@@ -67,7 +67,7 @@ export class ConnectionApi {
     async deleteConnection(user: Identity, connection: WorkspaceConnection): Promise<BaseResponse> {
         let headers = addTokenHeader(user)
         headers.append('content-type', 'application/json')
-        let rsp = await fetch(`/api/workspace/${connection.workspaceId}/connection/${connection.id}`, {
+        let rsp = await fetch(`/api/workspace/${connection.workspaceId}/connection/${connection.id}/delete`, {
             headers: headers,
             method: "DELETE"
         })
