@@ -1,6 +1,7 @@
 import type { MariaDBConfig } from "@/entities/connection/mariadbconfig"
 import type { MsSqlConfig } from "@/entities/connection/mssqlconfig"
 import type { PostgreSqlConfig } from "@/entities/connection/pgconfig"
+import { newDbConfig, type BaseDbConfig } from "./dbconfigbase"
 
 export interface WorkspaceConnection {
     id: number
@@ -11,7 +12,7 @@ export interface WorkspaceConnection {
     addTime: number
     modifyBy: number
     modifyTime: number
-    configuration: PostgreSqlConfig | MariaDBConfig | MsSqlConfig
+    configuration: BaseDbConfig | PostgreSqlConfig | MariaDBConfig | MsSqlConfig
 }
 
 export function dbConfigStringify(config: PostgreSqlConfig | MariaDBConfig | MsSqlConfig): string {
@@ -27,3 +28,15 @@ export function dbConfigStringify(config: PostgreSqlConfig | MariaDBConfig | MsS
             throw new Error(`unknown db config: ${JSON.stringify(config)}`)
     }
 }
+
+export const newWorkspaceConnection = (wkid: number): WorkspaceConnection => ({
+    id: -1,
+    name: 'new connection',
+    description: '',
+    workspaceId: wkid,
+    addBy: -1,
+    addTime: new Date().getTime(),
+    modifyBy: -1,
+    modifyTime: new Date().getTime(),
+    configuration: newDbConfig()
+})

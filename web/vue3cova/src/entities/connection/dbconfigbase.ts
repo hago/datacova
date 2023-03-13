@@ -4,3 +4,10 @@ export interface BaseDbConfig {
     password: string,
     databaseName: string
 }
+
+export const newDbConfig = (): BaseDbConfig => ({
+    dbType: '',
+    username: '',
+    password: '',
+    databaseName: ''
+})
