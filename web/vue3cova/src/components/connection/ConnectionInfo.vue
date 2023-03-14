@@ -7,7 +7,8 @@ import MsSqlComponent from './dbconfig/MsSqlComponent.vue';
 import connApiHelper from '@/api/connectionapi';
 import { identityStore } from '@/stores/identitystore';
 import { eventBus } from '@/util/eventbus';
-import { EVENT_CONNECTION_DELETED, EVENT_REMOTE_API_ERROR } from '@/entities/events';
+import { EVENT_CONNECTION_DELETED, EVENT_GLOBAL_DRAWER_NOTIFY, EVENT_REMOTE_API_ERROR } from '@/entities/events';
+import { buildSuccessDrawerConfig } from '@/entities/globaldrawercfg';
 
 const verifiedIcon = '/src/assets/images/success.png'
 
@@ -23,7 +24,7 @@ export default defineComponent({
     components: {
         MariaDbComponent, PostgreSqlComponent, MsSqlComponent
     },
-    updated(){
+    updated() {
         this.verified = null
         this.dbNameOptions = []
     },
@@ -42,7 +43,7 @@ export default defineComponent({
         saveConnection(conn: WorkspaceConnection) {
             let user = identityStore().currentIdentity()
             connApiHelper.saveConnection(user, conn).then(rsp => {
-                //
+                eventBus.send(EVENT_GLOBAL_DRAWER_NOTIFY, buildSuccessDrawerConfig("Connection Saved", "top"))
             }).catch(err => {
                 eventBus.send(EVENT_REMOTE_API_ERROR, err)
             })
