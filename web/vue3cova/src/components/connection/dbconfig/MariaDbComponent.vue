@@ -1,6 +1,6 @@
 <script lang="ts">
 import type { BaseDbConfig } from '@/entities/connection/dbconfigbase';
-import type { MariaDBConfig } from '@/entities/connection/mariadbconfig';
+import { fromBaseConfig, type MariaDBConfig } from '@/entities/connection/mariadbconfig';
 import { computed, defineComponent, reactive, type PropType } from 'vue';
 
 export default defineComponent({
@@ -12,7 +12,7 @@ export default defineComponent({
         editable: Boolean
     },
     setup(props) {
-        let conf = props.config as MariaDBConfig
+        let conf = fromBaseConfig(props.config)
         return reactive({
             conf,
             port: computed({
