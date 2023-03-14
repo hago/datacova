@@ -12,7 +12,7 @@ export const fromBaseConfig = (baseConfig: BaseDbConfig): MsSqlConfig => {
         ret.host = ""
     }
     if (ret.port === undefined) {
-        ret.port = 5432
+        ret.port = 1433
     }
     if (ret.trustServerCertificate === undefined) {
         ret.trustServerCertificate = false
