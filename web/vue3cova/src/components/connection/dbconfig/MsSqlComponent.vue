@@ -1,6 +1,6 @@
 <script lang="ts">
 import type { BaseDbConfig } from '@/entities/connection/dbconfigbase';
-import type { MsSqlConfig } from '@/entities/connection/mssqlconfig';
+import { fromBaseConfig } from '@/entities/connection/mssqlconfig';
 import { computed, defineComponent, reactive, type PropType } from 'vue';
 
 export default defineComponent({
@@ -12,7 +12,7 @@ export default defineComponent({
         editable: Boolean
     },
     setup(props) {
-        let conf = props.config as MsSqlConfig
+        let conf = fromBaseConfig(props.config)
         return reactive({
             conf,
             port: computed({
@@ -37,6 +37,11 @@ export default defineComponent({
         <n-gi>
             <span class="field">Port</span>
             <n-input class="taskname" v-model:value="port" type="number" placeholder="port" :readonly="!editable" />
+        </n-gi>
+        <n-gi>
+            <n-checkbox class="taskname" v-model:checked="conf.trustServerCertificate" :readonly="!editable">
+                Trust Server Certificate
+            </n-checkbox>
         </n-gi>
     </n-grid>
 </template>
