@@ -39,9 +39,11 @@ export default defineComponent({
             <n-input class="taskname" v-model:value="port" type="number" placeholder="port" :readonly="!editable" />
         </n-gi>
         <n-gi>
-            <n-checkbox class="taskname" v-model:checked="conf.trustServerCertificate" :readonly="!editable">
-                Trust Server Certificate
-            </n-checkbox>
+            <n-space item-style="display: flex;" align="center">
+                <n-checkbox v-model:checked="conf.trustServerCertificate" :readonly="!editable">
+                    Trust Server Certificate
+                </n-checkbox>
+            </n-space>
         </n-gi>
     </n-grid>
 </template>
