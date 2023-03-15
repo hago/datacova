@@ -97,12 +97,12 @@ export default defineComponent({
             return action.type === type
         },
         addAction() {
-            this.task.actions.push({
+            this.task.actions = [{
                 type: -1,
                 name: 'New Action',
                 description: '',
                 enabled: true
-            })
+            } as TaskAction].concat(this.task.actions)
         },
         shouldExpand(action: TaskAction) {
             return action.expand === undefined || action.expand
