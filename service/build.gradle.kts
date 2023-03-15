@@ -18,6 +18,10 @@ repositories {
 }
 
 dependencies {
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.7.20")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.20")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.20")
+
     testImplementation(kotlin("test"))
 }
 
