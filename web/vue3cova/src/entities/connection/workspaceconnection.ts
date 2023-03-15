@@ -12,20 +12,26 @@ export interface WorkspaceConnection {
     addTime: number
     modifyBy: number
     modifyTime: number
-    configuration: BaseDbConfig | PostgreSqlConfig | MariaDBConfig | MsSqlConfig
+    configuration: BaseDbConfig
 }
 
-export function dbConfigStringify(config: PostgreSqlConfig | MariaDBConfig | MsSqlConfig): string {
-    switch (config.dbType) {
-        case "PostgreSQL":
+export function dbConfigStringify(configuration: BaseDbConfig): string {
+    switch (configuration.dbType) {
+        case "PostgreSQL": {
+            let config = configuration as PostgreSqlConfig
             return `${config.dbType} - ${config.host}:${config.port}/${config.databaseName}`
-        case "MariaDB":
+        }
+        case "MariaDB": {
+            let config = configuration as MariaDBConfig
             return `${config.dbType} - ${config.host}:${config.port}/${config.databaseName}`
-        case "Microsoft SQL Sever":
+        }
+        case "Microsoft SQL Sever": {
+            let config = configuration as MsSqlConfig
             return `${config.dbType} - ${config.host}:${config.port}/${config.databaseName}`
+        }
         default:
-            console.log(`not recognized type ${config.dbType}`)
-            throw new Error(`unknown db config: ${JSON.stringify(config)}`)
+            console.log(`not recognized type ${configuration.dbType}`)
+            throw new Error(`unknown db config: ${JSON.stringify(configuration)}`)
     }
 }
 
