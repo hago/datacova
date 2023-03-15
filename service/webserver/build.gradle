@@ -27,7 +27,7 @@ dependencies {
     implementation 'io.vertx:vertx-lang-kotlin:4.3.0'
     implementation 'io.vertx:vertx-web:4.3.0'
 
-    implementation 'com.hagoapp:f2t:0.7.5'
+    implementation 'com.hagoapp:f2t:0.7.6'
     implementation project(':surveyor')
 
     implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.30'
