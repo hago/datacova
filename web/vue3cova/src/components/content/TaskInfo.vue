@@ -1,5 +1,5 @@
 <script lang="ts">
-import { computed, defineComponent, reactive, ref, type PropType } from 'vue';
+import { computed, defineComponent, reactive, type PropType } from 'vue';
 import type { Task, TaskAction } from '@/entities/task/task';
 import { identityStore } from '@/stores/identitystore';
 import { isAdmin, isMaintainer } from '@/util/permission';
@@ -15,7 +15,7 @@ import ActionDistribute from '@/components/task/ActionDistribute.vue';
 import ActionVerify from '@/components/task/ActionVerify.vue';
 import ActionTypeSelect from '@/components/task/ActionTypeSelect.vue'
 import ActionBasicInfo from '@/components/task/ActionBasicInfo.vue'
-import { buildSuccessDrawerConfig, type GlobalDrawerConfig } from '@/entities/globaldrawercfg';
+import { buildSuccessDrawerConfig } from '@/entities/globaldrawercfg';
 
 export default defineComponent({
     name: "TaskInfo",
