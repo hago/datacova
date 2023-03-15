@@ -29,5 +29,5 @@ export default defineComponent({
 </script>
 
 <template>
-    <div>{{ action.name }} action dist</div>
+    <div>{{ action.name }} action verify</div>
 </template>
