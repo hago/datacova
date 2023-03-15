@@ -3,30 +3,14 @@ import connApiHelper from '@/api/connectionapi';
 import { dbConfigStringify } from '@/entities/connection/workspaceconnection';
 import { EVENT_REMOTE_API_ERROR } from '@/entities/events';
 import type { Task, TaskAction } from '@/entities/task/task';
-import type { TaskActionIngest } from '@/entities/task/taskingest';
+import { newTaskActionIngest } from '@/entities/task/taskingest';
 import { identityStore } from '@/stores/identitystore';
 import { eventBus } from '@/util/eventbus';
-import { computed, defineComponent, reactive, type PropType } from 'vue';
+import { defineComponent, reactive, type PropType } from 'vue';
 
 interface SelectOption {
     value: number | string
     label: string
-}
-
-function initNewTaskActionIngest(task: TaskActionIngest) {
-    if (task.connectionId === undefined) {
-        task.connectionId = -1
-    }
-    if (task.ingestOptions === undefined) {
-        task.ingestOptions = {
-            targetSchema: "",
-            targetTable: "",
-            addBatch: false,
-            clearTable: false,
-            createTableIfNeeded: true,
-            batchColumnName: "batchId"
-        }
-    }
 }
 
 export default defineComponent({
@@ -45,8 +29,7 @@ export default defineComponent({
         }
     },
     setup(props) {
-        let act = props.action as TaskActionIngest;
-        initNewTaskActionIngest(act)
+        let act = newTaskActionIngest(props.action);
         let tablesMeta = {} as {
             [key: string]: {
                 schema: string
@@ -70,22 +53,29 @@ export default defineComponent({
                     label: dbConfigStringify(c.configuration)
                 }
             })
+            if (this.act.connectionId < 0) {
+                return
+            }
             let con = this.connections.find(c => c.value === this.act.connectionId)
             if (con !== undefined) {
                 let conId = typeof con.value === 'number' ? con.value : parseInt(con.value)
-                connApiHelper.listTables(user, this.task.workspaceId, conId).then(r => {
-                    this.tablesMeta = r.data
-                    this.calcSchemas()
-                    this.calcTables()
-                })
+                this.loadTables(conId)
             } else {
-                eventBus.send(EVENT_REMOTE_API_ERROR, `connection ${this.act.connectionId} doen's exist!`)
+                eventBus.send(EVENT_REMOTE_API_ERROR, `connection ${this.act.connectionId} doesn't exist!`)
             }
         }).catch(err => {
             eventBus.send(EVENT_REMOTE_API_ERROR, err)
         })
     },
     methods: {
+        loadTables(newConnectionId: number) {
+            let user = identityStore().currentIdentity()
+            connApiHelper.listTables(user, this.task.workspaceId, newConnectionId).then(rsp => {
+                this.act.connectionId = newConnectionId
+                this.tablesMeta = rsp.data
+                this.calcSchemas()
+            })
+        },
         calcSchemas() {
             console.log('compute schemas')
             let ret = []
@@ -99,11 +89,17 @@ export default defineComponent({
                     value: i
                 }
             })
+            if (this.act.ingestOptions.targetSchema === '') {
+                this.act.ingestOptions.targetSchema = this.schemas.length > 0 ?
+                    this.schemas[0].label : ""
+            }
+            this.calcTables(this.act.ingestOptions.targetSchema)
         },
-        calcTables() {
-            let found = this.tablesMeta[(this.act.ingestOptions!.targetSchema)]
-            if (found === undefined) {
-                return []
+        calcTables(schema: string) {
+            let found = this.tablesMeta[schema]
+            if ((found === undefined) || (found.length === 0)) {
+                this.act.ingestOptions!.targetTable = ""
+                this.tables = []
             } else {
                 this.tables = found.map(t => {
                     return {
@@ -111,6 +107,9 @@ export default defineComponent({
                         value: t.tableName
                     }
                 })
+                if (this.act.ingestOptions.targetTable === "") {
+                    this.act.ingestOptions.targetTable = found[0].tableName
+                }
             }
         }
     }
@@ -122,14 +121,15 @@ export default defineComponent({
         <n-gi>
             <span class="field">Connection</span>
             <n-select :options="connections" v-model:value="act.connectionId" :readonly="readonly"
-                :fallback-option="(v: any) => ({ label: 'Select a Connection', value: v })" />
+                :on-update:value="loadTables" :fallback-option="(v: any) => ({ label: 'Select a Connection', value: v })" />
         </n-gi>
         <n-gi>
             <div>&nbsp;</div>
             <n-button type="info" class="connedit">Edit Connection</n-button>
         </n-gi>
         <n-gi>
-            <n-popselect :options="schemas" v-model:value="act.ingestOptions!.targetSchema" :readonly="readonly">
+            <n-popselect :options="schemas" v-model:value="act.ingestOptions!.targetSchema" :readonly="readonly"
+                @update:value="calcTables">
                 <n-button>Schema: {{ act.ingestOptions!.targetSchema }}</n-button>
             </n-popselect>
             <n-popselect :options="tables" v-model:value="act.ingestOptions!.targetTable" :readonly="readonly">
