@@ -1,5 +1,6 @@
 import type { TaskActionIdle } from "./taskidle"
 import type { TaskActionIngest } from "./taskingest"
+import type { TaskActionVerify } from "./taskverify"
 
 export interface TaskExtra {
     tag: string
@@ -34,7 +35,7 @@ export interface Task {
     description: string
     workspaceId: number
     extra: TaskExtra
-    actions: (TaskAction | TaskActionIngest | TaskActionIdle)[],
+    actions: (TaskAction | TaskActionIngest | TaskActionIdle | TaskActionVerify)[],
     addTime: number,
     addBy: number,
     modifyTime: number,
