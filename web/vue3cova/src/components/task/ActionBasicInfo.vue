@@ -33,8 +33,14 @@ export default defineComponent({
 
 <template>
     <div>
-        <span>Action: {{ action.name }}</span>
+        <span class="actionname">Action: {{ action.name }}</span>
         <n-button quaternary type="warning" style="float:right" :render-icon="renderFoldIcon" v-model="action.expand"
             @click="collapse"></n-button>
     </div>
 </template>
+
+<style scoped>
+.actionname {
+    color: cornflowerblue;
+}
+</style>
