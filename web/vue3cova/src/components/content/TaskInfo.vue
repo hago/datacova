@@ -104,6 +104,11 @@ export default defineComponent({
                 enabled: true
             } as TaskAction].concat(this.task.actions)
         },
+        deleteAction(index: number) {
+            if (confirm(`Are you sure to remove action "${this.task.actions[index].name}"?`)) {
+                this.task.actions.splice(index, 1)
+            }
+        },
         shouldExpand(action: TaskAction) {
             return action.expand === undefined || action.expand
         },
@@ -167,6 +172,7 @@ export default defineComponent({
             </n-button>
         </n-gi>
         <n-gi span="2" v-for="(act, index) in task.actions" v-bind:key="task.id * 100 + index">
+            <n-button type="error" size="small" @click="deleteAction(index)">Remove {{ act.name }}</n-button>
             <ActionBasicInfo :action="act" :readonly="!canModify"> </ActionBasicInfo>
             <ActionTypeSelect :action="act" :task="task" :readonly="!canModify" v-if="shouldExpand(act)"></ActionTypeSelect>
             <ActionIngest :action="act" :task="task" v-if="isActionOfType(act, 1) && shouldExpand(act)"
