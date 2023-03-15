@@ -2,9 +2,10 @@ import type { TaskAction } from "./task";
 
 export interface RuleConfig {
     nullable: boolean
+    configType: string
 }
 
-export const newRuleConfig = (): RuleConfig => ({ nullable: true })
+export const newRuleConfig = (): RuleConfig => ({ nullable: true, configType: '' })
 
 export interface VerifyConfiguration {
     fields: string[]
