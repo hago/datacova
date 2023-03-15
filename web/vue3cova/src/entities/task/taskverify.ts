@@ -1,8 +1,10 @@
 import type { TaskAction } from "./task";
 
 export interface RuleConfig {
-
+    nullable: boolean
 }
+
+export const newRuleConfig = (): RuleConfig => ({ nullable: true })
 
 export interface VerifyConfiguration {
     fields: string[]
@@ -14,4 +16,18 @@ export interface VerifyConfiguration {
 
 export interface TaskActionVerify extends TaskAction {
     configurations: VerifyConfiguration[]
+}
+
+export const newTaskActionVerify = (action: TaskAction): TaskActionVerify => {
+    let act = action as TaskActionVerify
+    if (act.configurations === undefined) {
+        act.configurations = [{
+            fields: [],
+            nullable: true,
+            ignoreFieldCase: true,
+            fieldCountLimit: 1,
+            ruleConfig: newRuleConfig()
+        }]
+    }
+    return act
 }

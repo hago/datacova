@@ -1,6 +1,6 @@
 <script lang="ts">
 import type { Task, TaskAction } from '@/entities/task/task';
-import type { TaskActionIngest } from '@/entities/task/taskingest';
+import { newTaskActionVerify } from '@/entities/task/taskverify';
 import { defineComponent, reactive, type PropType } from 'vue';
 
 
@@ -20,7 +20,7 @@ export default defineComponent({
         }
     },
     setup(props) {
-        let act = props.action as TaskActionIngest
+        let act = newTaskActionVerify(props.action)
         return reactive({
             act
         })
