@@ -17,9 +17,9 @@ export interface WorkspaceConnection {
 
 export function dbConfigStringify(config: PostgreSqlConfig | MariaDBConfig | MsSqlConfig): string {
     switch (config.dbType) {
-        case "PostgreSql":
+        case "PostgreSQL":
             return `${config.dbType} - ${config.host}:${config.port}/${config.databaseName}`
-        case "MariaDb":
+        case "MariaDB":
             return `${config.dbType} - ${config.host}:${config.port}/${config.databaseName}`
         case "Microsoft SQL Sever":
             return `${config.dbType} - ${config.host}:${config.port}/${config.databaseName}`
