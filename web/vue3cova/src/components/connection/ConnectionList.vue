@@ -49,6 +49,7 @@ export default defineComponent({
             this.connections = [con].concat(this.connections)
             this.permissions.deletables.push(con.id)
             this.permissions.editables.push(con.id)
+            this.selectConnection(con.id)
         },
         selectConnection(connectionId: number) {
             let conn = this.connections.find(c => c.id === connectionId)
