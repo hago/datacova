@@ -48,6 +48,7 @@ export default defineComponent({
       console.log('newTask')
       const task: Task = newEmptyTask(this.workspace!.workspace.id)
       this.tasks = [task].concat(this.tasks)
+      this.selectTask(task.id)
     }
   },
   components: {
