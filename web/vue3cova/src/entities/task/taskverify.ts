@@ -23,7 +23,7 @@ export const newTaskActionVerify = (action: TaskAction): TaskActionVerify => {
     let act = action as TaskActionVerify
     if (act.configurations === undefined) {
         act.configurations = [{
-            fields: [],
+            fields: [""],
             nullable: true,
             ignoreFieldCase: true,
             fieldCountLimit: 1,
