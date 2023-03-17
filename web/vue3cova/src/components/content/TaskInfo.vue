@@ -173,7 +173,7 @@ export default defineComponent({
         </n-gi>
         <n-gi span="2" v-for="(act, index) in task.actions" v-bind:key="task.id * 100 + index">
             <n-button type="error" size="small" @click="deleteAction(index)">Remove {{ act.name }}</n-button>
-            <ActionBasicInfo :action="act" :readonly="!canModify"> </ActionBasicInfo>
+            <ActionBasicInfo :action="act" :readonly="!canModify"></ActionBasicInfo>
             <ActionTypeSelect :action="act" :task="task" :readonly="!canModify" v-if="shouldExpand(act)"></ActionTypeSelect>
             <ActionIngest :action="act" :task="task" v-if="isActionOfType(act, 1) && shouldExpand(act)"
                 :readonly="!canModify">
