@@ -68,7 +68,7 @@ export default defineComponent({
             })" v-model:value="config.ruleConfig.configType"></n-select>
         </n-gi>
         <n-gi span="2">
-            <n-checkbox v-model:checked="config.nullable">Accept NULL value</n-checkbox>
+            <n-checkbox v-model:checked="config.ruleConfig.nullable">Make verification true for Null value</n-checkbox>
         </n-gi>
     </n-grid>
 </template>

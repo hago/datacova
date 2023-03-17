@@ -9,7 +9,7 @@ export const newRuleConfig = (): RuleConfig => ({ nullable: true, configType: ''
 
 export interface VerifyConfiguration {
     fields: string[]
-    nullable: boolean
+    // nullable: boolean
     ignoreFieldCase: boolean
     fieldCountLimit: number
     ruleConfig: RuleConfig
@@ -24,7 +24,7 @@ export const newTaskActionVerify = (action: TaskAction): TaskActionVerify => {
     if (act.configurations === undefined) {
         act.configurations = [{
             fields: [""],
-            nullable: true,
+            // nullable: true,
             ignoreFieldCase: true,
             fieldCountLimit: 1,
             ruleConfig: newRuleConfig()
