@@ -19,29 +19,67 @@ export default defineComponent({
         }
     },
     setup(props) {
-        let act = newTaskActionVerify(props.action)
-        return reactive({
+        let act = newTaskActionVerify(props.action);
+        return {
             act,
             ruleOptions: [
-                { label: 'Python Script', value: 'com.hagoapp.embed.jython' },
-                { label: 'Number Range', value: 'com.hagoapp.number.range' },
-                { label: 'Options', value: 'com.hagoapp.options' },
-                { label: 'Regular Expression Matching', value: 'com.hagoapp.regex' },
-                { label: 'Time Range', value: 'com.hagoapp.time.range' },
-                { label: 'Relative Time Range', value: 'com.hagoapp.relative.time.range' },
+                { label: "Python Script", value: "com.hagoapp.embed.jython" },
+                { label: "Number Range", value: "com.hagoapp.number.range" },
+                { label: "Options", value: "com.hagoapp.options" },
+                { label: "Regular Expression Matching", value: "com.hagoapp.regex" },
+                { label: "Time Range", value: "com.hagoapp.time.range" },
+                { label: "Relative Time Range", value: "com.hagoapp.relative.time.range" },
             ]
-        })
+        };
+    },
+    methods: {
+        deleteField(index: number, j: number) {
+            console.log(index, j);
+            this.act.configurations[index].fields.splice(j, 1);
+        }
     }
 })
 </script>
 
 <template>
-    <n-grid cols="2" v-for="(rule, index) in act.configurations" :key="index">
+    <n-grid cols="2" v-for="(config, i) in act.configurations" :key="i">
         <n-gi span="2">
+            <span>Fields</span>
+            <n-button type="success" size="x-small" class="fieldbutton rightbutton"
+                @click="config.fields.push('')">+</n-button>
+        </n-gi>
+        <n-gi span="2">
+            <n-grid cols="2">
+                <n-gi v-for="(field, j) in config.fields" :key="j">
+                    <n-input type="text" v-model:value="config.fields[j]" />
+                    <n-button type="warning" size="x-small" class="fieldbutton" @click="deleteField(i, j)">-</n-button>
+                </n-gi>
+                <n-gi v-if="config.fields.length % 2 === 1" :key="-1">
+                    <!--placeholder-->
+                </n-gi>
+            </n-grid>
+        </n-gi>
+        <n-gi>
             <span>Rule Type</span>
+        </n-gi>
+        <n-gi>
             <n-select :options="ruleOptions" :fallback-option="(v: any) => ({
                 label: 'Choose Rule Type', value: v
-            })" :model:value="rule.ruleConfig"></n-select>
+            })" v-model:value="config.ruleConfig.configType"></n-select>
+        </n-gi>
+        <n-gi span="2">
+            <n-checkbox v-model:checked="config.nullable">Accept NULL value</n-checkbox>
         </n-gi>
     </n-grid>
 </template>
+
+<style scoped>
+.rightbutton {
+    float: right;
+}
+
+.fieldbutton {
+    width: 30px;
+    font-size: large;
+}
+</style>
