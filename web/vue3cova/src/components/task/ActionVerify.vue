@@ -1,11 +1,12 @@
 <script lang="ts">
 import type { Task, TaskAction } from '@/entities/task/task';
-import { newTaskActionVerify, VerificationTypes, isRegexRule } from '@/entities/task/taskverify';
-import { defineComponent, reactive, type PropType } from 'vue';
+import { newTaskActionVerify, VerificationTypes, isRegexRule, isOptionsRule } from '@/entities/task/taskverify';
+import { defineComponent, type PropType } from 'vue';
 import RegexRule from './verify/RegexRule.vue';
+import OptionsRule from './verify/OptionsRule.vue';
 
 export default defineComponent({
-    components: { RegexRule },
+    components: { RegexRule, OptionsRule },
     props: {
         action: {
             type: Object as PropType<TaskAction>,
@@ -25,7 +26,8 @@ export default defineComponent({
         return {
             act,
             ruleOptions: VerificationTypes,
-            isRegexRule
+            isRegexRule,
+            isOptionsRule
         };
     },
     methods: {
@@ -69,7 +71,8 @@ export default defineComponent({
             <n-checkbox v-model:checked="config.ruleConfig.nullable">Make verification true for Null value</n-checkbox>
         </n-gi>
         <n-gi span="2">
-            <RegexRule :rule-config="config.ruleConfig" v-if="isRegexRule(config.ruleConfig)"></RegexRule>
+            <RegexRule :ruleConfig="config.ruleConfig" v-if="isRegexRule(config.ruleConfig)"></RegexRule>
+            <OptionsRule :ruleConfig="config.ruleConfig" v-if="isOptionsRule(config.ruleConfig)"></OptionsRule>
         </n-gi>
     </n-grid>
 </template>
