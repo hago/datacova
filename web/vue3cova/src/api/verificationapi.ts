@@ -1,8 +1,9 @@
 import type Identity from "@/entities/identity"
 import type DistFtpConfiguration from "@/entities/task/distribute/distconfigftp"
 import type DistSFtpConfiguration from "@/entities/task/distribute/distconfigsftp"
+import type { RegexRuleConfig } from "@/entities/task/verify/regexruleconfig"
 import { fromFetchResponse, type BaseResponse } from "./baseresponse"
-import { addTokenHeader } from "./credential"
+import { addJsonRequestHeader, addTokenHeader } from "./credential"
 
 export interface FtpVerificationResponse extends BaseResponse {
     data: {
@@ -53,6 +54,19 @@ export class VerificationApi {
             headers: headers,
             method: "POST",
             body: form
+        })
+        return fromFetchResponse(p)
+    }
+
+    async verifyRegexRule(user: Identity, regexConfig: {
+        regexConfig: RegexRuleConfig
+        text: string
+    }): Promise<BaseResponse> {
+        let headers = addJsonRequestHeader(addTokenHeader(user))
+        let p = await fetch("/api/rule/regex/evaluate", {
+            headers: headers,
+            method: "POST",
+            body: JSON.stringify(regexConfig)
         })
         return fromFetchResponse(p)
     }
