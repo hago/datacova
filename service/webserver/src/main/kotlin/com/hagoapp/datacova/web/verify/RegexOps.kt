@@ -7,10 +7,13 @@
 
 package com.hagoapp.datacova.web.verify
 
+import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.MethodName
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import com.hagoapp.datacova.web.authentication.AuthType
+import com.hagoapp.surveyor.rule.RegexRuleConfig
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.ext.web.RoutingContext
 import java.util.regex.Pattern
@@ -29,6 +32,49 @@ class RegexOps {
             Pattern.compile(pattern)
             ResponseHelper.sendResponse(context, HttpResponseStatus.OK)
         } catch (e: PatternSyntaxException) {
+            ResponseHelper.sendResponse(
+                context, HttpResponseStatus.BAD_REQUEST, mapOf(
+                    "code" to HttpResponseStatus.BAD_REQUEST.code(),
+                    "error" to mapOf(
+                        "message" to e.message
+                    )
+                )
+            )
+        }
+    }
+
+    private data class EvalRequest(
+        val regexConfig: RegexRuleConfig,
+        val text: String
+    )
+
+    @WebEndPoint(
+        path = "/api/rule/regex/evaluate",
+        methods = [MethodName.POST],
+        authTypes = [AuthType.UserToken]
+    )
+    fun verifyRegexRule(context: RoutingContext) {
+        val s = context.body().asString()
+        try {
+            val req = Gson().fromJson(s, EvalRequest::class.java)
+                ?: throw JsonSyntaxException("Not a valid regex eval data")
+            val p: Pattern
+            try {
+                p = Pattern.compile(
+                    req.regexConfig.pattern,
+                    if (req.regexConfig.isCaseSensitive) 0 else Pattern.CASE_INSENSITIVE
+                )
+            } catch (e: PatternSyntaxException) {
+                ResponseHelper.sendResponse(context, HttpResponseStatus.OK, mapOf("code" to -1))
+                return
+            }
+            val m = p.matcher(req.text)
+            ResponseHelper.sendResponse(
+                context, HttpResponseStatus.OK, mapOf(
+                    "code" to if (m.matches()) 0 else -2
+                )
+            )
+        } catch (e: JsonSyntaxException) {
             ResponseHelper.sendResponse(
                 context, HttpResponseStatus.BAD_REQUEST, mapOf(
                     "code" to HttpResponseStatus.BAD_REQUEST.code(),
