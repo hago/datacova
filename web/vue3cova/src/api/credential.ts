@@ -6,4 +6,9 @@ export function addTokenHeader(user: Identity, headers?: Headers): Headers {
     return h
 }
 
+export const addJsonRequestHeader = (headers: Headers): Headers => {
+    headers.append("content-type", "application/json")
+    return headers
+}
+
 export default {}
