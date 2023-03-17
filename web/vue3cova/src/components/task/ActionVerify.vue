@@ -1,9 +1,11 @@
 <script lang="ts">
 import type { Task, TaskAction } from '@/entities/task/task';
-import { newTaskActionVerify } from '@/entities/task/taskverify';
+import { newTaskActionVerify, VerificationTypes, isRegexRule } from '@/entities/task/taskverify';
 import { defineComponent, reactive, type PropType } from 'vue';
+import RegexRule from './verify/RegexRule.vue';
 
 export default defineComponent({
+    components: { RegexRule },
     props: {
         action: {
             type: Object as PropType<TaskAction>,
@@ -22,14 +24,8 @@ export default defineComponent({
         let act = newTaskActionVerify(props.action);
         return {
             act,
-            ruleOptions: [
-                { label: "Python Script", value: "com.hagoapp.embed.jython" },
-                { label: "Number Range", value: "com.hagoapp.number.range" },
-                { label: "Options", value: "com.hagoapp.options" },
-                { label: "Regular Expression Matching", value: "com.hagoapp.regex" },
-                { label: "Time Range", value: "com.hagoapp.time.range" },
-                { label: "Relative Time Range", value: "com.hagoapp.relative.time.range" },
-            ]
+            ruleOptions: VerificationTypes,
+            isRegexRule
         };
     },
     methods: {
@@ -69,6 +65,9 @@ export default defineComponent({
         </n-gi>
         <n-gi span="2">
             <n-checkbox v-model:checked="config.ruleConfig.nullable">Make verification true for Null value</n-checkbox>
+        </n-gi>
+        <n-gi span="2">
+            <RegexRule :rule-config="config.ruleConfig" v-if="isRegexRule(config.ruleConfig)"></RegexRule>
         </n-gi>
     </n-grid>
 </template>
