@@ -47,8 +47,10 @@ export default defineComponent({
         <n-gi span="2">
             <n-grid cols="2">
                 <n-gi v-for="(field, j) in config.fields" :key="j">
-                    <n-input type="text" v-model:value="config.fields[j]" />
-                    <n-button type="warning" size="x-small" class="fieldbutton" @click="deleteField(i, j)">-</n-button>
+                    <n-input-group>
+                        <n-input type="text" v-model:value="config.fields[j]" />
+                        <n-button type="warning" size="x-small" class="fieldbutton" @click="deleteField(i, j)">-</n-button>
+                    </n-input-group>
                 </n-gi>
                 <n-gi v-if="config.fields.length % 2 === 1" :key="-1">
                     <!--placeholder-->
