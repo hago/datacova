@@ -54,7 +54,7 @@ export default defineComponent({
             <span>Rules</span>
         </n-gi>
         <n-gi span="2">
-            <span>Fields</span>
+            <span>Field{{ config.fieldCountLimit > 1 ? "s" : "" }}</span>
             <n-button type="success" size="x-small" class="fieldbutton rightbutton" @click="config.fields.push('')"
                 title="Add Field">+</n-button>
         </n-gi>
@@ -63,7 +63,8 @@ export default defineComponent({
                 <n-gi v-for="(field, j) in config.fields" :key="j">
                     <n-input-group>
                         <n-input type="text" v-model:value="config.fields[j]" />
-                        <n-button type="warning" size="x-small" class="fieldbutton" @click="deleteField(i, j)">-</n-button>
+                        <n-button type="warning" size="x-small" class="fieldbutton" @click="deleteField(i, j)"
+                            v-if="config.fields.length > 1">-</n-button>
                     </n-input-group>
                 </n-gi>
                 <n-gi v-if="config.fields.length % 2 === 1" :key="-1">
@@ -80,7 +81,9 @@ export default defineComponent({
             })" v-model:value="config.ruleConfig.configType"></n-select>
         </n-gi>
         <n-gi span="2">
-            <n-checkbox v-model:checked.boolean="config.ruleConfig.nullable">Make verification true for Null value</n-checkbox>
+            <n-checkbox v-model:checked.boolean="config.ruleConfig.nullable">
+                Make verification true for Null value
+            </n-checkbox>
         </n-gi>
         <n-gi span="2">
             <RegexRule :ruleConfig="config.ruleConfig" v-if="isRegexRule(config.ruleConfig)"></RegexRule>
