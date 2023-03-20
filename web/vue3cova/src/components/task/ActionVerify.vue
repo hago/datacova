@@ -89,7 +89,7 @@ export default defineComponent({
             <RegexRule :ruleConfig="config.ruleConfig" v-if="isRegexRule(config.ruleConfig)"></RegexRule>
             <OptionsRule :ruleConfig="config.ruleConfig" v-if="isOptionsRule(config.ruleConfig)"></OptionsRule>
             <NumberRangeRule :ruleConfig="config.ruleConfig" v-if="isNumberRangeRule(config.ruleConfig)"></NumberRangeRule>
-            <PythonRule :ruleConfig="config.ruleConfig" v-if="isPythonRule(config.ruleConfig)"></PythonRule>
+            <PythonRule :verifyConfig="config" v-if="isPythonRule(config.ruleConfig)"></PythonRule>
         </n-gi>
         <n-gi span="2">
             <n-button type="warning" class="rightbutton" @click="act.configurations.splice(i, 1)">Remove Rule</n-button>
