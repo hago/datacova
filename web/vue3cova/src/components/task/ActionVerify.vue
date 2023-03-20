@@ -1,12 +1,13 @@
 <script lang="ts">
 import type { Task, TaskAction } from '@/entities/task/task';
-import { newTaskActionVerify, VerificationTypes, isRegexRule, isOptionsRule, newVerifyConfiguration } from '@/entities/task/taskverify';
+import { newTaskActionVerify, VerificationTypes, isRegexRule, isOptionsRule, newVerifyConfiguration, isNumberRangeRule } from '@/entities/task/taskverify';
 import { defineComponent, type PropType } from 'vue';
 import RegexRule from './verify/RegexRule.vue';
 import OptionsRule from './verify/OptionsRule.vue';
+import NumberRangeRule from './verify/NumberRangeRule.vue';
 
 export default defineComponent({
-    components: { RegexRule, OptionsRule },
+    components: { RegexRule, OptionsRule, NumberRangeRule },
     props: {
         action: {
             type: Object as PropType<TaskAction>,
@@ -27,7 +28,8 @@ export default defineComponent({
             act,
             ruleOptions: VerificationTypes,
             isRegexRule,
-            isOptionsRule
+            isOptionsRule,
+            isNumberRangeRule
         };
     },
     methods: {
@@ -43,12 +45,11 @@ export default defineComponent({
 </script>
 
 <template>
-    <n-grid cols="2" v-for="(config, i) in act.configurations" :key="i" style="margin-bottom: 2px; border-bottom-style: dashed;">
+    <n-button type="default" class="rightbutton" @click="newRuleConfig">New Rule</n-button>
+    <n-grid cols="2" v-for="(config, i) in act.configurations" :key="i"
+        style="margin-bottom: 2px; border-bottom-style: dashed;">
         <n-gi>
             <span>Rules</span>
-        </n-gi>
-        <n-gi>
-            <n-button type="default" class="rightbutton" @click="newRuleConfig">New Rule</n-button>
         </n-gi>
         <n-gi span="2">
             <span>Fields</span>
@@ -82,6 +83,7 @@ export default defineComponent({
         <n-gi span="2">
             <RegexRule :ruleConfig="config.ruleConfig" v-if="isRegexRule(config.ruleConfig)"></RegexRule>
             <OptionsRule :ruleConfig="config.ruleConfig" v-if="isOptionsRule(config.ruleConfig)"></OptionsRule>
+            <NumberRangeRule :ruleConfig="config.ruleConfig" v-if="isNumberRangeRule(config.ruleConfig)"></NumberRangeRule>
         </n-gi>
         <n-gi span="2">
             <n-button type="warning" class="rightbutton" @click="act.configurations.splice(i, 1)">Remove Rule</n-button>
