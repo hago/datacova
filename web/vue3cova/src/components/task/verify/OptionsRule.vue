@@ -41,4 +41,5 @@ export default defineComponent({
 <style scoped>
 .rightbutton {
     float: right;
-}</style>
+}
+</style>
