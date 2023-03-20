@@ -19,16 +19,18 @@ export interface TaskActionVerify extends TaskAction {
     configurations: VerifyConfiguration[]
 }
 
+export const newVerifyConfiguration = (): VerifyConfiguration => ({
+    fields: [""],
+    // nullable: true,
+    ignoreFieldCase: true,
+    fieldCountLimit: 1,
+    ruleConfig: newRuleConfig()
+})
+
 export const newTaskActionVerify = (action: TaskAction): TaskActionVerify => {
     let act = action as TaskActionVerify
     if (act.configurations === undefined) {
-        act.configurations = [{
-            fields: [""],
-            // nullable: true,
-            ignoreFieldCase: true,
-            fieldCountLimit: 1,
-            ruleConfig: newRuleConfig()
-        }]
+        act.configurations = [newVerifyConfiguration()]
     }
     return act
 }
