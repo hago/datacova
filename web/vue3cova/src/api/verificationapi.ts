@@ -1,6 +1,8 @@
 import type Identity from "@/entities/identity"
 import type DistFtpConfiguration from "@/entities/task/distribute/distconfigftp"
 import type DistSFtpConfiguration from "@/entities/task/distribute/distconfigsftp"
+import type { EvalField } from "@/entities/task/verify/evalfield"
+import type { JythonRuleConfig } from "@/entities/task/verify/jythonconfig"
 import type { RegexRuleConfig } from "@/entities/task/verify/regexruleconfig"
 import { fromFetchResponse, type BaseResponse } from "./baseresponse"
 import { addJsonRequestHeader, addTokenHeader } from "./credential"
@@ -15,6 +17,15 @@ export interface SFtpVerificationResponse extends BaseResponse {
     data: {
         keyStored?: string
         pwd: string
+    }
+}
+
+export interface PythonEvalResponse extends BaseResponse {
+    data: {
+        row: {
+            [key: string]: string
+        },
+        result: any
     }
 }
 
@@ -67,6 +78,21 @@ export class VerificationApi {
             headers: headers,
             method: "POST",
             body: JSON.stringify(regexConfig)
+        })
+        return fromFetchResponse(p)
+    }
+
+    async verifyPythonScript(user: Identity, config: {
+        code: string
+        fieldValues: {
+            [key: string]: EvalField
+        }
+    }): Promise<PythonEvalResponse> {
+        let headers = addJsonRequestHeader(addTokenHeader(user))
+        let p = await fetch("/api/python/evaluate", {
+            headers: headers,
+            method: "POST",
+            body: JSON.stringify(config)
         })
         return fromFetchResponse(p)
     }
