@@ -1,6 +1,6 @@
 <script lang="ts">
 import type { Task, TaskAction } from '@/entities/task/task';
-import { newTaskActionVerify, VerificationTypes, isRegexRule, isOptionsRule } from '@/entities/task/taskverify';
+import { newTaskActionVerify, VerificationTypes, isRegexRule, isOptionsRule, newVerifyConfiguration } from '@/entities/task/taskverify';
 import { defineComponent, type PropType } from 'vue';
 import RegexRule from './verify/RegexRule.vue';
 import OptionsRule from './verify/OptionsRule.vue';
@@ -34,17 +34,26 @@ export default defineComponent({
         deleteField(index: number, j: number) {
             console.log(index, j);
             this.act.configurations[index].fields.splice(j, 1);
+        },
+        newRuleConfig() {
+            this.act.configurations = [newVerifyConfiguration()].concat(this.act.configurations)
         }
     }
 })
 </script>
 
 <template>
-    <n-grid cols="2" v-for="(config, i) in act.configurations" :key="i">
+    <n-grid cols="2" v-for="(config, i) in act.configurations" :key="i" style="margin-bottom: 2px; border-bottom-style: dashed;">
+        <n-gi>
+            <span>Rules</span>
+        </n-gi>
+        <n-gi>
+            <n-button type="default" class="rightbutton" @click="newRuleConfig">New Rule</n-button>
+        </n-gi>
         <n-gi span="2">
             <span>Fields</span>
-            <n-button type="success" size="x-small" class="fieldbutton rightbutton"
-                @click="config.fields.push('')">+</n-button>
+            <n-button type="success" size="x-small" class="fieldbutton rightbutton" @click="config.fields.push('')"
+                title="Add Field">+</n-button>
         </n-gi>
         <n-gi span="2">
             <n-grid cols="2">
@@ -73,6 +82,9 @@ export default defineComponent({
         <n-gi span="2">
             <RegexRule :ruleConfig="config.ruleConfig" v-if="isRegexRule(config.ruleConfig)"></RegexRule>
             <OptionsRule :ruleConfig="config.ruleConfig" v-if="isOptionsRule(config.ruleConfig)"></OptionsRule>
+        </n-gi>
+        <n-gi span="2">
+            <n-button type="warning" class="rightbutton" @click="act.configurations.splice(i, 1)">Remove Rule</n-button>
         </n-gi>
     </n-grid>
 </template>
