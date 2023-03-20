@@ -1,13 +1,14 @@
 <script lang="ts">
 import type { Task, TaskAction } from '@/entities/task/task';
-import { newTaskActionVerify, VerificationTypes, isRegexRule, isOptionsRule, newVerifyConfiguration, isNumberRangeRule } from '@/entities/task/taskverify';
+import { newTaskActionVerify, VerificationTypes, isRegexRule, isOptionsRule, newVerifyConfiguration, isNumberRangeRule, isPythonRule } from '@/entities/task/taskverify';
 import { defineComponent, type PropType } from 'vue';
 import RegexRule from './verify/RegexRule.vue';
 import OptionsRule from './verify/OptionsRule.vue';
 import NumberRangeRule from './verify/NumberRangeRule.vue';
+import PythonRule from './verify/PythonRule.vue';
 
 export default defineComponent({
-    components: { RegexRule, OptionsRule, NumberRangeRule },
+    components: { RegexRule, OptionsRule, NumberRangeRule, PythonRule },
     props: {
         action: {
             type: Object as PropType<TaskAction>,
@@ -29,7 +30,8 @@ export default defineComponent({
             ruleOptions: VerificationTypes,
             isRegexRule,
             isOptionsRule,
-            isNumberRangeRule
+            isNumberRangeRule,
+            isPythonRule
         };
     },
     methods: {
@@ -78,12 +80,13 @@ export default defineComponent({
             })" v-model:value="config.ruleConfig.configType"></n-select>
         </n-gi>
         <n-gi span="2">
-            <n-checkbox v-model:checked="config.ruleConfig.nullable">Make verification true for Null value</n-checkbox>
+            <n-checkbox v-model:checked.boolean="config.ruleConfig.nullable">Make verification true for Null value</n-checkbox>
         </n-gi>
         <n-gi span="2">
             <RegexRule :ruleConfig="config.ruleConfig" v-if="isRegexRule(config.ruleConfig)"></RegexRule>
             <OptionsRule :ruleConfig="config.ruleConfig" v-if="isOptionsRule(config.ruleConfig)"></OptionsRule>
             <NumberRangeRule :ruleConfig="config.ruleConfig" v-if="isNumberRangeRule(config.ruleConfig)"></NumberRangeRule>
+            <PythonRule :ruleConfig="config.ruleConfig" v-if="isPythonRule(config.ruleConfig)"></PythonRule>
         </n-gi>
         <n-gi span="2">
             <n-button type="warning" class="rightbutton" @click="act.configurations.splice(i, 1)">Remove Rule</n-button>
