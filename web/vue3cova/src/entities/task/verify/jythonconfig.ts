@@ -2,7 +2,7 @@ import type { RuleConfig } from "../taskverify"
 
 export interface JythonRuleConfig extends RuleConfig {
     snippet: string
-    allowImports: boolean
+    allowImports: string[]
 }
 
 export const fromRuleConfig = (ruleConfig: RuleConfig): JythonRuleConfig => {
@@ -11,7 +11,7 @@ export const fromRuleConfig = (ruleConfig: RuleConfig): JythonRuleConfig => {
         ret.snippet = ""
     }
     if (ret.allowImports === undefined) {
-        ret.allowImports = false
+        ret.allowImports = []
     }
     return ret
 }
