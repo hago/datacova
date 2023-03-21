@@ -20,7 +20,7 @@ export const fromRuleConfig = (ruleConfig: RuleConfig): TimeRangeRuleConfig => {
     if (ret.lowerBoundary === undefined) {
         ret.lowerBoundary = null
     }
-    if (ret.upperBoundary === null) {
+    if (ret.upperBoundary === undefined) {
         ret.upperBoundary = null
     }
     return ret
