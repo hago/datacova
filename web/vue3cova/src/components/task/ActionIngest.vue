@@ -74,6 +74,8 @@ export default defineComponent({
                 this.act.connectionId = newConnectionId
                 this.tablesMeta = rsp.data
                 this.calcSchemas()
+            }).catch(err => {
+                eventBus.send(EVENT_REMOTE_API_ERROR, err)
             })
         },
         calcSchemas() {
