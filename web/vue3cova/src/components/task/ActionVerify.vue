@@ -10,9 +10,10 @@ import OptionsRule from './verify/OptionsRule.vue';
 import NumberRangeRule from './verify/NumberRangeRule.vue';
 import PythonRule from './verify/PythonRule.vue';
 import TimeRangeRule from './verify/TimeRangeRule.vue';
+import RelativeTimeRangeRule from './verify/RelativeTimeRangeRule.vue';
 
 export default defineComponent({
-    components: { RegexRule, OptionsRule, NumberRangeRule, PythonRule, TimeRangeRule },
+    components: { RegexRule, OptionsRule, NumberRangeRule, PythonRule, TimeRangeRule, RelativeTimeRangeRule },
     props: {
         action: {
             type: Object as PropType<TaskAction>,
@@ -97,6 +98,8 @@ export default defineComponent({
             <NumberRangeRule :ruleConfig="config.ruleConfig" v-if="isNumberRangeRule(config.ruleConfig)"></NumberRangeRule>
             <PythonRule :verifyConfig="config" v-if="isPythonRule(config.ruleConfig)"></PythonRule>
             <TimeRangeRule :ruleConfig="config.ruleConfig" v-if="isTimeRangeRule(config.ruleConfig)"></TimeRangeRule>
+            <RelativeTimeRangeRule :ruleConfig="config.ruleConfig" v-if="isRelativeTimeRangeRule(config.ruleConfig)">
+            </RelativeTimeRangeRule>
         </n-gi>
         <n-gi span="2">
             <n-button type="warning" class="rightbutton" @click="act.configurations.splice(i, 1)">Remove Rule</n-button>
