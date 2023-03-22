@@ -8,6 +8,7 @@ import TaskInfo from '@/components/content/TaskInfo.vue';
 import EmptyTaskInfo from '@/components/content/EmptyTaskInfo.vue';
 import { EVENT_REMOTE_API_ERROR, EVENT_TASK_SELECTED } from '@/entities/events';
 import { eventBus } from '@/util/eventbus';
+import router from '@/router';
 
 export default defineComponent({
   props: {
@@ -50,8 +51,8 @@ export default defineComponent({
       this.tasks = [task].concat(this.tasks)
       this.selectTask(task.id)
     },
-    execute(id: number) {
-      //
+    execute(task: Task) {
+      router.push(`/task/run/${task.workspaceId}/${task.id}`)
     }
   },
   components: {
@@ -67,7 +68,7 @@ export default defineComponent({
     <n-list-item v-for="task in tasks" v-bind:key="task.id"
       :class="(selectedTask !== null) && (task.id === selectedTask.id) ? 'taskitem selectedtaskitem' : 'taskitem'">
       <n-tag :bordered="false" :title="task.description" @click="selectTask(task.id)">{{ task.name }}</n-tag>
-      <n-button style="float: right;" @click="execute(task.id)">Execute</n-button>
+      <n-button style="float: right;" @click="execute(task)">Execute</n-button>
     </n-list-item>
   </n-list>
 </template>

@@ -4,6 +4,7 @@ import RouteErrorView from '@/views/auth/RouteErrorView.vue'
 import LoginView from '@/views/auth/LoginView.vue'
 import WorkspaceView from '@/views/WorkspaceView.vue'
 import WelcomeView from '@/views/WelcomeView.vue'
+import ExecuteView from '@/views/ExecuteView.vue'
 
 declare module 'vue-router' {
   interface RouteMeta {
@@ -72,6 +73,18 @@ const router = createRouter({
             return false
           }
           return true
+        }
+      }
+    },
+    {
+      path: '/task/run/:workspaceid/:id',
+      name: 'taskRun',
+      component: ExecuteView,
+      props: true,
+      meta: {
+        login: {
+          requireLogin: true,
+          jumpToLogin: true
         }
       }
     }
