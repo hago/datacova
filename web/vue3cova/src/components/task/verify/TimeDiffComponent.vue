@@ -19,41 +19,45 @@ export default defineComponent({
     <n-grid cols="2">
         <n-gi>
             <n-input-group>
-                <n-tag>Year</n-tag>
+                <n-tag type="info" class="timepart">Year</n-tag>
                 <n-input-number v-model:value="diff.year" clearable />
             </n-input-group>
         </n-gi>
         <n-gi>
             <n-input-group>
-                <n-tag>Month</n-tag>
+                <n-tag type="info" class="timepart">Month</n-tag>
                 <n-input-number v-model:value="diff.month" clearable />
             </n-input-group>
         </n-gi>
         <n-gi>
             <n-input-group>
-                <n-tag>Day</n-tag>
+                <n-tag type="info" class="timepart">Day</n-tag>
                 <n-input-number v-model:value="diff.day" clearable />
             </n-input-group>
         </n-gi>
         <n-gi>
             <n-input-group>
-                <n-tag>Hour</n-tag>
+                <n-tag type="info" class="timepart">Hour</n-tag>
                 <n-input-number v-model:value="diff.hour" clearable />
             </n-input-group>
         </n-gi>
         <n-gi>
             <n-input-group>
-                <n-tag>Month</n-tag>
+                <n-tag type="info" class="timepart">Month</n-tag>
                 <n-input-number v-model:value="diff.minute" clearable />
             </n-input-group>
         </n-gi>
         <n-gi>
             <n-input-group>
-                <n-tag>Second</n-tag>
+                <n-tag type="info" class="timepart">Second</n-tag>
                 <n-input-number v-model:value="diff.second" clearable />
             </n-input-group>
         </n-gi>
     </n-grid>
 </template>
 
-<style scoped></style>
+<style scoped>
+.timepart {
+    width: 120px;
+}
+</style>
