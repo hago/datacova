@@ -21,7 +21,7 @@ export default defineComponent({
         return reactive({
             conf,
             anchors: anchorList.map(i => ({ label: TimeAnchor[i] as string, value: i })),
-            timezones: timezones.map(tz => ({ label: tz, value: tz })),
+            timezones: timezones.map(tz => ({ label: tz.name, value: tz.name })),
             hasLowerLimit: computed({
                 get: (): boolean => conf.lowerBoundary !== null,
                 set: (v: boolean) => {
@@ -47,8 +47,11 @@ export default defineComponent({
             <n-checkbox v-model:checked.boolean="conf.lowerBoundary!.inclusive" v-if="hasLowerLimit">
                 Inclusive
             </n-checkbox>
-            <n-select :options="timezones" tag v-model:value="conf.lowerBoundary!.timeZoneName"
-                v-if="hasLowerLimit"></n-select>
+            <n-input-group v-if="hasLowerLimit">
+                <n-tag>Time Zone</n-tag>
+                <n-select filterable :options="timezones" tag v-model:value="conf.lowerBoundary!.timeZoneName"
+                    v-if="hasLowerLimit"></n-select>
+            </n-input-group>
             <TimeDiffComponent :diff="conf.lowerBoundary!.diff" v-if="hasLowerLimit"></TimeDiffComponent>
         </n-gi>
         <n-gi>
