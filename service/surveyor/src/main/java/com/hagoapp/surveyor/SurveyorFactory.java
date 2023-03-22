@@ -33,7 +33,7 @@ public class SurveyorFactory {
 
     private static final Map<String, Class<? extends RuleConfig>> configurations = new HashMap<>();
     private static final Map<String, Class<? extends Surveyor>> processors = new HashMap<>();
-    private static final Logger logger = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+    private static final Logger logger = LoggerFactory.getLogger(SurveyorFactory.class);
 
     static {
         registerRuleConfiguration(SurveyorFactory.class.getPackageName());
@@ -51,9 +51,11 @@ public class SurveyorFactory {
                             oldClz.getCanonicalName(), type.getCanonicalName(), typeName);
                 }
                 configurations.put(typeName, type);
+                logger.info("Configuration type {} registered by class {}", typeName, type.getCanonicalName());
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                      NoSuchMethodException e) {
                 logger.error("Error occurs while trying to instantiate {}", type.getCanonicalName());
+                logger.error("Cause: {}", e.getMessage());
             }
         }
         var processorTypes = new Reflections(packageName, Scanners.SubTypes).getSubTypesOf(Surveyor.class);
@@ -70,6 +72,7 @@ public class SurveyorFactory {
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                      NoSuchMethodException e) {
                 logger.error("Error occurs while trying to instantiate {}", type.getCanonicalName());
+                logger.error("cause: {}", e.getMessage());
             }
         }
     }
