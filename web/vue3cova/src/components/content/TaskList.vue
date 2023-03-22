@@ -49,6 +49,9 @@ export default defineComponent({
       const task: Task = newEmptyTask(this.workspace!.workspace.id)
       this.tasks = [task].concat(this.tasks)
       this.selectTask(task.id)
+    },
+    execute(id: number) {
+      //
     }
   },
   components: {
@@ -61,10 +64,11 @@ export default defineComponent({
 <template>
   <n-button type="primary" @click="newTask">New Task</n-button>
   <n-list style="width: 90%">
-    <n-space v-for="task in tasks" v-bind:key="task.id"
+    <n-list-item v-for="task in tasks" v-bind:key="task.id"
       :class="(selectedTask !== null) && (task.id === selectedTask.id) ? 'taskitem selectedtaskitem' : 'taskitem'">
-      <div @click="selectTask(task.id)" :title="task.description">{{ task.name }}</div>
-    </n-space>
+      <n-tag :bordered="false" :title="task.description" @click="selectTask(task.id)">{{ task.name }}</n-tag>
+      <n-button style="float: right;" @click="execute(task.id)">Execute</n-button>
+    </n-list-item>
   </n-list>
 </template>
 
