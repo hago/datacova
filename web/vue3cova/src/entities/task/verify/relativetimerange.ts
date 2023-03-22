@@ -1,3 +1,4 @@
+import { getTimeZone } from "@/entities/timezones"
 import type { RuleConfig } from "../taskverify"
 
 export const TimeAnchor = {
@@ -52,7 +53,7 @@ export const newRelativeTimeBoundary = (): RelativeTimeBoundary => ({
     anchor: TimeAnchor.Now,
     diff: newTimeDiff(),
     inclusive: true,
-    timeZoneName: "UTC"
+    timeZoneName: getTimeZone(new Date())
 })
 
 export interface RelativeTimeRangeRuleConfig extends RuleConfig {
