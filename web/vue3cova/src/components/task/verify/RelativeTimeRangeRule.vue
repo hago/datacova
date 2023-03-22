@@ -55,7 +55,17 @@ export default defineComponent({
             <TimeDiffComponent :diff="conf.lowerBoundary!.diff" v-if="hasLowerLimit"></TimeDiffComponent>
         </n-gi>
         <n-gi>
-
+            <n-checkbox v-model:checked.boolean="hasUpperLimit">Ends At</n-checkbox>
+            <n-select :options="anchors" v-model:value="conf.upperBoundary!.anchor" v-if="hasUpperLimit"></n-select>
+            <n-checkbox v-model:checked.boolean="conf.upperBoundary!.inclusive" v-if="hasUpperLimit">
+                Inclusive
+            </n-checkbox>
+            <n-input-group v-if="hasUpperLimit">
+                <n-tag>Time Zone</n-tag>
+                <n-select filterable :options="timezones" tag v-model:value="conf.upperBoundary!.timeZoneName"
+                    v-if="hasUpperLimit"></n-select>
+            </n-input-group>
+            <TimeDiffComponent :diff="conf.upperBoundary!.diff" v-if="hasUpperLimit"></TimeDiffComponent>
         </n-gi>
     </n-grid>
 </template>
