@@ -47,6 +47,29 @@ export class TaskApi {
         })
         return fromFetchResponse(rsp)
     }
+
+    async getTask(user: Identity, workspaceId: number, taskId: number): Promise<TaskResponse> {
+        let headers = addTokenHeader(user)
+        headers.append('content-type', 'application/json')
+        let rsp = await fetch(`/api/workspace/${workspaceId}/task/${taskId}`, {
+            headers: headers,
+            method: "GET"
+        })
+        return fromFetchResponse(rsp)
+    }
+
+    async runTask(user: Identity, task: Task, file: File, extra: Object): Promise<TaskResponse> {
+        let headers = addTokenHeader(user)
+        let form = new FormData()
+        form.append('file', file, file.name)
+        form.append('extra', JSON.stringify(extra))
+        let rsp = await fetch(`/api/workspace/${task.workspaceId}/task/${task.id}/run`, {
+            headers: headers,
+            method: "POST",
+            body: JSON.stringify(task)
+        })
+        return fromFetchResponse(rsp)
+    }
 }
 
 const taskApiHelper: TaskApi = new TaskApi()
