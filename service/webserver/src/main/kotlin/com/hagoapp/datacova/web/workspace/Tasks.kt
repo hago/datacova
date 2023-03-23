@@ -31,11 +31,16 @@ import com.hagoapp.f2t.datafile.excel.FileInfoExcel
 import com.hagoapp.f2t.util.JDBCTypeUtils
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.ext.web.RoutingContext
+import org.slf4j.LoggerFactory
 import java.sql.JDBCType
+import java.time.LocalDate
+import java.time.LocalTime
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 class Tasks {
+
+    private val logger = LoggerFactory.getLogger(Tasks::class.java)
 
     @WebEndPoint(
         path = "/api/workspace/:id/tasks",
@@ -218,8 +223,8 @@ class Tasks {
         fi.filename = file.uploadedFileName()
         val info = if (fi is FileInfoExcel) ExcelDataFileParser(file.uploadedFileName()).getInfo() else null
         ReaderFactory.getReader(fi).use { reader ->
-            val size = context.request().getParam("size").toIntOrNull() ?: 20
-            val start = context.request().getParam("start").toIntOrNull() ?: 0
+            val size = context.request().getParam("size", "20").toInt()
+            val start = context.request().getParam("start", "0").toInt()
             reader.open(fi)
             reader.findColumns()
             val cols = reader.inferColumnTypes(start.toLong() + size.toLong())
@@ -259,7 +264,18 @@ class Tasks {
                 val x = JDBCTypeUtils.toTypedValue(data, type) as ZonedDateTime
                 DateTimeFormatter.ISO_DATE_TIME.format(x)
             }
-            else -> JDBCTypeUtils.toTypedValue(data, type)
+            type == JDBCType.DATE -> {
+                val x = JDBCTypeUtils.toTypedValue(data, type) as LocalDate
+                DateTimeFormatter.ISO_DATE.format(x)
+            }
+            type == JDBCType.TIME || type == JDBCType.TIME_WITH_TIMEZONE -> {
+                val x = JDBCTypeUtils.toTypedValue(data, type) as LocalTime
+                DateTimeFormatter.ISO_TIME.format(x)
+            }
+            else -> {
+                logger.debug("for data {} with type {}", data, type)
+                JDBCTypeUtils.toTypedValue(data, type)
+            }
         }
 
     }
