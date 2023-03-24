@@ -1,10 +1,10 @@
 plugins {
     java
     kotlin("jvm") version "1.7.20"
-    id("org.jetbrains.dokka") version("1.7.20")
+    id("org.jetbrains.dokka") version ("1.7.20")
 }
 
-subprojects{
+subprojects {
     apply(plugin = "java")
     apply(plugin = "org.jetbrains.dokka").apply { version = "1.7.20" }
     apply(plugin = "kotlin").apply { version = "1.7.20" }
@@ -21,8 +21,6 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.7.20")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.20")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.20")
-
-    implementation(group = "org.slf4j", name = "slf4j-api", version = "1.7.30")
 
     testImplementation(kotlin("test"))
 }
