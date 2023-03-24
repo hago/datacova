@@ -97,7 +97,7 @@ class LocalFsFileStore private constructor(private val rootPath: String) : FileS
         if (prefix.any { !it.isDigit() }) {
             throw InvalidParameterException("Not found")
         }
-        return "${prefix.substring((0, 4)}/${prefix.substring(4, 2)}/${prefix.substring(6, 2)}/${id.substring(8)}"
+        return "${prefix.substring(0, 4)}/${prefix.substring(4, 2)}/${prefix.substring(6, 2)}/${id.substring(8)}"
     }
 
     override fun getFile(id: String): InputStream {
