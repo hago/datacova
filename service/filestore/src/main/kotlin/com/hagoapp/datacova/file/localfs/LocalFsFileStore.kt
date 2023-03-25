@@ -25,6 +25,7 @@ import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import kotlin.io.path.name
 
 class LocalFsFileStore private constructor(private val rootPath: String) : FileStore {
 
@@ -52,7 +53,7 @@ class LocalFsFileStore private constructor(private val rootPath: String) : FileS
 
     override fun putFile(src: InputStream, fileName: String, size: Long): String {
         val internal = createInternalFileName(fileName)
-        val namingFileName = "$internal.name"
+        val namingFileName = getNamingFile(internal)
         FileOutputStream(namingFileName).use { it.write(fileName.toByteArray(StandardCharsets.UTF_8)) }
         FileOutputStream(internal).use { out ->
             BufferedOutputStream(out)
@@ -66,7 +67,7 @@ class LocalFsFileStore private constructor(private val rootPath: String) : FileS
                 out.write(buffer, 0, i)
             }
         }
-        return File(internal).path
+        return File(internal).toPath().fileName.name
     }
 
     /**
@@ -89,6 +90,10 @@ class LocalFsFileStore private constructor(private val rootPath: String) : FileS
         return File(pf, internalName).absolutePath
     }
 
+    private fun getNamingFile(fileName: String): String {
+        return "$fileName.name"
+    }
+
     private fun parseId(id: String): String {
         if (id.length != 40) {
             throw InvalidParameterException("Not found")
@@ -97,21 +102,22 @@ class LocalFsFileStore private constructor(private val rootPath: String) : FileS
         if (prefix.any { !it.isDigit() }) {
             throw InvalidParameterException("Not found")
         }
-        return "${prefix.substring(0, 4)}/${prefix.substring(4, 2)}/${prefix.substring(6, 2)}/${id.substring(8)}"
+        return "${prefix.substring(0, 4)}/${prefix.substring(4, 6)}/${prefix.substring(6, 8)}/${id}"
     }
 
     override fun getFile(id: String): InputStream {
         val fn = parseId(id)
-        if (!File(rootPath, fn).exists()) {
+        val f = File(rootPath, fn)
+        if (!f.exists()) {
             throw FileNotFoundException("file $id not found")
         }
-        return FileInputStream(fn)
+        return FileInputStream(f)
     }
 
     override fun getFileInfo(id: String): FileInfo {
-        val fn = "${parseId(id)}.name"
+        val fn = getNamingFile(parseId(id))
         if (!File(rootPath, fn).exists()) {
-            throw FileNotFoundException("file $id not found")
+            throw FileNotFoundException("naming file $fn for $id not found")
         }
         val originalFileName = FileInputStream(fn).use { it.readAllBytes().toString(StandardCharsets.UTF_8) }
         val fn1 = File(parseId(id))
@@ -123,14 +129,20 @@ class LocalFsFileStore private constructor(private val rootPath: String) : FileS
     }
 
     override fun delete(id: String): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    fun getRelativeFileName(fullName: String): String {
-        if (!fullName.startsWith(rootPath, true)) {
-            throw FileNotFoundException("$fullName not in $rootPath")
+        val file = File(parseId(id))
+        if (file.exists()) {
+            if (!file.delete()) {
+                logger.error("Failed deletion of file: {}", file.absoluteFile)
+                return false
+            }
         }
-        val partial = fullName.substring(rootPath.length)
-        return if (partial.startsWith("/")) partial.substring(1) else partial
+        val file1 = File("${parseId(id)}.name")
+        if (file1.exists()) {
+            if (!file1.delete()) {
+                logger.error("Failed deletion of file: {}", file1.absoluteFile)
+                return false
+            }
+        }
+        return true
     }
 }
