@@ -92,4 +92,10 @@ class LocalFsTest {
             }
         }
     }
+
+    @Test
+    @Order(3)
+    fun testDeleteFile() {
+        Assertions.assertTrue(store.delete(id))
+    }
 }

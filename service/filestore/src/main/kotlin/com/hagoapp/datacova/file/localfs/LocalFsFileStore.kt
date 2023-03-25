@@ -129,14 +129,14 @@ class LocalFsFileStore private constructor(private val rootPath: String) : FileS
     }
 
     override fun delete(id: String): Boolean {
-        val file = File(parseId(id))
+        val file = File(rootPath, parseId(id))
         if (file.exists()) {
             if (!file.delete()) {
                 logger.error("Failed deletion of file: {}", file.absoluteFile)
                 return false
             }
         }
-        val file1 = File("${parseId(id)}.name")
+        val file1 = File(rootPath, "${parseId(id)}.name")
         if (file1.exists()) {
             if (!file1.delete()) {
                 logger.error("Failed deletion of file: {}", file1.absoluteFile)
