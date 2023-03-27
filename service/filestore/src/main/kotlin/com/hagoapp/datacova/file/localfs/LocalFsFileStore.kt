@@ -7,7 +7,7 @@
 
 package com.hagoapp.datacova.file.localfs
 
-import com.hagoapp.datacova.file.FileInfo
+import com.hagoapp.datacova.file.StoreFileInfo
 import com.hagoapp.datacova.file.FileStore
 import org.slf4j.LoggerFactory
 import java.io.BufferedOutputStream
@@ -114,7 +114,7 @@ class LocalFsFileStore private constructor(private val rootPath: String) : FileS
         return FileInputStream(f)
     }
 
-    override fun getFileInfo(id: String): FileInfo {
+    override fun getFileInfo(id: String): StoreFileInfo {
         val fn = getNamingFile(parseId(id))
         if (!File(rootPath, fn).exists()) {
             throw FileNotFoundException("naming file $fn for $id not found")
@@ -125,7 +125,7 @@ class LocalFsFileStore private constructor(private val rootPath: String) : FileS
             throw FileNotFoundException("file $id not found")
         }
         val size = fn1.length()
-        return FileInfo(originalFileName, id, size)
+        return StoreFileInfo(originalFileName, id, size)
     }
 
     override fun delete(id: String): Boolean {

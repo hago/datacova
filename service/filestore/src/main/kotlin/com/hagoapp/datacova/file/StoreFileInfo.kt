@@ -7,7 +7,7 @@
 
 package com.hagoapp.datacova.file
 
-open class FileInfo(
+open class StoreFileInfo(
     open var originalFileName: String? = null,
     open var id: String? = null,
     open var size: Long? = null

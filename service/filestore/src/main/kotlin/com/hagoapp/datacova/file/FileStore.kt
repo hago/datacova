@@ -14,7 +14,7 @@ import kotlin.jvm.Throws
 interface FileStore {
     fun putFile(src: InputStream, fileName: String, size: Long): String
     fun getFile(id: String): InputStream
-    fun getFileInfo(id: String): FileInfo
+    fun getFileInfo(id: String): StoreFileInfo
 
     @Throws(FileNotFoundException::class, AccessDeniedException::class)
     fun delete(id: String): Boolean
