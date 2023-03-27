@@ -4,15 +4,14 @@ import { defineComponent, reactive } from 'vue';
 export default defineComponent({
     setup() {
         return reactive({
-            
+
         })
     }
 })
 </script>
 
 <template>
-    <div>Parquet</div>
+    <h1>Parquet File</h1>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

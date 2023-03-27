@@ -61,6 +61,7 @@ class DataFile {
                     fileName.endsWith(".csv", true) -> FileInfoCsv.FILE_TYPE_CSV
                     fileName.endsWith(".xls", true) -> FileInfoExcel.FILE_TYPE_EXCEL
                     fileName.endsWith(".xlsx", true) -> FileInfoExcelX.FILE_TYPE_EXCEL_OPEN_XML
+                    fileName.endsWith(".parquet", true) -> FileInfoParquet.FILE_TYPE_PARQUET
                     else -> FileInfo.FILE_TYPE_UNDETERMINED
                 }
             }
