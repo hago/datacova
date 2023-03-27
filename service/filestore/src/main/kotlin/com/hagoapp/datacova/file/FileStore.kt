@@ -18,4 +18,6 @@ interface FileStore {
 
     @Throws(FileNotFoundException::class, AccessDeniedException::class)
     fun delete(id: String): Boolean
+
+    fun exists(id: String): Boolean
 }

@@ -66,6 +66,7 @@ class LocalFsFileStore private constructor(private val rootPath: String) : FileS
                 }
                 out.write(buffer, 0, i)
             }
+            out.flush()
         }
         return File(internal).toPath().fileName.name
     }
@@ -144,5 +145,10 @@ class LocalFsFileStore private constructor(private val rootPath: String) : FileS
             }
         }
         return true
+    }
+
+    override fun exists(id: String): Boolean {
+        val fn = parseId(id)
+        return File(rootPath, fn).exists() && File(rootPath, getNamingFile(fn)).exists()
     }
 }

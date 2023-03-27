@@ -11,8 +11,10 @@ import com.hagoapp.datacova.file.localfs.LocalFsFileStore
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestMethodOrder
 import org.slf4j.LoggerFactory
 import java.io.ByteArrayInputStream
 import java.io.File
@@ -27,7 +29,7 @@ import kotlin.random.Random
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-
+@TestMethodOrder(OrderAnnotation::class)
 class LocalFsTest {
 
     companion object {
@@ -48,6 +50,7 @@ class LocalFsTest {
         @JvmStatic
         @BeforeAll
         fun initStore() {
+            logger.debug("init")
             val hay = rand.nextInt(Integer.MAX_VALUE)
             val md5 = MessageDigest.getInstance("md5")
             val rootPath = md5.digest(hay.toString().toByteArray())
@@ -59,6 +62,7 @@ class LocalFsTest {
         @JvmStatic
         @AfterAll()
         fun cleanUp() {
+            logger.debug("cleanup")
             try {
                 File(testRootPath).deleteRecursively()
                 logger.debug("LocalFs file store for test is deleted: {}", testRootPath)
@@ -71,15 +75,25 @@ class LocalFsTest {
     @Test
     @Order(1)
     fun testWriteFile() {
+        logger.debug("write file")
         ByteArrayInputStream(data).use { src ->
             id = store.putFile(src, testFileName, len.toLong())
             logger.debug("File saved, returned id: {}", id)
+            //Assertions.assertTrue(store.exists(id))
         }
     }
 
     @Test
     @Order(2)
+    fun testExists() {
+        logger.debug("file exists?")
+        Assertions.assertTrue(store.exists(id))
+    }
+
+    @Test
+    @Order(3)
     fun testReadFile() {
+        logger.debug("read file")
         store.getFile(id).use { stream ->
             {
                 val buffer = ByteArray(1)
@@ -94,8 +108,16 @@ class LocalFsTest {
     }
 
     @Test
-    @Order(3)
+    @Order(4)
     fun testDeleteFile() {
+        logger.debug("delete file")
         Assertions.assertTrue(store.delete(id))
+    }
+
+    @Test
+    @Order(5)
+    fun testNotExists() {
+        logger.debug("file not exists?")
+        Assertions.assertFalse(store.exists(id))
     }
 }
