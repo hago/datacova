@@ -10,7 +10,11 @@ import ExcelExtra from '@/components/task/upload/ExcelExtra.vue';
 import CsvExtra from '@/components/task/upload/CsvExtra.vue';
 import ParquetExtra from '@/components/task/upload/ParquetExtra.vue';
 import UnsupportedUpload from '@/components/task/upload/UnsupportedUpload.vue';
-import type { BaseFileInfo } from '@/entities/datafile/BaseFileInfo';
+import uploadApiHelper, { type UploadedFileInfo } from '@/api/uploadapi';
+import { FILE_TYPE_CSV } from '@/entities/datafile/CsvFileInfo';
+import { FILE_TYPE_EXCEL } from '@/entities/datafile/ExcelFileInfo';
+import { FILE_TYPE_EXCEL_OOXML } from '@/entities/datafile/ExcelXFileInfo';
+import { FILE_TYPE_PARQUET } from '@/entities/datafile/ParquetFileInfo';
 
 export default defineComponent({
     components: { ExcelExtra, CsvExtra, ParquetExtra, UnsupportedUpload },
@@ -20,12 +24,11 @@ export default defineComponent({
             darkTheme,
             columns: [] as { title: string, key: string }[],
             data: [] as any[],
-            uploadOptions: null as UploadCustomRequestOptions | null,
-            fileType: undefined as 'Excel' | 'CSV' | 'Parquet' | null | undefined,
-            fileInfo: {
-                filename: '',
-                type: 0
-            } as BaseFileInfo
+            uploaded: null as null | UploadedFileInfo,
+            FILE_TYPE_CSV,
+            FILE_TYPE_EXCEL,
+            FILE_TYPE_EXCEL_OOXML,
+            FILE_TYPE_PARQUET
         })
     },
     mounted() {
@@ -39,30 +42,9 @@ export default defineComponent({
         })
     },
     methods: {
-        selectFile(uploadCustomRequestOptions: UploadCustomRequestOptions) {
-            this.uploadOptions = uploadCustomRequestOptions
-            let ext = this.uploadOptions.file.name.toLocaleLowerCase()
-            if (ext.endsWith('.xls') || ext.endsWith('.xlsx')) {
-                this.fileType = 'Excel'
-            } else if (ext.endsWith('csv')) {
-                this.fileType = 'CSV'
-            } else {
-                this.fileType = null
-            }
-        },
-        preview() {
-            let user = identityStore().currentIdentity()
-            taskApiHelper.previewFile(user, this.uploadOptions!.file.file!, this.fileInfo).then(rsp => {
-                this.columns = rsp.data.columns.map(col => ({ title: col, key: col }))
-                this.data = rsp.data.rows.map(row => {
-                    let r = {} as {
-                        [key: string]: any
-                    }
-                    for (let i = 0; i < rsp.data.columns.length; i++) {
-                        r[this.columns[i].title] = row[i]
-                    }
-                    return r
-                })
+        uploadFile(uploadCustomRequestOptions: UploadCustomRequestOptions) {
+            uploadApiHelper.uploadFile(identityStore().currentIdentity(), uploadCustomRequestOptions.file.file!).then(rsp => {
+                this.uploaded = rsp.data[0]
             }).catch(err => {
                 eventBus.send(EVENT_REMOTE_API_ERROR, err)
             })
@@ -89,19 +71,20 @@ export default defineComponent({
             <n-gi></n-gi>
             <n-gi span="4">
                 <n-input-group>
-                    <n-upload :custom-request="selectFile" :show-file-list="false">
-                        <n-button>Select File</n-button>
+                    <n-upload :custom-request="uploadFile" :show-file-list="false">
+                        <n-button>Upload File</n-button>
                     </n-upload>
-                    <n-button v-if="uploadOptions !== null" @click="preview">Preview</n-button>
+                    <n-button v-if="uploaded !== null">Preview</n-button>
                 </n-input-group>
             </n-gi>
             <n-gi></n-gi>
             <n-gi></n-gi>
             <n-gi span="4">
-                <ExcelExtra :fileInfo="fileInfo" v-if="fileType === 'Excel'"></ExcelExtra>
-                <CsvExtra :fileInfo="fileInfo" v-if="fileType === 'CSV'"></CsvExtra>
-                <ParquetExtra :fileInfo="fileInfo" v-if="fileType === 'Parquet'"></ParquetExtra>
-                <UnsupportedUpload :fileInfo="fileInfo" v-if="fileType === null"></UnsupportedUpload>
+                <ExcelExtra :fileInfo="uploaded"
+                    v-if="uploaded?.type === FILE_TYPE_EXCEL || uploaded?.type === FILE_TYPE_EXCEL_OOXML"></ExcelExtra>
+                <CsvExtra :fileInfo="uploaded" v-else-if="uploaded?.type === FILE_TYPE_CSV"></CsvExtra>
+                <ParquetExtra :fileInfo="uploaded" v-else-if="uploaded?.type === FILE_TYPE_PARQUET"></ParquetExtra>
+                <UnsupportedUpload :fileInfo="uploaded" v-else></UnsupportedUpload>
             </n-gi>
             <n-gi></n-gi>
             <n-gi></n-gi>

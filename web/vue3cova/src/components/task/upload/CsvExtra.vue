@@ -1,18 +1,18 @@
 <script lang="ts">
+import type { UploadedFileInfo } from '@/api/uploadapi';
 import { Charsets } from '@/entities/charsets';
-import type { BaseFileInfo } from '@/entities/datafile/BaseFileInfo';
-import { fromBaseFileInfo } from '@/entities/datafile/CsvFileInfo';
+import type { CsvFileInfo } from '@/entities/datafile/CsvFileInfo';
 import { defineComponent, reactive, type PropType } from 'vue';
 
 export default defineComponent({
     props: {
         fileInfo: {
-            type: Object as PropType<BaseFileInfo>,
+            type: Object as PropType<UploadedFileInfo>,
             required: true
         }
     },
     setup(props) {
-        let info = fromBaseFileInfo(props.fileInfo)
+        let info = props.fileInfo.extra as CsvFileInfo
         return reactive({
             encodings: Charsets.map(c => ({ label: c, value: c })),
             info
@@ -22,6 +22,7 @@ export default defineComponent({
 </script>
 
 <template>
+    <h1>CSV file</h1>
     <n-grid cols="2">
         <n-gi>
             <n-input-group>
