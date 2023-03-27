@@ -14,3 +14,5 @@ export const fromBaseFileInfo = (info: BaseFileInfo): CsvFileInfo => {
     }
     return ret
 }
+
+export const FILE_TYPE_CSV = 1
