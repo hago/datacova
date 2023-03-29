@@ -10,6 +10,9 @@ package com.hagoapp.datacova.util
 
 import com.hagoapp.datacova.CoVaException
 import java.io.File
+import java.io.IOException
+import java.io.InputStream
+import java.io.OutputStream
 import java.math.BigInteger
 import java.nio.file.FileSystems
 import java.nio.file.Files
@@ -138,6 +141,19 @@ class Utils {
             }
             ret.addAll(path0.split(delimiter))
             return ret
+        }
+
+        @JvmStatic
+        @Throws(IOException::class)
+        fun copyStream(fis: InputStream, fos: OutputStream, bufferSize: Int = 1024 * 1024 * 10) {
+            val buffer = ByteArray(bufferSize)
+            while (true) {
+                val i = fis.read(buffer, 0, buffer.size)
+                if (i < 0) {
+                    break
+                }
+                fos.write(buffer, 0, i)
+            }
         }
     }
 }
