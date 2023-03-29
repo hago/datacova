@@ -94,6 +94,8 @@ class LocalFsTest {
     @Order(3)
     fun testReadFile() {
         logger.debug("read file")
+        val info = store.getFileInfo(id)
+        logger.debug("file info: {}", info)
         store.getFile(id).use { stream ->
             {
                 val buffer = ByteArray(1)
