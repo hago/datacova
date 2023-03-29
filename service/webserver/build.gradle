@@ -29,8 +29,8 @@ dependencies {
     implementation project(':filestore')
 
     implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.36'
-    implementation group: 'ch.qos.logback', name:'logback-classic', version: '1.2.3'
-    implementation group: 'ch.qos.logback', name: 'logback-core', version:  '1.2.3'
+    implementation group: 'ch.qos.logback', name:'logback-classic', version: '1.2.9'
+    implementation group: 'ch.qos.logback', name: 'logback-core', version: '1.2.9'
 
     implementation group: 'org.apache.poi', name: 'poi', version: '4.1.2'
     implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '4.1.2'
@@ -50,10 +50,10 @@ dependencies {
     implementation group: 'com.github.felfert', name: 'cidrutils', version: '1.4'
 
     implementation group: 'com.jcraft', name: 'jsch', version: '0.1.55'
-    implementation group: 'com.azure', name: 'azure-storage-blob', version: '12.15.0'
+    implementation group: 'com.azure', name: 'azure-storage-blob', version: '12.18.0'
     //implementation platform('com.amazonaws:aws-java-sdk-bom:1.11.1000')
     //implementation 'com.amazonaws:aws-java-sdk-s3'
-    implementation group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.12.182'
+    implementation group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.12.232'
 
     implementation group: 'com.sun.mail', name: 'javax.mail', version: '1.6.2'
 
@@ -65,7 +65,7 @@ dependencies {
     runtimeOnly 'org.mariadb.jdbc:mariadb-java-client:3.0.6'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
-    testImplementation group: 'ch.qos.logback', name:'logback-classic', version: '1.2.3'
+    testImplementation group: 'ch.qos.logback', name:'logback-classic', version: '1.2.9'
 
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
     testRuntimeOnly fileTree('libs') { include '*.jar' }

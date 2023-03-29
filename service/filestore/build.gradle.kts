@@ -10,8 +10,8 @@ dependencies {
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
-    testRuntimeOnly("ch.qos.logback:logback-classic:1.2.3")
-    testRuntimeOnly("ch.qos.logback:logback-core:1.2.3")
+    testRuntimeOnly("ch.qos.logback:logback-classic:1.2.9")
+    testRuntimeOnly("ch.qos.logback:logback-core:1.2.9")
 }
 
 tasks.withType(JavaCompile::class).configureEach {
