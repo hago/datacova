@@ -17,4 +17,11 @@ export const fromBaseFileInfo = (info: BaseFileInfo): ExcelFileInfo => {
     return ret
 }
 
+export const emptyExcelFileInfo = (): ExcelFileInfo => ({
+    filename: '',
+    type: 2,
+    sheetIndex: 0,
+    sheetName: null
+})
+
 export const FILE_TYPE_EXCEL = 2
