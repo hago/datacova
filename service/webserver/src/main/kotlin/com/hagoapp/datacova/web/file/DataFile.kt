@@ -2,11 +2,14 @@ package com.hagoapp.datacova.web.file
 
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.file.localfs.LocalFsFileStore
+import com.hagoapp.datacova.util.Utils
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.MethodName
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import com.hagoapp.datacova.web.authentication.AuthType
 import com.hagoapp.f2t.datafile.FileInfo
+import com.hagoapp.f2t.datafile.FileInfoReader
+import com.hagoapp.f2t.datafile.ReaderFactory
 import com.hagoapp.f2t.datafile.csv.FileInfoCsv
 import com.hagoapp.f2t.datafile.excel.ExcelDataFileParser
 import com.hagoapp.f2t.datafile.excel.ExcelInfo
@@ -16,9 +19,13 @@ import com.hagoapp.f2t.datafile.parquet.FileInfoParquet
 import com.hagoapp.util.EncodingUtils
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.ext.web.RoutingContext
+import java.io.File
 import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.io.InputStream
 import java.nio.charset.Charset
+import java.nio.charset.StandardCharsets
+import java.util.UUID
 
 class DataFile {
     @WebEndPoint(
@@ -90,5 +97,55 @@ class DataFile {
 
     private fun excelXInfo(stream: InputStream): ExcelInfo {
         return excelInfo(stream)
+    }
+
+    @WebEndPoint(
+        methods = [MethodName.POST],
+        path = "/api/file/preview/:id/:count",
+        authTypes = [AuthType.UserToken]
+    )
+    fun previewFile(context: RoutingContext) {
+        val id = context.pathParam("id")
+        val count = context.pathParam("count").toIntOrNull() ?: 20
+        val fs = LocalFsFileStore.getFileStore(CoVaConfig.getConfig().fileStorage.uploadDirectory)
+        if (!fs.exists(id)) {
+            ResponseHelper.sendResponse(context, HttpResponseStatus.NOT_FOUND)
+            return
+        }
+        val info = fs.getFileInfo(id)
+        val tmpFile = File(
+            CoVaConfig.getConfig().fileStorage.tempDirectory,
+            UUID.randomUUID().toString() + info.originalFileName
+        )
+        fs.getFile(id).use { fis ->
+            FileOutputStream(tmpFile).use { fos ->
+                Utils.copyStream(fis, fos)
+            }
+        }
+        val metaInfo = FileInfoReader.createFileInfo(
+            context.body().asString(StandardCharsets.UTF_8.name()).toByteArray(StandardCharsets.UTF_8)
+        )
+        metaInfo.filename = tmpFile.absolutePath
+        val columns: List<String>
+        val data: List<List<String?>>
+        ReaderFactory.getReader(metaInfo, false).use { reader ->
+            reader.open(metaInfo)
+            columns = reader.findColumns().map { it.name }
+            data = mutableListOf()
+            for (i in 0 until count) {
+                val row = reader.next()
+                data.add(row.cells.map { cell -> cell.data?.toString() })
+            }
+        }
+        tmpFile.delete()
+        ResponseHelper.sendResponse(
+            context, HttpResponseStatus.OK, mapOf(
+                "code" to 0,
+                "data" to mapOf(
+                    "columns" to columns,
+                    "data" to data
+                )
+            )
+        )
     }
 }
