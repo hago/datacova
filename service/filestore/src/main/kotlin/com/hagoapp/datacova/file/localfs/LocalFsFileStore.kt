@@ -116,12 +116,12 @@ class LocalFsFileStore private constructor(private val rootPath: String) : FileS
     }
 
     override fun getFileInfo(id: String): StoreFileInfo {
-        val fn = getNamingFile(parseId(id))
-        if (!File(rootPath, fn).exists()) {
-            throw FileNotFoundException("naming file $fn for $id not found")
+        val fn = File(rootPath, getNamingFile(parseId(id)))
+        if (!fn.exists()) {
+            throw FileNotFoundException("naming file ${fn.absolutePath} for $id not found")
         }
         val originalFileName = FileInputStream(fn).use { it.readAllBytes().toString(StandardCharsets.UTF_8) }
-        val fn1 = File(parseId(id))
+        val fn1 = File(rootPath, parseId(id))
         if (!fn1.exists()) {
             throw FileNotFoundException("file $id not found")
         }
