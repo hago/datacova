@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { UploadedFileInfo } from '@/api/uploadapi';
+import type { ExcelFileInfo } from '@/entities/datafile/ExcelFileInfo';
 import type { ExcelInfo } from '@/entities/datafile/ExcelInfo';
 import { defineComponent, reactive, type PropType } from 'vue';
 
@@ -8,14 +9,17 @@ export default defineComponent({
         fileInfo: {
             type: Object as PropType<UploadedFileInfo>,
             required: true
+        },
+        metaInfo: {
+            type: Object as PropType<ExcelFileInfo>,
+            required: true
         }
     },
     setup(props) {
         let info = props.fileInfo.extra as ExcelInfo
         return reactive({
             info,
-            sheets: info.sheets.map((sh, i) => ({ label: sh.name, value: i })),
-            sheetIndex: 0
+            sheets: info.sheets.map((sh, i) => ({ label: sh.name, value: i }))
         })
     }
 })
@@ -25,7 +29,7 @@ export default defineComponent({
     <div>Excel File</div>
     <n-input-group>
         <div class="sheet">Sheet</div>
-        <n-select :options="sheets" v-model:value="sheetIndex"></n-select>
+        <n-select :options="sheets" v-model:value="metaInfo.sheetIndex"></n-select>
     </n-input-group>
 </template>
 
