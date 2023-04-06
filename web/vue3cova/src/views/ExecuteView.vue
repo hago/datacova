@@ -23,7 +23,9 @@ export default defineComponent({
             task: null as Task | null,
             darkTheme,
             columns: [] as { title: string, key: string }[],
-            data: [] as any[],
+            data: [] as {
+                [key: string]: string | null
+            }[],
             uploaded: undefined as undefined | null | UploadedFileInfo,
             FILE_TYPE_CSV,
             FILE_TYPE_EXCEL,
@@ -44,6 +46,7 @@ export default defineComponent({
     },
     methods: {
         uploadFile(uploadCustomRequestOptions: UploadCustomRequestOptions) {
+            this.columns = []
             uploadApiHelper.uploadFile(identityStore().currentIdentity(), uploadCustomRequestOptions.file.file!).then(rsp => {
                 this.uploaded = rsp.data[0]
                 this.metaInfo = this.createMeta(rsp.data[0])
@@ -53,8 +56,15 @@ export default defineComponent({
         },
         preview() {
             uploadApiHelper.previewFile(identityStore().currentIdentity(), this.uploaded!!.id, this.metaInfo).then(rsp => {
-                this.columns = rsp.data.columns.map(i => ({ title: i === null ? "" : i, key: i === null ? "" : i }))
-
+                this.columns = rsp.data.columns.map(i => ({ title: i, key: i }))
+                let cols = this.columns
+                this.data = rsp.data.data.map(line => {
+                    let row = {} as { [key: string]: string | null }
+                    line.forEach((cell, i) => {
+                        row[cols[i].title] = cell
+                    })
+                    return row
+                })
             }).catch(err => {
                 eventBus.send(EVENT_REMOTE_API_ERROR, err)
             })
@@ -115,7 +125,7 @@ export default defineComponent({
             <n-gi></n-gi>
             <n-gi></n-gi>
             <n-gi span="4">
-                <n-data-table :columns="columns" :data="data" :bordered="false" v-if="data.length > 0" />
+                <n-data-table :columns="columns" :data="data" :bordered="false" v-if="columns.length > 0" />
             </n-gi>
             <n-gi></n-gi>
         </n-grid>

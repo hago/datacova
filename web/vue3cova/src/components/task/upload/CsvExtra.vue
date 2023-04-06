@@ -9,13 +9,15 @@ export default defineComponent({
         fileInfo: {
             type: Object as PropType<UploadedFileInfo>,
             required: true
+        },
+        metaInfo: {
+            type: Object as PropType<CsvFileInfo>,
+            required: true
         }
     },
     setup(props) {
-        let info = props.fileInfo.extra as CsvFileInfo
         return reactive({
-            encodings: Charsets.map(c => ({ label: c, value: c })),
-            info
+            encodings: Charsets.map(c => ({ label: c, value: c }))
         })
     }
 })
@@ -27,19 +29,19 @@ export default defineComponent({
         <n-gi>
             <n-input-group>
                 <div :bordered="false" class="attrname">Quote</div>
-                <n-input type="text" placeholder='"' v-model:value="info.quote" />
+                <n-input type="text" placeholder='"' v-model:value="metaInfo.quote" />
             </n-input-group>
         </n-gi>
         <n-gi>
             <n-input-group>
                 <div :bordered="false" class="attrname">Delimiter</div>
-                <n-input type="text" placeholder=',' v-model:value="info.delimiter" />
+                <n-input type="text" placeholder=',' v-model:value="metaInfo.delimiter" />
             </n-input-group>
         </n-gi>
         <n-gi>
             <n-input-group>
                 <div :bordered="false" class="attrname">Delimiter</div>
-                <n-select :options="encodings" filterable v-model:value="info.encoding"
+                <n-select :options="encodings" filterable v-model:value="metaInfo.encoding"
                     :fallback-option="(v: string | number) => ({ label: 'auto', value: null })" />
             </n-input-group>
         </n-gi>
