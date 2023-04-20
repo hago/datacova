@@ -4,6 +4,7 @@ import type { ExcelInfo } from "@/entities/datafile/ExcelInfo"
 import type Identity from "@/entities/identity"
 import { fromFetchResponse, type BaseResponse } from "./baseresponse"
 import { addJsonRequestHeader, addTokenHeader } from "./credential"
+import type { TaskExecution } from "@/entities/execution/taskexecution"
 
 export interface UploadedFileInfo {
     originalName: string
@@ -23,6 +24,10 @@ export interface PreviewResponse extends BaseResponse {
     }
 }
 
+export interface ExecuteResponse extends BaseResponse {
+    data: TaskExecution
+}
+
 export class UploadApi {
     constructor() {
         //
@@ -40,9 +45,21 @@ export class UploadApi {
         return fromFetchResponse(rsp)
     }
 
-    async previewFile(user: Identity, fileId: string, fileInfo: Object | undefined | null, rowCount = 20): Promise<PreviewResponse> {
+    async previewFile(user: Identity, fileId: string, fileInfo: Object | undefined | null, rowCount = 20)
+        : Promise<PreviewResponse> {
         let headers = addJsonRequestHeader(addTokenHeader(user))
         let rsp = await fetch(`/api/file/preview/${fileId}/${rowCount}`, {
+            headers: headers,
+            method: "POST",
+            body: JSON.stringify(fileInfo)
+        })
+        return fromFetchResponse(rsp)
+    }
+
+    async executeTaskFile(user: Identity, workspaceId: number, taskId: number, fileId: string,
+        fileInfo: Object | undefined | null): Promise<ExecuteResponse> {
+        let headers = addJsonRequestHeader(addTokenHeader(user))
+        let rsp = await fetch(`/api/file/execute/${fileId}/task/${workspaceId}/${taskId}`, {
             headers: headers,
             method: "POST",
             body: JSON.stringify(fileInfo)

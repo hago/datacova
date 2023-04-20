@@ -20,6 +20,7 @@ export default defineComponent({
     components: { ExcelExtra, CsvExtra, ParquetExtra, UnsupportedUpload },
     setup() {
         return reactive({
+            workspaceId: 0,
             task: null as Task | null,
             darkTheme,
             columns: [] as { title: string, key: string }[],
@@ -36,9 +37,9 @@ export default defineComponent({
     },
     mounted() {
         //console.log(this.$route.params.workspaceid, this.$route.params.id)
-        let workspaceid = parseInt(this.$route.params.workspaceid as string)
+        this.workspaceId = parseInt(this.$route.params.workspaceid as string)
         let taskId = parseInt(this.$route.params.id as string)
-        taskApiHelper.getTask(identityStore().currentIdentity(), workspaceid, taskId).then(rsp => {
+        taskApiHelper.getTask(identityStore().currentIdentity(), this.workspaceId, taskId).then(rsp => {
             this.task = rsp.data
         }).catch(err => {
             eventBus.send(EVENT_REMOTE_API_ERROR, err)
@@ -81,6 +82,15 @@ export default defineComponent({
                 default:
                     return undefined
             }
+        },
+        execute() {
+            let user = identityStore().currentIdentity()
+            uploadApiHelper.executeTaskFile(user, this.workspaceId, this.task!!.id, this.uploaded!!.id, this.metaInfo)
+            .then(rsp => {
+                console.log(rsp)
+            }).catch(err => {
+                eventBus.send(EVENT_REMOTE_API_ERROR, err)
+            })
         }
     }
 })
@@ -108,6 +118,7 @@ export default defineComponent({
                         <n-button>Upload File</n-button>
                     </n-upload>
                     <n-button v-if="uploaded !== null && uploaded !== undefined" @click="preview">Preview</n-button>
+                    <n-button v-if="uploaded !== null && uploaded !== undefined" @click="execute">Execute</n-button>
                 </n-input-group>
             </n-gi>
             <n-gi></n-gi>
