@@ -24,7 +24,7 @@ dependencies {
     implementation 'io.vertx:vertx-lang-kotlin:4.3.0'
     implementation 'io.vertx:vertx-web:4.3.0'
 
-    implementation 'com.hagoapp:f2t:0.7.6'
+    implementation 'com.hagoapp:f2t:0.8'
     implementation project(':surveyor')
     implementation project(':filestore')
 
@@ -32,10 +32,10 @@ dependencies {
     implementation group: 'ch.qos.logback', name:'logback-classic', version: '1.2.9'
     implementation group: 'ch.qos.logback', name: 'logback-core', version: '1.2.9'
 
-    implementation group: 'org.apache.poi', name: 'poi', version: '4.1.2'
-    implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '4.1.2'
+    implementation group: 'org.apache.poi', name: 'poi', version: '5.2.3'
+    implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '5.2.3'
     implementation group: "org.apache.directory.api", name: "api-all", version: "2.0.1"
-    implementation group: 'commons-net', name: 'commons-net', version: '3.7.2'
+    implementation group: 'commons-net', name: 'commons-net', version: '3.9.0'
 
     implementation group: 'com.github.felfert', name: 'cidrutils', version: '1.4'
 
@@ -50,7 +50,7 @@ dependencies {
     implementation group: 'com.github.felfert', name: 'cidrutils', version: '1.4'
 
     implementation group: 'com.jcraft', name: 'jsch', version: '0.1.55'
-    implementation group: 'com.azure', name: 'azure-storage-blob', version: '12.18.0'
+    implementation group: 'com.azure', name: 'azure-storage-blob', version: '12.22.0'
     //implementation platform('com.amazonaws:aws-java-sdk-bom:1.11.1000')
     //implementation 'com.amazonaws:aws-java-sdk-s3'
     implementation group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.12.232'
