@@ -10,5 +10,6 @@ package com.hagoapp.datacova.file
 open class StoreFileInfo(
     open var originalFileName: String? = null,
     open var id: String? = null,
-    open var size: Long? = null
+    open var size: Long? = null,
+    open var actualPath: String? = null
 )
