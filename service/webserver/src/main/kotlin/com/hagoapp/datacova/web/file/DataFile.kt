@@ -1,12 +1,21 @@
 package com.hagoapp.datacova.web.file
 
 import com.hagoapp.datacova.config.CoVaConfig
+import com.hagoapp.datacova.data.execution.TaskExecutionCache
+import com.hagoapp.datacova.data.execution.TaskExecutionData
+import com.hagoapp.datacova.data.workspace.TaskCache
+import com.hagoapp.datacova.data.workspace.WorkspaceCache
+import com.hagoapp.datacova.dispatcher.Dispatcher
+import com.hagoapp.datacova.entity.execution.ExecutionFileInfo
+import com.hagoapp.datacova.entity.execution.TaskExecution
 import com.hagoapp.datacova.file.localfs.LocalFsFileStore
 import com.hagoapp.datacova.util.Utils
+import com.hagoapp.datacova.util.WorkspaceUserRoleUtil
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.MethodName
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import com.hagoapp.datacova.web.authentication.AuthType
+import com.hagoapp.datacova.web.authentication.Authenticator
 import com.hagoapp.f2t.datafile.FileInfo
 import com.hagoapp.f2t.datafile.FileInfoReader
 import com.hagoapp.f2t.datafile.ReaderFactory
@@ -145,6 +154,58 @@ class DataFile {
                     "columns" to columns,
                     "data" to data
                 )
+            )
+        )
+    }
+
+    @WebEndPoint(
+        methods = [MethodName.POST],
+        path = "/api/file/execute/:id/task/:wkid/:taskid",
+        authTypes = [AuthType.UserToken]
+    )
+    fun execute(context: RoutingContext) {
+        val user = Authenticator.getUser(context)
+        val workspaceId = context.pathParam("wkid").toInt()
+        val workSpace = WorkspaceCache.getWorkspace(workspaceId)
+        if ((workSpace == null) || !WorkspaceUserRoleUtil.isUser(user, workspaceId)) {
+            ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, "access denied")
+            return
+        }
+        val id = context.pathParam("id")
+        val taskId = context.pathParam("taskid").toInt()
+        val fs = LocalFsFileStore.getFileStore(CoVaConfig.getConfig().fileStorage.uploadDirectory)
+        if (!fs.exists(id)) {
+            ResponseHelper.sendResponse(context, HttpResponseStatus.NOT_FOUND)
+            return
+        }
+        val info = fs.getFileInfo(id)
+        val metaInfo = FileInfoReader.createFileInfo(
+            context.body().asString(StandardCharsets.UTF_8.name()).toByteArray(StandardCharsets.UTF_8)
+        )
+        val exec = TaskExecutionData(CoVaConfig.getConfig().database).use { db ->
+            val eai = ExecutionFileInfo()
+            metaInfo.filename = info.actualPath!!
+            with(eai) {
+                originalName = info.originalFileName
+                size = info.size!!
+                fileInfo = metaInfo
+            }
+            val execTask = TaskExecution()
+            val task = TaskCache.getTask(workspaceId, taskId)
+            with(execTask) {
+                this.taskId = taskId
+                this.addBy = user.id
+                fileInfo = eai
+                this.task = task
+            }
+            db.createTaskExecution(execTask)
+        }
+        TaskExecutionCache.clearWorkspaceTaskExecutions(workspaceId)
+        Dispatcher.get().executionComing(exec)
+        ResponseHelper.sendResponse(
+            context, HttpResponseStatus.OK, mapOf(
+                "code" to 0,
+                "data" to exec
             )
         )
     }
