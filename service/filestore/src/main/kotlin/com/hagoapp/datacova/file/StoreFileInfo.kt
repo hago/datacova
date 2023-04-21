@@ -7,9 +7,11 @@
 
 package com.hagoapp.datacova.file
 
+/**
+ * Meta information for a file stored in store.
+ */
 open class StoreFileInfo(
     open var originalFileName: String? = null,
     open var id: String? = null,
-    open var size: Long? = null,
-    open var actualPath: String? = null
+    open var size: Long? = null
 )

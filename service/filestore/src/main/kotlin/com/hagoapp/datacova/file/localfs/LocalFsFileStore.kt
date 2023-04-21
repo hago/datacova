@@ -126,7 +126,7 @@ class LocalFsFileStore private constructor(private val rootPath: String) : FileS
             throw FileNotFoundException("file $id not found")
         }
         val size = fn1.length()
-        return StoreFileInfo(originalFileName, id, size, fn1.absolutePath)
+        return StoreFileInfo(originalFileName, id, size)
     }
 
     override fun delete(id: String): Boolean {
