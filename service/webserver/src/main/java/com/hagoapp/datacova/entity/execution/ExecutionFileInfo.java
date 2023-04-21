@@ -23,6 +23,16 @@ public class ExecutionFileInfo implements JsonStringify {
     private long size;
     private FileInfo fileInfo;
 
+    private String fileId;
+
+    public String getFileId() {
+        return fileId;
+    }
+
+    public void setFileId(String fileId) {
+        this.fileId = fileId;
+    }
+
     public void setOriginalName(String originalName) {
         this.originalName = originalName;
     }
