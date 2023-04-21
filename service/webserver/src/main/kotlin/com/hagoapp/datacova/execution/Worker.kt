@@ -30,6 +30,7 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
     private val detail = ExecutionDetail(taskExecution)
     private var currentActionDetail: ExecutionActionDetail? = null
     private var currentActionIndex: Int = 0
+    private val watcherMethods = TaskExecutionWatcher::class.java.methods.associateBy { it.name }
 
     fun addWatcher(watcher: TaskExecutionWatcher): Worker {
         observers.add(watcher)
@@ -44,27 +45,40 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
         }
     }
 
+    private fun callObservers(watcher: TaskExecutionWatcher, methodName: String, vararg params: Any?) {
+        val m = watcherMethods[methodName]
+        if (m == null) {
+            logger.error("No method '{}' for TaskExecutionWatcher", methodName)
+            return
+        }
+        try {
+            m.invoke(watcher, *params)
+        } catch (e: Throwable) {
+            logger.warn("Error occurs in {} event of {}", methodName, watcher)
+        }
+    }
+
     fun execute() {
         detail.startTiming()
-        observers.forEach { it.onStart(taskExec) }
+        observers.forEach { callObservers(it, "onStart", taskExec) }
         val dt: DataTable<FileColumnDefinition>
         try {
-            observers.forEach { it.onDataLoadStart(taskExec) }
+            observers.forEach { callObservers(it, "onDataLoadStart", taskExec) }
             taskExec.fileInfo.fileInfo.filename =
                 FileStoreUtils.getUploadedFileStore().getFullFileName(taskExec.fileInfo.fileInfo.filename!!)
             val parser = FileParser(taskExec.fileInfo.fileInfo)
             dt = parser.extractData()
-            observers.forEach { it.onDataLoadComplete(taskExec, true) }
+            observers.forEach { callObservers(it, "onDataLoadComplete", taskExec, true) }
             detail.lineCount = dt.rows.size
         } catch (ex: Exception) {
             val msg =
                 "Data source loading fail, abort execution ${taskExec.id} of task ${taskExec.task.name}(${taskExec.taskId})"
             logger.error(msg)
-            observers.forEach { it.onError(taskExec, ex) }
-            observers.forEach { it.onDataLoadComplete(taskExec, false) }
+            observers.forEach { callObservers(it, "onError", taskExec, ex) }
+            observers.forEach { callObservers(it, "onDataLoadComplete", taskExec, false) }
             detail.dataLoadingError = ex
             detail.endTiming()
-            observers.forEach { it.onComplete(taskExec, detail) }
+            observers.forEach { callObservers(it, "onComplete", taskExec, detail) }
             return
         }
         for (i in 0 until taskExec.task.actions.size) {
@@ -82,7 +96,7 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
                 executor.watcher = this
                 executor.execute(taskExec, action, dt)
                 currentActionDetail!!.end()
-                observers.forEach { it.onActionComplete(taskExec, i, currentActionDetail!!) }
+                observers.forEach { callObservers(it, "onActionComplete", taskExec, i, currentActionDetail!!) }
                 if ((i < taskExec.task.actions.size - 1) && !executor.mayContinueWhenDone()) {
                     logger.info("action $i: ${action.name} completed, and it prevents following actions to proceed")
                     break
@@ -92,7 +106,7 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
                 StackTraceWriter.write(ex, logger)
                 currentActionDetail!!.error = ex
                 currentActionDetail!!.end()
-                observers.forEach { it.onActionComplete(taskExec, i, currentActionDetail!!) }
+                observers.forEach { callObservers(it, "onActionComplete", taskExec, i, currentActionDetail!!) }
                 if (action.extra.continueNextWhenError) {
                     logger.info("continue next action of execution ${taskExec.id}")
                     continue
@@ -103,7 +117,7 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
             }
         }
         detail.endTiming()
-        observers.forEach { it.onComplete(taskExec, detail) }
+        observers.forEach { callObservers(it, "onComplete", taskExec, detail) }
     }
 
     /**
