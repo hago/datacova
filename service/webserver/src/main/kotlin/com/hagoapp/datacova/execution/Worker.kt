@@ -8,19 +8,25 @@
 
 package com.hagoapp.datacova.execution
 
+import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.execution.TaskExecutionData
 import com.hagoapp.datacova.entity.action.TaskAction
 import com.hagoapp.datacova.entity.execution.DataMessage
 import com.hagoapp.datacova.entity.execution.ExecutionActionDetail
 import com.hagoapp.datacova.entity.execution.ExecutionDetail
+import com.hagoapp.datacova.entity.execution.ExecutionFileInfo
 import com.hagoapp.datacova.entity.execution.TaskExecution
 import com.hagoapp.datacova.executor.Executor
+import com.hagoapp.datacova.file.localfs.LocalFsFileStore
 import com.hagoapp.datacova.util.FileStoreUtils
 import com.hagoapp.datacova.util.StackTraceWriter
 import com.hagoapp.f2t.DataTable
 import com.hagoapp.f2t.FileColumnDefinition
 import com.hagoapp.f2t.FileParser
 import org.slf4j.LoggerFactory
+import java.io.File
+import java.io.FileOutputStream
+import java.util.UUID
 
 class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExecutionWatcher {
 
@@ -58,14 +64,32 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
         }
     }
 
+    private fun createTempFile(fileInfo: ExecutionFileInfo): String {
+        val fs = LocalFsFileStore.getFileStore(CoVaConfig.getConfig().fileStorage.uploadDirectory)
+        val f = File(CoVaConfig.getConfig().fileStorage.tempDirectory, UUID.randomUUID().toString()).absolutePath
+        fs.getFile(fileInfo.fileId).use { reader ->
+            FileOutputStream(f).use { writer ->
+                val buffer = ByteArray(1024 * 1024 * 5)
+                while (true) {
+                    val i = reader.read(buffer, 0, buffer.size)
+                    if (i < 0) {
+                        break
+                    }
+                    writer.write(buffer, 0, i)
+                }
+            }
+        }
+        return f
+    }
+
     fun execute() {
         detail.startTiming()
         observers.forEach { callObservers(it, "onStart", taskExec) }
         val dt: DataTable<FileColumnDefinition>
+        observers.forEach { callObservers(it, "onDataLoadStart", taskExec) }
+        val tempFile = createTempFile(taskExec.fileInfo)
         try {
-            observers.forEach { callObservers(it, "onDataLoadStart", taskExec) }
-            taskExec.fileInfo.fileInfo.filename =
-                FileStoreUtils.getUploadedFileStore().getFullFileName(taskExec.fileInfo.fileInfo.filename!!)
+            taskExec.fileInfo.fileInfo.filename = tempFile
             val parser = FileParser(taskExec.fileInfo.fileInfo)
             dt = parser.extractData()
             observers.forEach { callObservers(it, "onDataLoadComplete", taskExec, true) }
@@ -80,6 +104,8 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
             detail.endTiming()
             observers.forEach { callObservers(it, "onComplete", taskExec, detail) }
             return
+        } finally {
+            File(tempFile).delete()
         }
         for (i in 0 until taskExec.task.actions.size) {
             currentActionIndex = i
