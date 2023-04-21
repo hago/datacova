@@ -184,11 +184,11 @@ class DataFile {
         )
         val exec = TaskExecutionData(CoVaConfig.getConfig().database).use { db ->
             val eai = ExecutionFileInfo()
-            metaInfo.filename = info.actualPath!!
             with(eai) {
                 originalName = info.originalFileName
                 size = info.size!!
                 fileInfo = metaInfo
+                fileId = info.id
             }
             val execTask = TaskExecution()
             val task = TaskCache.getTask(workspaceId, taskId)
