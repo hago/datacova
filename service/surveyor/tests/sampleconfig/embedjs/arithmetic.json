@@ -1,0 +1,27 @@
+{
+  "config": {
+    "configType": "com.hagoapp.embed.js",
+    "nullable": true,
+    "snippet": "(a, b, c) => a + b <= c",
+    "description": "",
+    "paramCount": 3
+  },
+  "cases": [
+    {
+      "expect": true,
+      "params": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "expect": false,
+      "params": [
+        1,
+        2,
+        2
+      ]
+    }
+  ]
+}
