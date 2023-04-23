@@ -1,0 +1,25 @@
+{
+  "config": {
+    "configType": "com.hagoapp.embed.js",
+    "nullable": true,
+    "snippet": "(function x(a, b) { return a**2 > b; })",
+    "description": "",
+    "paramCount": 2
+  },
+  "cases": [
+    {
+      "expect": true,
+      "params": [
+        3,
+        2
+      ]
+    },
+    {
+      "expect": false,
+      "params": [
+        1,
+        2
+      ]
+    }
+  ]
+}

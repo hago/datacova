@@ -29,7 +29,8 @@ class EmbedJsTest {
     )
 
     private val tests = listOf(
-        "tests/sampleconfig/embedjs/arithmetic.json"
+        "tests/sampleconfig/embedjs/arithmetic.json",
+        "tests/sampleconfig/embedjs/function.json"
     )
 
     @Test
