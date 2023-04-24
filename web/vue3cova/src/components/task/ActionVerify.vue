@@ -2,7 +2,7 @@
 import type { Task, TaskAction } from '@/entities/task/task';
 import {
     newTaskActionVerify, VerificationTypes, isRegexRule, isOptionsRule, newVerifyConfiguration, isNumberRangeRule,
-    isPythonRule, isTimeRangeRule, isRelativeTimeRangeRule
+    isPythonRule, isTimeRangeRule, isRelativeTimeRangeRule, isJsRule
 } from '@/entities/task/taskverify';
 import { defineComponent, type PropType } from 'vue';
 import RegexRule from './verify/RegexRule.vue';
@@ -11,9 +11,10 @@ import NumberRangeRule from './verify/NumberRangeRule.vue';
 import PythonRule from './verify/PythonRule.vue';
 import TimeRangeRule from './verify/TimeRangeRule.vue';
 import RelativeTimeRangeRule from './verify/RelativeTimeRangeRule.vue';
+import JsRule from './verify/JsRule.vue';
 
 export default defineComponent({
-    components: { RegexRule, OptionsRule, NumberRangeRule, PythonRule, TimeRangeRule, RelativeTimeRangeRule },
+    components: { RegexRule, OptionsRule, NumberRangeRule, PythonRule, TimeRangeRule, RelativeTimeRangeRule, JsRule },
     props: {
         action: {
             type: Object as PropType<TaskAction>,
@@ -38,7 +39,8 @@ export default defineComponent({
             isNumberRangeRule,
             isPythonRule,
             isTimeRangeRule,
-            isRelativeTimeRangeRule
+            isRelativeTimeRangeRule,
+            isJsRule
         };
     },
     methods: {
@@ -97,6 +99,7 @@ export default defineComponent({
             <OptionsRule :ruleConfig="config.ruleConfig" v-if="isOptionsRule(config.ruleConfig)"></OptionsRule>
             <NumberRangeRule :ruleConfig="config.ruleConfig" v-if="isNumberRangeRule(config.ruleConfig)"></NumberRangeRule>
             <PythonRule :verifyConfig="config" v-if="isPythonRule(config.ruleConfig)"></PythonRule>
+            <JsRule :verifyConfig="config" v-if="isJsRule(config.ruleConfig)"></JsRule>
             <TimeRangeRule :ruleConfig="config.ruleConfig" v-if="isTimeRangeRule(config.ruleConfig)"></TimeRangeRule>
             <RelativeTimeRangeRule :ruleConfig="config.ruleConfig" v-if="isRelativeTimeRangeRule(config.ruleConfig)">
             </RelativeTimeRangeRule>

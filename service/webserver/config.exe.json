@@ -1,0 +1,65 @@
+{
+  "executor": {
+    "bindIp": "0.0.0.0",
+    "name": "local6787",
+    "executorUrl": "http://127.0.0.1:6787",
+    "port": 6787,
+    "allowCrossOriginResourceSharing": true,
+    "crossOriginSources": [
+      "http://127.0.0.1:8080",
+      "http://cova.hagoapp.com"
+    ],
+    "privilegedIpAddresses": [
+      "127.0.0.1"
+    ],
+    "tempDirectory": null,
+    "uploadTempDirectory": null,
+    "uploadSizeLimit": -1,
+    "outputStackTrace": true,
+    "baseUrl": "http://127.0.0.1:8080",
+    "dispatcherUrl": "http://127.0.0.1:6786"
+  },
+  "database": {
+    "host": "127.0.0.1",
+    "port": 5432,
+    "username": "cova",
+    "password": "cova",
+    "databaseName": "covadb"
+  },
+  "redis": {
+    "isSentinel": false,
+    "serverConfig": {
+      "host": "127.0.0.1",
+      "port": 6379
+    },
+    "sentinelConfig": {
+      "master": "192.168.3.1",
+      "nodes": {
+        "192.168.3.1": 26379,
+        "192.168.3.2": 26379,
+        "192.168.3.3": 26379
+      }
+    },
+    "database": 0,
+    "password": null
+  },
+  "mail": {
+    "host": "smtp.sina.com",
+    "port": 587,
+    "user": "suncjs@sina.com",
+    "password": "4$zooropa",
+    "from": "Chaojun<suncjs@sina.com>",
+    "ssl": false
+  },
+  "template": {
+    "directory": "./src/main/resources/templates",
+    "aliases": {
+      "execution_report": "execution/report"
+    }
+  },
+  "fileStorage": {
+    "uploadDirectory": "c:/temp/cova/files",
+    "thumbnailDirectory": "c:/temp/cova/thumb",
+    "tempDirectory": null
+  }
+}

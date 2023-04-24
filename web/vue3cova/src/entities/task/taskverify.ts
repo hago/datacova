@@ -40,9 +40,11 @@ const VERIFY_TYPE_NUMBER_RANGE = "com.hagoapp.number.range"
 const VERIFY_TYPE_OPTIONS = "com.hagoapp.options"
 const VERIFY_TYPE_TIME_RANGE = "com.hagoapp.time.range"
 const VERIFY_TYPE_RELATIVE_TIME_RANGE = "com.hagoapp.relative.time.range"
+const VERIFY_TYPE_JS_SCRIPT = "com.hagoapp.embed.js"
 
 export const VerificationTypes = [
     { label: "Python Script", value: VERIFY_TYPE_PYTHON_SCRIPT },
+    { label: "JS Script", value: VERIFY_TYPE_JS_SCRIPT },
     { label: "Number Range", value: VERIFY_TYPE_NUMBER_RANGE },
     { label: "Options", value: VERIFY_TYPE_OPTIONS },
     { label: "Regular Expression Matching", value: VERIFY_TYPE_REGEX },
@@ -67,4 +69,7 @@ export const isTimeRangeRule = (ruleConfig: RuleConfig): boolean => {
 }
 export const isRelativeTimeRangeRule = (ruleConfig: RuleConfig): boolean => {
     return ruleConfig.configType === VERIFY_TYPE_RELATIVE_TIME_RANGE
+}
+export const isJsRule = (ruleConfig: RuleConfig): boolean => {
+    return ruleConfig.configType === VERIFY_TYPE_JS_SCRIPT
 }

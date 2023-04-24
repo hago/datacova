@@ -17,6 +17,8 @@ import com.hagoapp.datacova.web.MethodName
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import com.hagoapp.datacova.web.authentication.AuthType
 import com.hagoapp.f2t.util.DateTimeTypeUtils
+import com.hagoapp.surveyor.rule.EmbedJsRuleConfig
+import com.hagoapp.surveyor.utils.EmbedJsFunctionHelper
 import io.netty.handler.codec.http.HttpResponseStatus.*
 import io.vertx.ext.web.RoutingContext
 import org.luaj.vm2.LuaError
@@ -135,6 +137,38 @@ class ScriptOps {
         } catch (ex: Exception) {
             StackTraceWriter.write(ex, logger)
             ResponseHelper.respondError(context, BAD_REQUEST, ex.message)
+        }
+    }
+
+    data class EvaluateData4Js (
+        val config: EmbedJsRuleConfig,
+        val params: List<Any?>
+    )
+
+    @WebEndPoint(
+        methods = [MethodName.POST],
+        path = "/api/js/evaluate",
+        authTypes = [AuthType.UserToken]
+    )
+    fun evaluateJs(context: RoutingContext) {
+        val data = Gson().fromJson(context.body().asString(), EvaluateData4Js::class.java)
+        if (data.config.snippet.isBlank()) {
+            ResponseHelper.sendResponse(
+                context, BAD_REQUEST, mapOf(
+                    "code" to BAD_REQUEST.code(),
+                    "error" to mapOf(
+                        "message" to "Empty code snippet"
+                    )
+                )
+            )
+            return
+        }
+        EmbedJsFunctionHelper(data.config.snippet).use { js ->
+            val r = js.execute(*data.params.toTypedArray())
+            ResponseHelper.sendResponse(context, OK, mapOf(
+                "code" to 0,
+                "data" to r
+            ))
         }
     }
 }
