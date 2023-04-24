@@ -9,15 +9,13 @@ package com.hagoapp.surveyor.surveyor
 
 import com.hagoapp.surveyor.RuleConfig
 import com.hagoapp.surveyor.rule.EmbedJsRuleConfig
-import org.graalvm.polyglot.Context
-import org.graalvm.polyglot.Value
+import com.hagoapp.surveyor.utils.EmbedJsFunctionHelper
 import org.slf4j.LoggerFactory
 
 class EmbedJsSurveyor : Surveyor {
 
     private lateinit var conf: EmbedJsRuleConfig
-    private lateinit var expression: Value
-    private lateinit var context: Context
+    private lateinit var function: EmbedJsFunctionHelper
     private val logger = LoggerFactory.getLogger(EmbedJsSurveyor::class.java)
 
     override fun getSupportedConfigType(): String {
@@ -29,12 +27,7 @@ class EmbedJsSurveyor : Surveyor {
             throw UnsupportedOperationException("Not a EmbedJsRuleConfig")
         }
         conf = ruleConfig
-        context = Context.newBuilder("js").allowCreateProcess(false)
-            .option("js.ecmascript-version", "2020").build()
-        expression = context.eval("js", conf.snippet)
-        if (!expression.canExecute()) {
-            throw UnsupportedOperationException("Not executable: ${conf.snippet}")
-        }
+        function = EmbedJsFunctionHelper(ruleConfig.snippet)
         return this
     }
 
@@ -43,9 +36,12 @@ class EmbedJsSurveyor : Surveyor {
             if ((conf.paramCount != null) && (conf.paramCount != params.size)) {
                 throw IllegalArgumentException("expect ${conf.paramCount} parameters, ${params.size} given")
             }
-            val result = expression.execute(*params.toTypedArray())
+            val result = function.execute(*params.toTypedArray())
             logger.debug("result: {}", result)
-            result.asBoolean()
+            if (result !is Boolean) {
+                throw UnsupportedOperationException("Expect a boolean return value, however '$result' was returned")
+            }
+            return result
         } catch (e: Throwable) {
             logger.error("Execution of js snippet error: {}, source: {}", e.message, conf.snippet)
             false
@@ -55,7 +51,7 @@ class EmbedJsSurveyor : Surveyor {
     override fun close() {
         try {
             super.close()
-            context.close()
+            function.close()
         } catch (e: Throwable) {
             logger.error("Releasing Graal js error {}", e.message)
         }
