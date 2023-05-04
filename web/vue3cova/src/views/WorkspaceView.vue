@@ -10,6 +10,7 @@ import { defineComponent, reactive, ref } from 'vue';
 import TaskInfo from '@/components/content/TaskInfo.vue';
 import EmptyTaskInfo from '@/components/content/EmptyTaskInfo.vue';
 import ConnectionView from '@/views/ConnectionView.vue'
+import ExecutionView from '@/views/ExecutionView.vue';
 
 export default defineComponent({
   name: 'WorkspaceView',
@@ -54,7 +55,7 @@ export default defineComponent({
       this.selectedTask = found as Task
     }
   },
-  components: { TaskList, EmptyTaskInfo, TaskInfo, ConnectionView }
+  components: { TaskList, EmptyTaskInfo, TaskInfo, ConnectionView, ExecutionView }
 })
 </script>
 
@@ -77,8 +78,8 @@ export default defineComponent({
         <n-tab-pane name="Connections" tab="connections">
           <ConnectionView :workspace="workspace"></ConnectionView>
         </n-tab-pane>
-        <n-tab-pane name="Execution Log" tab="executes">
-          Executions
+        <n-tab-pane name="Execution Log" tab="executions">
+          <ExecutionView :workspace="workspace"></ExecutionView>
         </n-tab-pane>
       </n-tabs>
     </n-card>
