@@ -7,7 +7,7 @@ import workspaceApiHelper from '@/api/workspaceapi';
 import { workspaceStore } from '@/stores/workspacestore';
 import type { WorkspaceWithUser } from "@/api/workspaceapi";
 import taskApiHelper from '@/api/taskapi';
-import { EVENT_GLOBAL_DRAWER_NOTIFY, EVENT_REMOTE_API_ERROR, EVENT_TASKINFO_CLOSE_RECIPIENTS_EDITOR, EVENT_TASK_DELETED } from '@/entities/events';
+import { EVENT_GLOBAL_DRAWER_NOTIFY, EVENT_REMOTE_API_ERROR, EVENT_TASKINFO_CLOSE_RECIPIENTS_EDITOR, EVENT_TASK_ACTION_DELETE, EVENT_TASK_DELETED } from '@/entities/events';
 import { eventBus } from '@/util/eventbus';
 import RecipientsEditor from '../task/RecipientsEditor.vue';
 import ActionIngest from '@/components/task/ActionIngest.vue';
@@ -53,10 +53,12 @@ export default defineComponent({
     },
     mounted() {
         eventBus.register(EVENT_TASKINFO_CLOSE_RECIPIENTS_EDITOR, this.closeRpctEditor)
+        eventBus.register(EVENT_TASK_ACTION_DELETE, this.deleteAction)
         this.updateWorkspaceTask()
     },
     unmounted() {
         eventBus.unregister(EVENT_TASKINFO_CLOSE_RECIPIENTS_EDITOR, this.closeRpctEditor)
+        eventBus.unregister(EVENT_TASK_ACTION_DELETE, this.deleteAction)
     },
     update() {
         this.updateWorkspaceTask()
@@ -104,9 +106,12 @@ export default defineComponent({
                 enabled: true
             } as TaskAction].concat(this.task.actions)
         },
-        deleteAction(index: number) {
+        async deleteAction(index: number): Promise<any> {
             if (confirm(`Are you sure to remove action "${this.task.actions[index].name}"?`)) {
                 this.task.actions.splice(index, 1)
+                return Promise.resolve()
+            } else {
+                return Promise.reject()
             }
         },
         shouldExpand(action: TaskAction) {
@@ -164,7 +169,7 @@ export default defineComponent({
             </n-button>
         </n-gi>
         <n-gi class="actionheader">
-            <div class="field">Task Actions</div>
+            <div class="field">Actions</div>
         </n-gi>
         <n-gi class="actionheader">
             <n-button secondary type="warning" @click="addAction" class="rightbutton">
@@ -172,19 +177,21 @@ export default defineComponent({
             </n-button>
         </n-gi>
         <n-gi span="2" v-for="(act, index) in task.actions" v-bind:key="task.id * 100 + index">
-            <n-button type="error" size="small" @click="deleteAction(index)">Remove {{ act.name }}</n-button>
-            <ActionBasicInfo :action="act" :readonly="!canModify"></ActionBasicInfo>
-            <ActionTypeSelect :action="act" :task="task" :readonly="!canModify" v-if="shouldExpand(act)"></ActionTypeSelect>
-            <ActionIngest :action="act" :task="task" v-if="isActionOfType(act, 1) && shouldExpand(act)"
-                :readonly="!canModify">
-            </ActionIngest>
-            <ActionDistribute :action="act" :task="task" v-if="isActionOfType(act, 3) && shouldExpand(act)"
-                :readonly="!canModify">
-            </ActionDistribute>
-            <ActionVerify :action="act" :task="task" v-if="isActionOfType(act, 2) && shouldExpand(act)"
-                :readonly="!canModify">
-            </ActionVerify>
-            <div style="border-bottom-style: dotted"></div>
+            <div class="actionitem">
+                <ActionBasicInfo :action="act" :index="index" :readonly="!canModify"></ActionBasicInfo>
+                <ActionTypeSelect :action="act" :task="task" :readonly="!canModify" v-if="shouldExpand(act)">
+                </ActionTypeSelect>
+                <ActionIngest :action="act" :task="task" v-if="isActionOfType(act, 1) && shouldExpand(act)"
+                    :readonly="!canModify">
+                </ActionIngest>
+                <ActionDistribute :action="act" :task="task" v-if="isActionOfType(act, 3) && shouldExpand(act)"
+                    :readonly="!canModify">
+                </ActionDistribute>
+                <ActionVerify :action="act" :task="task" v-if="isActionOfType(act, 2) && shouldExpand(act)"
+                    :readonly="!canModify">
+                </ActionVerify>
+                <div style="border-bottom-style: dotted"></div>
+            </div>
         </n-gi>
     </n-grid>
     <RecipientsEditor v-if="editRecipients" :extra="task.extra" :readonly="!canModify"></RecipientsEditor>
@@ -223,5 +230,10 @@ export default defineComponent({
 .rightbutton {
     float: right;
     width: 120px;
+}
+
+.actionitem {
+    border: 2px;
+    border-color: aqua;
 }
 </style>
