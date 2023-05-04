@@ -41,13 +41,12 @@ export default defineComponent({
     if (!id.isValidIdentity()) {
       id = anonymousIdentity()
     }
-    let emptySpaces: Workspace[] = []
     return reactive({
       userIdentity: id,
       activeKey: ref<string | null>(null),
       options: createOptions(),
       workspaceId: ref<number | null>(null),
-      workspaces: emptySpaces,
+      workspaces: [] as Workspace[],
       drawerConfig: defaultDrawerConfig,
       darkTheme
     });
@@ -123,6 +122,7 @@ export default defineComponent({
       console.log(`selected ${value}`)
       if ((value === undefined) || (value === null)) {
         //this.$emit('errorOccurred', `select workspace ${value} not applicable`)
+        router.push({ name: 'workspace', params: { id: -1 } });
       } else {
         router.push({ name: 'workspace', params: { id: value } });
       }
