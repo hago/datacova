@@ -33,8 +33,8 @@ export default defineComponent({
                 this.action.expand = !this.action.expand
             }
         },
-        deleteAction(index: number) {
-            eventBus.send(EVENT_TASK_ACTION_DELETE, index)
+        deleteAction() {
+            eventBus.send(EVENT_TASK_ACTION_DELETE, this.index)
         }
     }
 })
@@ -45,7 +45,7 @@ export default defineComponent({
         <span class="actionname">Action: {{ action.name }}</span>
         <n-button quaternary type="warning" style="float:right" :render-icon="renderFoldIcon" v-model="action.expand"
             @click="collapse"></n-button>
-        <n-button quaternary type="error" style="float:right" @click="deleteAction(index)">Remove</n-button>
+        <n-button quaternary type="error" style="float:right" @click="deleteAction">Remove</n-button>
     </div>
 </template>
 
