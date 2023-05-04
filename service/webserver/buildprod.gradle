@@ -58,10 +58,7 @@ dependencies {
     implementation group: "org.postgresql", name: "postgresql", version: "42.3.3"
 
     implementation group: 'org.reflections', name: 'reflections', version: '0.10.2'
-
-    implementation group: "org.luaj", name: "luaj-jse", version: "3.0.1"
-    implementation group: 'org.python', name: 'jython-standalone', version: '2.7.2'
-
+    
     implementation group: 'com.github.felfert', name: 'cidrutils', version: '1.4'
 
     implementation group: 'com.jcraft', name: 'jsch', version: '0.1.55'
