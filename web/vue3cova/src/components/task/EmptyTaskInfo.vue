@@ -10,5 +10,5 @@ export default defineComponent({
 </script>
 
 <template>
-    Workspace not selected
+    Task not selected
 </template>
