@@ -4,6 +4,8 @@ import type { ExcelXFileInfo } from "../datafile/ExcelXFileInfo"
 import type { ParquetFileInfo } from "../datafile/ParquetFileInfo"
 import type { Task } from "../task/task"
 
+export type ExecutionStatus = 0 | "0" | 1 | "1" | 2 | "2" | -1 | "-1"
+
 export interface TaskExecution {
     id: number
     taskId: number
@@ -12,7 +14,7 @@ export interface TaskExecution {
     addTime: number
     startTime: number | null
     endTime: number | null
-    status: 0 | 1 | 2 | -1
+    status: ExecutionStatus
     fileInfo: ExecutionFileInfo
     detail: ExecutionDetail | null
 }
