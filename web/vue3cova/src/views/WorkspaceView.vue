@@ -44,8 +44,13 @@ export default defineComponent({
       let workspaceId = this.$route.params.id
       console.log(`WorkspaceView.id: ${workspaceId}`)
       if (typeof workspaceId === 'string') {
-        this.workspace = workspaceStore().getWorkspace(parseInt(workspaceId))
-        console.log(`WorkspaceView.workspace: ${this.workspace}`)
+        let id = parseInt(workspaceId)
+        if (id >= 0) {
+          this.workspace = workspaceStore().getWorkspace(id)
+          console.log(`WorkspaceView.workspace: ${this.workspace}`)
+        } else {
+          this.workspace = null
+        }
       } else {
         eventBus.send(EVENT_REMOTE_API_ERROR, `workspace id "${workspaceId}" is not a value`)
       }
@@ -83,6 +88,11 @@ export default defineComponent({
         </n-tab-pane>
       </n-tabs>
     </n-card>
+    <n-grid v-else :cols="1">
+        <n-gi>
+          No Workspace
+        </n-gi>
+      </n-grid>
   </n-config-provider>
 </template>
 
