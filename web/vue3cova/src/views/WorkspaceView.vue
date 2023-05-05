@@ -1,14 +1,14 @@
 <script lang="ts">
 import type { WorkspaceWithUser } from '@/api/workspaceapi';
-import TaskList from '@/components/content/TaskList.vue';
+import TaskList from '@/components/task/TaskList.vue';
 import { EVENT_REMOTE_API_ERROR, EVENT_TASK_SELECTED } from '@/entities/events';
 import type { Task } from '@/entities/task/task';
 import { workspaceStore } from '@/stores/workspacestore';
 import { eventBus } from '@/util/eventbus';
 import { darkTheme } from 'naive-ui';
 import { defineComponent, reactive, ref } from 'vue';
-import TaskInfo from '@/components/content/TaskInfo.vue';
-import EmptyTaskInfo from '@/components/content/EmptyTaskInfo.vue';
+import TaskInfo from '@/components/task/TaskInfo.vue';
+import EmptyTaskInfo from '@/components/task/EmptyTaskInfo.vue';
 import ConnectionView from '@/views/ConnectionView.vue'
 import ExecutionView from '@/views/ExecutionView.vue';
 

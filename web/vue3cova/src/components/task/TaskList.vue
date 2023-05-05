@@ -4,8 +4,8 @@ import { defineComponent, reactive, ref, type PropType } from 'vue';
 import type { WorkspaceWithUser } from '@/api/workspaceapi'
 import { newEmptyTask, type Task } from '@/entities/task/task';
 import { identityStore } from '@/stores/identitystore';
-import TaskInfo from '@/components/content/TaskInfo.vue';
-import EmptyTaskInfo from '@/components/content/EmptyTaskInfo.vue';
+import TaskInfo from '@/components/task/TaskInfo.vue';
+import EmptyTaskInfo from '@/components/task/EmptyTaskInfo.vue';
 import { EVENT_REMOTE_API_ERROR, EVENT_TASK_SELECTED } from '@/entities/events';
 import { eventBus } from '@/util/eventbus';
 import router from '@/router';
