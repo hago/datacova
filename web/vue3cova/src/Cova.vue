@@ -2,13 +2,14 @@
 import { darkTheme } from "naive-ui";
 import { defineComponent, reactive, ref } from "vue";
 import workspaceApiHelper, { type Workspace } from "./api/workspaceapi";
-import { EVENT_GLOBAL_DRAWER_NOTIFY, EVENT_LOGIN_STATUS_CHANGED, EVENT_REMOTE_API_ERROR } from "./entities/events";
+import { EVENT_GLOBAL_DRAWER_NOTIFY, EVENT_LOGIN_STATUS_CHANGED, EVENT_NEW_WORKSPACE_DIALOG_CLOSED, EVENT_REMOTE_API_ERROR } from "./entities/events";
 import { buildErrorDrawerConfig, defaultDrawerConfig, type GlobalDrawerConfig } from "./entities/globaldrawercfg";
 import { anonymousIdentity } from "./entities/identity";
 import router from "./router";
 import { identityStore } from "./stores/identitystore";
 import { workspaceStore } from "./stores/workspacestore";
 import { eventBus } from "./util/eventbus";
+import NewWorkspace from "./components/NewWorkspace.vue";
 
 let createOptions = () => {
   let id = identityStore();
@@ -24,6 +25,10 @@ let createOptions = () => {
         disabled: true,
       },
       {
+        label: 'New Workspace',
+        key: 'newwk'
+      },
+      {
         label: "Logout",
         key: "logout",
       },
@@ -36,6 +41,9 @@ export default defineComponent({
     EVENT_LOGIN_STATUS_CHANGED,
     EVENT_REMOTE_API_ERROR
   ],
+  components: {
+    NewWorkspace
+  },
   setup() {
     let id = identityStore().currentIdentity();
     if (!id.isValidIdentity()) {
@@ -48,13 +56,20 @@ export default defineComponent({
       workspaceId: ref<number | null>(null),
       workspaces: [] as Workspace[],
       drawerConfig: defaultDrawerConfig,
-      darkTheme
+      darkTheme,
+      updateWorkSpace: false
     });
   },
   mounted() {
     eventBus.register(EVENT_REMOTE_API_ERROR, this.errorMessageReceived)
     eventBus.register(EVENT_GLOBAL_DRAWER_NOTIFY, this.showGlobalDrawer)
+    eventBus.register(EVENT_NEW_WORKSPACE_DIALOG_CLOSED, this.closeWorkspaceView)
     this.loadWorkspaces()
+  },
+  unmounted() {
+    eventBus.unregister(EVENT_REMOTE_API_ERROR, this.errorMessageReceived)
+    eventBus.unregister(EVENT_GLOBAL_DRAWER_NOTIFY, this.showGlobalDrawer)
+    eventBus.unregister(EVENT_NEW_WORKSPACE_DIALOG_CLOSED, this.closeWorkspaceView)
   },
   methods: {
     dropdownClick(key: string | number) {
@@ -64,9 +79,20 @@ export default defineComponent({
           this.userIdentity = anonymousIdentity()
           router.push("/login")
           break
+        case "newwk":
+          this.updateWorkSpace = true
+          break
         default:
           return
       }
+    },
+    async closeWorkspaceView(result: boolean): Promise<any> {
+      this.updateWorkSpace = false
+      if (!result) {
+        return Promise.reject()
+      }
+      this.loadWorkspaces()
+      return Promise.resolve()
     },
     logonChanged() {
       console.log("logonChanged triggered")
@@ -160,6 +186,7 @@ export default defineComponent({
       <RouterView @loginStatusChanged="logonChanged" @apiErrorOccurred="errorMessageReceived" />
     </n-gi>
   </n-grid>
+  <NewWorkspace v-if="updateWorkSpace"></NewWorkspace>
 </template>
 
 <style scoped>
