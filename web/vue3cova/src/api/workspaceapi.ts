@@ -1,13 +1,15 @@
 import type Identity from "@/entities/identity";
 import type { User } from "@/entities/user";
 import { fromFetchResponse, type BaseResponse } from "./baseresponse";
-import { addTokenHeader } from "./credential";
+import { addJsonRequestHeader, addTokenHeader } from "./credential";
 
 export interface Workspace {
     id: number
     name: string
     description: string
-    ownerId: string
+    ownerId: number
+    addBy?: number
+    addTime?: number
 }
 
 export enum WorkSpaceUserRole {
@@ -54,6 +56,34 @@ export class WorkspaceApi {
         let p = await fetch(`/api/workspace/${id}`, {
             headers: headers,
             method: "GET"
+        })
+        return fromFetchResponse(p)
+    }
+
+    async newWorkspace(user: Identity, name: string, description: string): Promise<WorkspaceResponse> {
+        let headers = addJsonRequestHeader(addTokenHeader(user))
+        let wk: Workspace = {
+            id: 0,
+            name: name,
+            description: description,
+            ownerId: 0,
+            addBy: 0,
+            addTime: 0
+        }
+        let p = await fetch(`/api/workspace/add`, {
+            headers: headers,
+            method: "PUT",
+            body: JSON.stringify(wk)
+        })
+        return fromFetchResponse(p)
+    }
+
+    async updateWorkspace(user: Identity, workspace: Workspace): Promise<WorkspaceResponse> {
+        let headers = addJsonRequestHeader(addTokenHeader(user))
+        let p = await fetch(`/api/workspace/update`, {
+            headers: headers,
+            method: "PUT",
+            body: JSON.stringify(workspace)
         })
         return fromFetchResponse(p)
     }
