@@ -83,7 +83,7 @@ class TaskExecutionData(config: DatabaseConfig) : CoVaDatabase(config) {
     }
 
     fun completeTaskExecution(detail: ExecutionDetail) {
-        val sql = "update taskexecution set detail = ?, xstatus = ? where id = ?"
+        val sql = "update taskexecution set detail = ?, xstatus = ?, endtime = CURRENT_TIMESTAMP where id = ?"
         connection.prepareStatement(sql).use { stmt ->
             stmt.setObject(1, DatabaseFunctions.createPgObject("json", detail))
             stmt.setInt(2, if (detail.isSucceeded) 2 else -1)
@@ -93,7 +93,7 @@ class TaskExecutionData(config: DatabaseConfig) : CoVaDatabase(config) {
     }
 
     fun startTaskExecution(te: TaskExecution) {
-        val sql = "update taskexecution set xstatus = 1 where id = ?"
+        val sql = "update taskexecution set xstatus = 1, starttime = CURRENT_TIMESTAMP, endtime = null where id = ?"
         connection.prepareStatement(sql).use { stmt ->
             stmt.setInt(1, te.id)
             stmt.execute()
