@@ -24,7 +24,7 @@ dependencies {
     implementation 'io.vertx:vertx-lang-kotlin:4.3.0'
     implementation 'io.vertx:vertx-web:4.3.0'
 
-    implementation 'com.hagoapp:f2t:0.8'
+    implementation 'com.hagoapp:f2t:0.8.1'
     implementation project(':surveyor')
     implementation project(':filestore')
 

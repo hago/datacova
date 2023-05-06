@@ -30,6 +30,7 @@ class IngestExecutor : BaseTaskActionExecutor(), ProgressNotify {
         val fileTable = DataTable(data.columnDefinition.mapIndexed { i, col ->
             val fileCol = FileColumnDefinition(col.name, setOf(col.dataType), col.dataType)
             fileCol.order = i
+            fileCol.typeModifier = col.typeModifier
             fileCol
         }, data.rows)
         val d2t = D2TProcess(fileTable, connection.configuration.createConnection(), action.ingestOptions)
