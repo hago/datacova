@@ -18,7 +18,6 @@ import com.hagoapp.datacova.entity.execution.ExecutionFileInfo
 import com.hagoapp.datacova.entity.execution.TaskExecution
 import com.hagoapp.datacova.executor.Executor
 import com.hagoapp.datacova.file.localfs.LocalFsFileStore
-import com.hagoapp.datacova.util.FileStoreUtils
 import com.hagoapp.datacova.util.StackTraceWriter
 import com.hagoapp.f2t.DataTable
 import com.hagoapp.f2t.FileColumnDefinition
@@ -32,14 +31,13 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
 
     private val logger = LoggerFactory.getLogger(Worker::class.java)
     private val taskExec = taskExecution
-    private val observers = mutableListOf<TaskExecutionWatcher>()
     private val detail = ExecutionDetail(taskExecution)
     private var currentActionDetail: ExecutionActionDetail? = null
     private var currentActionIndex: Int = 0
-    private val watcherMethods = TaskExecutionWatcher::class.java.methods.associateBy { it.name }
+    private val watcherGroup = TaskExecutionGroupWatcher()
 
     fun addWatcher(watcher: TaskExecutionWatcher): Worker {
-        observers.add(watcher)
+        watcherGroup.addWatcher(watcher)
         return this
     }
 
@@ -48,19 +46,6 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
         addWatcher(this)
         if (executor != null) {
             addWatcher(executor)
-        }
-    }
-
-    private fun callObservers(watcher: TaskExecutionWatcher, methodName: String, vararg params: Any?) {
-        val m = watcherMethods[methodName]
-        if (m == null) {
-            logger.error("No method '{}' for TaskExecutionWatcher", methodName)
-            return
-        }
-        try {
-            m.invoke(watcher, *params)
-        } catch (e: Throwable) {
-            logger.warn("Error occurs in {} event of {}", methodName, watcher)
         }
     }
 
@@ -84,25 +69,25 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
 
     fun execute() {
         detail.startTiming()
-        observers.forEach { callObservers(it, "onStart", taskExec) }
+        watcherGroup.onStart(taskExec)
         val dt: DataTable<FileColumnDefinition>
-        observers.forEach { callObservers(it, "onDataLoadStart", taskExec) }
+        watcherGroup.onDataLoadStart(taskExec)
         val tempFile = createTempFile(taskExec.fileInfo)
         try {
             taskExec.fileInfo.fileInfo.filename = tempFile
             val parser = FileParser(taskExec.fileInfo.fileInfo)
             dt = parser.extractData()
-            observers.forEach { callObservers(it, "onDataLoadComplete", taskExec, true) }
+            watcherGroup.onDataLoadComplete(taskExec, true)
             detail.lineCount = dt.rows.size
         } catch (ex: Exception) {
             val msg =
                 "Data source loading fail, abort execution ${taskExec.id} of task ${taskExec.task.name}(${taskExec.taskId})"
             logger.error(msg)
-            observers.forEach { callObservers(it, "onError", taskExec, ex) }
-            observers.forEach { callObservers(it, "onDataLoadComplete", taskExec, false) }
+            watcherGroup.onError(taskExec, ex)
+            watcherGroup.onDataLoadComplete(taskExec, false)
             detail.dataLoadingError = ex
             detail.endTiming()
-            observers.forEach { callObservers(it, "onComplete", taskExec, detail) }
+            watcherGroup.onComplete(taskExec, detail)
             return
         } finally {
             File(tempFile).delete()
@@ -111,7 +96,7 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
             currentActionIndex = i
             val action = taskExec.task.actions[i]
             currentActionDetail = detail.addActionDetail(i, action)
-            observers.forEach { it.onActionStart(taskExec, i) }
+            watcherGroup.onActionStart(taskExec, i)
             if (!action.isEnabled) {
                 logger.info("action $i: ${action.name} is skipped because it's disabled")
                 continue
@@ -122,7 +107,7 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
                 executor.watcher = this
                 executor.execute(taskExec, action, dt)
                 currentActionDetail!!.end()
-                observers.forEach { callObservers(it, "onActionComplete", taskExec, i, currentActionDetail!!) }
+                watcherGroup.onActionComplete(taskExec, i, currentActionDetail!!)
                 if ((i < taskExec.task.actions.size - 1) && !executor.mayContinueWhenDone()) {
                     logger.info("action $i: ${action.name} completed, and it prevents following actions to proceed")
                     break
@@ -132,7 +117,7 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
                 StackTraceWriter.write(ex, logger)
                 currentActionDetail!!.error = ex
                 currentActionDetail!!.end()
-                observers.forEach { callObservers(it, "onActionComplete", taskExec, i, currentActionDetail!!) }
+                watcherGroup.onActionComplete(taskExec, i, currentActionDetail!!)
                 if (action.extra.continueNextWhenError) {
                     logger.info("continue next action of execution ${taskExec.id}")
                     continue
@@ -143,7 +128,7 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
             }
         }
         detail.endTiming()
-        observers.forEach { callObservers(it, "onComplete", taskExec, detail) }
+        watcherGroup.onComplete(taskExec, detail)
     }
 
     /**
