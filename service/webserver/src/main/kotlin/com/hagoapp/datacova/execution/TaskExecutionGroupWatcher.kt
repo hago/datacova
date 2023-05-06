@@ -34,9 +34,9 @@ class TaskExecutionGroupWatcher(private val watchers: MutableSet<TaskExecutionWa
                 try {
                     method.invoke(w, *params)
                 } catch (e: Throwable) {
-                    logger.error("Error {} in TaskExecutionWatcher.{} for {}", e.message, method.name, w)
+                    logger.error("Error {} in TaskExecutionWatcher.{} for {}", e.message, method.name, w::class.java)
                 }
-            }
+            }.run()
         }
     }
 
@@ -45,30 +45,30 @@ class TaskExecutionGroupWatcher(private val watchers: MutableSet<TaskExecutionWa
     }
 
     override fun onComplete(te: TaskExecution, result: ExecutionDetail) {
-        callMethod(watcherMethods.getValue("onStart"), te, result)
+        callMethod(watcherMethods.getValue("onComplete"), te, result)
     }
 
     override fun onError(te: TaskExecution, error: Exception) {
-        callMethod(watcherMethods.getValue("onStart"), te, error)
+        callMethod(watcherMethods.getValue("onError"), te, error)
     }
 
     override fun onActionStart(te: TaskExecution, actionIndex: Int) {
-        callMethod(watcherMethods.getValue("onStart"), te, actionIndex)
+        callMethod(watcherMethods.getValue("onActionStart"), te, actionIndex)
     }
 
     override fun onActionComplete(te: TaskExecution, actionIndex: Int, result: ExecutionActionDetail) {
-        callMethod(watcherMethods.getValue("onStart"), te, actionIndex, result)
+        callMethod(watcherMethods.getValue("onActionComplete"), te, actionIndex, result)
     }
 
     override fun onActionError(te: TaskExecution, actionIndex: Int, error: Exception) {
-        callMethod(watcherMethods.getValue("onStart"), te, actionIndex, error)
+        callMethod(watcherMethods.getValue("onActionError"), te, actionIndex, error)
     }
 
     override fun onDataLoadStart(te: TaskExecution) {
-        callMethod(watcherMethods.getValue("onStart"), te)
+        callMethod(watcherMethods.getValue("onDataLoadStart"), te)
     }
 
     override fun onDataLoadComplete(te: TaskExecution, isLoadingSuccessful: Boolean) {
-        callMethod(watcherMethods.getValue("onStart"), te, isLoadingSuccessful)
+        callMethod(watcherMethods.getValue("onDataLoadComplete"), te, isLoadingSuccessful)
     }
 }
