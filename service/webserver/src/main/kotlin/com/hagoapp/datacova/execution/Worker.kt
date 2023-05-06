@@ -34,7 +34,7 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
     private val detail = ExecutionDetail(taskExecution)
     private var currentActionDetail: ExecutionActionDetail? = null
     private var currentActionIndex: Int = 0
-    private val watcherGroup = TaskExecutionGroupWatcher()
+    private val watcherGroup = TaskExecutionGroupWatcher(this)
 
     fun addWatcher(watcher: TaskExecutionWatcher): Worker {
         watcherGroup.addWatcher(watcher)
