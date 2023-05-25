@@ -63,5 +63,10 @@ export interface ExecutionFileInfo {
 export interface ExecutionDetail {
     startTime: number
     endTime: number
-    lineCount: number
+    lineCount: number,
+    dataLoadingError: string | null
+}
+
+export const isErrorDataLoading = (d: ExecutionDetail | undefined | null): boolean => {
+    return d !== undefined && d !== null && d.dataLoadingError !== null
 }
