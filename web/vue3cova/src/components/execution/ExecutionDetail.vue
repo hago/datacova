@@ -6,31 +6,27 @@ import { identityStore } from '@/stores/identitystore';
 import { eventBus } from '@/util/eventbus';
 import { defineComponent, reactive } from 'vue';
 import dayjs from 'dayjs'
+import { useRoute } from 'vue-router';
 
 export default defineComponent({
-  props: {
-    workspaceId: {
-      type: Number,
-      required: true
-    },
-    id: {
-      type: Number,
-      required: true
-    }
-  },
   setup(props) {
     return reactive({
+      workspaceId: -1,
+      id: -1,
       execution: null as TaskExecution | null,
       isErrorDataLoading
     })
   },
   mounted() {
+    let route = useRoute()
+    this.workspaceId = Number(route.params.workspaceid)
+    this.id = Number(route.params.id)
     this.loadDetail()
   },
   methods: {
     loadDetail() {
       let user = identityStore().currentIdentity()
-      executionApiHelper.getExecution(user, this.$props.id).then(rsp => {
+      executionApiHelper.getExecution(user, this.id).then(rsp => {
         this.execution = rsp.data
       }).catch(err => {
         eventBus.send(EVENT_REMOTE_API_ERROR, err)
