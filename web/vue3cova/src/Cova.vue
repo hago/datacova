@@ -37,10 +37,6 @@ let createOptions = () => {
 };
 
 export default defineComponent({
-  emits: [
-    EVENT_LOGIN_STATUS_CHANGED,
-    EVENT_REMOTE_API_ERROR
-  ],
   components: {
     NewWorkspace
   },
@@ -61,12 +57,14 @@ export default defineComponent({
     });
   },
   mounted() {
+    eventBus.register(EVENT_LOGIN_STATUS_CHANGED, this.logonChanged)
     eventBus.register(EVENT_REMOTE_API_ERROR, this.errorMessageReceived)
     eventBus.register(EVENT_GLOBAL_DRAWER_NOTIFY, this.showGlobalDrawer)
     eventBus.register(EVENT_NEW_WORKSPACE_DIALOG_CLOSED, this.closeWorkspaceView)
     this.loadWorkspaces()
   },
   unmounted() {
+    eventBus.unregister(EVENT_LOGIN_STATUS_CHANGED, this.logonChanged)
     eventBus.unregister(EVENT_REMOTE_API_ERROR, this.errorMessageReceived)
     eventBus.unregister(EVENT_GLOBAL_DRAWER_NOTIFY, this.showGlobalDrawer)
     eventBus.unregister(EVENT_NEW_WORKSPACE_DIALOG_CLOSED, this.closeWorkspaceView)
@@ -77,7 +75,7 @@ export default defineComponent({
         case "logout":
           identityStore().logout()
           this.userIdentity = anonymousIdentity()
-          router.push("/login")
+          router.push("/")
           break
         case "newwk":
           this.updateWorkSpace = true
@@ -94,7 +92,7 @@ export default defineComponent({
       this.loadWorkspaces()
       return Promise.resolve()
     },
-    logonChanged() {
+    async logonChanged(): Promise<any> {
       console.log("logonChanged triggered")
       let logst = identityStore()
       this.userIdentity = logst.currentIdentity()
@@ -102,6 +100,7 @@ export default defineComponent({
         this.userIdentity = anonymousIdentity()
       }
       this.loadWorkspaces()
+      return Promise.resolve()
     },
     async errorMessageReceived(...message: string[]): Promise<void> {
       console.log('show drawer', message)
@@ -183,7 +182,7 @@ export default defineComponent({
   </n-grid>
   <n-grid>
     <n-gi span="24">
-      <RouterView @loginStatusChanged="logonChanged" @apiErrorOccurred="errorMessageReceived" />
+      <RouterView />
     </n-gi>
   </n-grid>
   <NewWorkspace v-if="updateWorkSpace"></NewWorkspace>

@@ -1,6 +1,8 @@
 <script lang="ts">
+import { EVENT_LOGIN_STATUS_CHANGED } from '@/entities/events';
 import router from '@/router';
 import { identityStore } from '@/stores/identitystore';
+import { eventBus } from '@/util/eventbus';
 import { defineComponent, reactive, ref } from 'vue';
 
 export default defineComponent({
@@ -11,7 +13,7 @@ export default defineComponent({
     mounted() {
         let id = identityStore().currentIdentity()
         if (id.isValidIdentity()) {
-            this.$emit("loginStatusChanged");
+            eventBus.send(EVENT_LOGIN_STATUS_CHANGED)
         }
     },
     methods: {

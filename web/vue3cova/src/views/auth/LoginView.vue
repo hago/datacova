@@ -43,6 +43,7 @@ import loginHelper from "@/api/userauthapi";
 import { identityStore } from "@/stores/identitystore";
 import { newIdentity } from "@/entities/identity";
 import { EVENT_LOGIN_STATUS_CHANGED } from "@/entities/events";
+import { eventBus } from "@/util/eventbus";
 
 const CAPTCHA_URL = "/api/auth/captcha";
 
@@ -90,7 +91,7 @@ export default defineComponent({
             rsp.data.token
           )
         )
-        this.$emit(EVENT_LOGIN_STATUS_CHANGED)
+        eventBus.send(EVENT_LOGIN_STATUS_CHANGED)
       }).catch(err => {
         this.errormessage = err;
       });
