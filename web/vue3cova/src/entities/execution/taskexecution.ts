@@ -2,7 +2,7 @@ import type { CsvFileInfo } from "../datafile/CsvFileInfo"
 import type { ExcelFileInfo } from "../datafile/ExcelFileInfo"
 import type { ExcelXFileInfo } from "../datafile/ExcelXFileInfo"
 import type { ParquetFileInfo } from "../datafile/ParquetFileInfo"
-import type { Task } from "../task/task"
+import type { Task, TaskAction } from "../task/task"
 
 export type ExecutionStatus = 0 | "0" | 1 | "1" | 2 | "2" | -1 | "-1"
 
@@ -64,7 +64,20 @@ export interface ExecutionDetail {
     startTime: number
     endTime: number
     lineCount: number,
-    dataLoadingError: string | null
+    dataLoadingError: string | null,
+    actionDetailMap: {
+        [key: number]: ExecutionActionDetail
+    }
+}
+
+export interface ExecutionActionDetail {
+    dataMessages: {
+        [key: number]: string[]
+    },
+    error: string | null,
+    startTime: number,
+    endTime: number | null,
+    action: TaskAction
 }
 
 export const isErrorDataLoading = (d: ExecutionDetail | undefined | null): boolean => {

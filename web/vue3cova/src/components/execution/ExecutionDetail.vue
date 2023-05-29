@@ -87,6 +87,20 @@ export default defineComponent({
       {{ execution?.detail?.dataLoadingError }}
     </n-gi>
   </n-grid>
+  <hr />
+  <n-grid v-for="(actionDetail, index) in execution?.detail?.actionDetailMap" :key="index" :cols="3">
+    <n-gi :span="3">
+      Action
+    </n-gi>
+    <n-gi class="content">{{ actionDetail.action.name }}</n-gi>
+    <n-gi class="content">{{ formatTime(actionDetail.startTime) }}</n-gi>
+    <n-gi class="content">{{ formatTime(actionDetail.endTime) }}</n-gi>
+    <n-gi :span="3" v-if="Object.keys(actionDetail.dataMessages).length > 0">
+      <n-list>
+        <n-list-item v-for="(message, rowNo) in actionDetail.dataMessages" :key="rowNo">{{ message }}</n-list-item>
+      </n-list>
+    </n-gi>
+  </n-grid>
 </template>
 
 <style scoped>
