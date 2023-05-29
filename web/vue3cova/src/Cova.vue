@@ -166,9 +166,11 @@ export default defineComponent({
   </n-config-provider>
   <n-grid :cols="3" class="navbar">
     <n-gi class="tm">
-      <span class="tmData">Data </span>
-      <span class="tmCo">CO</span><span>llect </span>
-      <span class="tmVa">VA</span><span>lidate</span>
+      <a href="/">
+        <span class="tmData">Data </span>
+        <span class="tmCo">CO</span><span>llect </span>
+        <span class="tmVa">VA</span><span>lidate</span>
+      </a>
     </n-gi>
     <n-gi class="tm">
       <n-select label-field="name" value-field="id" @update:value="workspaceSelect" v-model:value="workspaceId"
