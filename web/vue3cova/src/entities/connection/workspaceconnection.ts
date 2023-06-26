@@ -16,16 +16,16 @@ export interface WorkspaceConnection {
 }
 
 export function dbConfigStringify(configuration: BaseDbConfig): string {
-    switch (configuration.dbType) {
-        case "PostgreSQL": {
+    switch (configuration.dbType.toLowerCase()) {
+        case "PostgreSQL".toLowerCase(): {
             let config = configuration as PostgreSqlConfig
             return `${config.dbType} - ${config.host}:${config.port}/${config.databaseName}`
         }
-        case "MariaDB": {
+        case "MariaDB".toLowerCase(): {
             let config = configuration as MariaDBConfig
             return `${config.dbType} - ${config.host}:${config.port}/${config.databaseName}`
         }
-        case "Microsoft SQL Sever": {
+        case "Microsoft SQL Sever".toLowerCase(): {
             let config = configuration as MsSqlConfig
             return `${config.dbType} - ${config.host}:${config.port}/${config.databaseName}`
         }
