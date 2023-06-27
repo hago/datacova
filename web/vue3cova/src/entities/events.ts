@@ -8,6 +8,7 @@ export const EVENT_TASKINFO_CLOSE_RECIPIENTS_EDITOR = "task_info_close_recipient
 // connection object, editable, deletabe
 export const EVENT_CONNECTION_SELECTED = "onConnectionSelected"
 export const EVENT_CONNECTION_DELETED = "onConnectionDelected"
+export const EVENT_CONNECTION_ADDED = "onConnectionAdded"
 
 export const EVENT_GLOBAL_DRAWER_NOTIFY = "global_drawer_botify"
 
