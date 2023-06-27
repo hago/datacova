@@ -2,7 +2,7 @@
 import connApiHelper from '@/api/connectionapi';
 import type { WorkspaceWithUser } from '@/api/workspaceapi';
 import { newWorkspaceConnection, type WorkspaceConnection } from '@/entities/connection/workspaceconnection';
-import { EVENT_CONNECTION_DELETED, EVENT_CONNECTION_SELECTED, EVENT_REMOTE_API_ERROR } from '@/entities/events';
+import { EVENT_CONNECTION_ADDED, EVENT_CONNECTION_DELETED, EVENT_CONNECTION_SELECTED, EVENT_REMOTE_API_ERROR } from '@/entities/events';
 import { identityStore } from '@/stores/identitystore';
 import { eventBus } from '@/util/eventbus';
 import { defineComponent, reactive, type PropType } from 'vue';
@@ -27,9 +27,11 @@ export default defineComponent({
     },
     mounted() {
         this.loadConnections()
+        eventBus.register(EVENT_CONNECTION_ADDED, this.connectionAdded)
         eventBus.register(EVENT_CONNECTION_DELETED, this.connectionDeleted)
     },
     unmounted() {
+        eventBus.register(EVENT_CONNECTION_ADDED, this.connectionAdded)
         eventBus.unregister(EVENT_CONNECTION_DELETED, this.connectionDeleted)
     },
     methods: {
@@ -58,8 +60,17 @@ export default defineComponent({
                 this.permissions.editables.indexOf(connectionId) >= 0,
                 this.permissions.deletables.indexOf(connectionId) >= 0)
         },
+        async connectionAdded(conn: WorkspaceConnection): Promise<any> {
+            this.permissions.editables.push(conn.id)
+            this.permissions.deletables.push(conn.id)
+        },
         async connectionDeleted(conn: WorkspaceConnection): Promise<any> {
-            this.loadConnections()
+            this.connections = this.connections.filter(item => item.id !== conn.id)
+            this.permissions.deletables = this.permissions.deletables.filter(itemId => itemId !== conn.id)
+            this.permissions.editables = this.permissions.editables.filter(itemId => itemId !== conn.id)
+            if (this.connections.length > 0) {
+                this.selectConnection(this.connections[0].id)
+            }
             return Promise.resolve()
         }
     }
