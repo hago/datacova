@@ -131,7 +131,7 @@ export default defineComponent({
             </n-popselect>
         </n-gi>
         <n-gi>
-            <n-button prinary class="rightbutton" @click="listDatabase">Select Database</n-button>
+            <n-button prinary class="rightbutton" @click="listDatabase">Load Databases</n-button>
         </n-gi>
         <n-gi>
             <span>Login</span>
