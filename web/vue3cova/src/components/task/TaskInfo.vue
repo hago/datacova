@@ -88,9 +88,13 @@ export default defineComponent({
             if (!confirm(`Are you sure to delete the task "${task.name}"?`)) {
                 return
             }
+            if (task.id < 0) {
+                eventBus.send(EVENT_TASK_DELETED, task)
+                return
+            }
             let user = identityStore().currentIdentity()
-            taskApiHelper.deleteTask(user, this.task).then(() => {
-                this.$emit(EVENT_TASK_DELETED, task.id)
+            taskApiHelper.deleteTask(user, task).then(() => {
+                eventBus.send(EVENT_TASK_DELETED, task)
             }).catch((reason) => {
                 eventBus.send(EVENT_REMOTE_API_ERROR, reason)
             })

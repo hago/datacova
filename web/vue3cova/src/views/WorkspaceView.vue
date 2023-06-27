@@ -36,7 +36,7 @@ export default defineComponent({
     this.loadWorkspace()
   },
   methods: {
-    async onTaskSelected(t: Task): Promise<any> {
+    async onTaskSelected(t: Task | null): Promise<any> {
       this.selectedTask = t
       return Promise.resolve()
     },

@@ -6,7 +6,7 @@ import { newEmptyTask, type Task } from '@/entities/task/task';
 import { identityStore } from '@/stores/identitystore';
 import TaskInfo from '@/components/task/TaskInfo.vue';
 import EmptyTaskInfo from '@/components/task/EmptyTaskInfo.vue';
-import { EVENT_REMOTE_API_ERROR, EVENT_TASK_SELECTED } from '@/entities/events';
+import { EVENT_REMOTE_API_ERROR, EVENT_TASK_DELETED, EVENT_TASK_SELECTED } from '@/entities/events';
 import { eventBus } from '@/util/eventbus';
 import router from '@/router';
 
@@ -24,12 +24,28 @@ export default defineComponent({
     })
   },
   mounted() {
+    eventBus.register(EVENT_TASK_DELETED, this.taskDeleted)
     this.loadTasks()
+  },
+  unmounted() {
+    eventBus.unregister(EVENT_TASK_DELETED, this.taskDeleted)
   },
   updated() {
     this.loadTasks()
   },
   methods: {
+    async taskDeleted(task: Task): Promise<any> {
+      this.tasks = this.tasks.filter(item => item.id !== task.id)
+      if ((this.selectedTask !== null) && (this.selectedTask.id === task.id)) {
+        if (this.tasks.length > 0) {
+          this.selectTask(this.tasks[0].id)
+        } else {
+          this.selectedTask = null
+        }
+      }
+      eventBus.send(EVENT_TASK_SELECTED, this.selectedTask)
+      return Promise.resolve()
+    },
     loadTasks() {
       if (this.workspace !== null) {
         let user = identityStore().currentIdentity()
