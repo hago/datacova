@@ -99,6 +99,7 @@ export default defineComponent({
       if (!this.userIdentity.isValidIdentity()) {
         this.userIdentity = anonymousIdentity()
       }
+      this.options = createOptions()
       this.loadWorkspaces()
       return Promise.resolve()
     },
