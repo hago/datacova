@@ -13,7 +13,7 @@ interface ConnectionsResponse extends BaseResponse {
     }
 }
 
-interface TableListResponse extends Response {
+interface TableListResponse extends BaseResponse {
     data: {
         [key: string]: {
             schema: string,
@@ -22,7 +22,7 @@ interface TableListResponse extends Response {
     }
 }
 
-interface VerifyConnectionResponse extends Response {
+interface VerifyConnectionResponse extends BaseResponse {
     data: {
         result: boolean
         message?: string
@@ -30,7 +30,7 @@ interface VerifyConnectionResponse extends Response {
     }
 }
 
-interface WorkspaceConnectionResponse extends Response {
+interface WorkspaceConnectionResponse extends BaseResponse {
     data: WorkspaceConnection
 }
 
