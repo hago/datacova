@@ -41,7 +41,8 @@ export default defineComponent({
             connections: [] as SelectOption[],
             tablesMeta,
             schemas: [] as SelectOption[],
-            tables: [] as SelectOption[]
+            tables: [] as SelectOption[],
+            useExistingTable: true
         })
     },
     mounted() {
@@ -113,6 +114,9 @@ export default defineComponent({
                     this.act.ingestOptions.targetTable = found[0].tableName
                 }
             }
+        },
+        tblSelectChange(v: boolean) {
+            this.useExistingTable = v
         }
     }
 })
@@ -129,16 +133,25 @@ export default defineComponent({
             <div>&nbsp;</div>
             <n-button type="info" class="connedit">Edit Connection</n-button>
         </n-gi>
-        <n-gi>
+        <n-gi :span="2">
             <n-popselect :options="schemas" v-model:value="act.ingestOptions!.targetSchema" :readonly="readonly"
                 @update:value="calcTables">
                 <n-button>Schema: {{ act.ingestOptions!.targetSchema }}</n-button>
             </n-popselect>
-            <n-popselect :options="tables" v-model:value="act.ingestOptions!.targetTable" :readonly="readonly">
-                <n-button>Table: {{ act.ingestOptions!.targetTable }}</n-button>
+            <n-radio name="tbl" value="existing" :checked="useExistingTable" @change="tblSelectChange(true)">
+                Existing Tables
+            </n-radio>
+            <n-popselect v-if="useExistingTable" :options="tables" v-model:value="act.ingestOptions!.targetTable"
+                :readonly="readonly">
+                <n-button>{{ act.ingestOptions!.targetTable }}</n-button>
             </n-popselect>
+            <n-radio name="tbl" value="new" :checked="!useExistingTable" @change="tblSelectChange(false)">
+                New Table
+            </n-radio>
+            <n-input v-if="!useExistingTable" v-model:value="act.ingestOptions!.targetTable" :readonly="readonly" autosize
+                style="min-width: 50%">
+            </n-input>
         </n-gi>
-        <n-gi></n-gi>
         <n-gi>
             <n-checkbox v-model:checked="act.ingestOptions!.addBatch" :disabled="readonly">
                 Add batch column automatically if absent
