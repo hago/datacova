@@ -31,7 +31,7 @@ class SFtp {
 
     @WebEndPoint(
         methods = [MethodName.POST],
-        authTypes = [AuthType.UserToken],
+        authTypes = [AuthType.USER_TOKEN],
         path = "/api/distribute/verify/sftp"
     )
     fun verify(context: RoutingContext) {
@@ -62,7 +62,7 @@ class SFtp {
 
     @WebEndPoint(
         methods = [MethodName.POST],
-        authTypes = [AuthType.UserToken],
+        authTypes = [AuthType.USER_TOKEN],
         path = "/api/distribute/verify/sftp/keyfile"
     )
     fun verifyKeyAuth(context: RoutingContext) {

@@ -20,7 +20,7 @@ class TimeZone {
     @WebEndPoint(
         path = "/api/default/timezones",
         methods = [MethodName.GET],
-        authTypes = [AuthType.UserToken]
+        authTypes = [AuthType.USER_TOKEN]
     )
     fun getTimeZones(context: RoutingContext) {
         val zones = localizedTimeZones()

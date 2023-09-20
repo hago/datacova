@@ -20,7 +20,7 @@ import java.lang.reflect.Type
 class RedisCacheReader<T> private constructor() {
     companion object {
         const val DEFAULT_VALIDITY = 3600L
-        private val skipCache = !Application.productionMode
+        private val skipCache = !Application.PRODUCTION_MODE
 
         @JvmStatic
         fun <T> readCachedData(

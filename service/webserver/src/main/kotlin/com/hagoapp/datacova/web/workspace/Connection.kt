@@ -34,7 +34,7 @@ class Connection {
     @WebEndPoint(
         path = "/api/workspace/:id/connections",
         methods = [MethodName.GET],
-        authTypes = [AuthType.UserToken]
+        authTypes = [AuthType.USER_TOKEN]
     )
     fun getConnections(context: RoutingContext) {
         val id = context.pathParam("id").toIntOrNull()
@@ -73,7 +73,7 @@ class Connection {
     @WebEndPoint(
         path = "/api/connection/verify",
         methods = [MethodName.POST],
-        authTypes = [AuthType.UserToken]
+        authTypes = [AuthType.USER_TOKEN]
     )
     fun verifyConnection(context: RoutingContext) {
         val json = context.body().asString()
@@ -125,7 +125,7 @@ class Connection {
     @WebEndPoint(
         path = "/api/workspace/:id/connection/add",
         methods = [MethodName.PUT],
-        authTypes = [AuthType.UserToken]
+        authTypes = [AuthType.USER_TOKEN]
     )
     fun addConnection(context: RoutingContext) {
         val id = context.pathParam("id").toInt()
@@ -165,7 +165,7 @@ class Connection {
     @WebEndPoint(
         path = "/api/workspace/:id/connection/update",
         methods = [MethodName.PUT],
-        authTypes = [AuthType.UserToken]
+        authTypes = [AuthType.USER_TOKEN]
     )
     fun updateConnection(context: RoutingContext) {
         val id = context.pathParam("id").toInt()
@@ -209,7 +209,7 @@ class Connection {
     @WebEndPoint(
         path = "/api/workspace/:wkid/connection/:id/delete",
         methods = [MethodName.DELETE],
-        authTypes = [AuthType.UserToken]
+        authTypes = [AuthType.USER_TOKEN]
     )
     fun deleteConnection(context: RoutingContext) {
         val workspaceId = context.pathParam("wkid").toInt()
@@ -238,7 +238,7 @@ class Connection {
     @WebEndPoint(
         path = "/api/workspace/:wkid/connection/:id",
         methods = [MethodName.GET],
-        authTypes = [AuthType.UserToken]
+        authTypes = [AuthType.USER_TOKEN]
     )
     fun getConnection(context: RoutingContext) {
         val workspaceId = context.pathParam("wkid").toInt()
@@ -273,7 +273,7 @@ class Connection {
     @WebEndPoint(
         path = "/api/workspace/:wkid/connection/:id/tables",
         methods = [MethodName.GET],
-        authTypes = [AuthType.UserToken]
+        authTypes = [AuthType.USER_TOKEN]
     )
     fun listConnectionTables(context: RoutingContext) {
         val connection = ConnectionCache.getConnection(

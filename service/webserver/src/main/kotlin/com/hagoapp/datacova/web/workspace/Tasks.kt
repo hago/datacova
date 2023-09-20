@@ -45,7 +45,7 @@ class Tasks {
     @WebEndPoint(
         path = "/api/workspace/:id/tasks",
         methods = [MethodName.GET],
-        authTypes = [AuthType.UserToken]
+        authTypes = [AuthType.USER_TOKEN]
     )
     fun listTasksOfWorkspace(context: RoutingContext) {
         val id = context.pathParam("id").toIntOrNull()
@@ -65,7 +65,7 @@ class Tasks {
     @WebEndPoint(
         path = "/api/workspace/:id/task/update",
         methods = [MethodName.PUT],
-        authTypes = [AuthType.UserToken]
+        authTypes = [AuthType.USER_TOKEN]
     )
     fun updateTask(context: RoutingContext) {
         val workspace = WorkspaceCache.getWorkspace(context.pathParam("id").toInt())
@@ -99,7 +99,7 @@ class Tasks {
     @WebEndPoint(
         path = "/api/workspace/:wkid/task/:id",
         methods = [MethodName.DELETE],
-        authTypes = [AuthType.UserToken]
+        authTypes = [AuthType.USER_TOKEN]
     )
     fun deleteTask(context: RoutingContext) {
         val workspaceId = context.pathParam("wkid").toInt()
@@ -127,7 +127,7 @@ class Tasks {
     @WebEndPoint(
         path = "/api/workspace/:wkid/task/:id",
         methods = [MethodName.GET],
-        authTypes = [AuthType.UserToken]
+        authTypes = [AuthType.USER_TOKEN]
     )
     fun getTask(context: RoutingContext) {
         val workspaceId = context.pathParam("wkid").toInt()
@@ -153,7 +153,7 @@ class Tasks {
     @WebEndPoint(
         path = "/api/workspace/:wkid/task/:id/run",
         methods = [MethodName.POST],
-        authTypes = [AuthType.UserToken]
+        authTypes = [AuthType.USER_TOKEN]
     )
     fun runTask(context: RoutingContext) {
         val files = context.fileUploads()
@@ -209,7 +209,7 @@ class Tasks {
     @WebEndPoint(
         path = "/api/file/preview",
         methods = [MethodName.POST],
-        authTypes = [AuthType.UserToken]
+        authTypes = [AuthType.USER_TOKEN]
     )
     fun preview(context: RoutingContext) {
         val files = context.fileUploads()

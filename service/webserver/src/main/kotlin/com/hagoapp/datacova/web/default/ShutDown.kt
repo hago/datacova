@@ -29,7 +29,7 @@ class ShutDown {
 
     @WebEndPoint(
         methods = [MethodName.GET],
-        authTypes = [AuthType.Anonymous],
+        authTypes = [AuthType.ANONYMOUS],
         path = "/api/service/web/shutdown",
         isBlocking = false
     )

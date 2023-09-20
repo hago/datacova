@@ -40,7 +40,7 @@ class DataFile {
     @WebEndPoint(
         methods = [MethodName.PUT],
         path = "/api/file/upload",
-        authTypes = [AuthType.UserToken]
+        authTypes = [AuthType.USER_TOKEN]
     )
     fun uploadFile(context: RoutingContext) {
         if (context.fileUploads().isEmpty()) {
@@ -111,7 +111,7 @@ class DataFile {
     @WebEndPoint(
         methods = [MethodName.POST],
         path = "/api/file/preview/:id/:count",
-        authTypes = [AuthType.UserToken]
+        authTypes = [AuthType.USER_TOKEN]
     )
     fun previewFile(context: RoutingContext) {
         val id = context.pathParam("id")
@@ -161,7 +161,7 @@ class DataFile {
     @WebEndPoint(
         methods = [MethodName.POST],
         path = "/api/file/execute/:id/task/:wkid/:taskid",
-        authTypes = [AuthType.UserToken]
+        authTypes = [AuthType.USER_TOKEN]
     )
     fun execute(context: RoutingContext) {
         val user = Authenticator.getUser(context)

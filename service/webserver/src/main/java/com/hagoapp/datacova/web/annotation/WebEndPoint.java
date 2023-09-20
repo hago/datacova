@@ -30,5 +30,5 @@ public @interface WebEndPoint {
 
     boolean isBlocking() default true;
 
-    AuthType[] authTypes() default AuthType.Anonymous;
+    AuthType[] authTypes() default AuthType.ANONYMOUS;
 }

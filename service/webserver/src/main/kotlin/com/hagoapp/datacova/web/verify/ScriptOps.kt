@@ -55,7 +55,7 @@ class ScriptOps {
     @WebEndPoint(
         methods = [MethodName.POST],
         path = "/api/python/evaluate",
-        authTypes = [AuthType.UserToken]
+        authTypes = [AuthType.USER_TOKEN]
     )
     fun evaluatePython(context: RoutingContext) {
         val data = Gson().fromJson(context.body().asString(), EvaluateData4Python::class.java)
@@ -103,7 +103,7 @@ class ScriptOps {
     @WebEndPoint(
         methods = [MethodName.POST],
         path = "/api/js/evaluate",
-        authTypes = [AuthType.UserToken]
+        authTypes = [AuthType.USER_TOKEN]
     )
     fun evaluateJs(context: RoutingContext) {
         val data = Gson().fromJson(context.body().asString(), EvaluateData4Js::class.java)

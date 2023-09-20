@@ -26,7 +26,7 @@ import io.vertx.ext.web.RoutingContext
 
 class KeyValue {
 
-    @WebEndPoint(methods = [MethodName.POST, MethodName.PUT], path = "/store/pair", authTypes = [AuthType.UserToken])
+    @WebEndPoint(methods = [MethodName.POST, MethodName.PUT], path = "/store/pair", authTypes = [AuthType.USER_TOKEN])
     fun storeKeyValue(context: RoutingContext) {
         val kv = RequestHelper.readBodyClass(context, KeyValuePair::class.java)
         if (kv != null) {
@@ -42,7 +42,7 @@ class KeyValue {
         }
     }
 
-    @WebEndPoint(methods = [MethodName.POST, MethodName.PUT], path = "/store/pairs", authTypes = [AuthType.UserToken])
+    @WebEndPoint(methods = [MethodName.POST, MethodName.PUT], path = "/store/pairs", authTypes = [AuthType.USER_TOKEN])
     fun storeKeyValues(context: RoutingContext) {
         val token = object : TypeToken<List<KeyValuePair>>() {}
         val json = RequestHelper.readBodyString(context)
@@ -70,7 +70,7 @@ class KeyValue {
         }
     }
 
-    @WebEndPoint(methods = [MethodName.GET], path = "/store/pair/:key", authTypes = [AuthType.UserToken])
+    @WebEndPoint(methods = [MethodName.GET], path = "/store/pair/:key", authTypes = [AuthType.USER_TOKEN])
     fun readKey(context: RoutingContext) {
         JedisManager.getJedis(CoVaConfig.getConfig().redis).use {
             val key = context.request().getParam("key")
@@ -87,7 +87,7 @@ class KeyValue {
         }
     }
 
-    @WebEndPoint(methods = [MethodName.POST], path = "/store/pairs/fetch", authTypes = [AuthType.UserToken])
+    @WebEndPoint(methods = [MethodName.POST], path = "/store/pairs/fetch", authTypes = [AuthType.USER_TOKEN])
     fun readMultipleKeys(context: RoutingContext) {
         val json = RequestHelper.readBodyString(context)
         val token = object : TypeToken<List<KeyValuePair>>() {}

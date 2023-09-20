@@ -25,7 +25,7 @@ class WorkSpaceApi {
     @WebEndPoint(
         methods = [MethodName.GET],
         path = "/api/workspaces/mine",
-        authTypes = [AuthType.UserToken]
+        authTypes = [AuthType.USER_TOKEN]
     )
     fun myWorkSpaces(routeContext: RoutingContext) {
         val user = Authenticator.getUser(routeContext)
@@ -65,7 +65,7 @@ class WorkSpaceApi {
     @WebEndPoint(
         methods = [MethodName.GET],
         path = "/api/workspace/:id",
-        authTypes = [AuthType.UserToken]
+        authTypes = [AuthType.USER_TOKEN]
     )
     fun getWorkSpace(context: RoutingContext) {
         val userInfo = Authenticator.getUser(context)
@@ -86,7 +86,7 @@ class WorkSpaceApi {
     @WebEndPoint(
         methods = [MethodName.PUT, MethodName.POST],
         path = "/api/workspace/add",
-        authTypes = [AuthType.UserToken]
+        authTypes = [AuthType.USER_TOKEN]
     )
     fun addWorkSpace(routeContext: RoutingContext) {
         val userInfo = Authenticator.getUser(routeContext)
@@ -118,7 +118,7 @@ class WorkSpaceApi {
     @WebEndPoint(
         methods = [MethodName.PUT],
         path = "/api/workspace/update",
-        authTypes = [AuthType.UserToken]
+        authTypes = [AuthType.USER_TOKEN]
     )
     fun updateWorkSpace(routeContext: RoutingContext) {
         val wk = parseWorkSpace(routeContext)
@@ -141,7 +141,7 @@ class WorkSpaceApi {
     @WebEndPoint(
         methods = [MethodName.GET],
         path = "/api/workspace/:id/executions",
-        authTypes = [AuthType.UserToken]
+        authTypes = [AuthType.USER_TOKEN]
     )
     fun getExecutionList(context: RoutingContext) {
         val id = context.pathParam("id").toInt()
@@ -151,7 +151,7 @@ class WorkSpaceApi {
     @WebEndPoint(
         methods = [MethodName.GET],
         path = "/api/workspace/:id/executions/:size",
-        authTypes = [AuthType.UserToken]
+        authTypes = [AuthType.USER_TOKEN]
     )
     fun getExecutionSizedList(context: RoutingContext) {
         val id = context.pathParam("id").toInt()
@@ -162,7 +162,7 @@ class WorkSpaceApi {
     @WebEndPoint(
         methods = [MethodName.GET],
         path = "/api/workspace/:id/executions/:start/:size",
-        authTypes = [AuthType.UserToken]
+        authTypes = [AuthType.USER_TOKEN]
     )
     fun getExecutionRange(context: RoutingContext) {
         val id = context.pathParam("id").toInt()
@@ -189,7 +189,7 @@ class WorkSpaceApi {
     @WebEndPoint(
         path = "/api/execution/:id",
         methods = [MethodName.GET],
-        authTypes = [AuthType.UserToken]
+        authTypes = [AuthType.USER_TOKEN]
     )
     fun getTaskExecution(context: RoutingContext) {
         val id = context.pathParam("id").toIntOrNull()
@@ -214,7 +214,7 @@ class WorkSpaceApi {
     @WebEndPoint(
         path = "/api/workspace/:wkid/rules/:start/:size",
         methods = [MethodName.GET],
-        authTypes = [AuthType.UserToken]
+        authTypes = [AuthType.USER_TOKEN]
     )
     fun getRules(context: RoutingContext) {
         val workspaceId = context.pathParam("wkid").toInt()
@@ -238,7 +238,7 @@ class WorkSpaceApi {
     @WebEndPoint(
         path = "/api/workspace/:wkid/rule",
         methods = [MethodName.POST],
-        authTypes = [AuthType.UserToken]
+        authTypes = [AuthType.USER_TOKEN]
     )
     fun saveRule(context: RoutingContext) {
         val json = context.body().asString()

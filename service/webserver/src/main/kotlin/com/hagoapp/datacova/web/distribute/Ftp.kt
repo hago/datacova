@@ -25,7 +25,7 @@ class Ftp {
 
     @WebEndPoint(
         methods = [MethodName.POST],
-        authTypes = [AuthType.UserToken],
+        authTypes = [AuthType.USER_TOKEN],
         path = "/api/distribute/verify/ftp"
     )
     fun verify(context: RoutingContext) {

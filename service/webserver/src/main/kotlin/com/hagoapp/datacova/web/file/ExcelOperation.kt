@@ -22,7 +22,7 @@ class ExcelOperation {
     @WebEndPoint(
         methods = [MethodName.POST],
         path = "/api/excel/parse",
-        authTypes = [AuthType.Anonymous]
+        authTypes = [AuthType.ANONYMOUS]
     )
     fun parseExcel(context: RoutingContext) {
         val files = context.fileUploads()

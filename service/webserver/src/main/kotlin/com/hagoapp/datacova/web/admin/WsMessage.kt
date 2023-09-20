@@ -19,7 +19,7 @@ class WsMessage {
     @WebEndPoint(
         path = "/api/admin/ws/sessions",
         methods = [MethodName.GET],
-        authTypes = [AuthType.UserToken]
+        authTypes = [AuthType.USER_TOKEN]
     )
     fun getClients(context: RoutingContext) {
         val sessions = WebSocketManager.getManager().allWsSessions

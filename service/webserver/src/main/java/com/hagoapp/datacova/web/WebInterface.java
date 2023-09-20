@@ -35,7 +35,7 @@ public interface WebInterface {
     Map<String, Handler> requestHandlers();
 
     default List<AuthType> getAuthTypes() {
-        return List.of(AuthType.Anonymous);
+        return List.of(AuthType.ANONYMOUS);
     }
 
     default List<String> requireHeaders() {

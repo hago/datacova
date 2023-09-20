@@ -20,7 +20,7 @@ class MessageController {
     @WebEndPoint(
         path = "/api/ws/send",
         methods = [MethodName.POST],
-        authTypes = [AuthType.UserToken]
+        authTypes = [AuthType.USER_TOKEN]
     )
     fun sendMessage(context: RoutingContext) {
         val str = context.body().asString()

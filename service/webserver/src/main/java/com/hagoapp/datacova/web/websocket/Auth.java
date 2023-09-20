@@ -24,7 +24,10 @@ import static com.hagoapp.datacova.util.web.AuthUtils.LOGIN_COOKIE;
 
 public class Auth {
 
-    private final static Logger logger = LoggerFactory.getLogger(Auth.class);
+    private static final Logger logger = LoggerFactory.getLogger(Auth.class);
+
+    private Auth() {
+    }
 
     public static UserInfo authenticate(ServerWebSocket serverWebSocket) {
         var token = authenticateCookie(serverWebSocket);
@@ -34,25 +37,22 @@ public class Auth {
         if (token == null) {
             return null;
         }
-        //logger.debug("web socket token: {}", token);
+        logger.debug("web socket token: {}", token);
         return RedisCacheReader.readDataInCacheOnly(token, UserInfo.class);
     }
 
     private static String authenticateCookie(ServerWebSocket serverWebSocket) {
         var headers = serverWebSocket.headers();
         var cookieStr = headers.get(HttpHeaderNames.COOKIE);
-        // logger.debug("web socket cookie: {}", cookieStr);
+        logger.debug("web socket cookie: {}", cookieStr);
         if (cookieStr == null) {
             return null;
         }
         List<HttpCookie> cookies = RequestHelper.parseCookie(cookieStr);
-        // cookies.forEach(cookie -> logger.debug("cookie {}", cookie.getName()));
+        cookies.forEach(cookie -> logger.debug("cookie {}", cookie.getName()));
         var authCookie = cookies.stream()
                 .filter(cookie -> cookie.getName().equals(LOGIN_COOKIE)).findFirst();
-        if (authCookie.isEmpty()) {
-            return null;
-        }
-        return authCookie.get().getValue();
+        return authCookie.map(HttpCookie::getValue).orElse(null);
     }
 
     private static String authenticateHeader(ServerWebSocket serverWebSocket) {

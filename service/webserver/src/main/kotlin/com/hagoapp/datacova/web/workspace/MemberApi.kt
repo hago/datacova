@@ -29,7 +29,7 @@ class MemberApi {
     @WebEndPoint(
         methods = [MethodName.PUT],
         path = "/api/workspace/:id/member/:type/add",
-        authTypes = [AuthType.UserToken]
+        authTypes = [AuthType.USER_TOKEN]
     )
     fun addWorkspaceMember(routeContext: RoutingContext) {
         val id = routeContext.request().getParam("id").toIntOrNull()
@@ -68,7 +68,7 @@ class MemberApi {
     @WebEndPoint(
         methods = [MethodName.DELETE],
         path = "/api/workspace/:id/member/:type/remove/:uid",
-        authTypes = [AuthType.UserToken]
+        authTypes = [AuthType.USER_TOKEN]
     )
     fun removeWorkspaceMember(routeContext: RoutingContext) {
         val id = routeContext.request().getParam("id").toIntOrNull()

@@ -40,7 +40,7 @@ class Register {
     @WebEndPoint(
         methods = [MethodName.PUT],
         path = "/api/register/:captcha",
-        authTypes = [AuthType.Anonymous]
+        authTypes = [AuthType.ANONYMOUS]
     )
     fun register(context: RoutingContext) {
         val captcha = context.pathParam("captcha")
@@ -119,7 +119,7 @@ class Register {
     @WebEndPoint(
         path = "/api/user/activate/:code",
         methods = [MethodName.GET],
-        authTypes = [AuthType.Anonymous]
+        authTypes = [AuthType.ANONYMOUS]
     )
     fun activate(context: RoutingContext) {
         val code = context.pathParam("code")

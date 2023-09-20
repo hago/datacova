@@ -30,7 +30,7 @@ class ShutDown {
 
     @WebEndPoint(
         methods = [MethodName.GET],
-        authTypes = [AuthType.Anonymous],
+        authTypes = [AuthType.ANONYMOUS],
         path = "/api/service/executor/shutdown",
         isBlocking = false
     )
@@ -56,7 +56,7 @@ class ShutDown {
 
     @WebEndPoint(
         methods = [MethodName.GET],
-        authTypes = [AuthType.Anonymous],
+        authTypes = [AuthType.ANONYMOUS],
         path = "/api/service/executor/shutdown/force",
         isBlocking = false
     )

@@ -24,7 +24,7 @@ class RegexOps {
     @WebEndPoint(
         path = "/api/regex/evaluate",
         methods = [MethodName.POST],
-        authTypes = [AuthType.UserToken]
+        authTypes = [AuthType.USER_TOKEN]
     )
     fun verifyRegex(context: RoutingContext) {
         val pattern = context.body().asString()
@@ -51,7 +51,7 @@ class RegexOps {
     @WebEndPoint(
         path = "/api/rule/regex/evaluate",
         methods = [MethodName.POST],
-        authTypes = [AuthType.UserToken]
+        authTypes = [AuthType.USER_TOKEN]
     )
     fun verifyRegexRule(context: RoutingContext) {
         val s = context.body().asString()

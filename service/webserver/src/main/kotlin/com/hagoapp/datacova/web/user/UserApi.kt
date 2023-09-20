@@ -24,7 +24,7 @@ class UserApi {
     @WebEndPoint(
         path = "/api/user/search",
         methods = [MethodName.POST],
-        authTypes = [AuthType.UserToken]
+        authTypes = [AuthType.USER_TOKEN]
     )
     fun searchUser(context: RoutingContext) {
         val load = context.body().asString()
@@ -40,7 +40,7 @@ class UserApi {
     @WebEndPoint(
         path = "/api/user/batch",
         methods = [MethodName.POST],
-        authTypes = [AuthType.UserToken]
+        authTypes = [AuthType.USER_TOKEN]
     )
     fun batchGetUserInfo(context: RoutingContext) {
         val token = object : TypeToken<List<Long>>() {}
@@ -57,7 +57,7 @@ class UserApi {
         path = "/api/user/(\\d+)",
         isPathRegex = true,
         methods = [MethodName.GET],
-        authTypes = [AuthType.UserToken]
+        authTypes = [AuthType.USER_TOKEN]
     )
     fun getUser(context: RoutingContext) {
         val id = context.pathParam("param0").toLong()

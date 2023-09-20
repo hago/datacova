@@ -44,7 +44,7 @@ public class Application {
         return new CommandLine.RunLast().execute(parseResult); // default execution strategy
     }
 
-    public final static boolean productionMode = isProduction();
+    public static final boolean PRODUCTION_MODE = isProduction();
 
     private static boolean isProduction() {
         try {
