@@ -28,6 +28,7 @@ import com.hagoapp.f2t.datafile.parquet.FileInfoParquet
 import com.hagoapp.util.EncodingUtils
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.ext.web.RoutingContext
+import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -37,6 +38,9 @@ import java.nio.charset.StandardCharsets
 import java.util.UUID
 
 class DataFile {
+
+    private val logger = LoggerFactory.getLogger(DataFile::class.java)
+
     @WebEndPoint(
         methods = [MethodName.PUT],
         path = "/api/file/upload",
@@ -146,7 +150,9 @@ class DataFile {
                 data.add(row.cells.map { cell -> cell.data?.toString() })
             }
         }
-        tmpFile.delete()
+        if (!tmpFile.delete()) {
+            logger.warn("delete temp file {} failed", tmpFile.absolutePath)
+        }
         ResponseHelper.sendResponse(
             context, HttpResponseStatus.OK, mapOf(
                 "code" to 0,

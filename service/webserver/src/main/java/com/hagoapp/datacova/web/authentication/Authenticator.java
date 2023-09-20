@@ -38,7 +38,6 @@ public abstract class Authenticator {
     public String[] getHeaders() { return new String[0]; }
 
     public static UserInfo getUser(RoutingContext routingContext) {
-        UserInfo user = routingContext.get(AUTHENTICATION_USER_ID);
-        return user;
+        return routingContext.get(AUTHENTICATION_USER_ID);
     }
 }

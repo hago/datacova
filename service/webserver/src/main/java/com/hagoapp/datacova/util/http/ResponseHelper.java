@@ -17,11 +17,19 @@ import io.vertx.core.http.HttpServerResponse;
 import io.vertx.ext.web.RoutingContext;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class ResponseHelper {
+
+    private static final String CONTENT_TYPE_HEADER = "Content-Type";
+    private static final String JSON_CONTENT_TYPE = "application/json";
+
+    private ResponseHelper() {
+    }
+
     public static boolean checkMethod(RoutingContext routeContext, HttpMethod method) {
         return routeContext.request().method().equals(method);
     }
@@ -31,17 +39,15 @@ public class ResponseHelper {
     }
 
     public static void sendResponse(RoutingContext routeContext, HttpResponseStatus status, String message) {
-        sendResponse(routeContext, status, message, "UTF-8");
+        sendResponse(routeContext, status, message, StandardCharsets.UTF_8.name());
     }
 
     public static void sendResponse(RoutingContext routeContext, HttpResponseStatus status,
                                     Map<String, Object> message) {
         Gson gson = createGson();
         String msg = gson.toJson(message);
-        Map<String, String> headers = new HashMap<String, String>() {{
-            put("Content-Type", "application/json");
-        }};
-        sendResponse(routeContext, status, headers, msg, "UTF-8");
+        Map<String, String> headers = Map.of(CONTENT_TYPE_HEADER, JSON_CONTENT_TYPE);
+        sendResponse(routeContext, status, headers, msg, StandardCharsets.UTF_8.name());
     }
 
     public static void sendResponse(RoutingContext routeContext, HttpResponseStatus
@@ -49,8 +55,8 @@ public class ResponseHelper {
         Gson gson = createGson();
         String msg = gson.toJson(message);
         Map<String, String> h = new HashMap<>(headers);
-        h.put("Content-Type", "application/json");
-        sendResponse(routeContext, status, h, msg, "UTF-8");
+        h.put(CONTENT_TYPE_HEADER, JSON_CONTENT_TYPE);
+        sendResponse(routeContext, status, h, msg, StandardCharsets.UTF_8.name());
     }
 
     private static Gson createGson() {
@@ -60,10 +66,8 @@ public class ResponseHelper {
     public static void sendResponse(RoutingContext routeContext, HttpResponseStatus status, List<Object> message) {
         Gson gson = createGson();
         String msg = gson.toJson(message);
-        Map<String, String> headers = new HashMap<String, String>() {{
-            put("Content-Type", "application/json");
-        }};
-        sendResponse(routeContext, status, headers, msg, "UTF-8");
+        Map<String, String> headers = Map.of(CONTENT_TYPE_HEADER, JSON_CONTENT_TYPE);
+        sendResponse(routeContext, status, headers, msg, StandardCharsets.UTF_8.name());
     }
 
     public static void sendResponse(RoutingContext routeContext, HttpResponseStatus status, String message, String
@@ -79,9 +83,7 @@ public class ResponseHelper {
     }
 
     public static <T> void sendResponse(RoutingContext routeContext, HttpResponseStatus status, T content) {
-        Map<String, String> headers = new HashMap<String, String>() {{
-            put("Content-Type", "application/json");
-        }};
+        Map<String, String> headers = Map.of(CONTENT_TYPE_HEADER, JSON_CONTENT_TYPE);
         sendResponse(routeContext, status, headers, content);
     }
 
@@ -98,8 +100,8 @@ public class ResponseHelper {
             Gson gson = createGson();
             String msg = gson.toJson(content);
             HashMap<String, String> allHeaders = new HashMap<>(headers);
-            allHeaders.put("Content-Type", "application/json");
-            sendResponse(routeContext, status, allHeaders, msg, "UTF-8");
+            allHeaders.put(CONTENT_TYPE_HEADER, JSON_CONTENT_TYPE);
+            sendResponse(routeContext, status, allHeaders, msg, StandardCharsets.UTF_8.name());
         }
     }
 

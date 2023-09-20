@@ -74,7 +74,7 @@ class AuthUtils {
             val userJson = when (val token = getCurrentToken(context)) {
                 null -> null
                 else -> JedisManager.getJedis(CoVaConfig.getConfig().redis).use {
-                    it.get(token)
+                    it[token]
                 }
             }
             val user = fromJson(userJson)
@@ -117,7 +117,7 @@ class AuthUtils {
             val impJson = when (val identity = getImpersonateToken(context)) {
                 null -> null
                 else -> JedisManager.getJedis(CoVaConfig.getConfig().redis).use {
-                    it.get(identity)
+                    it[identity]
                 }
             }
             return fromJson(impJson)

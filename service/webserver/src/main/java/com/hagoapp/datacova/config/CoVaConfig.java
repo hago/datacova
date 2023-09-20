@@ -29,7 +29,7 @@ public class CoVaConfig implements JsonStringify {
     private static final String DEFAULT_CONFIG = "config.json";
     private static final Logger logger = LoggerFactory.getLogger(CoVaConfig.class);
 
-    public synchronized static CoVaConfig getConfig() {
+    public static synchronized CoVaConfig getConfig() {
         if (config == null) {
             try {
                 loadConfig(DEFAULT_CONFIG);
@@ -54,7 +54,7 @@ public class CoVaConfig implements JsonStringify {
                 String json = bos.toString(StandardCharsets.UTF_8);
                 config = new Gson().fromJson(json, CoVaConfig.class);
                 logger.debug("Loading config from {}", new File(configFile).getAbsolutePath());
-                logger.trace("CoVa config loaded: {}", config.toJson());
+                logger.info("CoVa config loaded: {}", config);
             }
         } catch (IOException | JsonSyntaxException e) {
             throw new CoVaException(String.format("parse config file %s failed", configFile), e);
@@ -123,5 +123,10 @@ public class CoVaConfig implements JsonStringify {
 
     public void setTemplate(TemplateConfig template) {
         this.template = template;
+    }
+
+    @Override
+    public String toString() {
+        return this.toJson();
     }
 }

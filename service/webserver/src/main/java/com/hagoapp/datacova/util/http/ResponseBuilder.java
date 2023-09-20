@@ -16,6 +16,7 @@ import io.vertx.ext.web.RoutingContext;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +34,7 @@ public class ResponseBuilder {
     private HttpResponseStatus statusCode = HttpResponseStatus.OK;
     private String statusMessage = "";
     private final Map<String, String> headers = new HashMap<>();
-    private String encoding = "UTF-8";
+    private String encoding = StandardCharsets.UTF_8.name();
     private byte[] responseBody = new byte[0];
 
     public HttpResponseStatus getStatusCode() {
@@ -122,7 +123,6 @@ public class ResponseBuilder {
         rsp.setStatusCode(this.statusCode.code());
         rsp.setStatusMessage(this.statusMessage);
         rsp.write(Buffer.buffer(this.responseBody));
-        //rsp.end();
     }
 
     public ResponseBuilder useJson() {

@@ -9,14 +9,17 @@
 package com.hagoapp.datacova.web;
 
 public class MethodName {
-    public final static String GET = "GET";
-    public final static String POST = "POST";
-    public final static String PUT = "PUT";
-    public final static String OPTIONS = "OPTIONS";
-    public final static String HEAD = "HEAD";
-    public final static String CONNECT = "CONNECT";
-    public final static String DELETE = "DELETE";
-    public final static String TRACE = "TRACE";
+    private MethodName() {
+    }
+
+    public static final String GET = "GET";
+    public static final String POST = "POST";
+    public static final String PUT = "PUT";
+    public static final String OPTIONS = "OPTIONS";
+    public static final String HEAD = "HEAD";
+    public static final String CONNECT = "CONNECT";
+    public static final String DELETE = "DELETE";
+    public static final String TRACE = "TRACE";
 
     public static boolean isValidName(String input) {
         return (input != null) && (

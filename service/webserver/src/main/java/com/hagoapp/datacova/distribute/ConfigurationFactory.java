@@ -25,7 +25,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ConfigurationFactory {
 
-    private static final Map<String, Class<? extends Configuration>> typeMap = new ConcurrentHashMap<String, Class<? extends Configuration>>();
+    private ConfigurationFactory() {
+    }
+
+    private static final Map<String, Class<? extends Configuration>> typeMap = new ConcurrentHashMap<>();
     private static final Logger logger = LoggerFactory.getLogger(ConfigurationFactory.class);
 
     static {

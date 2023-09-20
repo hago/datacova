@@ -9,21 +9,21 @@
 package com.hagoapp.datacova.execution.datafile;
 
 public enum DataFileType {
-    Unknown,
+    UNKNOWN,
     CSV,
-    Excel,
-    ExcelOpenXML;
+    EXCEL,
+    EXCEL_OPEN_XML;
 
     public static DataFileType getFromExtension(String ext) {
         switch (ext.trim().toLowerCase()) {
             case "csv":
                 return CSV;
             case "xls":
-                return Excel;
+                return EXCEL;
             case "xlsx":
-                return ExcelOpenXML;
+                return EXCEL_OPEN_XML;
             default:
-                return Unknown;
+                return UNKNOWN;
         }
     }
 }

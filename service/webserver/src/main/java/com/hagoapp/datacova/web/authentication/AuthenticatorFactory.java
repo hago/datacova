@@ -1,6 +1,9 @@
 package com.hagoapp.datacova.web.authentication;
 
 public class AuthenticatorFactory {
+    private AuthenticatorFactory() {
+    }
+
     public static Authenticator createAuthenticator(AuthType authType) {
         switch (authType) {
             case ANONYMOUS:

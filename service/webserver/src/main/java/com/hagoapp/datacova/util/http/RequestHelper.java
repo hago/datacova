@@ -27,6 +27,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class RequestHelper {
+    private RequestHelper() {
+    }
 
     public static byte[] readBodyBytes(RoutingContext context) {
         return context.body().buffer().getBytes();

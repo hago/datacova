@@ -71,9 +71,9 @@ class PermissionData(config: DatabaseConfig) : CoVaDatabase(config) {
         return permission
     }
 
-    private lateinit var allPermissions: Set<Permission>
+    private lateinit var permissionSet: Set<Permission>
     private fun getAllPermissions(): Set<Permission> {
-        if (!this::allPermissions.isInitialized) {
+        if (!this::permissionSet.isInitialized) {
             val sql = "select * from permissions"
             connection.prepareStatement(sql).use { stmt ->
                 val ret = mutableSetOf<Permission>()
@@ -82,13 +82,13 @@ class PermissionData(config: DatabaseConfig) : CoVaDatabase(config) {
                         ret.add(result2Permission(rs))
                     }
                 }
-                allPermissions = ret.map { p ->
+                permissionSet = ret.map { p ->
                     p.parent = ret.find { p.parentId == it.id }
                     p
                 }.toSet()
             }
         }
-        return allPermissions
+        return permissionSet
     }
 
     fun getUserPermissions(userInfo: UserInfo): UserPermissions {

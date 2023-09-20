@@ -7,10 +7,18 @@
 
 package com.hagoapp.datacova;
 
+import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 public interface JsonStringify {
+
+    class GsonHolder {
+        private GsonHolder() {
+        }
+        static final Gson GSON = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
+    }
+
     default String toJson() {
-        return new GsonBuilder().serializeNulls().setPrettyPrinting().create().toJson(this);
+        return GsonHolder.GSON.toJson(this);
     }
 }

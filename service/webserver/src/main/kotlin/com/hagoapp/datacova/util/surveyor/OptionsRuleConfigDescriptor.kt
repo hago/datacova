@@ -37,6 +37,5 @@ class OptionsRuleConfigDescriptor internal constructor() : RuleConfigDescriptor(
             else """"${it.replace("\"", "\"\"")}""""
         }
         return dt.rawTemplate.format(locale, fieldString, optionString)
-        // return String.format(dt.rawTemplate, fieldString, optionString)
     }
 }
