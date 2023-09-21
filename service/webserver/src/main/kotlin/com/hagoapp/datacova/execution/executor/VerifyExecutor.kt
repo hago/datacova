@@ -33,8 +33,6 @@ class VerifyExecutor : BaseTaskActionExecutor(), ProgressNotify {
         }
         taskAction = action
         val validators = action.configurations.map { conf ->
-            // descriptions.add(conf.describe(taskExecution.task.extra.locale))
-            // ValidatorFactory.createValidator(conf).withColumnDefinition(data.columnDefinition).setConfig(conf)
             val validator = SurveyorFactory.createSurveyor(conf.ruleConfig)
             val columnIndexes = conf.fields.map { f ->
                 data.columnDefinition.indexOfFirst { it.name == f }
@@ -48,7 +46,7 @@ class VerifyExecutor : BaseTaskActionExecutor(), ProgressNotify {
             validators.forEachIndexed { j, validator ->
                 try {
                     val r = validator.first.process(validator.second.map { row.cells[it] })
-                    logger.trace("""validate $row against validator "${action.configurations[j].ruleConfig}", result: $r""")
+                    logger.trace("""validate {} against validator "{}", result: {}""", row, action.configurations[j].ruleConfig, r)
                     if (!r) {
                         verificationFailed = true
                         validator.second.map { colIndex ->
@@ -68,8 +66,7 @@ class VerifyExecutor : BaseTaskActionExecutor(), ProgressNotify {
                 it.first.close()
             } catch (e: Exception) {
                 logger.error(
-                    "closing validator of type {} causes error: {}",
-                    action.configurations[i].ruleConfig.configType, e
+                    "closing validator of type {} causes error: {}", action.configurations[i].ruleConfig.configType, e
                 )
             }
         }
