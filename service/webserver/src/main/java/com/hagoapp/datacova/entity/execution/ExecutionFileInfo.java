@@ -59,10 +59,10 @@ public class ExecutionFileInfo implements JsonStringify {
 
     @SuppressWarnings("unchecked")
     public static ExecutionFileInfo getFileInfo(String s) throws IOException {
-        Gson gson = new GsonBuilder().create();
-        ExecutionFileInfo eai = gson.fromJson(s, ExecutionFileInfo.class);
-        Map<String, Object> map = JSON.std.mapFrom(s);
-        Map<String, Object> subMap = (Map<String, Object>) map.get("fileInfo");
+        var gson = new GsonBuilder().create();
+        var eai = gson.fromJson(s, ExecutionFileInfo.class);
+        var map = JSON.std.mapFrom(s);
+        var subMap = (Map<String, Object>) map.get("fileInfo");
         eai.fileInfo = FileInfoReader.Companion.json2FileInfo(subMap);
         return eai;
     }

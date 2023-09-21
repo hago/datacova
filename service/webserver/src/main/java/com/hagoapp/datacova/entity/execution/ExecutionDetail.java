@@ -44,7 +44,7 @@ public class ExecutionDetail implements JsonStringify {
     }
 
     public static ExecutionDetail fromString(String s) {
-        Gson gson = new GsonBuilder().create();
+        var gson = new GsonBuilder().create();
         return gson.fromJson(s, ExecutionDetail.class);
     }
 
@@ -64,7 +64,7 @@ public class ExecutionDetail implements JsonStringify {
     }
 
     public ExecutionActionDetail addActionDetail(int actionIndex, TaskAction action) {
-        ExecutionActionDetail ead = new ExecutionActionDetail(action);
+        var ead = new ExecutionActionDetail(action);
         actionDetailMap.put(actionIndex, ead);
         return ead;
     }

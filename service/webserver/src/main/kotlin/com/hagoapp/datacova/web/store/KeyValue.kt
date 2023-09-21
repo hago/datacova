@@ -26,6 +26,10 @@ import io.vertx.ext.web.RoutingContext
 
 class KeyValue {
 
+    companion object {
+        private const val INVALID_BODY = "invalid body";
+    }
+
     @WebEndPoint(methods = [MethodName.POST, MethodName.PUT], path = "/store/pair", authTypes = [AuthType.USER_TOKEN])
     fun storeKeyValue(context: RoutingContext) {
         val kv = RequestHelper.readBodyClass(context, KeyValuePair::class.java)
@@ -38,7 +42,7 @@ class KeyValue {
                 )
             )
         } else {
-            context.fail(HttpResponseStatus.BAD_REQUEST.code(), CoVaException("invalid body"))
+            context.fail(HttpResponseStatus.BAD_REQUEST.code(), CoVaException(INVALID_BODY))
         }
     }
 
@@ -60,7 +64,7 @@ class KeyValue {
                 context.fail(HttpResponseStatus.BAD_REQUEST.code(), CoVaException("empty body"))
             }
         } catch (e: JsonSyntaxException) {
-            context.fail(HttpResponseStatus.BAD_REQUEST.code(), CoVaException("invalid body"))
+            context.fail(HttpResponseStatus.BAD_REQUEST.code(), CoVaException(INVALID_BODY))
         }
     }
 
@@ -109,7 +113,7 @@ class KeyValue {
                 )
             }
         } catch (e: JsonSyntaxException) {
-            context.fail(HttpResponseStatus.BAD_REQUEST.code(), CoVaException("invalid body"))
+            context.fail(HttpResponseStatus.BAD_REQUEST.code(), CoVaException(INVALID_BODY))
         }
     }
 }

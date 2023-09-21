@@ -15,6 +15,7 @@ import com.hagoapp.datacova.entity.workspace.WorkSpaceUserRole
 import com.hagoapp.datacova.util.StackTraceWriter
 import com.hagoapp.datacova.util.WorkspaceUserRoleUtil
 import com.hagoapp.datacova.util.http.ResponseHelper
+import com.hagoapp.datacova.web.Messages
 import com.hagoapp.datacova.web.MethodName
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import com.hagoapp.datacova.web.authentication.AuthType
@@ -137,7 +138,7 @@ class Connection {
         val json = context.body().asString()
         val wsCon = WorkspaceConnection.load(json)
         if (wsCon == null) {
-            ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "Invalid Connection")
+            ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, Messages.INVALID_CONNECTION)
             return
         }
         val user = Authenticator.getUser(context)
@@ -147,7 +148,7 @@ class Connection {
                 setOf(WorkSpaceUserRole.Admin, WorkSpaceUserRole.Maintainer)
             )
         ) {
-            ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, "Access Denied")
+            ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, Messages.ACCESS_DENIED)
             return
         }
         wsCon.workspaceId = id
@@ -191,7 +192,7 @@ class Connection {
                 setOf(WorkSpaceUserRole.Admin, WorkSpaceUserRole.Maintainer)
             )
         ) {
-            ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, "Access Denied")
+            ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, Messages.ACCESS_DENIED)
             return
         }
         wsCon.workspaceId = id

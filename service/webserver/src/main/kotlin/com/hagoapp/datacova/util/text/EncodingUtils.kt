@@ -38,7 +38,6 @@ class EncodingUtils {
                     }
                 }
             }
-            //println(det.detectedCharset)
             return normalizeEncoding(det.detectedCharset)
         }
 

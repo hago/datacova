@@ -11,7 +11,7 @@ import com.hagoapp.datacova.config.CoVaConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract public class Distributor {
+public abstract class Distributor {
 
     protected TaskActionDistribute distAction;
     protected final Logger logger = LoggerFactory.getLogger(Distributor.class);
@@ -21,10 +21,10 @@ abstract public class Distributor {
         distAction = action;
     }
 
-    public Distributor() {
+    protected Distributor() {
     }
 
-    abstract public void distribute(String source);
+    public abstract void distribute(String source);
 
-    abstract public String supportedDistributionType();
+    public abstract String supportedDistributionType();
 }

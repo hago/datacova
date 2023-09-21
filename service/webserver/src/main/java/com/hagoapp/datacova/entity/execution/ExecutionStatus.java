@@ -16,13 +16,13 @@ import java.util.stream.Collectors;
 
 public enum ExecutionStatus {
     @SerializedName("0")
-    added(0),
+    ADDED(0),
     @SerializedName("1")
-    executing(1),
+    EXECUTING(1),
     @SerializedName("2")
-    succeed(2),
+    SUCCEED(2),
     @SerializedName("-1")
-    fail(-1);
+    FAIL(-1);
 
     private final int value;
 
@@ -32,7 +32,7 @@ public enum ExecutionStatus {
 
     public static ExecutionStatus valueOf(int v) throws InstantiationException {
         List<ExecutionStatus> l = Arrays.stream(values()).filter(e -> e.value == v).collect(Collectors.toList());
-        if (l.size() > 0) {
+        if (!l.isEmpty()) {
             return l.get(0);
         } else {
             throw new InstantiationException(String.format("invalid value %d for ExecutionStatus enum", v));

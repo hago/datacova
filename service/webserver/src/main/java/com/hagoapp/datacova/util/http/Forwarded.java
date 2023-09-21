@@ -81,14 +81,14 @@ public class Forwarded {
      * @return Forwarded object or null if text is malformed.
      */
     public static Forwarded parse(String text) {
-        String[] parts = text.split(",");
-        Forwarded forwarded = new Forwarded();
-        for (String part : parts) {
-            String[] kv = part.split(":");
+        var parts = text.split(",");
+        var forwarded = new Forwarded();
+        for (var part : parts) {
+            var kv = part.split(":");
             if (kv.length != 2) {
                 continue;
             }
-            String value = kv[1].trim();
+            var value = kv[1].trim();
             switch (kv[0].trim().toLowerCase()) {
                 case "by":
                     forwarded.setByIdentifier(value);

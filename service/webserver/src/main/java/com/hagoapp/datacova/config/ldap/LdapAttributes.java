@@ -8,6 +8,8 @@
 package com.hagoapp.datacova.config.ldap;
 
 import com.hagoapp.datacova.JsonStringify;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
@@ -51,15 +53,14 @@ public class LdapAttributes implements JsonStringify {
     public static final String DEFAULT_ATTRIBUTE_DN = "dn";
 
     private static final Map<String, String> defaults = new HashMap<>();
+    private static final Logger logger = LoggerFactory.getLogger(LdapAttributes.class);
 
     static {
         var fields = LdapAttributes.class.getDeclaredFields();
         for (var field : fields) {
             int modifiers = field.getModifiers();
-            if (!Modifier.isStatic(modifiers) || !Modifier.isPublic(modifiers) || !Modifier.isFinal(modifiers)) {
-                continue;
-            }
-            if (!field.getName().startsWith("ATTRIBUTE_") || !field.getType().isAssignableFrom(String.class)) {
+            if (!Modifier.isStatic(modifiers) || !Modifier.isPublic(modifiers) || !Modifier.isFinal(modifiers) ||
+                    !field.getName().startsWith("ATTRIBUTE_") || !field.getType().isAssignableFrom(String.class)) {
                 continue;
             }
             try {
@@ -68,9 +69,9 @@ public class LdapAttributes implements JsonStringify {
                 var attrDefaultName = defaultNameField.get(null).toString();
                 defaults.putIfAbsent(attrIdentity, attrDefaultName);
             } catch (IllegalAccessException e) {
-                System.err.printf("LDAP attribute %s read error\r\n", field.getName());
+                logger.error("LDAP attribute {} read error", field.getName());
             } catch (NoSuchFieldException e) {
-                System.err.printf("LDAP attribute DEFAULT_%s is absent\r\n", field.getName());
+                logger.error("LDAP attribute DEFAULT_{} is absent", field.getName());
             }
         }
     }

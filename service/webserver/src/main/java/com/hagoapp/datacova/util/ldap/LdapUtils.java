@@ -3,12 +3,10 @@ package com.hagoapp.datacova.util.ldap;
 import com.hagoapp.datacova.CoVaException;
 import com.hagoapp.datacova.config.ldap.LdapAttributes;
 import com.hagoapp.datacova.config.ldap.LdapConfig;
-import org.apache.directory.api.ldap.model.cursor.SearchCursor;
 import org.apache.directory.api.ldap.model.entry.Attribute;
 import org.apache.directory.api.ldap.model.entry.Entry;
 import org.apache.directory.api.ldap.model.entry.Value;
 import org.apache.directory.api.ldap.model.exception.LdapException;
-import org.apache.directory.api.ldap.model.message.SearchRequest;
 import org.apache.directory.api.ldap.model.message.SearchRequestImpl;
 import org.apache.directory.api.ldap.model.message.SearchResultEntry;
 import org.apache.directory.api.ldap.model.message.SearchScope;
@@ -249,16 +247,14 @@ public class LdapUtils implements Closeable, ConnectionClosedEventListener {
             throws CoVaException {
         var uid = conf.getAttributes().getActualAttribute(LdapAttributes.ATTRIBUTE_USERID);
         var name = conf.getAttributes().getActualAttribute(LdapAttributes.ATTRIBUTE_DISPLAY_NAME);
-        final List<Map<String, Object>> list =
-                search(String.format("(|(%s=%s*)(%s=%s*))", uid, userId, name, userId), attributeIdentities, count);
-        return list;
+        return search(String.format("(|(%s=%s*)(%s=%s*))", uid, userId, name, userId), attributeIdentities, count);
     }
 
     private List<Entry> rawSearch(String filter, List<String> attributeNames, Dn searchDn, long max)
             throws LdapException, IOException {
-        String[] attributeArray = new String[attributeNames.size()];
+        var attributeArray = new String[attributeNames.size()];
         attributeArray = attributeNames.toArray(attributeArray);
-        SearchRequest searchReq = new SearchRequestImpl()
+        var searchReq = new SearchRequestImpl()
                 .setScope(SearchScope.SUBTREE)
                 .setBase(searchDn)
                 .setFilter(filter)
@@ -266,11 +262,11 @@ public class LdapUtils implements Closeable, ConnectionClosedEventListener {
                 .setMessageId(1)
                 .setSizeLimit(max)
                 .setTimeLimit(timeOut);
-        List<Entry> ret = new ArrayList<>();
-        try (SearchCursor cur = conn.search(searchReq)) {
+        var ret = new ArrayList<Entry>();
+        try (var cur = conn.search(searchReq)) {
             cur.forEach(response -> {
                 if (response instanceof SearchResultEntry) {
-                    SearchResultEntry searchResultEntry = (SearchResultEntry) response;
+                    var searchResultEntry = (SearchResultEntry) response;
                     ret.add(searchResultEntry.getEntry());
                 }
             });
@@ -358,9 +354,9 @@ public class LdapUtils implements Closeable, ConnectionClosedEventListener {
             if (!bound) {
                 bind();
             }
-            Dn dn = new Dn(searchBasedDn);
+            var dn = new Dn(searchBasedDn);
             rawSearch(filter, attributeIdentities, dn, max).forEach(entry -> {
-                Map<String, Object> map = new HashMap<>();
+                var map = new HashMap<String, Object>();
                 attributeIdentities.forEach(attrName -> {
                     Attribute attr = entry.get(attrName);
                     if (attr == null) {

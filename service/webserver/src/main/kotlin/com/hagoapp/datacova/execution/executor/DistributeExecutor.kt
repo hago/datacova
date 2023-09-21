@@ -42,7 +42,6 @@ class DistributeExecutor : BaseTaskActionExecutor() {
         this.execution = taskExecution
         val filename = prepareSourceFile(taskExecution.id, action.configuration, data, taskExecution.fileInfo.fileInfo)
         action.configuration.targetFileName = prepareTargetFile(action)
-        //println(action.configuration.toJson())
         DistributorFactory.getDistributor(action).distribute(filename)
     }
 

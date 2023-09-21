@@ -27,8 +27,8 @@ public class Application {
     private static final Map<String, Object> internalData = new ConcurrentHashMap<>();
 
     public static void main(String[] args) {
-        Application app = new Application();
-        CommandLine cli = new CommandLine(app);
+        var app = new Application();
+        var cli = new CommandLine(app);
         cli.setExecutionStrategy(app::executionStrategy).execute(args);
     }
 

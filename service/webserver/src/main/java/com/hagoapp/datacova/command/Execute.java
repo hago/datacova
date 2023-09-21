@@ -17,6 +17,7 @@ import com.hagoapp.datacova.entity.execution.TaskExecution;
 import com.hagoapp.datacova.execution.TaskExecutionWatcher;
 import com.hagoapp.datacova.execution.Worker;
 import com.hagoapp.datacova.executor.ExecuteResultMailer;
+import com.hagoapp.datacova.util.StackTraceWriter;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,14 +80,14 @@ public class Execute extends CommandWithConfig implements TaskExecutionWatcher {
     @Override
     public void onComplete(@NotNull TaskExecution te, @NotNull ExecutionDetail result) {
         logger.info("Execution {} of task {} completed: {}",
-                te.getId(), te.getTask().getId(), result.isSucceeded() ? "succeeded" : "failed");
+                te.getId(), te.getTask().getId(), result.isSucceeded());
     }
 
     @Override
     public void onError(@NotNull TaskExecution te, @NotNull Exception error) {
         logger.error("Execution {} of task {} detected error: {}",
                 te.getId(), te.getTask().getId(), error.getMessage());
-        error.printStackTrace();
+        StackTraceWriter.write(error, logger);
     }
 
     @Override

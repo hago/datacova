@@ -41,17 +41,17 @@ public class CoVaConfig implements JsonStringify {
     }
 
     public static synchronized void loadConfig(String configFile) throws CoVaException {
-        try (FileInputStream fis = new FileInputStream(configFile)) {
-            try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
-                byte[] buffer = new byte[1024];
+        try (var fis = new FileInputStream(configFile)) {
+            try (var bos = new ByteArrayOutputStream()) {
+                var buffer = new byte[1024];
                 while (true) {
-                    int i = fis.read(buffer, 0, buffer.length);
+                    var i = fis.read(buffer, 0, buffer.length);
                     if (i < 0) {
                         break;
                     }
                     bos.write(buffer, 0, i);
                 }
-                String json = bos.toString(StandardCharsets.UTF_8);
+                var json = bos.toString(StandardCharsets.UTF_8);
                 config = new Gson().fromJson(json, CoVaConfig.class);
                 logger.debug("Loading config from {}", new File(configFile).getAbsolutePath());
                 logger.info("CoVa config loaded: {}", config);
