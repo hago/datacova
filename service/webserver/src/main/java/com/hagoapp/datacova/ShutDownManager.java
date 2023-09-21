@@ -15,21 +15,25 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ShutDownManager {
-    private static final List<ShutDownWatcher> watchers = new ArrayList<>();
-    private static final Logger logger = LoggerFactory.getLogger(ShutDownManager.class);
+
+    private ShutDownManager() {
+    }
+
+    private static final List<ShutDownWatcher> WATCHERS = new ArrayList<>();
+    private static final Logger LOGGER = LoggerFactory.getLogger(ShutDownManager.class);
 
     public static void watch(ShutDownWatcher watcher) {
-        watchers.add(watcher);
+        WATCHERS.add(watcher);
     }
 
     public static void closeWatchers() {
-        var threads = watchers.stream().map(watcher -> {
+        var threads = WATCHERS.stream().map(watcher -> {
             var t = new Thread(() -> {
                 try {
                     watcher.shutdown();
-                    logger.info("Shutdown {} successfully", watcher.getName());
-                } catch (Throwable e) {
-                    logger.error("Shutdown {} failed: {}", watcher.getName(), e.getMessage());
+                    LOGGER.info("Shutdown {} successfully", watcher.getName());
+                } catch (Exception e) {
+                    LOGGER.error("Shutdown {} failed: {}", watcher.getName(), e.getMessage());
                 }
             });
             t.setDaemon(true);
@@ -40,7 +44,7 @@ public class ShutDownManager {
             try {
                 t.join(1000 * 60L);
             } catch (InterruptedException e) {
-                //
+                Thread.currentThread().interrupt();
             }
         });
     }
