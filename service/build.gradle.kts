@@ -2,6 +2,7 @@ plugins {
     java
     kotlin("jvm") version "1.7.20"
     id("org.jetbrains.dokka") version ("1.7.20")
+    id("org.sonarqube") version "4.3.1.3277"
 }
 
 subprojects {
