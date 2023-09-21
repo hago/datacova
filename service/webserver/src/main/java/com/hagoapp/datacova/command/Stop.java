@@ -50,8 +50,10 @@ public class Stop extends CommandWithConfig {
         try {
             var rsp = http.send(request, HttpResponse.BodyHandlers.ofString());
             logger.info("Notification of stop has been sent to service: {}", rsp.statusCode());
-        } catch (IOException | InterruptedException e) {
-            logger.error("Messaging service to stop failed: {}", e.getMessage());
+        } catch (IOException e) {
+            logger.error("web service to stop failed: {}", e.getMessage());
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 
@@ -67,8 +69,10 @@ public class Stop extends CommandWithConfig {
         try {
             var rsp = http.send(request, HttpResponse.BodyHandlers.ofString());
             logger.info("Notification of stop has been sent to service: {}", rsp.statusCode());
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
             logger.error("Messaging service to stop failed: {}", e.getMessage());
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 }

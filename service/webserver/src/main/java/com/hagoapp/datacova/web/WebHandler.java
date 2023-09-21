@@ -91,6 +91,11 @@ public class WebHandler {
         this.blocking = blocking;
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(path, method);
+    }
+
     public boolean equals(Object other) {
         if (!(other instanceof WebHandler)) {
             return false;

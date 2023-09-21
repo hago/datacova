@@ -17,10 +17,12 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Objects;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class DateUtils {
+
+    private DateUtils() {
+    }
 
     @NotNull
     public static ZonedDateTime beginOfZonedDay(@NotNull ZonedDateTime someTime) {
@@ -41,49 +43,47 @@ public class DateUtils {
 
     @NotNull
     public static ZonedDateTime beginOfZonedWeek(@NotNull ZonedDateTime someTime) {
-        ZonedDateTime need = ZonedDateTime.of(someTime.getYear(), someTime.getMonthValue(), someTime.getDayOfMonth(),
+        var need = ZonedDateTime.of(someTime.getYear(), someTime.getMonthValue(), someTime.getDayOfMonth(),
                 0, 0, 0, 0, someTime.getZone());
-        need = need.minusDays(someTime.getDayOfWeek().getValue() - 1);
+        need = need.minusDays(someTime.getDayOfWeek().getValue() - 1L);
         return need;
     }
 
     @NotNull
     public static ZonedDateTime endOfZonedWeek(@NotNull ZonedDateTime someTime) {
         int weekDay1 = someTime.getDayOfWeek().getValue();
-        return someTime.plusDays(7 - weekDay1).minusNanos(1);
+        return someTime.plusDays(7L - weekDay1).minusNanos(1);
     }
 
     @NotNull
     public static LocalDateTime beginOfLocalWeek(LocalDateTime someTime) {
-        LocalDateTime need = LocalDateTime.of(someTime.getYear(), someTime.getMonthValue(), someTime.getDayOfMonth(),
+        var need = LocalDateTime.of(someTime.getYear(), someTime.getMonthValue(), someTime.getDayOfMonth(),
                 0, 0, 0, 0);
-        need = need.minusDays(someTime.getDayOfWeek().getValue() - 1);
+        need = need.minusDays(someTime.getDayOfWeek().getValue() - 1L);
         return need;
     }
 
     @NotNull
     public static ZonedDateTime beginOfZonedMonth(ZonedDateTime someTime) {
-        ZonedDateTime need = ZonedDateTime.of(someTime.getYear(), someTime.getMonthValue(),
+        return ZonedDateTime.of(someTime.getYear(), someTime.getMonthValue(),
                 1, 0, 0, 0, 0, someTime.getZone());
-        return need;
     }
 
     @NotNull
     public static ZonedDateTime endOfZonedMonth(ZonedDateTime someTime) {
-        ZonedDateTime dayAfterAMonth = someTime.plusMonths(1);
+        var dayAfterAMonth = someTime.plusMonths(1);
         return DateUtils.trimZonedDate(dayAfterAMonth, dayAfterAMonth.getMonthValue()).minusNanos(1);
     }
 
     @NotNull
     public static LocalDateTime beginOfLocalMonth(LocalDateTime someTime) {
-        LocalDateTime need = LocalDateTime.of(someTime.getYear(), someTime.getMonthValue(),
+        return LocalDateTime.of(someTime.getYear(), someTime.getMonthValue(),
                 1, 0, 0, 0, 0);
-        return need;
     }
 
     @NotNull
     public static ZonedDateTime beginOfZonedQuarter(ZonedDateTime someTime) {
-        ZonedDateTime need = ZonedDateTime.of(someTime.getYear(), someTime.getMonthValue(),
+        var need = ZonedDateTime.of(someTime.getYear(), someTime.getMonthValue(),
                 1, 0, 0, 0, 0, someTime.getZone());
         need = need.minusMonths((someTime.getMonthValue() - 1) % 3);
         return need;
@@ -91,13 +91,13 @@ public class DateUtils {
 
     @NotNull
     public static ZonedDateTime endOfZonedQuarter(ZonedDateTime someTime) {
-        ZonedDateTime begin = beginOfZonedQuarter(someTime);
+        var begin = beginOfZonedQuarter(someTime);
         return begin.plusMonths(3).minusNanos(1);
     }
 
     @NotNull
     public static LocalDateTime beginOfLocalQuarter(LocalDateTime someTime) {
-        LocalDateTime need = LocalDateTime.of(someTime.getYear(), someTime.getMonthValue(),
+        var need = LocalDateTime.of(someTime.getYear(), someTime.getMonthValue(),
                 1, 0, 0, 0, 0);
         need = need.minusMonths((someTime.getMonthValue() - 1) % 3);
         return need;
@@ -105,9 +105,8 @@ public class DateUtils {
 
     @NotNull
     public static ZonedDateTime beginOfZonedYear(ZonedDateTime someTime) {
-        ZonedDateTime need = ZonedDateTime.of(someTime.getYear(), 1, 1,
+        return ZonedDateTime.of(someTime.getYear(), 1, 1,
                 0, 0, 0, 0, someTime.getZone());
-        return need;
     }
 
     @NotNull
@@ -117,9 +116,8 @@ public class DateUtils {
 
     @NotNull
     public static LocalDateTime beginOfLocalYear(LocalDateTime someTime) {
-        LocalDateTime need = LocalDateTime.of(someTime.getYear(), 1, 1,
+        return LocalDateTime.of(someTime.getYear(), 1, 1,
                 0, 0, 0, 0);
-        return need;
     }
 
     public static long yearMonthOffsetToMilliSecond(@NotNull LocalDateTime base, int monthOffset) {
@@ -189,9 +187,9 @@ public class DateUtils {
     }
 
     public static class DurationYearMonth {
-        public Duration duration = null;
-        public Integer year = null;
-        public Integer month = null;
+        private Duration duration = null;
+        private Integer year = null;
+        private Integer month = null;
 
         @Override
         public String toString() {
@@ -202,15 +200,15 @@ public class DateUtils {
     private static final Pattern durationYearMonthPattern = Pattern.compile("P(-?\\d+Y|)(-?\\d+M|)(-?\\d+D|)(T.*|)");
 
     public static DurationYearMonth stringToDurationYearMonth(String src) {
-        Matcher matcher = durationYearMonthPattern.matcher(src.toUpperCase());
-        DurationYearMonth dym = new DurationYearMonth();
+        var matcher = durationYearMonthPattern.matcher(src.toUpperCase());
+        var dym = new DurationYearMonth();
         if (!matcher.matches()) {
             return dym;
         }
-        String y = matcher.group(1);
-        String m = matcher.group(2);
-        String d = matcher.group(3);
-        String t = matcher.group(4);
+        var y = matcher.group(1);
+        var m = matcher.group(2);
+        var d = matcher.group(3);
+        var t = matcher.group(4);
         dym.duration = t.isEmpty() && d.isEmpty() ? null : Duration.parse(String.format("P%s%s", d, t));
         dym.year = y.isEmpty() ? null : Integer.valueOf(y.substring(0, y.length() - 1));
         dym.month = m.isEmpty() ? null : Integer.valueOf(m.substring(0, m.length() - 1));

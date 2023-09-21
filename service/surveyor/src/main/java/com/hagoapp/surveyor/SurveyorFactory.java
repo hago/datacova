@@ -31,6 +31,9 @@ import java.util.Map;
  */
 public class SurveyorFactory {
 
+    private SurveyorFactory() {
+    }
+
     private static final Map<String, Class<? extends RuleConfig>> configurations = new HashMap<>();
     private static final Map<String, Class<? extends Surveyor>> processors = new HashMap<>();
     private static final Logger logger = LoggerFactory.getLogger(SurveyorFactory.class);
@@ -60,8 +63,7 @@ public class SurveyorFactory {
         }
         var processorTypes = new Reflections(packageName, Scanners.SubTypes).getSubTypesOf(Surveyor.class);
         for (var type : processorTypes) {
-            try {
-                var instance = type.getConstructor().newInstance();
+            try (var instance = type.getConstructor().newInstance()) {
                 var typeName = instance.getSupportedConfigType();
                 if (processors.containsKey(typeName)) {
                     var oldClz = processors.get(typeName);
@@ -70,7 +72,7 @@ public class SurveyorFactory {
                 }
                 processors.put(typeName, type);
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                     NoSuchMethodException e) {
+                     NoSuchMethodException | IOException e) {
                 logger.error("Error occurs while trying to instantiate {}", type.getCanonicalName());
                 logger.error("cause: {}", e.getMessage());
             }
@@ -110,7 +112,7 @@ public class SurveyorFactory {
         return createSurveyor(config);
     }
 
-    public static Surveyor createSurveyor(String json) throws IOException {
+    public static Surveyor createSurveyor(String json) {
         var config = createRuleConfig(json);
         return createSurveyor(config);
     }

@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ExecutorManager {
 
-    public static long CHECK_INTERVAL = 60 * 10 * 1000;
+    public static final long CHECK_INTERVAL = 60 * 10 * 1000L;
     private static final ExecutorManager manager = new ExecutorManager();
 
     public static ExecutorManager getManager() {
@@ -48,8 +48,8 @@ public class ExecutorManager {
                 }));
             }
         };
-        Timer timer = new Timer();
-        timer.schedule(checker, 2 * 1000, CHECK_INTERVAL);
+        var timer = new Timer();
+        timer.schedule(checker, 2 * 1000L, CHECK_INTERVAL);
     }
 
     public void registerExecutor(ExecutorStatus status) {
@@ -75,8 +75,9 @@ public class ExecutorManager {
         if (executorMap.isEmpty()) {
             return null;
         }
-        return executorMap.values().stream()
-                .min(Comparator.comparingInt(o -> o.status.getExecutions().size())).get().status;
+        var minExecutionInfo = executorMap.values().stream()
+                .min(Comparator.comparingInt(o -> o.status.getExecutions().size()));
+        return minExecutionInfo.map(executorInfo -> executorInfo.status).orElse(null);
     }
 
     public Map<String, ExecutorInfo> getExecutors() {
