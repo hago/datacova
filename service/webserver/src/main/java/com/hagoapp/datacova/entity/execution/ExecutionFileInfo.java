@@ -8,7 +8,6 @@
 package com.hagoapp.datacova.entity.execution;
 
 import com.fasterxml.jackson.jr.ob.JSON;
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.hagoapp.datacova.JsonStringify;
 import com.hagoapp.f2t.datafile.FileInfo;

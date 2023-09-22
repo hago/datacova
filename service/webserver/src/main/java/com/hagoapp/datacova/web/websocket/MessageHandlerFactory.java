@@ -23,9 +23,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class MessageHandlerFactory {
 
-    private final static Map<Integer, Constructor<? extends IMessageHandler>> handlerMap = new ConcurrentHashMap<>();
-    private final static Map<Integer, Class<? extends ClientMessage>> typeMap = new ConcurrentHashMap<>();
-    private final static Logger logger = LoggerFactory.getLogger(MessageHandlerFactory.class);
+    private static final Map<Integer, Constructor<? extends IMessageHandler>> handlerMap = new ConcurrentHashMap<>();
+    private static final Map<Integer, Class<? extends ClientMessage>> typeMap = new ConcurrentHashMap<>();
+    private static final Logger logger = LoggerFactory.getLogger(MessageHandlerFactory.class);
 
     static {
         var ref = new Reflections(Application.class.getPackageName(), Scanners.SubTypes);

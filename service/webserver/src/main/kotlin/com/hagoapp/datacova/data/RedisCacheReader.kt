@@ -14,6 +14,7 @@ import com.hagoapp.datacova.Application
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.redis.JedisManager
 import com.hagoapp.datacova.data.redis.RedisConfig
+import org.slf4j.LoggerFactory
 import redis.clients.jedis.Jedis
 import java.lang.reflect.Type
 
@@ -21,6 +22,7 @@ class RedisCacheReader<T> private constructor() {
     companion object {
         const val DEFAULT_VALIDITY = 3600L
         private val skipCache = !Application.PRODUCTION_MODE
+        private val logger = LoggerFactory.getLogger(RedisCacheReader::class.java)
 
         @JvmStatic
         fun <T> readCachedData(
@@ -63,7 +65,7 @@ class RedisCacheReader<T> private constructor() {
             vararg params: Any?
         ): T? {
             val builder = Builder<T>()
-                .shouldSkipCache(skipCache)
+                .shouldSkipCache(true)
                 .withLoadFunction(loader)
                 .withDataLifeTime(dataLifetime)
                 .withCacheName(cacheName)
@@ -261,7 +263,7 @@ class RedisCacheReader<T> private constructor() {
 
     fun clearData(vararg params: Any?) {
         actualKey = key ?: createKey(*params)
-        //println("clear key $actualKey")
+        logger.debug("clear key {}", actualKey)
         createJedis().use { it.del(actualKey) }
     }
 }

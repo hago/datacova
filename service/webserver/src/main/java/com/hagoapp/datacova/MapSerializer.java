@@ -16,6 +16,9 @@ import java.util.List;
 import java.util.Map;
 
 public class MapSerializer {
+
+    private MapSerializer() {
+    }
     public static String serializeMap(Map<String, Object> map) throws IOException {
         return JSON.std.asString(map);
     }
@@ -29,7 +32,7 @@ public class MapSerializer {
     }
 
     public static List<Map<String, Object>> deserializeList(String s) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
+        var mapper = new ObjectMapper();
         return mapper.readValue(s, new TypeReference<>() {
         });
     }

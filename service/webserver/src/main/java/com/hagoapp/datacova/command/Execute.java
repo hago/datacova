@@ -61,7 +61,7 @@ public class Execute extends CommandWithConfig implements TaskExecutionWatcher {
                     logger.info(locales);
                     return -1;
                 }
-                logger.debug("get locale: {}", loc.toLanguageTag());
+                logger.debug("get locale: {}", loc);
                 taskExecution.getTask().getExtra().setLocale(loc);
             }
             Worker worker = new Worker(taskExecution);
@@ -108,7 +108,7 @@ public class Execute extends CommandWithConfig implements TaskExecutionWatcher {
         logger.error("Execution {} of task {} is performing action {}: {}, error: {} occurs",
                 te.getId(), te.getTask().getId(), actionIndex,
                 te.getTask().getActions().get(actionIndex).getName(), error.getMessage());
-        error.printStackTrace();
+        StackTraceWriter.write(error, logger);
     }
 
     @Override

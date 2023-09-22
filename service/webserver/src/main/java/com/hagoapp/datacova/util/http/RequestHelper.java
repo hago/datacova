@@ -22,9 +22,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class RequestHelper {
     private RequestHelper() {
@@ -38,8 +38,8 @@ public class RequestHelper {
         String cType = context.request().getHeader(HttpHeaderNames.CONTENT_TYPE);
         Charset cs = null;
         if (cType != null) {
-            Pattern p = Pattern.compile("charset=(.+)", Pattern.CASE_INSENSITIVE);
-            Matcher m = p.matcher(cType);
+            var p = Pattern.compile("charset=(.+)", Pattern.CASE_INSENSITIVE);
+            var m = p.matcher(cType);
             if (m.find()) {
                 try {
                     cs = Charset.forName(m.group());
@@ -63,7 +63,7 @@ public class RequestHelper {
     }
 
     public static <T> T readBodyClass(RoutingContext context, Class<? extends T> clz) {
-        String json = readBodyString(context);
+        var json = readBodyString(context);
         if (json == null) {
             return null;
         } else {
@@ -76,7 +76,7 @@ public class RequestHelper {
     }
 
     public static List<HttpCookie> parseCookie(RoutingContext context) {
-        String cookieString = context.request().getHeader(HttpHeaderNames.COOKIE);
+        var cookieString = context.request().getHeader(HttpHeaderNames.COOKIE);
         return parseCookie(cookieString);
     }
 
@@ -102,17 +102,18 @@ public class RequestHelper {
     public static String getRemoteIp(MultiMap headers) {
         return getRemoteIp(headers, null);
     }
+
     public static String getRemoteIp(MultiMap headers, String defaultIp) {
         String headerXForwardFor = headers.get("X-Forwarded-For");
         if (headerXForwardFor != null) {
-            XForwardFor objectXForwardFor = XForwardFor.parse(headerXForwardFor);
+            var objectXForwardFor = XForwardFor.parse(headerXForwardFor);
             if (objectXForwardFor != null) {
                 return objectXForwardFor.getClientIp();
             }
         }
-        String forwardedHeader = headers.get("Forwarded");
+        var forwardedHeader = headers.get("Forwarded");
         if (forwardedHeader != null) {
-            Forwarded forwarded = Forwarded.parse(forwardedHeader);
+            var forwarded = Forwarded.parse(forwardedHeader);
             if (forwarded.getForClientIp() != null) {
                 return forwarded.getForClientIp();
             }
@@ -127,10 +128,13 @@ public class RequestHelper {
      * @return true if the request comes from internet, or false for intranet
      */
     public static boolean requestForwarded(RoutingContext context) {
-        return List.of(
-                "X-Forwarded-For", "Forwarded"
-        ).stream().anyMatch(header -> context.request().getHeader(header) != null);
+        return Stream.of("X-Forwarded-For", "Forwarded")
+                .anyMatch(header -> context.request().getHeader(header) != null);
     }
+
+    private static final List<String> INTRANET_RANGES = List.of(
+            "192.168.0.0/24", "10.0.0.0/8", "172.1.0.0/11", "127.0.0.0/8"
+    );
 
     /**
      * Whether the request comes from internet.
@@ -140,7 +144,7 @@ public class RequestHelper {
      */
     public static boolean isFromInternet(RoutingContext context) {
         String ip = getRemoteIp(context);
-        return List.of("192.68.0.0/16", "10.0.0.0/8", "172.1.0.0/11", "127.0.0.0/8").stream().noneMatch(subnet -> {
+        return INTRANET_RANGES.stream().noneMatch(subnet -> {
             try {
                 return new CIDRUtils(subnet).isInHostsRange(ip);
             } catch (UnknownHostException e) {
