@@ -2,7 +2,14 @@ plugins {
     java
     kotlin("jvm") version "1.7.20"
     id("org.jetbrains.dokka") version ("1.7.20")
+    id("jacoco")
     id("org.sonarqube") version "4.3.1.3277"
+}
+
+tasks.jacocoTestReport {
+    reports {
+        xml.required.set(true)
+    }
 }
 
 subprojects {
