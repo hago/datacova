@@ -18,7 +18,6 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind:2.15.3")
     implementation("com.hagoapp:f2t:0.8.3")
     implementation("com.fasterxml.jackson.jr:jackson-jr-objects:2.15.3")
-    implementation("com.jcraft", "jsch", "0.1.55")
     implementation("org.postgresql", "postgresql", "42.5.1")
     compileOnly("org.projectlombok:lombok:1.18.30")
     annotationProcessor("org.projectlombok:lombok:1.18.30")
