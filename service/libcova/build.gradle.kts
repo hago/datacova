@@ -19,8 +19,6 @@ dependencies {
     implementation("com.hagoapp:f2t:0.8.3")
     implementation("com.fasterxml.jackson.jr:jackson-jr-objects:2.15.3")
     implementation("org.postgresql", "postgresql", "42.5.1")
-    compileOnly("org.projectlombok:lombok:1.18.30")
-    annotationProcessor("org.projectlombok:lombok:1.18.30")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
     testImplementation("ch.qos.logback", "logback-classic","1.2.9")
