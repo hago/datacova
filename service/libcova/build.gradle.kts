@@ -14,7 +14,7 @@ dependencies {
     implementation(project(":surveyor"))
     implementation(project(":filestore"))
     implementation("org.reflections", "reflections", "0.10.2")
-    implementation("com.google.code.gson:gson:2.9.0")
+    implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.15.3")
     implementation("com.hagoapp:f2t:0.8.3")
     implementation("com.fasterxml.jackson.jr:jackson-jr-objects:2.15.3")
