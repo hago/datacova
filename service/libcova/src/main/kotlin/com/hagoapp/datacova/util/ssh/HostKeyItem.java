@@ -5,11 +5,26 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package com.hagoapp.datacova.entity.distribute.sftp;
+package com.hagoapp.datacova.util.ssh;
 
+/**
+ * Item to present a line of known hosts file.
+ *
+ * @author suncjs
+ * @since 0.5
+ */
 public class HostKeyItem {
+    /**
+     * host name.
+     */
     private final String host;
+    /**
+     * key type. E.g., ecdsa-sha2-nistp256, ssh-rsa.
+     */
     private final String type;
+    /**
+     * signature
+     */
     private final String key;
 
     public String getHost() {
