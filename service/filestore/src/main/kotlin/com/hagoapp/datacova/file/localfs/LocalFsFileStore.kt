@@ -7,8 +7,9 @@
 
 package com.hagoapp.datacova.file.localfs
 
-import com.hagoapp.datacova.file.StoreFileInfo
 import com.hagoapp.datacova.file.FileStore
+import com.hagoapp.datacova.file.FsScheme
+import com.hagoapp.datacova.file.StoreFileInfo
 import org.slf4j.LoggerFactory
 import java.io.BufferedOutputStream
 import java.io.File
@@ -27,6 +28,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import kotlin.io.path.name
 
+@FsScheme(name = LocalFsConfig.LOCAL_FS_SCHEME)
 class LocalFsFileStore private constructor(private val rootPath: String) : FileStore {
 
     companion object {
