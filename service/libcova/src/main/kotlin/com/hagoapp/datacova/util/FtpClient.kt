@@ -110,6 +110,21 @@ class FtpClient(private val config: FtpConfig) : Closeable {
         return ftp.listNames(path) ?: arrayOf()
     }
 
+    fun list(): List<RemoteFile> {
+        val pwd = pwd()
+        return list(pwd)
+    }
+
+    private fun list(path: String): List<RemoteFile> {
+        val ret = mutableListOf<RemoteFile>()
+        ftp.listFiles(path).forEach {
+            if (it != null) {
+                ret.add(RemoteFile(it.name, it.isDirectory, it.isSymbolicLink, it.size, path))
+            }
+        }
+        return ret
+    }
+
     fun getReply(): Pair<Int, String> {
         return Pair(ftp.replyCode, ftp.replyString)
     }
