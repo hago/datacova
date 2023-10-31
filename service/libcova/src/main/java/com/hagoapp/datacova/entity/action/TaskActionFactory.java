@@ -9,7 +9,7 @@ package com.hagoapp.datacova.entity.action;
 
 import com.google.gson.Gson;
 import com.hagoapp.datacova.CoVaException;
-import com.hagoapp.datacova.LibCova;
+import com.hagoapp.datacova.LibCoVa1;
 import com.hagoapp.datacova.MapSerializer;
 import com.hagoapp.datacova.StackTraceWriter;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +33,7 @@ public class TaskActionFactory {
     private static final Logger logger = LoggerFactory.getLogger(TaskActionFactory.class);
 
     static {
-        Reflections r = new Reflections(LibCova.DEFAULT_NAMESPACE, Scanners.SubTypes);
+        Reflections r = new Reflections(LibCoVa1.DEFAULT_NAMESPACE, Scanners.SubTypes);
         Set<Class<? extends TaskAction>> actionClasses = r.getSubTypesOf(TaskAction.class);
         actionClasses.forEach(actionClass -> {
             try {

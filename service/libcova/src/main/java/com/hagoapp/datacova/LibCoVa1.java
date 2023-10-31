@@ -7,8 +7,8 @@
 
 package com.hagoapp.datacova;
 
-public class LibCova {
+public class LibCoVa1 {
 
-    private LibCova() {}
-    public static final String DEFAULT_NAMESPACE = LibCova.class.getPackageName();
+    private LibCoVa1() {}
+    public static final String DEFAULT_NAMESPACE = LibCoVa1.class.getPackageName();
 }
