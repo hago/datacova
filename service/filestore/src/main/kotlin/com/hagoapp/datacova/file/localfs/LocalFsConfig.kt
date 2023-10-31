@@ -12,10 +12,14 @@ import com.hagoapp.datacova.file.FsScheme
 import java.io.File
 
 @FsScheme(name = LocalFsConfig.LOCAL_FS_SCHEME)
-class LocalFsConfig: FsConfig() {
+class LocalFsConfig(): FsConfig() {
 
     companion object {
         const val LOCAL_FS_SCHEME = "localFs"
+    }
+
+    constructor(root: String) : this() {
+        rootPath = root
     }
 
     var rootPath: String = File("./").absolutePath

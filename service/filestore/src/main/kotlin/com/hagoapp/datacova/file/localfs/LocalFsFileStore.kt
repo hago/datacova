@@ -8,6 +8,7 @@
 package com.hagoapp.datacova.file.localfs
 
 import com.hagoapp.datacova.file.FileStore
+import com.hagoapp.datacova.file.FsConfig
 import com.hagoapp.datacova.file.FsScheme
 import com.hagoapp.datacova.file.StoreFileInfo
 import org.slf4j.LoggerFactory
@@ -19,7 +20,6 @@ import java.io.FileOutputStream
 import java.io.InputStream
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
-import java.nio.file.Path
 import java.security.InvalidParameterException
 import java.security.MessageDigest
 import java.time.Instant
@@ -29,28 +29,18 @@ import java.time.format.DateTimeFormatter
 import kotlin.io.path.name
 
 @FsScheme(name = LocalFsConfig.LOCAL_FS_SCHEME)
-class LocalFsFileStore private constructor(private val rootPath: String) : FileStore {
+class LocalFsFileStore constructor(private val config: FsConfig) : FileStore {
 
-    companion object {
-        private val instances = mutableMapOf<String, LocalFsFileStore>()
-        private val logger = LoggerFactory.getLogger(LocalFsFileStore::class.java)
+    private val conf: LocalFsConfig
+    private val logger = LoggerFactory.getLogger(LocalFsFileStore::class.java)
 
-        fun getFileStore(root: String): LocalFsFileStore {
-            val key = File(root).absolutePath
-            val instance = instances.compute(key) { k: String, existed: LocalFsFileStore? ->
-                if (existed != null) existed
-                else {
-                    val f = File(k)
-                    if (!f.exists()) {
-                        logger.debug("create directory {}", f.absolutePath)
-                        Files.createDirectory(Path.of(f.toURI()))
-                    }
-                    val lfs = LocalFsFileStore(File(k).absolutePath)
-                    lfs
-                }
-            }
-            return instance!!
+    constructor(rootPath: String) : this(LocalFsConfig(rootPath))
+
+    init {
+        if (config !is LocalFsConfig) {
+            throw UnsupportedOperationException("Not a LocalFsConfig instance")
         }
+        conf = config
     }
 
     override fun putFile(src: InputStream, fileName: String, size: Long): String {
@@ -82,7 +72,7 @@ class LocalFsFileStore private constructor(private val rootPath: String) : FileS
     private fun createInternalFileName(originalName: String): String {
         val dt = LocalDateTime.now(ZoneId.of("UTC"))
         val subDirectory = dt.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"))
-        val pf = File(rootPath, subDirectory)
+        val pf = File(conf.rootPath, subDirectory)
         if (!pf.exists()) {
             Files.createDirectories(pf.toPath())
         }
@@ -110,7 +100,7 @@ class LocalFsFileStore private constructor(private val rootPath: String) : FileS
 
     override fun getFile(id: String): InputStream {
         val fn = parseId(id)
-        val f = File(rootPath, fn)
+        val f = File(conf.rootPath, fn)
         if (!f.exists()) {
             throw FileNotFoundException("file $id not found")
         }
@@ -118,12 +108,12 @@ class LocalFsFileStore private constructor(private val rootPath: String) : FileS
     }
 
     override fun getFileInfo(id: String): StoreFileInfo {
-        val fn = File(rootPath, getNamingFile(parseId(id)))
+        val fn = File(conf.rootPath, getNamingFile(parseId(id)))
         if (!fn.exists()) {
             throw FileNotFoundException("naming file ${fn.absolutePath} for $id not found")
         }
         val originalFileName = FileInputStream(fn).use { it.readAllBytes().toString(StandardCharsets.UTF_8) }
-        val fn1 = File(rootPath, parseId(id))
+        val fn1 = File(conf.rootPath, parseId(id))
         if (!fn1.exists()) {
             throw FileNotFoundException("file $id not found")
         }
@@ -132,12 +122,12 @@ class LocalFsFileStore private constructor(private val rootPath: String) : FileS
     }
 
     override fun delete(id: String): Boolean {
-        val file = File(rootPath, parseId(id))
+        val file = File(conf.rootPath, parseId(id))
         if (file.exists() && !file.delete()) {
             logger.error("Failed deletion of file: {}", file.absoluteFile)
             return false
         }
-        val file1 = File(rootPath, "${parseId(id)}.name")
+        val file1 = File(conf.rootPath, "${parseId(id)}.name")
         if (file1.exists() && !file1.delete()) {
             logger.error("Failed deletion of file: {}", file1.absoluteFile)
             return false
@@ -147,6 +137,6 @@ class LocalFsFileStore private constructor(private val rootPath: String) : FileS
 
     override fun exists(id: String): Boolean {
         val fn = parseId(id)
-        return File(rootPath, fn).exists() && File(rootPath, getNamingFile(fn)).exists()
+        return File(conf.rootPath, fn).exists() && File(conf.rootPath, getNamingFile(fn)).exists()
     }
 }

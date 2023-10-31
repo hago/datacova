@@ -55,7 +55,7 @@ class LocalFsTest {
             val rootPath = md5.digest(hay.toString().toByteArray())
                 .joinToString("", transform = { aByte -> String.format("%02x", aByte) })
             testRootPath = File(rootPath).absolutePath
-            store = LocalFsFileStore.getFileStore(testRootPath)
+            store = LocalFsFileStore(testRootPath)
         }
 
         @JvmStatic
