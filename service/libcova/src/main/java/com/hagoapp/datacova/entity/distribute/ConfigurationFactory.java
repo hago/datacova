@@ -11,7 +11,7 @@ package com.hagoapp.datacova.entity.distribute;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.hagoapp.datacova.CoVaException;
-import com.hagoapp.datacova.LibCoVa1;
+import com.hagoapp.datacova.LibCoVa;
 import com.hagoapp.datacova.MapSerializer;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
@@ -32,7 +32,7 @@ public class ConfigurationFactory {
     private static final Logger logger = LoggerFactory.getLogger(ConfigurationFactory.class);
 
     static {
-        Reflections r = new Reflections(LibCoVa1.DEFAULT_NAMESPACE, Scanners.SubTypes);
+        Reflections r = new Reflections(LibCoVa.DEFAULT_NAMESPACE, Scanners.SubTypes);
         r.getSubTypesOf(Configuration.class).forEach(clz -> {
             try {
                 var constructor = clz.getConstructor();
