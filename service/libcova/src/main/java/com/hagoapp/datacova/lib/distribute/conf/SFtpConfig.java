@@ -26,7 +26,7 @@ public class SFtpConfig extends Configuration {
     private String remoteName;
     private SFtpAuthType authType = SFtpAuthType.PASSWORD;
     private String privateKeyFile;
-    private String b64PrivateKey;
+    private byte[] privateKey;
     private String passPhrase;
 
     public static final String DISTRIBUTE_TYPE_SFTP = "sftp";
@@ -92,12 +92,12 @@ public class SFtpConfig extends Configuration {
         this.authType = authType;
     }
 
-    public String getB64PrivateKey() {
-        return b64PrivateKey;
+    public byte[] getPrivateKey() {
+        return privateKey;
     }
 
-    public void setB64PrivateKey(String b64PrivateKey) {
-        this.b64PrivateKey = b64PrivateKey;
+    public void setPrivateKey(byte[] privateKey) {
+        this.privateKey = privateKey;
     }
 
     public String getPrivateKeyFile() {
