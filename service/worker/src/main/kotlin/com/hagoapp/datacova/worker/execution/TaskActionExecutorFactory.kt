@@ -10,8 +10,8 @@ package com.hagoapp.datacova.worker.execution
 
 import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.LibCova
-import com.hagoapp.datacova.entity.action.TaskAction
-import com.hagoapp.datacova.entity.action.TaskActionFactory
+import com.hagoapp.datacova.lib.action.TaskAction
+import com.hagoapp.datacova.lib.action.TaskActionFactory
 import com.hagoapp.datacova.execution.executor.BaseTaskActionExecutor
 import org.reflections.Reflections
 import org.reflections.scanners.Scanners

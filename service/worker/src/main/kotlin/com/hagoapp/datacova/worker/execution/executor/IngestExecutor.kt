@@ -9,10 +9,10 @@ package com.hagoapp.datacova.execution.executor
 
 import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.data.workspace.ConnectionData
-import com.hagoapp.datacova.entity.action.TaskAction
+import com.hagoapp.datacova.lib.action.TaskAction
 import com.hagoapp.datacova.ingest.TaskActionIngest
 import com.hagoapp.datacova.ingest.TaskActionIngest.TASK_ACTION_TYPE_INGEST
-import com.hagoapp.datacova.entity.execution.TaskExecution
+import com.hagoapp.datacova.lib.execution.TaskExecution
 import com.hagoapp.f2t.*
 import com.hagoapp.f2t.datafile.ParseResult
 

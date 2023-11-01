@@ -12,7 +12,7 @@ import com.hagoapp.datacova.distribute.Distributor
 import com.hagoapp.datacova.distribute.TaskActionDistribute
 import com.hagoapp.datacova.distribute.conf.SFtpConfig
 import com.hagoapp.datacova.execution.distribute.sftp.KnownHostsStore
-import com.hagoapp.datacova.util.SFtpClient
+import com.hagoapp.datacova.lib.util.SFtpClient
 import com.hagoapp.datacova.util.Utils
 import com.jcraft.jsch.ChannelSftp
 import com.jcraft.jsch.JSchException

@@ -8,11 +8,11 @@
 package com.hagoapp.datacova.execution.executor
 
 import com.hagoapp.datacova.CoVaException
-import com.hagoapp.datacova.entity.action.TaskAction
+import com.hagoapp.datacova.lib.action.TaskAction
 import com.hagoapp.datacova.distribute.Configuration
 import com.hagoapp.datacova.distribute.TaskActionDistribute
 import com.hagoapp.datacova.distribute.TaskActionDistribute.TASK_ACTION_TYPE_DISTRIBUTE
-import com.hagoapp.datacova.entity.execution.TaskExecution
+import com.hagoapp.datacova.lib.execution.TaskExecution
 import com.hagoapp.datacova.worker.execution.datafile.CSVDataFileWriter
 import com.hagoapp.datacova.worker.execution.datafile.ExcelDataFileWriter
 import com.hagoapp.datacova.worker.execution.datafile.ExcelXDataFileWriter

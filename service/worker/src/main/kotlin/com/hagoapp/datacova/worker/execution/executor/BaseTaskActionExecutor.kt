@@ -8,8 +8,8 @@
 
 package com.hagoapp.datacova.execution.executor
 
-import com.hagoapp.datacova.entity.action.TaskAction
-import com.hagoapp.datacova.entity.execution.TaskExecution
+import com.hagoapp.datacova.lib.action.TaskAction
+import com.hagoapp.datacova.lib.execution.TaskExecution
 import com.hagoapp.datacova.worker.execution.TaskExecutionActionWatcher
 import com.hagoapp.f2t.ColumnDefinition
 import com.hagoapp.f2t.DataTable

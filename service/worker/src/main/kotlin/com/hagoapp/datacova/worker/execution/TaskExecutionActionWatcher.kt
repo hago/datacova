@@ -8,8 +8,8 @@
 
 package com.hagoapp.datacova.worker.execution
 
-import com.hagoapp.datacova.entity.action.TaskAction
-import com.hagoapp.datacova.entity.execution.DataMessage
+import com.hagoapp.datacova.lib.action.TaskAction
+import com.hagoapp.datacova.lib.execution.DataMessage
 
 interface TaskExecutionActionWatcher {
     /**

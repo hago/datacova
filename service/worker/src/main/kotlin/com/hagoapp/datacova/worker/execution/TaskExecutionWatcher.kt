@@ -8,9 +8,9 @@
 
 package com.hagoapp.datacova.worker.execution
 
-import com.hagoapp.datacova.entity.execution.ExecutionActionDetail
-import com.hagoapp.datacova.entity.execution.ExecutionDetail
-import com.hagoapp.datacova.entity.execution.TaskExecution
+import com.hagoapp.datacova.lib.execution.ExecutionActionDetail
+import com.hagoapp.datacova.lib.execution.ExecutionDetail
+import com.hagoapp.datacova.lib.execution.TaskExecution
 
 interface TaskExecutionWatcher {
     fun onStart(te: TaskExecution) {}
