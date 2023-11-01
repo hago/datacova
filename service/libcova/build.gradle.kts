@@ -20,10 +20,12 @@ dependencies {
     implementation("com.fasterxml.jackson.jr:jackson-jr-objects:2.15.3")
     implementation("org.postgresql", "postgresql", "42.5.1")
     implementation("commons-net", "commons-net", "3.9.0")
-    implementation("com.jcraft", "jsch", "0.1.55")
+    implementation("com.github.mwiede", "jsch", "0.2.12")
+    implementation("org.slf4j", "slf4j-api", "2.0.9")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
-    testImplementation("ch.qos.logback", "logback-classic", "1.2.9")
+    testImplementation("org.slf4j", "slf4j-api", "2.0.9")
+    testRuntimeOnly("ch.qos.logback", "logback-classic", "1.4.11")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
 }
 
@@ -33,4 +35,5 @@ kotlin {
 
 tasks.getByName<Test>("test") {
     useJUnitPlatform()
+    systemProperties(System.getProperties() as Map<String, Any>)
 }
