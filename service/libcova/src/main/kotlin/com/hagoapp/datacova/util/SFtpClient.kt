@@ -3,11 +3,14 @@ package com.hagoapp.datacova.util
 import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.entity.distribute.conf.SFtpConfig
 import com.hagoapp.datacova.entity.distribute.sftp.SFtpAuthType
+import com.hagoapp.datacova.util.ssh.HostKeyItem
 import com.hagoapp.datacova.util.ssh.KnownHostsStore
 import com.jcraft.jsch.*
+import com.jcraft.jsch.ChannelSftp.LsEntrySelector
 import org.slf4j.LoggerFactory
 import java.io.Closeable
 import java.io.FileInputStream
+import java.io.InputStream
 import java.nio.charset.StandardCharsets
 
 class SFtpClient(
@@ -96,7 +99,7 @@ class SFtpClient(
     }
 
     private fun updateKnownHosts(hostKey: HostKey) {
-        knownHostsStore.updateHost(hostKey)
+        knownHostsStore.update(HostKeyItem(hostKey.host, hostKey.type, hostKey.key))
     }
 
     override fun close() {
@@ -110,5 +113,17 @@ class SFtpClient(
         } catch (ex: Exception) {
             logger.error("disconnect ssh session error: {}, ignored", ex.message)
         }
+    }
+
+    fun list(path: String? = null): List<RemoteFile> {
+        val sftp = getClient()
+        val p = path ?: sftp.pwd()
+        val ret = mutableListOf<RemoteFile>()
+        sftp.ls(p) { entry ->
+            val attrs = entry.attrs
+            ret.add(RemoteFile(entry.filename, attrs.isDir, attrs.isLink, attrs.size, p))
+            LsEntrySelector.CONTINUE
+        }
+        return ret
     }
 }
