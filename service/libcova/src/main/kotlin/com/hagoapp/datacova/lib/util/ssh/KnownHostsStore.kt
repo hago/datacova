@@ -7,6 +7,7 @@
 
 package com.hagoapp.datacova.lib.util.ssh
 
+import com.hagoapp.datacova.lib.ssh.HostKeyItem
 import java.io.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.locks.ReentrantReadWriteLock

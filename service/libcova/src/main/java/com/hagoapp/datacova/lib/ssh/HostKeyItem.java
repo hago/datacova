@@ -5,7 +5,9 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package com.hagoapp.datacova.lib.util.ssh;
+package com.hagoapp.datacova.lib.ssh;
+
+import java.util.Objects;
 
 /**
  * Item to present a line of known hosts file.
@@ -43,5 +45,25 @@ public class HostKeyItem {
         this.host = host;
         this.type = type;
         this.key = key;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        HostKeyItem that = (HostKeyItem) o;
+
+        if (!Objects.equals(host, that.host)) return false;
+        if (!Objects.equals(type, that.type)) return false;
+        return Objects.equals(key, that.key);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = host != null ? host.hashCode() : 0;
+        result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + (key != null ? key.hashCode() : 0);
+        return result;
     }
 }

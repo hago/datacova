@@ -10,7 +10,7 @@ package com.hagoapp.datacova.lib.util
 import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.lib.distribute.conf.SFtpConfig
 import com.hagoapp.datacova.lib.distribute.sftp.SFtpAuthType
-import com.hagoapp.datacova.lib.util.ssh.HostKeyItem
+import com.hagoapp.datacova.lib.ssh.HostKeyItem
 import com.hagoapp.datacova.lib.util.ssh.KnownHostsStore
 import com.jcraft.jsch.*
 import com.jcraft.jsch.ChannelSftp.LsEntrySelector
@@ -105,7 +105,13 @@ class SFtpClient(
     }
 
     private fun updateKnownHosts(hostKey: HostKey) {
-        knownHostsStore.update(HostKeyItem(hostKey.host, hostKey.type, hostKey.key))
+        knownHostsStore.update(
+            HostKeyItem(
+                hostKey.host,
+                hostKey.type,
+                hostKey.key
+            )
+        )
     }
 
     override fun close() {
