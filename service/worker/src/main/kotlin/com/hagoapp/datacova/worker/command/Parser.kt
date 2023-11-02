@@ -11,6 +11,12 @@ import org.reflections.Reflections
 import org.reflections.scanners.Scanners
 import org.slf4j.LoggerFactory
 
+/**
+ * Command parser.
+ *
+ * @author suncjs
+ * @since 0.5
+ */
 class Parser {
     companion object {
 

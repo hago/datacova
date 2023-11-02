@@ -7,6 +7,12 @@
 
 package com.hagoapp.datacova.worker.command
 
-interface Command {
+/**
+ * Worker command interface.
+ *
+ * @author suncj2
+ * @since 0.5
+ */
+fun interface Command {
     fun run(cmd: String, args: List<String>): Result
 }

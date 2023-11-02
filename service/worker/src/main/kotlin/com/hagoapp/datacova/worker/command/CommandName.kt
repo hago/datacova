@@ -7,9 +7,16 @@
 
 package com.hagoapp.datacova.worker.command
 
+/**
+ * An annotation for <code>Command</code> descendants.
+ *
+ * @param names names handled by the command
+ * @param help help message for the command
+ * @author suncjs
+ * @since 0.5
+ */
 @Target(AnnotationTarget.CLASS)
 @Retention()
 annotation class CommandName(
-    val names: Array<String>,
-    val help: String = ""
+    val names: Array<String>, val help: String = ""
 )
