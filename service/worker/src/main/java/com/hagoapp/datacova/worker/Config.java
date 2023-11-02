@@ -7,5 +7,37 @@
 
 package com.hagoapp.datacova.worker;
 
-public class Config {
+import com.hagoapp.datacova.JsonStringify;
+
+/**
+ * The config for worker.
+ *
+ * @author suncjs
+ * @since 0.5
+ */
+public class Config implements JsonStringify {
+    /**
+     * The group that this worker belongs.
+     */
+    private String group;
+    /**
+     * The web socket url to connect;
+     */
+    private String server;
+
+    public String getGroup() {
+        return group;
+    }
+
+    public void setGroup(String group) {
+        this.group = group;
+    }
+
+    public String getServer() {
+        return server;
+    }
+
+    public void setServer(String server) {
+        this.server = server;
+    }
 }
