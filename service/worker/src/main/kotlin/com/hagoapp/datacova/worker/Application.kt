@@ -17,6 +17,7 @@ class Application {
 
         lateinit var config: Config
             private set
+        private var messenger: ServerMessenger? = null
 
         @JvmStatic
         fun main(args: Array<String>) {
@@ -50,7 +51,7 @@ class Application {
         }
 
         private fun startWebSocketClient() {
-
+            messenger = ServerMessenger.create(config)
         }
     }
 }
