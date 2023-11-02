@@ -39,7 +39,7 @@ class Application {
             val fn = if ((path == null) || !File(path).exists()) {
                 val f = File(DEFAULT_CONFIG_PATH)
                 if (!f.exists()) {
-                    throw UnsupportedOperationException("config file not found, from neither ${path} nor ${f.absolutePath}.")
+                    throw UnsupportedOperationException("config file not found, from neither $path nor ${f.absolutePath}.")
                 }
                 DEFAULT_CONFIG_PATH
             } else {
