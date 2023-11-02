@@ -7,17 +7,21 @@
 
 package com.hagoapp.datacova.message;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 /**
  * Interface for all message.
  *
  * @author suncjs
  * @since 0.5
  */
+@Retention(RetentionPolicy.RUNTIME)
 public @interface WorkerMessage {
     /**
      * Tells the message type.
      *
      * @return message type
      */
-    int type();
+    byte type();
 }

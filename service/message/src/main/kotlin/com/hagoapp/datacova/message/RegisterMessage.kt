@@ -13,7 +13,7 @@ import com.hagoapp.datacova.message.RegisterMessage.Companion.MESSAGE_TYPE_REGIS
 class RegisterMessage(val group: String) {
 
     companion object {
-        const val MESSAGE_TYPE_REGISTER = 0x1
+        const val MESSAGE_TYPE_REGISTER: Byte = 1
     }
 
     var name: String? = null

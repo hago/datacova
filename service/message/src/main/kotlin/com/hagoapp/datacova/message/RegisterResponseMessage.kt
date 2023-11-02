@@ -13,6 +13,6 @@ import com.hagoapp.datacova.message.RegisterResponseMessage.Companion.MESSAGE_TY
 class RegisterResponseMessage(val acknowledged: Boolean, val name: String) {
 
     companion object {
-        const val MESSAGE_TYPE_REGISTER_RESPONSE = 0x0101
+        const val MESSAGE_TYPE_REGISTER_RESPONSE: Byte = -1
     }
 }
