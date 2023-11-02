@@ -7,6 +7,9 @@
 
 package com.hagoapp.datacova.worker
 
+import com.hagoapp.datacova.message.MessageReader
+import com.hagoapp.datacova.message.MessageWriter
+import com.hagoapp.datacova.message.RegisterMessage
 import org.slf4j.LoggerFactory
 import java.net.URI
 import java.net.http.HttpClient
@@ -45,18 +48,32 @@ class ServerMessenger private constructor(private val config: Config) : WebSocke
         Thread { tryConnect() }.start()
     }
 
-    override fun onOpen(webSocket: WebSocket?) {
+    override fun onOpen(webSocket: WebSocket) {
         super.onOpen(webSocket)
         logger.debug("web socket connected")
-        TODO("register")
+        val message = RegisterMessage(config.group)
+        val load = MessageWriter.toBytes(message)
+        webSocket.sendBinary(ByteBuffer.wrap(load), true)
     }
+
+    private var reader: MessageReader? = null
 
     override fun onText(webSocket: WebSocket?, data: CharSequence?, last: Boolean): CompletionStage<*> {
         logger.warn("Unexpected text message: {} {}", data, last)
         return super.onText(webSocket, data, last)
     }
 
-    override fun onBinary(webSocket: WebSocket?, data: ByteBuffer?, last: Boolean): CompletionStage<*> {
+    override fun onBinary(webSocket: WebSocket, data: ByteBuffer, last: Boolean): CompletionStage<*> {
+        if (reader == null) {
+            reader = MessageReader()
+        }
+        reader!!.update(data.array())
+        if (last) {
+            val message = reader!!.parseMessage()
+            reader!!.close()
+            reader = null
+            handleMessage(message)
+        }
         return super.onBinary(webSocket, data, last)
     }
 
@@ -110,5 +127,9 @@ class ServerMessenger private constructor(private val config: Config) : WebSocke
         if ((sk != null) && !sk!!.isOutputClosed) {
             sk!!.sendBinary(null, true)
         }
+    }
+
+    private fun handleMessage(message: Any?) {
+        TODO()
     }
 }
