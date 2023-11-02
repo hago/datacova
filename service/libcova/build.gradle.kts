@@ -35,5 +35,6 @@ kotlin {
 
 tasks.getByName<Test>("test") {
     useJUnitPlatform()
+    @Suppress("UNCHECKED_CAST")
     systemProperties(System.getProperties() as Map<String, Any>)
 }
