@@ -17,7 +17,7 @@ import com.hagoapp.datacova.entity.execution.ExecutionDetail
 import com.hagoapp.datacova.entity.execution.ExecutionFileInfo
 import com.hagoapp.datacova.entity.execution.TaskExecution
 import com.hagoapp.datacova.executor.Executor
-import com.hagoapp.datacova.file.localfs.LocalFsFileStore
+import com.hagoapp.datacova.file.FileStoreFactory
 import com.hagoapp.datacova.util.StackTraceWriter
 import com.hagoapp.f2t.DataTable
 import com.hagoapp.f2t.FileColumnDefinition
@@ -50,7 +50,7 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
     }
 
     private fun createTempFile(fileInfo: ExecutionFileInfo): String {
-        val fs = LocalFsFileStore.getFileStore(CoVaConfig.getConfig().fileStorage.uploadDirectory)
+        val fs = FileStoreFactory.createFileStore(CoVaConfig.getConfig().fileStorage.uploadDirectory)
         val f = File(CoVaConfig.getConfig().fileStorage.tempDirectory, UUID.randomUUID().toString()).absolutePath
         fs.getFile(fileInfo.fileId).use { reader ->
             FileOutputStream(f).use { writer ->
