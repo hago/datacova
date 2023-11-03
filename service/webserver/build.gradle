@@ -1,5 +1,5 @@
 plugins {
-    id 'com.github.johnrengelman.shadow' version '6.1.0'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
     id 'maven-publish'
 }
 
@@ -13,10 +13,10 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3'
 
-    implementation 'info.picocli:picocli:4.6.3'
-    implementation 'com.google.code.gson:gson:2.9.0'
+    implementation 'info.picocli:picocli:4.7.5'
+    implementation 'com.google.code.gson:gson:2.10.1'
     implementation group: 'com.fasterxml.jackson.jr', name: 'jackson-jr-objects', version: '2.9.0'
     implementation 'com.github.albfernandez:juniversalchardet:2.4.0'
 
@@ -27,26 +27,24 @@ dependencies {
     implementation 'com.hagoapp:f2t:0.8.3'
     implementation project(':surveyor')
     implementation project(':filestore')
+    implementation project(':libcova')
+    implementation project(':message')
 
-    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.36'
-    implementation group: 'ch.qos.logback', name:'logback-classic', version: '1.2.9'
-    implementation group: 'ch.qos.logback', name: 'logback-core', version: '1.2.9'
+    implementation group: "org.slf4j", name: "slf4j-api", version: "2.0.9"
+    implementation group: "ch.qos.logback", name: "logback-classic", version: "1.4.11"
 
-    implementation group: 'org.apache.poi', name: 'poi', version: '5.2.3'
-    implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '5.2.3'
-    implementation group: "org.apache.directory.api", name: "api-all", version: "2.0.1"
-    implementation group: 'commons-net', name: 'commons-net', version: '3.9.0'
+    implementation group: 'org.apache.poi', name: 'poi', version: '5.2.4'
+    implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '5.2.4'
+    implementation group: "org.apache.directory.api", name: "api-all", version: "2.1.5"
+    implementation group: 'commons-net', name: 'commons-net', version: '3.10.0'
 
-    implementation group: 'com.github.felfert', name: 'cidrutils', version: '1.4'
+    implementation group: 'com.github.felfert', name: 'cidrutils', version: '1.5'
 
-    implementation group: 'redis.clients', name: 'jedis', version: "3.7.0"
-    implementation group: "org.postgresql", name: "postgresql", version: "42.5.1"
+    implementation group: 'redis.clients', name: 'jedis', version: "3.10.0"
+    implementation group: "org.postgresql", name: "postgresql", version: "42.6.0"
 
     implementation group: 'org.reflections', name: 'reflections', version: '0.10.2'
 
-    implementation group: 'com.github.felfert', name: 'cidrutils', version: '1.4'
-
-    implementation group: 'com.jcraft', name: 'jsch', version: '0.1.55'
     implementation group: 'com.azure', name: 'azure-storage-blob', version: '12.22.0'
     //implementation platform('com.amazonaws:aws-java-sdk-bom:1.11.1000')
     //implementation 'com.amazonaws:aws-java-sdk-s3'
@@ -54,15 +52,15 @@ dependencies {
 
     implementation group: 'com.sun.mail', name: 'javax.mail', version: '1.6.2'
 
-    implementation group: "org.freemarker", name: 'freemarker', version: '2.3.31'
-    implementation group: 'org.antlr', name: 'ST4', version: '4.3'
+    implementation group: "org.freemarker", name: 'freemarker', version: '2.3.32'
+    implementation group: 'org.antlr', name: 'ST4', version: '4.3.4'
 
     implementation group: 'com.github.whvcse', name: 'easy-captcha', version: '1.6.2'
 
-    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client:3.0.6'
+    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client:3.0.11'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
-    testImplementation group: 'ch.qos.logback', name:'logback-classic', version: '1.2.9'
+    testImplementation group: "ch.qos.logback", name: "logback-classic", version: "1.4.11"
 
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
     testRuntimeOnly fileTree('libs') { include '*.jar' }
