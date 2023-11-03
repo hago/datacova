@@ -37,7 +37,6 @@ dependencies {
 
     implementation group: 'org.apache.poi', name: 'poi', version: '5.2.4'
     implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '5.2.4'
-    implementation group: "org.apache.directory.api", name: "api-all", version: "2.1.5"
     implementation group: 'commons-net', name: 'commons-net', version: '3.10.0'
 
     implementation group: 'com.github.felfert', name: 'cidrutils', version: '1.5'

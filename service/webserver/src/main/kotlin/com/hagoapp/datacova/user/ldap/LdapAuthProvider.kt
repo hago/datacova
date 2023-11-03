@@ -7,14 +7,14 @@
 
 package com.hagoapp.datacova.user.ldap
 
-import com.hagoapp.datacova.config.ldap.LdapAttributes
+import com.hagoapp.datacova.ldap.LdapAttributes
 import com.hagoapp.datacova.data.user.UserCache
 import com.hagoapp.datacova.data.user.UserData
+import com.hagoapp.datacova.ldap.LdapUtils
 import com.hagoapp.datacova.user.UserAuthProvider
 import com.hagoapp.datacova.user.UserInfo
 import com.hagoapp.datacova.user.UserSearchResultItem
 import com.hagoapp.datacova.user.UserType
-import com.hagoapp.datacova.util.ldap.LdapUtils
 import io.vertx.ext.web.RoutingContext
 
 class LdapAuthProvider : UserAuthProvider {

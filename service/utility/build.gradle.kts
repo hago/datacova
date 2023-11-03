@@ -2,7 +2,7 @@ plugins {
     id("java")
 }
 
-group = "com.lenovo.led.util"
+group = "com.hagoapp.dataccova.util"
 version = "0.5"
 
 repositories {
@@ -14,6 +14,7 @@ dependencies {
     implementation("com.fasterxml.jackson.jr:jackson-jr-objects:2.15.3")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("org.slf4j", "slf4j-api", "2.0.9")
+    implementation("org.apache.directory.api:api-all:2.1.5")
     compileOnly("org.projectlombok:lombok:1.18.30")
     annotationProcessor("org.projectlombok:lombok:1.18.30")
 
