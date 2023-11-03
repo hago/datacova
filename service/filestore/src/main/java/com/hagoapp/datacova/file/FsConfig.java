@@ -7,11 +7,24 @@
 
 package com.hagoapp.datacova.file;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Config file for a FileStore type.
  *
  * @author suncjs
  * @since 0.5
  */
-public class FsConfig {
+public abstract class FsConfig {
+    public String createConnectString() {
+        var anno = this.getClass().getAnnotation(FsScheme.class);
+        if (anno == null) {
+            throw new UnsupportedOperationException("Not annotated, can't find scheme");
+        }
+        return String.format("%s:%s", anno.name(), serialize());
+    }
+
+    protected abstract String serialize();
+
+    public abstract void loadConnectionString(@NotNull String input);
 }
