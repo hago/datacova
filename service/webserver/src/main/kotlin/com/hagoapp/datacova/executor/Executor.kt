@@ -9,10 +9,10 @@ package com.hagoapp.datacova.executor
 
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.dispatcher.DispatcherInvoker
-import com.hagoapp.datacova.entity.execution.ExecutionActionDetail
-import com.hagoapp.datacova.entity.execution.ExecutionDetail
-import com.hagoapp.datacova.entity.execution.TaskExecution
 import com.hagoapp.datacova.execution.TaskExecutionWatcher
+import com.hagoapp.datacova.lib.execution.ExecutionActionDetail
+import com.hagoapp.datacova.lib.execution.ExecutionDetail
+import com.hagoapp.datacova.lib.execution.TaskExecution
 import com.hagoapp.datacova.web.WebManager
 import org.slf4j.LoggerFactory
 import java.time.Instant

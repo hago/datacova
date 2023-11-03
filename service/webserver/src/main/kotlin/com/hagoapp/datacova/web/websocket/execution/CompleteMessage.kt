@@ -7,7 +7,7 @@
 
 package com.hagoapp.datacova.web.websocket.execution
 
-import com.hagoapp.datacova.entity.execution.TaskExecution
+import com.hagoapp.datacova.lib.execution.TaskExecution
 import com.hagoapp.datacova.web.websocket.ServerMessage
 
 data class CompleteMessage(

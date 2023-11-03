@@ -9,7 +9,7 @@ package com.hagoapp.datacova.data.workspace
 
 import com.google.gson.reflect.TypeToken
 import com.hagoapp.datacova.data.RedisCacheReader
-import com.hagoapp.datacova.entity.task.Task
+import com.hagoapp.datacova.lib.task.Task
 
 class TaskCache {
     companion object {

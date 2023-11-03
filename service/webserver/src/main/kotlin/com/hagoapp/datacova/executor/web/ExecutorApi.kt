@@ -9,10 +9,10 @@ package com.hagoapp.datacova.executor.web
 
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.execution.TaskExecutionData
-import com.hagoapp.datacova.entity.execution.ExecutionStatus
 import com.hagoapp.datacova.execution.Worker
 import com.hagoapp.datacova.executor.ExecuteResultMailer
 import com.hagoapp.datacova.executor.Executor
+import com.hagoapp.datacova.lib.execution.ExecutionStatus
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.MethodName
 import com.hagoapp.datacova.web.annotation.WebEndPoint

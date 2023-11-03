@@ -11,11 +11,11 @@ package com.hagoapp.datacova.data.execution
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.config.DatabaseConfig
 import com.hagoapp.datacova.data.CoVaDatabase
-import com.hagoapp.datacova.entity.execution.ExecutionDetail
-import com.hagoapp.datacova.entity.execution.ExecutionFileInfo
-import com.hagoapp.datacova.entity.execution.ExecutionStatus
-import com.hagoapp.datacova.entity.execution.TaskExecution
-import com.hagoapp.datacova.entity.task.Task
+import com.hagoapp.datacova.lib.execution.ExecutionDetail
+import com.hagoapp.datacova.lib.execution.ExecutionFileInfo
+import com.hagoapp.datacova.lib.execution.ExecutionStatus
+import com.hagoapp.datacova.lib.execution.TaskExecution
+import com.hagoapp.datacova.lib.task.Task
 import com.hagoapp.datacova.util.data.DatabaseFunctions
 import java.sql.ResultSet
 import java.sql.Timestamp

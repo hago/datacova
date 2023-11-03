@@ -10,9 +10,9 @@ package com.hagoapp.datacova.execution
 
 import com.hagoapp.datacova.Application
 import com.hagoapp.datacova.CoVaException
-import com.hagoapp.datacova.entity.action.TaskAction
-import com.hagoapp.datacova.entity.action.TaskActionFactory
 import com.hagoapp.datacova.execution.executor.BaseTaskActionExecutor
+import com.hagoapp.datacova.lib.action.TaskAction
+import com.hagoapp.datacova.lib.action.TaskActionFactory
 import org.reflections.Reflections
 import org.reflections.scanners.Scanners
 import org.slf4j.LoggerFactory

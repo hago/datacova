@@ -10,14 +10,10 @@ package com.hagoapp.datacova.execution
 
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.execution.TaskExecutionData
-import com.hagoapp.datacova.entity.action.TaskAction
-import com.hagoapp.datacova.entity.execution.DataMessage
-import com.hagoapp.datacova.entity.execution.ExecutionActionDetail
-import com.hagoapp.datacova.entity.execution.ExecutionDetail
-import com.hagoapp.datacova.entity.execution.ExecutionFileInfo
-import com.hagoapp.datacova.entity.execution.TaskExecution
 import com.hagoapp.datacova.executor.Executor
 import com.hagoapp.datacova.file.FileStoreFactory
+import com.hagoapp.datacova.lib.action.TaskAction
+import com.hagoapp.datacova.lib.execution.*
 import com.hagoapp.datacova.util.StackTraceWriter
 import com.hagoapp.f2t.DataTable
 import com.hagoapp.f2t.FileColumnDefinition

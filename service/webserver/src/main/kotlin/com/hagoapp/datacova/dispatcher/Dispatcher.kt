@@ -10,7 +10,7 @@ package com.hagoapp.datacova.dispatcher
 import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.ExecutorManager
 import com.hagoapp.datacova.data.execution.TaskExecutionData
-import com.hagoapp.datacova.entity.execution.TaskExecution
+import com.hagoapp.datacova.lib.execution.TaskExecution
 import org.slf4j.LoggerFactory
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.TimeUnit

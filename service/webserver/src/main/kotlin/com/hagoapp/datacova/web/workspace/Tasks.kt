@@ -13,9 +13,9 @@ import com.hagoapp.datacova.data.workspace.TaskCache
 import com.hagoapp.datacova.data.workspace.TaskData
 import com.hagoapp.datacova.data.workspace.WorkspaceCache
 import com.hagoapp.datacova.dispatcher.Dispatcher
-import com.hagoapp.datacova.entity.execution.ExecutionFileInfo
-import com.hagoapp.datacova.entity.execution.TaskExecution
-import com.hagoapp.datacova.entity.task.Task
+import com.hagoapp.datacova.lib.execution.ExecutionFileInfo
+import com.hagoapp.datacova.lib.execution.TaskExecution
+import com.hagoapp.datacova.lib.task.Task
 import com.hagoapp.datacova.util.FileStoreUtils
 import com.hagoapp.datacova.util.WorkspaceUserRoleUtil
 import com.hagoapp.datacova.util.http.ResponseHelper

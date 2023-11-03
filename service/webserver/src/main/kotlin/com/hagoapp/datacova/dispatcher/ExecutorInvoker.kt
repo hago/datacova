@@ -10,7 +10,7 @@ package com.hagoapp.datacova.dispatcher
 
 import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.config.ExecutorConfig
-import com.hagoapp.datacova.entity.execution.TaskExecution
+import com.hagoapp.datacova.lib.execution.TaskExecution
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.core.http.HttpHeaders
 import java.net.URI

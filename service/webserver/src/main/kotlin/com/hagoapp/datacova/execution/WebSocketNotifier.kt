@@ -8,7 +8,7 @@
 package com.hagoapp.datacova.execution
 
 import com.hagoapp.datacova.data.user.UserCache
-import com.hagoapp.datacova.entity.execution.TaskExecution
+import com.hagoapp.datacova.lib.execution.TaskExecution
 import com.hagoapp.datacova.web.websocket.WebSocketManager
 import com.hagoapp.datacova.web.websocket.execution.CompleteMessage
 import com.hagoapp.datacova.web.websocket.execution.StartMessage

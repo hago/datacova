@@ -11,7 +11,7 @@ import com.google.gson.reflect.TypeToken
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.RedisCacheReader
 import com.hagoapp.datacova.data.redis.JedisManager
-import com.hagoapp.datacova.verification.Rule
+import com.hagoapp.datacova.lib.verification.Rule
 
 class ValidationRuleCache {
     companion object {

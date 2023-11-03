@@ -9,9 +9,9 @@ package com.hagoapp.datacova.executor
 
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.user.UserCache
-import com.hagoapp.datacova.entity.execution.ExecutionDetail
-import com.hagoapp.datacova.entity.execution.TaskExecution
 import com.hagoapp.datacova.execution.TaskExecutionWatcher
+import com.hagoapp.datacova.lib.execution.ExecutionDetail
+import com.hagoapp.datacova.lib.execution.TaskExecution
 import com.hagoapp.datacova.user.UserInfo
 import com.hagoapp.datacova.util.mail.MailHelper
 import com.hagoapp.datacova.util.text.TemplateManager

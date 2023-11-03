@@ -11,9 +11,9 @@ import com.hagoapp.datacova.MapSerializer
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.config.DatabaseConfig
 import com.hagoapp.datacova.data.CoVaDatabase
-import com.hagoapp.datacova.verification.Rule
+import com.hagoapp.datacova.lib.verification.Rule
+import com.hagoapp.datacova.lib.verification.VerifyConfiguration
 import com.hagoapp.datacova.util.data.DatabaseFunctions
-import com.hagoapp.datacova.verification.VerifyConfiguration
 import java.sql.ResultSet
 
 class ValidationRuleData(config: DatabaseConfig) : CoVaDatabase(config) {

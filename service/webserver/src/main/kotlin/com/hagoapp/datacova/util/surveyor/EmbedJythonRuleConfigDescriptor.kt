@@ -8,7 +8,7 @@
 
 package com.hagoapp.datacova.util.surveyor
 
-import com.hagoapp.datacova.verification.VerifyConfiguration
+import com.hagoapp.datacova.lib.verification.VerifyConfiguration
 import com.hagoapp.surveyor.RuleConfig
 import com.hagoapp.surveyor.rule.EmbedJythonRuleConfig
 import java.util.*
