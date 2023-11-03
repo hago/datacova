@@ -8,14 +8,14 @@ repositories {
 dependencies {
     implementation group: 'org.python', name: 'jython-standalone', version: '2.7.2'
 
-    implementation 'com.google.code.gson:gson:2.9.0'
+    implementation 'com.google.code.gson:gson:2.10.1'
     implementation group: 'org.reflections', name: 'reflections', version: '0.10.2'
     implementation 'org.graalvm.js:js:22.3.2'
 
-    implementation("org.slf4j:slf4j-api:1.7.36")
+    implementation('org.slf4j:slf4j-api:2.0.9')
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
     testRuntimeOnly group: 'ch.qos.logback', name:'logback-classic', version: '1.2.9'
 }
 
