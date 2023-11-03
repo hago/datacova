@@ -8,7 +8,7 @@ import com.hagoapp.datacova.data.workspace.WorkspaceCache
 import com.hagoapp.datacova.dispatcher.Dispatcher
 import com.hagoapp.datacova.entity.execution.ExecutionFileInfo
 import com.hagoapp.datacova.entity.execution.TaskExecution
-import com.hagoapp.datacova.file.localfs.LocalFsFileStore
+import com.hagoapp.datacova.file.FileStoreFactory
 import com.hagoapp.datacova.util.Utils
 import com.hagoapp.datacova.util.WorkspaceUserRoleUtil
 import com.hagoapp.datacova.util.http.ResponseHelper
@@ -51,7 +51,7 @@ class DataFile {
             ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "No file")
             return
         }
-        val fs = LocalFsFileStore.getFileStore(CoVaConfig.getConfig().fileStorage.uploadDirectory)
+        val fs = FileStoreFactory.createFileStore(CoVaConfig.getConfig().fileStorage.uploadDirectory)
         val fileIdList = context.fileUploads().map { upload ->
             val id = FileInputStream(upload.uploadedFileName()).use { fis ->
                 fs.putFile(fis, upload.fileName(), upload.size())
@@ -120,7 +120,7 @@ class DataFile {
     fun previewFile(context: RoutingContext) {
         val id = context.pathParam("id")
         val count = context.pathParam("count").toIntOrNull() ?: 20
-        val fs = LocalFsFileStore.getFileStore(CoVaConfig.getConfig().fileStorage.uploadDirectory)
+        val fs = FileStoreFactory.createFileStore(CoVaConfig.getConfig().fileStorage.uploadDirectory)
         if (!fs.exists(id)) {
             ResponseHelper.sendResponse(context, HttpResponseStatus.NOT_FOUND)
             return
@@ -179,7 +179,7 @@ class DataFile {
         }
         val id = context.pathParam("id")
         val taskId = context.pathParam("taskid").toInt()
-        val fs = LocalFsFileStore.getFileStore(CoVaConfig.getConfig().fileStorage.uploadDirectory)
+        val fs = FileStoreFactory.createFileStore(CoVaConfig.getConfig().fileStorage.uploadDirectory)
         if (!fs.exists(id)) {
             ResponseHelper.sendResponse(context, HttpResponseStatus.NOT_FOUND)
             return
