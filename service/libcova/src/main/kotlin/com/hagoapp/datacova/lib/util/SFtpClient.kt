@@ -16,6 +16,7 @@ import com.jcraft.jsch.*
 import com.jcraft.jsch.ChannelSftp.LsEntrySelector
 import org.slf4j.LoggerFactory
 import java.io.Closeable
+import java.io.InputStream
 
 class SFtpClient(
     private val config: SFtpConfig,
@@ -122,5 +123,42 @@ class SFtpClient(
             LsEntrySelector.CONTINUE
         }
         return ret
+    }
+
+    fun cd(path: String): Boolean {
+        return try {
+            val sftp = getClient()
+            sftp.cd(path)
+            true
+        } catch (ex: SftpException) {
+            false
+        }
+    }
+
+    fun home(): String {
+        return getClient().home
+    }
+
+    fun pwd(): String {
+        return getClient().pwd()
+    }
+
+    fun isPathExist(path: String) {
+        getClient().ls(path)
+    }
+
+    fun mkdir(path: String) {
+        val sftp = getClient()
+        sftp.mkdir(path)
+    }
+
+    fun rm(path: String) {
+        val sftp = getClient()
+        sftp.rm(path)
+    }
+
+    fun put(src: InputStream, dest: String) {
+        val sftp = getClient()
+        sftp.put(src, dest)
     }
 }

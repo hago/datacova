@@ -8,8 +8,6 @@
 package com.hagoapp.datacova.web.distribute
 
 import com.google.gson.Gson
-import com.hagoapp.datacova.distribute.conf.FtpConfig
-import com.hagoapp.datacova.util.FtpClient
 import com.hagoapp.datacova.util.StackTraceWriter
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.MethodName
