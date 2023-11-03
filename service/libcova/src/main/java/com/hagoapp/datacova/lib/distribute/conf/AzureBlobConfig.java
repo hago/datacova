@@ -5,9 +5,9 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package com.hagoapp.datacova.distribute.conf;
+package com.hagoapp.datacova.lib.distribute.conf;
 
-import com.hagoapp.datacova.distribute.Configuration;
+import com.hagoapp.datacova.lib.distribute.Configuration;
 
 public class AzureBlobConfig extends Configuration {
 

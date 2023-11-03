@@ -8,8 +8,8 @@
 package com.hagoapp.datacova.execution.distribute
 
 import com.hagoapp.datacova.CoVaException
-import com.hagoapp.datacova.distribute.Distributor
-import com.hagoapp.datacova.distribute.TaskActionDistribute
+import com.hagoapp.datacova.execution.Distributor
+import com.hagoapp.datacova.lib.distribute.TaskActionDistribute
 import com.hagoapp.datacova.lib.distribute.conf.SFtpConfig
 import com.hagoapp.datacova.lib.util.SFtpClient
 import com.hagoapp.datacova.lib.util.ssh.KnownHostsStore

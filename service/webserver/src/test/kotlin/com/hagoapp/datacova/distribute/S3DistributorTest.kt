@@ -9,7 +9,7 @@ package com.hagoapp.datacova.distribute
 
 import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.Constants
-import com.hagoapp.datacova.distribute.conf.S3Config
+import com.hagoapp.datacova.lib.distribute.conf.S3Config
 import com.hagoapp.datacova.execution.distribute.S3Distributor
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll

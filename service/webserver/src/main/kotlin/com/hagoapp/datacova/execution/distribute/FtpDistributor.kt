@@ -9,8 +9,8 @@ package com.hagoapp.datacova.execution.distribute
 
 import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.Utils
-import com.hagoapp.datacova.distribute.Distributor
-import com.hagoapp.datacova.distribute.TaskActionDistribute
+import com.hagoapp.datacova.execution.Distributor
+import com.hagoapp.datacova.lib.distribute.TaskActionDistribute
 import com.hagoapp.datacova.lib.distribute.conf.FtpConfig
 import com.hagoapp.datacova.lib.util.FtpClient
 

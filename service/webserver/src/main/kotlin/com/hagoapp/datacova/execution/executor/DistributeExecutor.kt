@@ -10,14 +10,14 @@ package com.hagoapp.datacova.execution.executor
 import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.Utils
 import com.hagoapp.datacova.entity.action.TaskAction
-import com.hagoapp.datacova.distribute.Configuration
-import com.hagoapp.datacova.distribute.TaskActionDistribute
-import com.hagoapp.datacova.distribute.TaskActionDistribute.TASK_ACTION_TYPE_DISTRIBUTE
 import com.hagoapp.datacova.entity.execution.TaskExecution
 import com.hagoapp.datacova.execution.datafile.CSVDataFileWriter
 import com.hagoapp.datacova.execution.datafile.ExcelDataFileWriter
 import com.hagoapp.datacova.execution.datafile.ExcelXDataFileWriter
 import com.hagoapp.datacova.execution.distribute.DistributorFactory
+import com.hagoapp.datacova.lib.distribute.Configuration
+import com.hagoapp.datacova.lib.distribute.TaskActionDistribute
+import com.hagoapp.datacova.lib.distribute.TaskActionDistribute.TASK_ACTION_TYPE_DISTRIBUTE
 import com.hagoapp.datacova.util.FileStoreUtils
 import com.hagoapp.f2t.ColumnDefinition
 import com.hagoapp.f2t.DataTable
@@ -39,6 +39,7 @@ class DistributeExecutor : BaseTaskActionExecutor() {
         if (action !is TaskActionDistribute) {
             throw CoVaException("Invalid distribute action")
         }
+        val act = action as TaskActionDistribute
         this.execution = taskExecution
         val filename = prepareSourceFile(taskExecution.id, action.configuration, data, taskExecution.fileInfo.fileInfo)
         action.configuration.targetFileName = prepareTargetFile(action)

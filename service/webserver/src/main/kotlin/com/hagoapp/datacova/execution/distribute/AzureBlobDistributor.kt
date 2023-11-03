@@ -9,9 +9,9 @@ package com.hagoapp.datacova.execution.distribute
 
 import com.azure.storage.blob.BlobClientBuilder
 import com.hagoapp.datacova.CoVaException
-import com.hagoapp.datacova.distribute.Distributor
-import com.hagoapp.datacova.distribute.TaskActionDistribute
-import com.hagoapp.datacova.distribute.conf.AzureBlobConfig
+import com.hagoapp.datacova.execution.Distributor
+import com.hagoapp.datacova.lib.distribute.TaskActionDistribute
+import com.hagoapp.datacova.lib.distribute.conf.AzureBlobConfig
 
 class AzureBlobDistributor: Distributor() {
 

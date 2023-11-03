@@ -10,7 +10,7 @@ package com.hagoapp.datacova.distribute
 import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.Constants
 import com.hagoapp.datacova.distribute.BlobDistributorTest.Companion.ENABLE_BLOB_TEST
-import com.hagoapp.datacova.distribute.conf.AzureBlobConfig
+import com.hagoapp.datacova.lib.distribute.conf.AzureBlobConfig
 import com.hagoapp.datacova.execution.distribute.AzureBlobDistributor
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll

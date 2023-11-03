@@ -5,8 +5,9 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package com.hagoapp.datacova.lib.distribute;
+package com.hagoapp.datacova.execution;
 
+import com.hagoapp.datacova.lib.distribute.TaskActionDistribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

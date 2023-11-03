@@ -9,8 +9,8 @@ package com.hagoapp.datacova.execution.distribute
 
 import com.hagoapp.datacova.Application
 import com.hagoapp.datacova.CoVaException
-import com.hagoapp.datacova.distribute.Distributor
-import com.hagoapp.datacova.distribute.TaskActionDistribute
+import com.hagoapp.datacova.execution.Distributor
+import com.hagoapp.datacova.lib.distribute.TaskActionDistribute
 import org.reflections.Reflections
 import org.reflections.scanners.Scanners
 import org.slf4j.LoggerFactory
