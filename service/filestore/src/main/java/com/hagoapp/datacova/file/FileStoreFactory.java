@@ -37,7 +37,7 @@ public class FileStoreFactory {
             for (var config : configs) {
                 var a = config.getAnnotation(FsScheme.class);
                 if (a == null) {
-                    log.error("Sub FileStore: {} is not annotated with FsSchema correctly", config.getCanonicalName());
+                    log.error("Sub FileStore: {} is not annotated with FsScheme correctly", config.getCanonicalName());
                 } else {
                     try {
                         var constructor = config.getConstructor(FsConfig.class);
