@@ -9,10 +9,10 @@
 package com.hagoapp.datacova.util.web
 
 import com.google.gson.GsonBuilder
+import com.hagoapp.datacova.Utils
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.redis.JedisManager
 import com.hagoapp.datacova.user.UserInfo
-import com.hagoapp.datacova.util.Utils
 import com.hagoapp.datacova.util.http.ResponseHelper
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.core.http.Cookie

@@ -1,8 +1,8 @@
 package com.hagoapp.datacova.web.authentication;
 
+import com.hagoapp.datacova.Utils;
 import com.hagoapp.datacova.config.CoVaConfig;
 import com.hagoapp.datacova.user.UserInfo;
-import com.hagoapp.datacova.util.Utils;
 import com.hagoapp.datacova.web.authentication.usertoken.UserTokenStore;
 import com.hagoapp.datacova.web.authentication.usertoken.UserTokenStoreMemory;
 import com.hagoapp.datacova.web.authentication.usertoken.UserTokenStoreRedis;

@@ -8,6 +8,7 @@
 package com.hagoapp.datacova.execution.executor
 
 import com.hagoapp.datacova.CoVaException
+import com.hagoapp.datacova.Utils
 import com.hagoapp.datacova.entity.action.TaskAction
 import com.hagoapp.datacova.distribute.Configuration
 import com.hagoapp.datacova.distribute.TaskActionDistribute
@@ -18,7 +19,6 @@ import com.hagoapp.datacova.execution.datafile.ExcelDataFileWriter
 import com.hagoapp.datacova.execution.datafile.ExcelXDataFileWriter
 import com.hagoapp.datacova.execution.distribute.DistributorFactory
 import com.hagoapp.datacova.util.FileStoreUtils
-import com.hagoapp.datacova.util.Utils
 import com.hagoapp.f2t.ColumnDefinition
 import com.hagoapp.f2t.DataTable
 import com.hagoapp.f2t.datafile.FileInfo

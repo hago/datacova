@@ -9,6 +9,7 @@
 package com.hagoapp.datacova.util
 
 import com.hagoapp.datacova.CoVaException
+import com.hagoapp.datacova.Utils
 import com.hagoapp.datacova.config.CoVaConfig
 import org.slf4j.LoggerFactory
 import java.io.File

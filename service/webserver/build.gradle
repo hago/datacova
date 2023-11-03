@@ -13,6 +13,12 @@ repositories {
 }
 
 dependencies {
+    implementation project(':surveyor')
+    implementation project(':filestore')
+    implementation project(':libcova')
+    implementation project(':message')
+    implementation project(':utility')
+
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3'
 
     implementation 'info.picocli:picocli:4.7.5'
@@ -25,10 +31,6 @@ dependencies {
     implementation 'io.vertx:vertx-web:4.3.0'
 
     implementation 'com.hagoapp:f2t:0.8.3'
-    implementation project(':surveyor')
-    implementation project(':filestore')
-    implementation project(':libcova')
-    implementation project(':message')
 
     implementation group: "org.slf4j", name: "slf4j-api", version: "2.0.9"
     implementation group: "ch.qos.logback", name: "logback-classic", version: "1.4.11"

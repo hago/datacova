@@ -7,11 +7,11 @@
 
 package com.hagoapp.datacova.user
 
+import com.hagoapp.datacova.Utils
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.RedisCacheReader
 import com.hagoapp.datacova.data.user.UserData
 import com.hagoapp.datacova.util.FileStoreUtils
-import com.hagoapp.datacova.util.Utils
 import com.hagoapp.datacova.util.web.CaptchaUtils
 import io.vertx.ext.web.RoutingContext
 import org.slf4j.LoggerFactory
