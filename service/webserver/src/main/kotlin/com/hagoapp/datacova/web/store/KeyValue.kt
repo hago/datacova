@@ -14,7 +14,6 @@ import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.redis.JedisManager
 import com.hagoapp.datacova.user.UserInfo
-import com.hagoapp.datacova.util.KeyValuePair
 import com.hagoapp.datacova.util.http.RequestHelper
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.MethodName
@@ -29,6 +28,11 @@ class KeyValue {
     companion object {
         private const val INVALID_BODY = "invalid body";
     }
+
+    data class KeyValuePair (
+        val key: String,
+        val value: String?
+    )
 
     @WebEndPoint(methods = [MethodName.POST, MethodName.PUT], path = "/store/pair", authTypes = [AuthType.USER_TOKEN])
     fun storeKeyValue(context: RoutingContext) {
