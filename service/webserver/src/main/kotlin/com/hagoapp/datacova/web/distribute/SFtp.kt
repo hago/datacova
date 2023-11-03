@@ -8,16 +8,15 @@
 package com.hagoapp.datacova.web.distribute
 
 import com.google.gson.Gson
-import com.hagoapp.datacova.distribute.sftp.SFtpAuthType
-import com.hagoapp.datacova.execution.distribute.sftp.KnownHostsStore
-import com.hagoapp.datacova.util.FileStoreUtils
+import com.hagoapp.datacova.lib.distribute.conf.SFtpConfig
+import com.hagoapp.datacova.lib.distribute.sftp.SFtpAuthType
+import com.hagoapp.datacova.lib.util.SFtpClient
+import com.hagoapp.datacova.lib.util.ssh.KnownHostsStore
 import com.hagoapp.datacova.util.StackTraceWriter
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.MethodName
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import com.hagoapp.datacova.web.authentication.AuthType
-import com.jcraft.jsch.JSchException
-import com.jcraft.jsch.SftpException
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.ext.web.RoutingContext
 import org.slf4j.LoggerFactory
@@ -35,24 +34,19 @@ class SFtp {
     fun verify(context: RoutingContext) {
         val json = context.body().asString()
         val config = Gson().fromJson(json, SFtpConfig::class.java)
-        if ((config == null) || (config.authType != SFtpAuthType.Password)) {
+        if ((config == null) || (config.authType != SFtpAuthType.PASSWORD)) {
             ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "not valid sftp config json")
             return
         }
         logger.debug("ssh config: {}", config.toJson())
         try {
-            val pwd = SFtpClient(config, KnownHostsStore.getStore()).use {
-                val ftp = it.getClient()
-                ftp.pwd()
+            val pwd = SFtpClient(config, KnownHostsStore.MemoryKnownHostStore()).use {
+                it.pwd()
             }
             logger.debug("sftp session connected, remote path is {}", pwd)
             ResponseHelper.sendResponse(context, HttpResponseStatus.OK, mapOf("data" to mapOf("pwd" to pwd)))
-        } catch (ex: JSchException) {
-            logger.error("JSchException error: {}", ex.message)
-            StackTraceWriter.write(ex, logger)
-            ResponseHelper.respondError(context, HttpResponseStatus.INTERNAL_SERVER_ERROR, ex.message)
-        } catch (ex: SftpException) {
-            logger.error("SftpException error: {}", ex.message)
+        } catch (ex: Exception) {
+            logger.error("SFtp error: {}", ex.message)
             StackTraceWriter.write(ex, logger)
             ResponseHelper.respondError(context, HttpResponseStatus.INTERNAL_SERVER_ERROR, ex.message)
         }
@@ -70,43 +64,27 @@ class SFtp {
         }
         val json = context.request().getParam("config")
         val config = Gson().fromJson(json, SFtpConfig::class.java)
-        if ((config == null) || (config.authType != SFtpAuthType.PrivateKey)) {
+        if ((config == null) || (config.authType != SFtpAuthType.PRIVATE_KEY)) {
             ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "not valid sftp config json")
             return
         }
         logger.debug("ssh config: {}", config.toJson())
         val f = context.fileUploads().first()
-        val target = SFtpClient.createPemFileName(config.login, config.host, config.port)
-        val fs = FileStoreUtils.getSshFileStore()
-        FileInputStream(f.uploadedFileName()).use {
-            fs.saveFileToStore(target, it)
+        val key = FileInputStream(f.uploadedFileName()).use {
+            it.readAllBytes()
         }
-        val keyFullName = fs.getFullFileName(target)
-        if (!SFtpClient.isValidPrivateKeyFile(keyFullName)) {
-            ResponseHelper.respondError(
-                context,
-                HttpResponseStatus.BAD_REQUEST,
-                "Acceptable private key file should start with 'BEGIN RSA PRIVATE KEY'"
-            )
-            return
-        }
-        config.privateKeyFile = target
+        config.privateKey = key
         logger.debug("private key file is {}", config.privateKeyFile)
         try {
-            val pwd = SFtpClient(config, KnownHostsStore.getStore()).use {
-                val ftp = it.getClient()
-                ftp.pwd()
+            val pwd = SFtpClient(config, KnownHostsStore.MemoryKnownHostStore()).use {
+                it.pwd()
             }
             logger.debug("sftp session connected, remote path is {}", pwd)
             ResponseHelper.sendResponse(
-                context, HttpResponseStatus.OK, mapOf("code" to 0, "data" to mapOf("keyStored" to target, "pwd" to pwd))
+                context, HttpResponseStatus.OK, mapOf("code" to 0, "data" to mapOf("keyStored" to null, "pwd" to pwd))
             )
-        } catch (ex: JSchException) {
-            logger.error("JSchException error: {}", ex.message)
-            StackTraceWriter.write(ex, logger)
-            ResponseHelper.respondError(context, HttpResponseStatus.INTERNAL_SERVER_ERROR, ex.message)
-        } catch (ex: SftpException) {
-            logger.error("SftpException error: {}", ex.message)
+        } catch (ex: Exception) {
+            logger.error("SFtp error: {}", ex.message)
             StackTraceWriter.write(ex, logger)
             ResponseHelper.respondError(context, HttpResponseStatus.INTERNAL_SERVER_ERROR, ex.message)
         }
