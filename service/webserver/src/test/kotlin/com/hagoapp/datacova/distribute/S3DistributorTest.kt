@@ -11,6 +11,7 @@ import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.Constants
 import com.hagoapp.datacova.lib.distribute.conf.S3Config
 import com.hagoapp.datacova.execution.distribute.S3Distributor
+import com.hagoapp.datacova.lib.distribute.TaskActionDistribute
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test

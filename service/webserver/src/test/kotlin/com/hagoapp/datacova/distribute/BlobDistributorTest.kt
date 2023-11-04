@@ -12,6 +12,7 @@ import com.hagoapp.datacova.Constants
 import com.hagoapp.datacova.distribute.BlobDistributorTest.Companion.ENABLE_BLOB_TEST
 import com.hagoapp.datacova.lib.distribute.conf.AzureBlobConfig
 import com.hagoapp.datacova.execution.distribute.AzureBlobDistributor
+import com.hagoapp.datacova.lib.distribute.TaskActionDistribute
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test

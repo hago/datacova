@@ -71,7 +71,7 @@ class JedisManager private constructor() {
             jedisPoolConfig.maxIdle = 80
             jedisPoolConfig.setMaxWait(Duration.of(30000, ChronoUnit.MILLIS))
             jedisPoolConfig.timeBetweenEvictionRuns = Duration.of(1000, ChronoUnit.MILLIS)
-            jedisPoolConfig.minEvictableIdleTime = Duration.of(1000, ChronoUnit.MILLIS)
+            jedisPoolConfig.minEvictableIdleDuration = Duration.of(1000, ChronoUnit.MILLIS)
             jedisPoolConfig.lifo = true
             jedisPoolConfig.numTestsPerEvictionRun = 50
             jedisPoolConfig.testOnBorrow = false
