@@ -9,25 +9,29 @@ package com.hagoapp.datacova.util;
 
 import org.slf4j.Logger;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
+/**
+ * A writer to print exception detail including stack traces to logger.
+ *
+ * @author suncjs
+ * @since 0.1
+ */
 public class StackTraceWriter {
+    /**
+     * Method to logging stack trace.
+     *
+     * @param e      the exception
+     * @param logger the logger to use
+     * @return Strings of stack trace
+     */
     public static List<String> write(Throwable e, Logger logger) {
-        List<String> stacktrace = new ArrayList<>();
-        try (StringWriter sw = new StringWriter()) {
-            try (PrintWriter writer = new PrintWriter(sw)) {
-                e.printStackTrace(writer);
-                stacktrace = Arrays.asList(sw.toString().split(System.lineSeparator()).clone());
-            }
-        } catch (IOException ignored) {
-            //
+        logger.error("Error {}", e.getMessage());
+        for (var stackTrace : e.getStackTrace()) {
+            logger.error("\t{}", stackTrace);
         }
-        stacktrace.forEach(logger::error);
-        return stacktrace;
+        return Arrays.stream(e.getStackTrace()).map(StackTraceElement::toString).collect(Collectors.toList());
     }
 }
