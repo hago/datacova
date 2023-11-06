@@ -10,6 +10,7 @@ package com.hagoapp.datacova.utility.redis
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonSyntaxException
+import com.hagoapp.datacova.utility.CoVaException
 import org.slf4j.LoggerFactory
 import redis.clients.jedis.Jedis
 import java.lang.reflect.Type
@@ -19,6 +20,12 @@ class RedisCacheReader<T> private constructor() {
         const val DEFAULT_VALIDITY = 3600L
         var skipCache = false
         private val logger = LoggerFactory.getLogger(RedisCacheReader::class.java)
+        private var redisConfig: RedisConfig? = null
+
+        @JvmStatic
+        fun setRedisConfiguration(cfg: RedisConfig) {
+            redisConfig = cfg
+        }
 
         @JvmStatic
         fun <T> readCachedData(
@@ -28,7 +35,9 @@ class RedisCacheReader<T> private constructor() {
             type: Type,
             vararg params: Any?
         ): T? {
+            assert(redisConfig != null)
             val builder = Builder<T>()
+                .withJedisConfig(redisConfig!!)
                 .shouldSkipCache(skipCache)
                 .withLoadFunction(loader)
                 .withDataLifeTime(dataLifetime)
@@ -44,7 +53,9 @@ class RedisCacheReader<T> private constructor() {
             type: Type,
             vararg params: Any?
         ): T? {
+            assert(redisConfig != null)
             val builder = Builder<T>()
+                .withJedisConfig(redisConfig!!)
                 .shouldSkipCache(skipCache)
                 .withCacheName(cacheName)
                 .withType(type)
@@ -60,7 +71,9 @@ class RedisCacheReader<T> private constructor() {
             type: Type,
             vararg params: Any?
         ): T? {
+            assert(redisConfig != null)
             val builder = Builder<T>()
+                .withJedisConfig(redisConfig!!)
                 .shouldSkipCache(true)
                 .withLoadFunction(loader)
                 .withDataLifeTime(dataLifetime)
@@ -77,19 +90,25 @@ class RedisCacheReader<T> private constructor() {
             type: Type,
             vararg params: Any?
         ): T? {
+            assert(redisConfig != null)
             val builder = Builder<T>()
+                .withJedisConfig(redisConfig!!)
                 .shouldSkipCache(skipCache)
                 .withLoadFunction(loader)
                 .withDataLifeTime(-1)
                 .withCacheName(cacheName)
                 .withType(type)
             val reader = builder.create()
-            return reader.readData(*params)
+            val value = reader.readData(*params)
+            reader.clearData(*params)
+            return value
         }
 
         @JvmStatic
         fun clearData(cacheName: String, vararg params: Any?) {
-            val builder = Builder<Any>()
+            assert(redisConfig != null)
+            val builder = Builder<String>()
+                .withJedisConfig(redisConfig!!)
                 .shouldSkipCache(skipCache)
                 .withDataLifeTime(-1)
                 .withCacheName(cacheName)
@@ -167,7 +186,10 @@ class RedisCacheReader<T> private constructor() {
     }
 
     private fun createJedis(): Jedis {
-        return JedisManager.getJedis(redisConfig!!)
+        return when {
+            redisConfig != null -> JedisManager.getJedis(redisConfig!!)
+            else -> throw CoVaException("Redis Configuration is null!")
+        }
     }
 
     fun readData(vararg params: Any?): T? {
@@ -178,6 +200,7 @@ class RedisCacheReader<T> private constructor() {
                     val jsonStr = jedis.get(actualKey)
                     if (jsonStr == null) null else Gson().fromJson<T>(jsonStr, type)
                 }
+
                 skipCache -> doDataLoadAndUpdateRedis(jedis, actualKey, *params)
                 else -> {
                     val jsonStr = jedis.get(actualKey)
@@ -245,6 +268,7 @@ class RedisCacheReader<T> private constructor() {
             (loadFunction != null) && (loadFunction!!::class.java.canonicalName != null) -> createCacheKey(
                 loadFunction!!::class.java.canonicalName, *params
             )
+
             else -> createCacheKey("", *params)
         }
     }

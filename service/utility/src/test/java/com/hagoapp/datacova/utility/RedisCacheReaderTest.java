@@ -13,6 +13,7 @@ import com.hagoapp.datacova.utility.redis.GenericLoader;
 import com.hagoapp.datacova.utility.redis.JedisManager;
 import com.hagoapp.datacova.utility.redis.RedisCacheReader;
 import com.hagoapp.datacova.utility.redis.RedisConfig;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+@Slf4j
 class RedisCacheReaderTest {
     private static RedisConfig config;
     private static RedisCacheReader<String> reader;
@@ -43,10 +45,15 @@ class RedisCacheReaderTest {
     private static final GenericLoader<String> dataFunction = params -> Arrays.stream(params)
             .map(i -> i == null ? "null" : i.toString())
             .collect(Collectors.joining(", "));
+
+    private static final GenericLoader<String> dataFunction2 = params -> Arrays.stream(params)
+            .map(i -> i == null ? "null" : i.toString())
+            .collect(Collectors.joining(";; "));
     private static final Gson gson = new GsonBuilder().create();
 
     private final Object[] params = {"ABC", 42, null, false};
     private final String expect = dataFunction.perform(params);
+    private final String expect2 = dataFunction2.perform(params);
 
     @Test
     void testRedisCacheReader() throws InterruptedException {
@@ -62,16 +69,29 @@ class RedisCacheReaderTest {
         }
     }
 
-//    @Test
-//    void testReadCachedData() {
-//        try (var jedis = JedisManager.getJedis(config)) {
-//            jedis.flushAll();
-//            var v = reader.readCachedData()
-//        }
-//    }
-//
-//    @Test
-//    void testReadDataInCacheOnly() {
-//
-//    }
+    @Test
+    void testRedisCacheReaderConvenientMethods() {
+        try (var jedis = JedisManager.getJedis(config)) {
+            RedisCacheReader.setRedisConfiguration(config);
+            jedis.flushAll();
+            var v = RedisCacheReader.readDataInCacheOnly(CACHE_NAME, String.class, params);
+            Assertions.assertNull(v);
+            log.debug("readDataInCacheOnly done");
+            v = RedisCacheReader.readCachedData(CACHE_NAME, CACHE_LIFE_SECOND, dataFunction, String.class, params);
+            Assertions.assertEquals(expect, v);
+            var keys = jedis.keys("*");
+            Assertions.assertFalse(keys.isEmpty());
+            v = RedisCacheReader.readCachedData(CACHE_NAME, CACHE_LIFE_SECOND, dataFunction2, String.class, params);
+            Assertions.assertEquals(expect, v);
+            log.debug("readCachedData done");
+            v = RedisCacheReader.readDataAndUpdateCache(CACHE_NAME, CACHE_LIFE_SECOND, dataFunction2, String.class, params);
+            Assertions.assertEquals(expect2, v);
+            log.debug("readDataAndUpdateCache done");
+            v = RedisCacheReader.readDataAndClearCache(CACHE_NAME, dataFunction, String.class, params);
+            Assertions.assertEquals(expect2, v);
+            keys = jedis.keys("*");
+            Assertions.assertTrue(keys.isEmpty());
+            log.debug("readDataAndClearCache done");
+        }
+    }
 }
