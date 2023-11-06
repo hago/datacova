@@ -5,7 +5,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package com.hagoapp.datacova;
+package com.hagoapp.datacova.utility;
 
 import com.hagoapp.datacova.utility.JsonStringify;
 import lombok.Getter;
