@@ -18,6 +18,7 @@ dependencies {
     api("org.apache.directory.api:api-all:2.1.5")
     implementation("redis.clients:jedis:3.10.0")
     api("redis.clients:jedis:3.10.0")
+    implementation("com.github.albfernandez:juniversalchardet:2.4.0")
     compileOnly("org.projectlombok:lombok:1.18.30")
     annotationProcessor("org.projectlombok:lombok:1.18.30")
 

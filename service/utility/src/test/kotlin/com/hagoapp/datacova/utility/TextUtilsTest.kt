@@ -5,9 +5,9 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package com.hagoapp.datacova
+package com.hagoapp.datacova.utility
 
-import com.hagoapp.datacova.util.text.TextUtils
+import com.hagoapp.datacova.utility.text.TextUtils
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 

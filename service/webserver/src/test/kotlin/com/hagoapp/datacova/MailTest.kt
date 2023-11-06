@@ -13,7 +13,7 @@ import com.hagoapp.datacova.config.MailConfig
 import com.hagoapp.datacova.config.TestConfig
 import com.hagoapp.datacova.config.TestMailConfig
 import com.hagoapp.datacova.util.mail.MailHelper
-import com.hagoapp.datacova.util.text.TextUtils
+import com.hagoapp.datacova.utility.text.TextUtils
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty
 import java.io.File

@@ -5,8 +5,14 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package com.hagoapp.datacova.util.text
+package com.hagoapp.datacova.utility.text
 
+/**
+ * Text utilities.
+ *
+ * @author suncjs
+ * @since 0.5
+ */
 class TextUtils {
     companion object {
         @JvmStatic
@@ -18,8 +24,8 @@ class TextUtils {
             return when {
                 tagStart < 0 -> false
                 (singleQuoteStart < 0) && (doubleQuoteStart < 0) -> true
-                (singleQuoteStart < 0) && (doubleQuoteStart >= 0) -> doubleQuoteStart > tagStart
-                (singleQuoteStart >= 0) && (doubleQuoteStart < 0) -> singleQuoteStart > tagStart
+                singleQuoteStart < 0 -> doubleQuoteStart > tagStart
+                doubleQuoteStart < 0 -> singleQuoteStart > tagStart
                 singleQuoteStart > doubleQuoteStart -> doubleQuoteStart > tagStart
                 else -> singleQuoteStart > tagStart
             }

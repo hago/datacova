@@ -6,7 +6,7 @@
  *
  */
 
-package com.hagoapp.datacova.util.text
+package com.hagoapp.datacova.utility.text
 
 import org.mozilla.universalchardet.UniversalDetector
 import java.io.ByteArrayOutputStream
@@ -16,6 +16,12 @@ import java.io.InputStream
 import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 
+/**
+ * The tool to detect character encoding from text.
+ *
+ * @author suncjs
+ * @since 0.1
+ */
 class EncodingUtils {
     companion object {
 
