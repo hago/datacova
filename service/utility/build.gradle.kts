@@ -2,7 +2,7 @@ plugins {
     id("java-library")
 }
 
-group = "com.hagoapp.dataccova.util"
+group = "com.hagoapp.dataccova"
 version = "0.5"
 
 repositories {
