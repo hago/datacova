@@ -1,16 +1,12 @@
 /*
- * Copyright (c) 2020.
+ * Copyright (c) 2021.
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package com.hagoapp.datacova.data.redis
+package com.hagoapp.datacova.utility.redis
 
-import com.hagoapp.datacova.ShutDownManager
-import com.hagoapp.datacova.ShutDownWatcher
-import com.hagoapp.datacova.config.CoVaConfig
-import com.hagoapp.datacova.data.CoVaRedisConfigProvider
 import org.slf4j.LoggerFactory
 import redis.clients.jedis.Jedis
 import redis.clients.jedis.JedisPool
@@ -22,38 +18,12 @@ import java.time.temporal.ChronoUnit
 
 class JedisManager private constructor() {
 
-    private class PortalRedisCloser : ShutDownWatcher {
-
-        override fun shutdown(): Boolean {
-            val results = pools.map { (config, pool) ->
-                try {
-                    pool.first.close()
-                    true
-                } catch (ignored: Throwable) {
-                    logger.error("Closing internal redis pool {} error: {}", config, ignored.message)
-                    false
-                }
-            }
-            return results.all { it }
-        }
-
-        override fun getName(): String {
-            return "Jedis Manager"
-        }
-    }
-
     companion object {
         private val logger = LoggerFactory.getLogger(JedisManager::class.java)
         private val pools = mutableMapOf<RedisConfig, Pair<Pool<Jedis>, Int>>()
-        private val defaultConfig = CoVaConfig.getConfig().redis
 
         interface ConfigProvider {
             fun getConfig(): RedisConfig
-        }
-
-        init {
-            val closer = PortalRedisCloser()
-            ShutDownManager.watch(closer)
         }
 
         private fun createSentinelPool(config: RedisConfig): Pool<Jedis> {
@@ -84,13 +54,9 @@ class JedisManager private constructor() {
         /**
          * Fetch a jedis instance using default config, which should be closed explicitly.
          *
+         * @param config configuration of redis
          * @return jedis instance
          */
-        @JvmStatic
-        fun getJedis(): Jedis {
-            return getJedis(defaultConfig)
-        }
-
         @JvmStatic
         fun getJedis(config: RedisConfig): Jedis {
             if (!pools.containsKey(config)) {
@@ -105,7 +71,7 @@ class JedisManager private constructor() {
         }
 
         @JvmStatic
-        fun getJedis(configProvider: CoVaRedisConfigProvider): Jedis {
+        fun getJedis(configProvider: RedisConfigProvider): Jedis {
             return getJedis(configProvider.getConfig())
         }
     }

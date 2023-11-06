@@ -10,9 +10,9 @@ package com.hagoapp.datacova.data.execution
 
 import com.google.gson.reflect.TypeToken
 import com.hagoapp.datacova.config.CoVaConfig
-import com.hagoapp.datacova.data.RedisCacheReader
-import com.hagoapp.datacova.data.redis.JedisManager
 import com.hagoapp.datacova.lib.execution.TaskExecution
+import com.hagoapp.datacova.utility.redis.JedisManager
+import com.hagoapp.datacova.utility.redis.RedisCacheReader
 
 class TaskExecutionCache {
     companion object {
@@ -27,11 +27,9 @@ class TaskExecutionCache {
             return RedisCacheReader.readCachedData(
                 TASK_EXECUTION_OF_TASK,
                 3600,
-                object : RedisCacheReader.GenericLoader<TaskExecution> {
-                    override fun perform(vararg params: Any?): TaskExecution? {
-                        val id = params[0].toString().toInt()
-                        return TaskExecutionData().getTaskExecution(id)
-                    }
+                { params ->
+                    val id = params[0].toString().toInt()
+                    TaskExecutionData().getTaskExecution(id)
                 },
                 TaskExecution::class.java,
                 taskId
@@ -54,13 +52,11 @@ class TaskExecutionCache {
             return RedisCacheReader.readCachedData(
                 TASK_EXECUTION_LIST_OF_WORKSPACE,
                 3600,
-                object : RedisCacheReader.GenericLoader<List<TaskExecution>> {
-                    override fun perform(vararg params: Any?): List<TaskExecution> {
-                        val id = params[0].toString().toInt()
-                        val offset = params[1].toString().toInt()
-                        val limit = params[2].toString().toInt()
-                        return TaskExecutionData().getTaskExecutionsOfWorkspace(id, offset, limit)
-                    }
+                { params ->
+                    val id = params[0].toString().toInt()
+                    val offset = params[1].toString().toInt()
+                    val limit = params[2].toString().toInt()
+                    TaskExecutionData().getTaskExecutionsOfWorkspace(id, offset, limit)
                 },
                 token.type,
                 workspaceId, start, size
@@ -82,11 +78,9 @@ class TaskExecutionCache {
             return RedisCacheReader.readCachedData(
                 TASK_EXECUTION,
                 3600,
-                object : RedisCacheReader.GenericLoader<TaskExecution> {
-                    override fun perform(vararg params: Any?): TaskExecution? {
-                        val execId = params[0].toString().toInt()
-                        return TaskExecutionData().getTaskExecution(execId)
-                    }
+                { params ->
+                    val execId = params[0].toString().toInt()
+                    TaskExecutionData().getTaskExecution(execId)
                 },
                 TaskExecution::class.java,
                 id

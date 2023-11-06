@@ -7,10 +7,10 @@
 
 package com.hagoapp.datacova.web.websocket;
 
-import com.hagoapp.datacova.data.RedisCacheReader;
 import com.hagoapp.datacova.user.UserInfo;
 import com.hagoapp.datacova.util.http.RequestHelper;
 import com.hagoapp.datacova.util.web.AuthUtils;
+import com.hagoapp.datacova.utility.redis.RedisCacheReader;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.ServerWebSocket;

@@ -8,8 +8,8 @@
 package com.hagoapp.datacova.data.workspace
 
 import com.google.gson.reflect.TypeToken
-import com.hagoapp.datacova.data.RedisCacheReader
 import com.hagoapp.datacova.entity.connection.WorkspaceConnection
+import com.hagoapp.datacova.utility.redis.RedisCacheReader
 
 class ConnectionCache {
     companion object {
@@ -20,11 +20,7 @@ class ConnectionCache {
             val token = object : TypeToken<List<WorkspaceConnection>>() {}
             val l = RedisCacheReader.readCachedData(
                 CONNECTION_LIST, 3600,
-                object : RedisCacheReader.GenericLoader<List<WorkspaceConnection>> {
-                    override fun perform(vararg params: Any?): List<WorkspaceConnection>? {
-                        return ConnectionData().getWorkspaceConnections(params[0] as Int)
-                    }
-                }, token.type, workspaceId
+                { params -> ConnectionData().getWorkspaceConnections(params[0] as Int) }, token.type, workspaceId
             )
             return l ?: listOf()
         }

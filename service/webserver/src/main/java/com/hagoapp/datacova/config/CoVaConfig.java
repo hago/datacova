@@ -11,7 +11,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.hagoapp.datacova.utility.CoVaException;
 import com.hagoapp.datacova.utility.JsonStringify;
-import com.hagoapp.datacova.data.redis.RedisConfig;
+import com.hagoapp.datacova.utility.redis.RedisConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

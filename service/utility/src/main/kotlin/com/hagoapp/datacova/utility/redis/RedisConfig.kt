@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2020.
+ * Copyright (c) 2021.
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package com.hagoapp.datacova.data.redis
+package com.hagoapp.datacova.utility.redis
 
 data class RedisConfig(
     val isSentinel: Boolean = false,
@@ -24,3 +24,7 @@ data class RedisSentinelConfig(
     val nodes: Map<String, Int> = mapOf(),
     val master: String = ""
 )
+
+interface RedisConfigProvider {
+    fun getConfig(): RedisConfig
+}

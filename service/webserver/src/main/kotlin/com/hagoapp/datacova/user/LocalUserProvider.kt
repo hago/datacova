@@ -9,10 +9,10 @@ package com.hagoapp.datacova.user
 
 import com.hagoapp.datacova.utility.Utils
 import com.hagoapp.datacova.config.CoVaConfig
-import com.hagoapp.datacova.data.RedisCacheReader
 import com.hagoapp.datacova.data.user.UserData
 import com.hagoapp.datacova.util.FileStoreUtils
 import com.hagoapp.datacova.util.web.CaptchaUtils
+import com.hagoapp.datacova.utility.redis.RedisCacheReader
 import io.vertx.ext.web.RoutingContext
 import org.slf4j.LoggerFactory
 import java.io.ByteArrayInputStream
@@ -46,18 +46,22 @@ class LocalUserProvider : UserAuthProvider {
                 logger.error("Local Database user auth: user not found for {} when try to login", userId)
                 null
             }
+
             userInfo.status == UserStatus.Registered -> {
                 logger.error("Local Database user auth: user not activated for {} when try to login", userId)
                 null
             }
+
             userInfo.status == UserStatus.Deleted -> {
                 logger.error("Local Database user auth: user has been deleted for {} when try to login", userId)
                 null
             }
+
             userInfo.pwdHash != UserData.computePwdHash(password) -> {
                 logger.error("Local Database user auth: password mismatch when user '{} try to login", userId)
                 null
             }
+
             else -> {
                 logger.info("Local Database user auth: user '{}' log in", userId)
                 userInfo
@@ -105,10 +109,7 @@ class LocalUserProvider : UserAuthProvider {
         return "${hash.substring(0, 3)}/${hash.substring(3, 6)}/$hash"
     }
 
-    private val userInfoLoader = object : RedisCacheReader.GenericLoader<UserInfo> {
-        override fun perform(vararg params: Any?): UserInfo? {
-            UserData(dbConfig).use { return it.findUser(params[0] as String) }
-        }
-
+    private val userInfoLoader = { params: Array<Any?> ->
+        UserData(dbConfig).use { it.findUser(params[0] as String) }
     }
 }

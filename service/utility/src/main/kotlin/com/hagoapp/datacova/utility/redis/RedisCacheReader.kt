@@ -1,19 +1,15 @@
 /*
- * Copyright (c) 2020.
+ * Copyright (c) 2021.
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package com.hagoapp.datacova.data
+package com.hagoapp.datacova.utility.redis
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonSyntaxException
-import com.hagoapp.datacova.Application
-import com.hagoapp.datacova.config.CoVaConfig
-import com.hagoapp.datacova.data.redis.JedisManager
-import com.hagoapp.datacova.data.redis.RedisConfig
 import org.slf4j.LoggerFactory
 import redis.clients.jedis.Jedis
 import java.lang.reflect.Type
@@ -21,7 +17,7 @@ import java.lang.reflect.Type
 class RedisCacheReader<T> private constructor() {
     companion object {
         const val DEFAULT_VALIDITY = 3600L
-        private val skipCache = !Application.PRODUCTION_MODE
+        var skipCache = false
         private val logger = LoggerFactory.getLogger(RedisCacheReader::class.java)
 
         @JvmStatic
@@ -120,7 +116,6 @@ class RedisCacheReader<T> private constructor() {
     private var cacheName: String? = null
     private lateinit var actualKey: String
     private var redisConfig: RedisConfig? = null
-        get() = field ?: CoVaConfig.getConfig().redis
 
     val lastKey: String
         get() = actualKey
@@ -168,13 +163,6 @@ class RedisCacheReader<T> private constructor() {
 
         fun create(): RedisCacheReader<T> {
             return reader
-        }
-    }
-
-    interface GenericLoader<T> {
-        fun perform(vararg params: Any?): T?
-        fun performBatch(paramsBatch: List<List<Any?>>): List<T?> {
-            return paramsBatch.map { params -> perform(*params.toTypedArray()) }
         }
     }
 

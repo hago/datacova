@@ -8,8 +8,8 @@
 package com.hagoapp.datacova.data.workspace
 
 import com.google.gson.reflect.TypeToken
-import com.hagoapp.datacova.data.RedisCacheReader
 import com.hagoapp.datacova.lib.task.Task
+import com.hagoapp.datacova.utility.redis.RedisCacheReader
 
 class TaskCache {
     companion object {
@@ -21,11 +21,9 @@ class TaskCache {
             val token = object : TypeToken<List<Task>>() {}
             val l = RedisCacheReader.readCachedData(
                 TASK_LIST, 3600,
-                object : RedisCacheReader.GenericLoader<List<Task>> {
-                    override fun perform(vararg params: Any?): List<Task> {
-                        return if (params.isEmpty()) listOf() else
-                            TaskData().getTasks(params[0] as Int)
-                    }
+                { params ->
+                    if (params.isEmpty()) listOf() else
+                        TaskData().getTasks(params[0] as Int)
                 }, token.type, id
             )
             return l ?: listOf()

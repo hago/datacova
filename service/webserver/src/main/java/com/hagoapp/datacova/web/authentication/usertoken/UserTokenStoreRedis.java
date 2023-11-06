@@ -8,9 +8,9 @@
 package com.hagoapp.datacova.web.authentication.usertoken;
 
 import com.google.gson.GsonBuilder;
-import com.hagoapp.datacova.data.redis.JedisManager;
-import com.hagoapp.datacova.data.redis.RedisConfig;
 import com.hagoapp.datacova.user.UserInfo;
+import com.hagoapp.datacova.utility.redis.JedisManager;
+import com.hagoapp.datacova.utility.redis.RedisConfig;
 
 import java.util.Set;
 

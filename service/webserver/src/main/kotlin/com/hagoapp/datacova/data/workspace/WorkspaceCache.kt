@@ -9,26 +9,22 @@ package com.hagoapp.datacova.data.workspace
 
 import com.google.gson.reflect.TypeToken
 import com.hagoapp.datacova.config.CoVaConfig
-import com.hagoapp.datacova.data.RedisCacheReader
 import com.hagoapp.datacova.entity.workspace.WorkSpace
 import com.hagoapp.datacova.entity.workspace.WorkSpaceUserRole
 import com.hagoapp.datacova.entity.workspace.WorkSpaceUserRole.*
+import com.hagoapp.datacova.utility.redis.RedisCacheReader
 
 class WorkspaceCache {
     companion object {
         private const val WORKSPACE_INFO = "Workspace"
-        private const val WORKSPACE_User_ROLE = "WorkspaceUserRoles"
+        private const val WORKSPACE_USER_ROLE = "WorkspaceUserRoles"
         private const val MY_WORKSPACE_INFO = "MyWorkspace"
 
         @JvmStatic
         fun getWorkspace(id: Int): WorkSpace? {
             return RedisCacheReader.readCachedData(
                 WORKSPACE_INFO, 3600,
-                object : RedisCacheReader.GenericLoader<WorkSpace?> {
-                    override fun perform(vararg params: Any?): WorkSpace? {
-                        return WorkSpaceData().getWorkSpace(params[0] as Int)
-                    }
-                }, WorkSpace::class.java, id
+                { params -> WorkSpaceData().getWorkSpace(params[0] as Int) }, WorkSpace::class.java, id
             )
         }
 
@@ -39,12 +35,8 @@ class WorkspaceCache {
         ): List<WorkSpaceData.WorkspaceBasicUser> {
             val token = object : TypeToken<List<WorkSpaceData.WorkspaceBasicUser>>() {}
             val list = RedisCacheReader.readCachedData(
-                WORKSPACE_User_ROLE, 3600,
-                object : RedisCacheReader.GenericLoader<List<WorkSpaceData.WorkspaceBasicUser>> {
-                    override fun perform(vararg params: Any?): List<WorkSpaceData.WorkspaceBasicUser> {
-                        return WorkSpaceData().getWorkspaceUserIdList(params[0] as Int)
-                    }
-                }, token.type, id
+                WORKSPACE_USER_ROLE, 3600,
+                { params -> WorkSpaceData().getWorkspaceUserIdList(params[0] as Int) }, token.type, id
             )
             return list!!.filter { u -> u.role in roles }
         }
@@ -54,18 +46,16 @@ class WorkspaceCache {
             val token = object : TypeToken<List<WorkSpace>>() {}
             return RedisCacheReader.readCachedData(
                 MY_WORKSPACE_INFO, 3600,
-                object : RedisCacheReader.GenericLoader<List<WorkSpace>> {
-                    override fun perform(vararg params: Any?): List<WorkSpace> {
-                        return if (params.isEmpty()) listOf() else
-                            WorkSpaceData(CoVaConfig.getConfig().database).getMyWorkSpaces(params[0] as Long)
-                    }
+                { params ->
+                    if (params.isEmpty()) listOf() else
+                        WorkSpaceData(CoVaConfig.getConfig().database).getMyWorkSpaces(params[0] as Long)
                 }, token.type, userId
             )
         }
 
         @JvmStatic
         fun clearWorkspaceUser(id: Int) {
-            RedisCacheReader.clearData(WORKSPACE_User_ROLE, id)
+            RedisCacheReader.clearData(WORKSPACE_USER_ROLE, id)
         }
 
         @JvmStatic

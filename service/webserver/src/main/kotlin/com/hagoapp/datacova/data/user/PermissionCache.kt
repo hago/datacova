@@ -7,9 +7,9 @@
 
 package com.hagoapp.datacova.data.user
 
-import com.hagoapp.datacova.data.RedisCacheReader
 import com.hagoapp.datacova.user.UserInfo
 import com.hagoapp.datacova.user.permission.UserPermissions
+import com.hagoapp.datacova.utility.redis.RedisCacheReader
 
 class PermissionCache {
     companion object {
@@ -21,12 +21,9 @@ class PermissionCache {
             val up = RedisCacheReader.readCachedData(
                 USER_PERMISSIONS,
                 PERMISSION_EXPIRY,
-                object : RedisCacheReader.GenericLoader<UserPermissions> {
-                    override fun perform(vararg params: Any?): UserPermissions {
-                        val u = params[0] as UserInfo
-                        return PermissionData().getUserPermissions(u)
-                    }
-
+                { params ->
+                    val u = params[0] as UserInfo
+                    PermissionData().getUserPermissions(u)
                 },
                 UserPermissions::class.java,
                 userInfo

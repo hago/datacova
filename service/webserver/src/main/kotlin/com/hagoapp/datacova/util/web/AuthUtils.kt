@@ -11,9 +11,9 @@ package com.hagoapp.datacova.util.web
 import com.google.gson.GsonBuilder
 import com.hagoapp.datacova.utility.Utils
 import com.hagoapp.datacova.config.CoVaConfig
-import com.hagoapp.datacova.data.redis.JedisManager
 import com.hagoapp.datacova.user.UserInfo
 import com.hagoapp.datacova.util.http.ResponseHelper
+import com.hagoapp.datacova.utility.redis.JedisManager
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.core.http.Cookie
 import io.vertx.core.http.HttpHeaders

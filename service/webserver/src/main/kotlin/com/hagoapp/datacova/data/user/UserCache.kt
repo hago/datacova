@@ -9,10 +9,9 @@ package com.hagoapp.datacova.data.user
 
 import com.google.gson.Gson
 import com.hagoapp.datacova.config.CoVaConfig
-import com.hagoapp.datacova.data.RedisCacheReader
-import com.hagoapp.datacova.data.RedisCacheReader.GenericLoader
-import com.hagoapp.datacova.data.redis.JedisManager
 import com.hagoapp.datacova.user.UserInfo
+import com.hagoapp.datacova.utility.redis.JedisManager
+import com.hagoapp.datacova.utility.redis.RedisCacheReader
 
 class UserCache {
     companion object {
@@ -24,11 +23,9 @@ class UserCache {
 
         @JvmStatic
         fun getUser(id: Long): UserInfo? {
-            return RedisCacheReader.readCachedData(USER_INFO, USER_INFO_CACHE_TIME, object : GenericLoader<UserInfo> {
-                override fun perform(params: Array<out Any?>): UserInfo? {
-                    UserData().use {
-                        return it.findUser(params[0] as Long)
-                    }
+            return RedisCacheReader.readCachedData(USER_INFO, USER_INFO_CACHE_TIME, { params ->
+                UserData().use {
+                    it.findUser(params[0] as Long)
                 }
             }, UserInfo::class.java, id)
         }
@@ -36,11 +33,9 @@ class UserCache {
         @JvmStatic
         fun batchGetUser(idList: List<Long>): List<UserInfo?> {
             val list = idList.map { id ->
-                RedisCacheReader.readCachedData(USER_INFO, 3600, object : GenericLoader<UserInfo> {
-                    override fun perform(params: Array<out Any?>): UserInfo? {
-                        return null
-                    }
-                }, UserInfo::class.java, id)
+                RedisCacheReader.readCachedData<UserInfo?>(USER_INFO, 3600,
+                    { null }, UserInfo::class.java, id
+                )
             }.toMutableList()
             val nullUsers = list.mapIndexed { i, info ->
                 if (info == null) Pair(idList[i], i) else null
@@ -80,13 +75,10 @@ class UserCache {
             return RedisCacheReader.readCachedData(
                 USER_INFO_BY_USERID,
                 USER_INFO_CACHE_TIME,
-                object : GenericLoader<UserInfo?> {
-                    override fun perform(vararg params: Any?): UserInfo? {
-                        val uid = params[0].toString()
-                        val type = params[1] as Int
-                        return UserData().findUser(uid, type)
-                    }
-
+                { params ->
+                    val uid = params[0].toString()
+                    val type = params[1] as Int
+                    UserData().findUser(uid, type)
                 },
                 UserInfo::class.java,
                 userId,
