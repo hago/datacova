@@ -9,8 +9,8 @@
 package com.hagoapp.datacova.util.surveyor
 
 import com.hagoapp.datacova.lib.verification.VerifyConfiguration
-import com.hagoapp.surveyor.RuleConfig
-import com.hagoapp.surveyor.rule.OptionsRuleConfig
+import com.hagoapp.datacova.surveyor.RuleConfig
+import com.hagoapp.datacova.surveyor.rule.OptionsRuleConfig
 import java.util.*
 
 class OptionsRuleConfigDescriptor internal constructor() : RuleConfigDescriptor() {

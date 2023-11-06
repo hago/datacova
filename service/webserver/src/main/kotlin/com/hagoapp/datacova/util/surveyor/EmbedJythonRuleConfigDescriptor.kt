@@ -9,8 +9,8 @@
 package com.hagoapp.datacova.util.surveyor
 
 import com.hagoapp.datacova.lib.verification.VerifyConfiguration
-import com.hagoapp.surveyor.RuleConfig
-import com.hagoapp.surveyor.rule.EmbedJythonRuleConfig
+import com.hagoapp.datacova.surveyor.RuleConfig
+import com.hagoapp.datacova.surveyor.rule.EmbedJythonRuleConfig
 import java.util.*
 
 class EmbedJythonRuleConfigDescriptor internal constructor() : RuleConfigDescriptor() {

@@ -9,8 +9,8 @@
 package com.hagoapp.datacova.util.surveyor
 
 import com.hagoapp.datacova.lib.verification.VerifyConfiguration
-import com.hagoapp.surveyor.RuleConfig
-import com.hagoapp.surveyor.rule.TimeRangeRuleConfig
+import com.hagoapp.datacova.surveyor.RuleConfig
+import com.hagoapp.datacova.surveyor.rule.TimeRangeRuleConfig
 import java.time.Instant
 import java.time.ZoneId
 import java.time.ZonedDateTime

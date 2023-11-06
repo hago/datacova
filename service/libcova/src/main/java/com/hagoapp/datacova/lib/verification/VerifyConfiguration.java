@@ -8,9 +8,9 @@
 package com.hagoapp.datacova.lib.verification;
 
 import com.google.gson.Gson;
-import com.hagoapp.surveyor.JsonStringify;
-import com.hagoapp.surveyor.RuleConfig;
-import com.hagoapp.surveyor.SurveyorFactory;
+import com.hagoapp.datacova.surveyor.JsonStringify;
+import com.hagoapp.datacova.surveyor.RuleConfig;
+import com.hagoapp.datacova.surveyor.SurveyorFactory;
 
 import java.util.ArrayList;
 import java.util.List;

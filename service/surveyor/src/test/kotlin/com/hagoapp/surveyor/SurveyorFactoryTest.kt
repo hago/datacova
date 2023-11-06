@@ -7,8 +7,9 @@
 
 package com.hagoapp.surveyor
 
-import com.hagoapp.surveyor.rule.*
-import com.hagoapp.surveyor.surveyor.*
+import com.hagoapp.datacova.surveyor.SurveyorFactory
+import com.hagoapp.datacova.surveyor.rule.*
+import com.hagoapp.datacova.surveyor.surveyor.*
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test

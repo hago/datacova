@@ -17,7 +17,7 @@ import com.hagoapp.f2t.ColumnDefinition
 import com.hagoapp.f2t.DataTable
 import com.hagoapp.f2t.ProgressNotify
 import com.hagoapp.f2t.datafile.ParseResult
-import com.hagoapp.surveyor.SurveyorFactory
+import com.hagoapp.datacova.surveyor.SurveyorFactory
 import org.slf4j.LoggerFactory
 
 class VerifyExecutor : BaseTaskActionExecutor(), ProgressNotify {

@@ -9,8 +9,8 @@
 package com.hagoapp.datacova.util.surveyor
 
 import com.hagoapp.datacova.lib.verification.VerifyConfiguration
-import com.hagoapp.surveyor.RuleConfig
-import com.hagoapp.surveyor.rule.RegexRuleConfig
+import com.hagoapp.datacova.surveyor.RuleConfig
+import com.hagoapp.datacova.surveyor.rule.RegexRuleConfig
 import java.util.*
 
 class RegexRuleConfigDescriptor internal constructor() : RuleConfigDescriptor() {

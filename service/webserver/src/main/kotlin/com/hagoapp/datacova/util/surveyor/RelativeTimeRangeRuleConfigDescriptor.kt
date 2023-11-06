@@ -9,9 +9,9 @@
 package com.hagoapp.datacova.util.surveyor
 
 import com.hagoapp.datacova.lib.verification.VerifyConfiguration
-import com.hagoapp.surveyor.RuleConfig
-import com.hagoapp.surveyor.rule.RelativeTimeBoundary
-import com.hagoapp.surveyor.rule.RelativeTimeRangeConfig
+import com.hagoapp.datacova.surveyor.RuleConfig
+import com.hagoapp.datacova.surveyor.rule.RelativeTimeBoundary
+import com.hagoapp.datacova.surveyor.rule.RelativeTimeRangeConfig
 import java.util.*
 
 class RelativeTimeRangeRuleConfigDescriptor internal constructor() : RuleConfigDescriptor() {

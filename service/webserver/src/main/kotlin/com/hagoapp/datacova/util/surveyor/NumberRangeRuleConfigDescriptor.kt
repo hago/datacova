@@ -9,8 +9,8 @@
 package com.hagoapp.datacova.util.surveyor
 
 import com.hagoapp.datacova.lib.verification.VerifyConfiguration
-import com.hagoapp.surveyor.RuleConfig
-import com.hagoapp.surveyor.rule.NumberRangeRuleConfig
+import com.hagoapp.datacova.surveyor.RuleConfig
+import com.hagoapp.datacova.surveyor.rule.NumberRangeRuleConfig
 import java.util.Locale
 
 class NumberRangeRuleConfigDescriptor internal constructor() : RuleConfigDescriptor() {

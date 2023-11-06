@@ -11,8 +11,8 @@ package com.hagoapp.datacova.util.surveyor
 import com.hagoapp.datacova.CoVaException
 import com.hagoapp.datacova.lib.verification.VerifyConfiguration
 import com.hagoapp.datacova.util.text.TextResourceManager
-import com.hagoapp.surveyor.RuleConfig
-import com.hagoapp.surveyor.rule.*
+import com.hagoapp.datacova.surveyor.RuleConfig
+import com.hagoapp.datacova.surveyor.rule.*
 import org.stringtemplate.v4.ST
 import java.lang.Exception
 import java.util.Locale
