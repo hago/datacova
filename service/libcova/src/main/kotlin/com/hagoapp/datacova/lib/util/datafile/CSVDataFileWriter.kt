@@ -6,7 +6,7 @@
  *
  */
 
-package com.hagoapp.datacova.execution.datafile
+package com.hagoapp.datacova.lib.util.datafile
 
 import com.hagoapp.datacova.utility.CoVaException
 import java.io.OutputStream

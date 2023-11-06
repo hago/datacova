@@ -6,35 +6,29 @@
  *
  */
 
-package com.hagoapp.datacova.execution.datafile
+package com.hagoapp.datacova.lib.util.datafile
 
+import com.hagoapp.datacova.lib.util.data.CellTypeUtils
 import com.hagoapp.datacova.utility.CoVaException
-import com.hagoapp.datacova.util.data.CellTypeUtils
+import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import org.apache.poi.ss.format.CellFormatType
 import org.apache.poi.ss.usermodel.CellType
-import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import java.io.OutputStream
 import java.sql.JDBCType
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
-class ExcelXDataFileWriter : DataFileWriter {
+class ExcelDataFileWriter : DataFileWriter {
 
-    private val wb = XSSFWorkbook()
+    private val wb = HSSFWorkbook()
     private val st = wb.createSheet()
     private val lines = mutableListOf<List<Any?>>()
 
     private var headerDef: List<String>? = null
     private var dataTypeDef: List<JDBCType>? = null
 
-    override fun addData(data: List<Any?>) {
-        if (headerDef == null) {
-            throw CoVaException("headers not set!")
-        }
-        if (headerDef!!.size != data.size) {
-            throw CoVaException("row size doesn't match headers size!")
-        }
-        lines.add(data)
+    override fun setHeader(headers: List<String>) {
+        headerDef = headers
     }
 
     override fun setDataType(types: List<JDBCType>) {
@@ -48,8 +42,14 @@ class ExcelXDataFileWriter : DataFileWriter {
         dataTypeDef = types
     }
 
-    override fun setHeader(headers: List<String>) {
-        headerDef = headers
+    override fun addData(data: List<Any?>) {
+        if (headerDef == null) {
+            throw CoVaException("headers not set!")
+        }
+        if (headerDef!!.size != data.size) {
+            throw CoVaException("row size doesn't match headers size!")
+        }
+        lines.add(data)
     }
 
     override fun write(outStream: OutputStream) {
@@ -82,4 +82,6 @@ class ExcelXDataFileWriter : DataFileWriter {
         }
         wb.write(outStream)
     }
+
+
 }
