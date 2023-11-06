@@ -191,9 +191,9 @@ public class LdapUtils implements Closeable, ConnectionClosedEventListener {
             return userId;
         }
         int pos = userId.indexOf("@");
-        String itCode = pos > 0 ? userId.substring(0, pos) : userId;
+        String un = pos > 0 ? userId.substring(0, pos) : userId;
         var dnField = conf.getAttributes().getActualAttribute(LdapAttributes.ATTRIBUTE_DISTINGUISHED_NAME);
-        Map<String, Object> userMap = getUser(itCode, List.of(dnField));
+        Map<String, Object> userMap = getUser(un, List.of(dnField));
         if (userMap == null) {
             throw new CoVaException(String.format("user %s not found", userId));
         }
