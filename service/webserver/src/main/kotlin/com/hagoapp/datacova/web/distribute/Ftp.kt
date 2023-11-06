@@ -10,8 +10,8 @@ package com.hagoapp.datacova.web.distribute
 import com.google.gson.Gson
 import com.hagoapp.datacova.lib.distribute.conf.FtpConfig
 import com.hagoapp.datacova.lib.util.FtpClient
-import com.hagoapp.datacova.util.StackTraceWriter
 import com.hagoapp.datacova.util.http.ResponseHelper
+import com.hagoapp.datacova.utility.StackTraceWriter
 import com.hagoapp.datacova.web.MethodName
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import com.hagoapp.datacova.web.authentication.AuthType

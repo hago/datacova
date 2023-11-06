@@ -17,7 +17,7 @@ import com.hagoapp.datacova.executor.ExecuteResultMailer;
 import com.hagoapp.datacova.lib.execution.ExecutionActionDetail;
 import com.hagoapp.datacova.lib.execution.ExecutionDetail;
 import com.hagoapp.datacova.lib.execution.TaskExecution;
-import com.hagoapp.datacova.util.StackTraceWriter;
+import com.hagoapp.datacova.utility.StackTraceWriter;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

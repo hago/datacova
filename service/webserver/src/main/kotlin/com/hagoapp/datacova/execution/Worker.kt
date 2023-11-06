@@ -14,7 +14,7 @@ import com.hagoapp.datacova.executor.Executor
 import com.hagoapp.datacova.file.FileStoreFactory
 import com.hagoapp.datacova.lib.action.TaskAction
 import com.hagoapp.datacova.lib.execution.*
-import com.hagoapp.datacova.util.StackTraceWriter
+import com.hagoapp.datacova.utility.StackTraceWriter
 import com.hagoapp.f2t.DataTable
 import com.hagoapp.f2t.FileColumnDefinition
 import com.hagoapp.f2t.FileParser

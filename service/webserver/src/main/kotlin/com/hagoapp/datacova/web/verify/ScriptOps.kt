@@ -9,7 +9,6 @@ package com.hagoapp.datacova.web.verify
 
 import com.google.gson.Gson
 import com.hagoapp.datacova.utility.CoVaException
-import com.hagoapp.datacova.util.StackTraceWriter
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.MethodName
 import com.hagoapp.datacova.web.annotation.WebEndPoint
@@ -18,6 +17,7 @@ import com.hagoapp.f2t.util.DateTimeTypeUtils
 import com.hagoapp.datacova.surveyor.rule.EmbedJsRuleConfig
 import com.hagoapp.datacova.surveyor.EmbedJsFunctionHelper
 import com.hagoapp.datacova.surveyor.EmbedPythonHelper
+import com.hagoapp.datacova.utility.StackTraceWriter
 import io.netty.handler.codec.http.HttpResponseStatus.*
 import io.vertx.ext.web.RoutingContext
 import org.slf4j.LoggerFactory

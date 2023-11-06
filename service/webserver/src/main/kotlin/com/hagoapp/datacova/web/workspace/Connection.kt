@@ -12,9 +12,9 @@ import com.hagoapp.datacova.data.workspace.ConnectionData
 import com.hagoapp.datacova.data.workspace.WorkspaceCache
 import com.hagoapp.datacova.entity.connection.WorkspaceConnection
 import com.hagoapp.datacova.entity.workspace.WorkSpaceUserRole
-import com.hagoapp.datacova.util.StackTraceWriter
 import com.hagoapp.datacova.util.WorkspaceUserRoleUtil
 import com.hagoapp.datacova.util.http.ResponseHelper
+import com.hagoapp.datacova.utility.StackTraceWriter
 import com.hagoapp.datacova.web.Messages
 import com.hagoapp.datacova.web.MethodName
 import com.hagoapp.datacova.web.annotation.WebEndPoint
