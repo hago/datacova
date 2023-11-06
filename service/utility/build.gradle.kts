@@ -15,6 +15,7 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("org.slf4j", "slf4j-api", "2.0.9")
     implementation("org.apache.directory.api:api-all:2.1.5")
+    api("org.apache.directory.api:api-all:2.1.5")
     compileOnly("org.projectlombok:lombok:1.18.30")
     annotationProcessor("org.projectlombok:lombok:1.18.30")
 
