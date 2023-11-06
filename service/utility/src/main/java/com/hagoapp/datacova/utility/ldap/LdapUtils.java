@@ -5,9 +5,9 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package com.hagoapp.datacova.ldap;
+package com.hagoapp.datacova.utility.ldap;
 
-import com.hagoapp.datacova.CoVaException;
+import com.hagoapp.datacova.utility.CoVaException;
 import org.apache.directory.api.ldap.model.entry.Attribute;
 import org.apache.directory.api.ldap.model.entry.Entry;
 import org.apache.directory.api.ldap.model.entry.Value;

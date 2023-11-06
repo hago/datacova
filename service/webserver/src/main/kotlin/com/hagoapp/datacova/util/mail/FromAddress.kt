@@ -8,7 +8,7 @@
 
 package com.hagoapp.datacova.util.mail
 
-import com.hagoapp.datacova.CoVaException
+import com.hagoapp.datacova.utility.CoVaException
 import java.nio.charset.StandardCharsets
 import javax.mail.internet.InternetAddress
 

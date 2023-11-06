@@ -8,7 +8,7 @@
 
 package com.hagoapp.datacova.util.surveyor
 
-import com.hagoapp.datacova.CoVaException
+import com.hagoapp.datacova.utility.CoVaException
 import com.hagoapp.datacova.lib.verification.VerifyConfiguration
 import com.hagoapp.datacova.util.text.TextResourceManager
 import com.hagoapp.datacova.surveyor.RuleConfig

@@ -5,9 +5,9 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package com.hagoapp.datacova.ldap;
+package com.hagoapp.datacova.utility.ldap;
 
-import com.hagoapp.datacova.JsonStringify;
+import com.hagoapp.datacova.utility.JsonStringify;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

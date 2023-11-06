@@ -8,7 +8,7 @@
 package com.hagoapp.datacova.lib.task;
 
 import com.google.gson.GsonBuilder;
-import com.hagoapp.datacova.JsonStringify;
+import com.hagoapp.datacova.utility.JsonStringify;
 
 import java.util.ArrayList;
 import java.util.List;

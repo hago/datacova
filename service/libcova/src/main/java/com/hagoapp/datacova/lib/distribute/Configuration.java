@@ -7,8 +7,8 @@
 
 package com.hagoapp.datacova.lib.distribute;
 
-import com.hagoapp.datacova.CoVaException;
-import com.hagoapp.datacova.JsonStringify;
+import com.hagoapp.datacova.utility.CoVaException;
+import com.hagoapp.datacova.utility.JsonStringify;
 
 /**
  * Configuration for distribution.

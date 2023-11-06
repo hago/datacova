@@ -8,7 +8,7 @@
 
 package com.hagoapp.datacova.util.datetime;
 
-import com.hagoapp.datacova.CoVaException;
+import com.hagoapp.datacova.utility.CoVaException;
 import com.hagoapp.f2t.util.DateTimeTypeUtils;
 import org.jetbrains.annotations.NotNull;
 

@@ -9,7 +9,7 @@ package com.hagoapp.datacova.web.websocket;
 
 import com.google.gson.Gson;
 import com.hagoapp.datacova.Application;
-import com.hagoapp.datacova.MapSerializer;
+import com.hagoapp.datacova.utility.MapSerializer;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
 import org.slf4j.Logger;

@@ -7,8 +7,8 @@
 
 package com.hagoapp.datacova.lib.action;
 
-import com.hagoapp.datacova.CoVaException;
-import com.hagoapp.datacova.MapSerializer;
+import com.hagoapp.datacova.utility.CoVaException;
+import com.hagoapp.datacova.utility.MapSerializer;
 
 import java.io.IOException;
 import java.util.Map;

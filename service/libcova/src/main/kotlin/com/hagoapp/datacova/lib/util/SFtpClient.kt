@@ -7,7 +7,7 @@
 
 package com.hagoapp.datacova.lib.util
 
-import com.hagoapp.datacova.CoVaException
+import com.hagoapp.datacova.utility.CoVaException
 import com.hagoapp.datacova.lib.distribute.conf.SFtpConfig
 import com.hagoapp.datacova.lib.distribute.sftp.SFtpAuthType
 import com.hagoapp.datacova.lib.ssh.HostKeyItem

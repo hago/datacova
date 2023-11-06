@@ -8,7 +8,7 @@
 
 package com.hagoapp.datacova.util.web
 
-import com.hagoapp.datacova.Utils
+import com.hagoapp.datacova.utility.Utils
 import com.wf.captcha.SpecCaptcha
 import com.wf.captcha.base.Captcha
 import io.vertx.core.http.Cookie

@@ -8,7 +8,7 @@
 
 package com.hagoapp.datacova.user;
 
-import com.hagoapp.datacova.JsonStringify;
+import com.hagoapp.datacova.utility.JsonStringify;
 
 public class UserInfo implements JsonStringify {
 

@@ -7,7 +7,7 @@
 
 package com.hagoapp.datacova.web.websocket;
 
-import com.hagoapp.datacova.Utils;
+import com.hagoapp.datacova.utility.Utils;
 import com.hagoapp.datacova.user.UserInfo;
 
 import java.time.Instant;

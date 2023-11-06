@@ -13,7 +13,7 @@ import com.amazonaws.auth.BasicAWSCredentials
 import com.amazonaws.auth.BasicSessionCredentials
 import com.amazonaws.regions.Regions
 import com.amazonaws.services.s3.AmazonS3ClientBuilder
-import com.hagoapp.datacova.CoVaException
+import com.hagoapp.datacova.utility.CoVaException
 import com.hagoapp.datacova.execution.Distributor
 import com.hagoapp.datacova.lib.distribute.conf.S3Config
 import java.io.File

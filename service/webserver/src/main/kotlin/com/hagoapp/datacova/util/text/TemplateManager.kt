@@ -8,7 +8,7 @@
 
 package com.hagoapp.datacova.util.text
 
-import com.hagoapp.datacova.CoVaException
+import com.hagoapp.datacova.utility.CoVaException
 import com.hagoapp.datacova.config.TemplateConfig
 import freemarker.template.Configuration
 import freemarker.template.Template

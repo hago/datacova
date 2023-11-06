@@ -7,7 +7,7 @@
 
 package com.hagoapp.datacova.worker;
 
-import com.hagoapp.datacova.JsonStringify;
+import com.hagoapp.datacova.utility.JsonStringify;
 
 /**
  * The config for worker.

@@ -9,8 +9,8 @@ package com.hagoapp.datacova.lib.execution;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.hagoapp.datacova.CoVaException;
-import com.hagoapp.datacova.JsonStringify;
+import com.hagoapp.datacova.utility.CoVaException;
+import com.hagoapp.datacova.utility.JsonStringify;
 import com.hagoapp.datacova.lib.action.TaskAction;
 
 import java.time.ZonedDateTime;

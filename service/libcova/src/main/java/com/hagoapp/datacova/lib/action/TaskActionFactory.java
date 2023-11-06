@@ -8,10 +8,10 @@
 package com.hagoapp.datacova.lib.action;
 
 import com.google.gson.Gson;
-import com.hagoapp.datacova.CoVaException;
+import com.hagoapp.datacova.utility.CoVaException;
 import com.hagoapp.datacova.lib.LibCoVa;
-import com.hagoapp.datacova.MapSerializer;
-import com.hagoapp.datacova.StackTraceWriter;
+import com.hagoapp.datacova.utility.MapSerializer;
+import com.hagoapp.datacova.utility.StackTraceWriter;
 import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;

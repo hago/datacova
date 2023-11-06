@@ -8,7 +8,7 @@
 package com.hagoapp.datacova.web.user
 
 import com.google.gson.Gson
-import com.hagoapp.datacova.Utils
+import com.hagoapp.datacova.utility.Utils
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.user.UserCache
 import com.hagoapp.datacova.data.user.UserData

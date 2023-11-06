@@ -7,7 +7,7 @@
 
 package com.hagoapp.datacova.execution.executor
 
-import com.hagoapp.datacova.CoVaException
+import com.hagoapp.datacova.utility.CoVaException
 import com.hagoapp.datacova.data.workspace.ConnectionData
 import com.hagoapp.datacova.lib.action.TaskAction
 import com.hagoapp.datacova.lib.execution.TaskExecution

@@ -8,8 +8,8 @@
 package com.hagoapp.datacova.lib.verification;
 
 import com.google.gson.Gson;
-import com.hagoapp.datacova.JsonStringify;
-import com.hagoapp.datacova.MapSerializer;
+import com.hagoapp.datacova.utility.JsonStringify;
+import com.hagoapp.datacova.utility.MapSerializer;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;

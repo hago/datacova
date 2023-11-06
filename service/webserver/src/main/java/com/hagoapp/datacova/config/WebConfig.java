@@ -7,7 +7,7 @@
 
 package com.hagoapp.datacova.config;
 
-import com.hagoapp.datacova.JsonStringify;
+import com.hagoapp.datacova.utility.JsonStringify;
 
 import java.util.ArrayList;
 import java.util.List;

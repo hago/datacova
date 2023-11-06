@@ -7,7 +7,7 @@
 
 package com.hagoapp.datacova.user
 
-import com.hagoapp.datacova.Utils
+import com.hagoapp.datacova.utility.Utils
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.RedisCacheReader
 import com.hagoapp.datacova.data.user.UserData

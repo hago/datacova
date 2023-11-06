@@ -7,8 +7,8 @@
 
 package com.hagoapp.datacova.execution.distribute
 
-import com.hagoapp.datacova.CoVaException
-import com.hagoapp.datacova.Utils
+import com.hagoapp.datacova.utility.CoVaException
+import com.hagoapp.datacova.utility.Utils
 import com.hagoapp.datacova.execution.Distributor
 import com.hagoapp.datacova.lib.distribute.TaskActionDistribute
 import com.hagoapp.datacova.lib.distribute.conf.FtpConfig

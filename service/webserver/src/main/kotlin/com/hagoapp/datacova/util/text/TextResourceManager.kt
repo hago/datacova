@@ -7,7 +7,7 @@
 
 package com.hagoapp.datacova.util.text
 
-import com.hagoapp.datacova.CoVaException
+import com.hagoapp.datacova.utility.CoVaException
 import java.nio.charset.StandardCharsets
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap

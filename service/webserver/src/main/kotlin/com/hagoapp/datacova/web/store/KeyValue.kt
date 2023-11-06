@@ -10,7 +10,7 @@ package com.hagoapp.datacova.web.store
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
-import com.hagoapp.datacova.CoVaException
+import com.hagoapp.datacova.utility.CoVaException
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.redis.JedisManager
 import com.hagoapp.datacova.user.UserInfo

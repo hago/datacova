@@ -7,7 +7,7 @@
 
 package com.hagoapp.datacova.web.websocket;
 
-import com.hagoapp.datacova.JsonStringify;
+import com.hagoapp.datacova.utility.JsonStringify;
 
 public class ServerMessage implements JsonStringify {
     protected int messageType;

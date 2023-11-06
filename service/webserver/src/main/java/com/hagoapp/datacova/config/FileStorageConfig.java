@@ -7,7 +7,7 @@
 
 package com.hagoapp.datacova.config;
 
-import com.hagoapp.datacova.Utils;
+import com.hagoapp.datacova.utility.Utils;
 
 public class FileStorageConfig {
     private String uploadDirectory;

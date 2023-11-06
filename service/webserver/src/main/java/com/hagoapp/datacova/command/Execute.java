@@ -8,7 +8,7 @@
 
 package com.hagoapp.datacova.command;
 
-import com.hagoapp.datacova.CoVaException;
+import com.hagoapp.datacova.utility.CoVaException;
 import com.hagoapp.datacova.config.CoVaConfig;
 import com.hagoapp.datacova.data.execution.TaskExecutionData;
 import com.hagoapp.datacova.execution.TaskExecutionWatcher;

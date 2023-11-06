@@ -7,8 +7,8 @@
 
 package com.hagoapp.datacova.execution.executor
 
-import com.hagoapp.datacova.CoVaException
-import com.hagoapp.datacova.Utils
+import com.hagoapp.datacova.utility.CoVaException
+import com.hagoapp.datacova.utility.Utils
 import com.hagoapp.datacova.execution.datafile.CSVDataFileWriter
 import com.hagoapp.datacova.execution.datafile.ExcelDataFileWriter
 import com.hagoapp.datacova.execution.datafile.ExcelXDataFileWriter

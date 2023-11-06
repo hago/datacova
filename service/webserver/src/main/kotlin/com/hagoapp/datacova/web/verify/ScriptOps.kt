@@ -8,7 +8,7 @@
 package com.hagoapp.datacova.web.verify
 
 import com.google.gson.Gson
-import com.hagoapp.datacova.CoVaException
+import com.hagoapp.datacova.utility.CoVaException
 import com.hagoapp.datacova.util.StackTraceWriter
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.MethodName

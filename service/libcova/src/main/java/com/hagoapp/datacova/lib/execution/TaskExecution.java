@@ -7,7 +7,7 @@
 
 package com.hagoapp.datacova.lib.execution;
 
-import com.hagoapp.datacova.JsonStringify;
+import com.hagoapp.datacova.utility.JsonStringify;
 import com.hagoapp.datacova.lib.task.Task;
 
 public class TaskExecution implements JsonStringify {

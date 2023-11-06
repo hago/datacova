@@ -9,7 +9,7 @@
 package com.hagoapp.datacova.util.web
 
 import com.google.gson.GsonBuilder
-import com.hagoapp.datacova.Utils
+import com.hagoapp.datacova.utility.Utils
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.redis.JedisManager
 import com.hagoapp.datacova.user.UserInfo

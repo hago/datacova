@@ -7,13 +7,15 @@
 
 package com.hagoapp.datacova
 
+import com.hagoapp.datacova.utility.JsonStringify
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 class JsonStringifyTest {
 
     companion object {
-        class JsonStringifySample(val id:Int, val name: String): JsonStringify
+        class JsonStringifySample(val id:Int, val name: String):
+            JsonStringify
     }
 
     @Test

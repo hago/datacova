@@ -10,7 +10,7 @@ package com.hagoapp.datacova.entity.internal;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.hagoapp.datacova.JsonStringify;
+import com.hagoapp.datacova.utility.JsonStringify;
 import com.hagoapp.datacova.config.ExecutorConfig;
 import com.hagoapp.datacova.executor.Status;
 

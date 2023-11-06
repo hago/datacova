@@ -7,7 +7,7 @@
 
 package com.hagoapp.datacova.util
 
-import com.hagoapp.datacova.CoVaException
+import com.hagoapp.datacova.utility.CoVaException
 import com.hagoapp.datacova.util.text.TextResourceManager
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

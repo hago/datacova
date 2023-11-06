@@ -7,7 +7,7 @@
 
 package com.hagoapp.datacova.lib.execution;
 
-import com.hagoapp.datacova.JsonStringify;
+import com.hagoapp.datacova.utility.JsonStringify;
 import com.hagoapp.datacova.lib.action.TaskAction;
 
 import java.time.Instant;

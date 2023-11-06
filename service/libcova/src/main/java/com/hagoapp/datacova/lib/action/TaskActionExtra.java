@@ -7,7 +7,7 @@
 
 package com.hagoapp.datacova.lib.action;
 
-import com.hagoapp.datacova.JsonStringify;
+import com.hagoapp.datacova.utility.JsonStringify;
 
 import java.util.HashMap;
 import java.util.Map;

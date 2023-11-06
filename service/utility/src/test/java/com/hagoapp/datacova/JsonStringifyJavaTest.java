@@ -7,6 +7,7 @@
 
 package com.hagoapp.datacova;
 
+import com.hagoapp.datacova.utility.JsonStringify;
 import lombok.Getter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

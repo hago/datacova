@@ -8,7 +8,7 @@
 
 package com.hagoapp.datacova.execution.datafile
 
-import com.hagoapp.datacova.CoVaException
+import com.hagoapp.datacova.utility.CoVaException
 import java.io.OutputStream
 import java.sql.JDBCType
 

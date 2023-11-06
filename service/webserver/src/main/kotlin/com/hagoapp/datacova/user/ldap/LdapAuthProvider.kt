@@ -7,10 +7,10 @@
 
 package com.hagoapp.datacova.user.ldap
 
-import com.hagoapp.datacova.ldap.LdapAttributes
+import com.hagoapp.datacova.utility.ldap.LdapAttributes
 import com.hagoapp.datacova.data.user.UserCache
 import com.hagoapp.datacova.data.user.UserData
-import com.hagoapp.datacova.ldap.LdapUtils
+import com.hagoapp.datacova.utility.ldap.LdapUtils
 import com.hagoapp.datacova.user.UserAuthProvider
 import com.hagoapp.datacova.user.UserInfo
 import com.hagoapp.datacova.user.UserSearchResultItem

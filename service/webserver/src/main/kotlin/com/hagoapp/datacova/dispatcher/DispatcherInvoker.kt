@@ -7,8 +7,8 @@
 
 package com.hagoapp.datacova.dispatcher
 
-import com.hagoapp.datacova.CoVaException
-import com.hagoapp.datacova.JsonStringify
+import com.hagoapp.datacova.utility.CoVaException
+import com.hagoapp.datacova.utility.JsonStringify
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.config.ExecutorConfig
 import com.hagoapp.datacova.entity.internal.ExecutorStatus

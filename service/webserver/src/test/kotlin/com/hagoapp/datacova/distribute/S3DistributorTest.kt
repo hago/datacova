@@ -7,7 +7,7 @@
 
 package com.hagoapp.datacova.distribute
 
-import com.hagoapp.datacova.CoVaException
+import com.hagoapp.datacova.utility.CoVaException
 import com.hagoapp.datacova.Constants
 import com.hagoapp.datacova.lib.distribute.conf.S3Config
 import com.hagoapp.datacova.execution.distribute.S3Distributor

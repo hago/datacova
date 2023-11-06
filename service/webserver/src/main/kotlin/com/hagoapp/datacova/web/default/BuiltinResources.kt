@@ -8,7 +8,7 @@
 
 package com.hagoapp.datacova.web.default
 
-import com.hagoapp.datacova.CoVaException
+import com.hagoapp.datacova.utility.CoVaException
 import com.hagoapp.datacova.web.MethodName
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import io.vertx.core.buffer.Buffer

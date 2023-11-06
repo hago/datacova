@@ -1,13 +1,13 @@
 /*
- * Copyright (c) 2020.
+ * Copyright (c) 2021.
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
- *
  */
 
-package com.hagoapp.datacova
+package com.hagoapp.datacova.utility
 
+import com.hagoapp.datacova.utility.CoVaException
 import java.io.File
 import java.io.IOException
 import java.io.InputStream

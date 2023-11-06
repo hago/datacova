@@ -9,9 +9,9 @@ package com.hagoapp.datacova.lib.distribute;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.hagoapp.datacova.CoVaException;
+import com.hagoapp.datacova.utility.CoVaException;
 import com.hagoapp.datacova.lib.LibCoVa;
-import com.hagoapp.datacova.MapSerializer;
+import com.hagoapp.datacova.utility.MapSerializer;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
 import org.slf4j.Logger;

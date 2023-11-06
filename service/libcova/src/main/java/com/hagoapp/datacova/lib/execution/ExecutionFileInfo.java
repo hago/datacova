@@ -9,7 +9,7 @@ package com.hagoapp.datacova.lib.execution;
 
 import com.fasterxml.jackson.jr.ob.JSON;
 import com.google.gson.GsonBuilder;
-import com.hagoapp.datacova.JsonStringify;
+import com.hagoapp.datacova.utility.JsonStringify;
 import com.hagoapp.f2t.datafile.FileInfo;
 import com.hagoapp.f2t.datafile.FileInfoReader;
 

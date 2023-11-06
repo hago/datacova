@@ -7,7 +7,7 @@
 
 package com.hagoapp.datacova.lib.distribute;
 
-import com.hagoapp.datacova.CoVaException;
+import com.hagoapp.datacova.utility.CoVaException;
 import com.hagoapp.datacova.lib.action.TaskAction;
 
 import java.util.Map;

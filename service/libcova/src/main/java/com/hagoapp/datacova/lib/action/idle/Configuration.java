@@ -7,7 +7,7 @@
 
 package com.hagoapp.datacova.lib.action.idle;
 
-import com.hagoapp.datacova.JsonStringify;
+import com.hagoapp.datacova.utility.JsonStringify;
 
 public class Configuration implements JsonStringify {
     private int stepCount;

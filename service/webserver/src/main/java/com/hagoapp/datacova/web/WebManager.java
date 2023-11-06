@@ -8,7 +8,7 @@
 
 package com.hagoapp.datacova.web;
 
-import com.hagoapp.datacova.CoVaException;
+import com.hagoapp.datacova.utility.CoVaException;
 import com.hagoapp.datacova.config.WebConfig;
 import com.hagoapp.datacova.config.WebSocketConfig;
 import com.hagoapp.datacova.user.UserInfo;
