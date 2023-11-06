@@ -22,10 +22,6 @@ class JedisManager private constructor() {
         private val logger = LoggerFactory.getLogger(JedisManager::class.java)
         private val pools = mutableMapOf<RedisConfig, Pair<Pool<Jedis>, Int>>()
 
-        interface ConfigProvider {
-            fun getConfig(): RedisConfig
-        }
-
         private fun createSentinelPool(config: RedisConfig): Pool<Jedis> {
             val sentinelConfig = config.sentinelConfig
             val nodeSet = sentinelConfig.nodes.map { (host, port) ->
