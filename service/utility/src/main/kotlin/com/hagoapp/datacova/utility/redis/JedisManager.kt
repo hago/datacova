@@ -57,8 +57,7 @@ class JedisManager private constructor() {
         fun getJedis(config: RedisConfig): Jedis {
             if (!pools.containsKey(config)) {
                 val pool0 = if (config.isSentinel) createSentinelPool(config) else createServerPool(config)
-                val dbIndex = config.database
-                pools[config] = Pair(pool0, dbIndex)
+                pools[config] = Pair(pool0, config.database)
             }
             val pool = pools.getValue(config)
             val jedis = pool.first.resource
