@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 public class WebSocketManager {
 
-    private final static WebSocketManager instance = new WebSocketManager();
+    private static final WebSocketManager instance = new WebSocketManager();
 
     private WebSocketManager() {
 

@@ -11,13 +11,10 @@ package com.hagoapp.datacova.web;
 import com.hagoapp.datacova.utility.CoVaException;
 import com.hagoapp.datacova.config.WebConfig;
 import com.hagoapp.datacova.config.WebSocketConfig;
-import com.hagoapp.datacova.user.UserInfo;
 import com.hagoapp.datacova.util.StackTraceWriter;
 import com.hagoapp.datacova.util.http.RequestHelper;
 import com.hagoapp.datacova.util.http.ResponseHelper;
 import com.hagoapp.datacova.web.annotation.WebEndPoint;
-import com.hagoapp.datacova.web.authentication.AuthType;
-import com.hagoapp.datacova.web.authentication.Authenticator;
 import com.hagoapp.datacova.web.authentication.AuthenticatorFactory;
 import com.hagoapp.datacova.web.websocket.*;
 import com.hagoapp.datacova.web.websocket.connect.ConnectServerMessage;
@@ -25,6 +22,7 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
+import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
@@ -38,9 +36,7 @@ import org.reflections.scanners.Scanners;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -87,13 +83,13 @@ public class WebManager {
     private void createWebServer(WebConfig config, List<String> packageNames) throws CoVaException {
         if (!isWebRunning()) {
             webConfig = config;
-            VertxOptions options = new VertxOptions();
+            var options = new VertxOptions();
             options.getFileSystemOptions().setFileCacheDir(config.getTempDirectory());
             vertx = Vertx.vertx(options);
-            HttpServerOptions webOptions = new HttpServerOptions();
+            var webOptions = new HttpServerOptions();
             webOptions.setUseProxyProtocol(true);
             webServer = vertx.createHttpServer(webOptions);
-            Router router = findRouter(vertx, packageNames);
+            var router = findRouter(vertx, packageNames);
             webServer.requestHandler(router);
             if (config.getWebSockets() != null) {
                 setupWebSocket(config.getWebSockets());
@@ -111,7 +107,7 @@ public class WebManager {
                 vertx.close();
                 logger.info("web server {} shut down successfully", webConfig.getIdentity());
             });
-        } catch (Throwable e) {
+        } catch (Exception e) {
             logger.error("error in web {} shutting down: {}", webConfig.getIdentity(), e.getMessage());
         }
     }
@@ -121,15 +117,15 @@ public class WebManager {
     }
 
     private Router findRouter(Vertx vertx, List<String> packageNames) throws CoVaException {
-        for (String packageName : packageNames) {
+        for (var packageName : packageNames) {
             loadAnnotatedWebHandlers(packageName);
             loadWebInterfaces(packageName);
         }
-        Router router = Router.router(vertx);
+        var router = Router.router(vertx);
         router.route().failureHandler(context -> {
-            Throwable error = context.failure();
-            Throwable e = error instanceof InvocationTargetException ? error.getCause() : error;
-            int code = context.statusCode();
+            var error = context.failure();
+            var e = error instanceof InvocationTargetException ? error.getCause() : error;
+            var code = context.statusCode();
             String errorMessage;
             if (e == null) {
                 errorMessage = HttpResponseStatus.valueOf(code).reasonPhrase();
@@ -138,7 +134,6 @@ public class WebManager {
             }
             logger.info("{} {} {} from {}\t{}", webConfig.getIdentity(), context.request().method().name(),
                     context.request().path(), context.request().remoteAddress().host(), code);
-            //logger.debug("message {}", errorMessage);
             List<String> stacktrace;
             if (webConfig.isOutputStackTrace() && (e != null)) {
                 stacktrace = StackTraceWriter.write(e, logger);
@@ -148,13 +143,13 @@ public class WebManager {
                 ResponseHelper.respondError(context, HttpResponseStatus.valueOf(code), errorMessage);
             }
         });
-        BodyHandler bodyHandler = BodyHandler.create()
+        var bodyHandler = BodyHandler.create()
                 .setBodyLimit(webConfig.getUploadSizeLimit())
                 .setUploadsDirectory(webConfig.getUploadTempDirectory())
                 .setDeleteUploadedFilesOnEnd(true);
         router.post().handler(bodyHandler);
         router.put().handler(bodyHandler);
-        for (WebHandler handler : handlers.values()) {
+        for (var handler : handlers.values()) {
             createCrossOriginRouteHandlers(router, handler);
             createAuthenticateHandlers(router, handler);
             createRouteHandlers(router, handler);
@@ -163,41 +158,31 @@ public class WebManager {
     }
 
     private void setupWebSocket(List<WebSocketConfig> webSockets) {
-        final List<String> acceptablePaths = webSockets.stream()
+        final var acceptablePaths = webSockets.stream()
                 .map(config -> config.getRoute().toLowerCase()).collect(Collectors.toList());
         webServer.webSocketHandler(event -> {
-            String path = event.path().toLowerCase();
+            var path = event.path().toLowerCase();
             if (!acceptablePaths.contains(path)) {
                 logger.error("access attempt to unknown path {} is rejected", event.path());
                 event.reject(HttpResponseStatus.NOT_FOUND.code());
                 return;
             }
-            UserInfo userInfo = Auth.authenticate(event);
+            var userInfo = Auth.authenticate(event);
             if (userInfo == null) {
                 logger.error("Unauthorized access attempt to path {} is rejected", event.path());
                 event.reject(HttpResponseStatus.FORBIDDEN.code());
                 return;
             }
-            WsSession session = new WsSession();
+            var session = new WsSession();
             session.setUserInfo(userInfo);
             session.setRemoteIp(RequestHelper.getRemoteIp(event.headers(), event.remoteAddress().host()));
             session.setDeviceIdentity(RequestHelper.getUserAgent(event.headers()));
-            WebSocketManager wsm = WebSocketManager.getManager();
+            var wsm = WebSocketManager.getManager();
             wsm.addUserSession(session, event);
-            event.textMessageHandler(msg -> {
-                MessageHandlerFactory factory;
-                try {
-                    factory = new MessageHandlerFactory(msg);
-                    var handler = factory.createMessageHandler();
-                    var message = ClientMessage.fromJson(msg);
-                    if ((handler == null) || (message == null)) {
-                        throw new IOException(String.format("Message can't be recognized: %s", msg));
-                    } else {
-                        var response = handler.handleMessage(event, message);
-                        event.writeTextMessage(response.toJson());
-                    }
-                } catch (Exception e) {
-                    event.writeTextMessage(new ErrorResponseMessage(e.getMessage()).toJson());
+            event.binaryMessageHandler(msg -> {
+                var rsp = ClientMessageHandler.get().handle(msg, event);
+                if (rsp != null) {
+                    event.writeBinaryMessage(Buffer.buffer(rsp));
                 }
             });
             event.closeHandler(ignore -> {
@@ -212,7 +197,7 @@ public class WebManager {
     }
 
     private void createRouteHandlers(Router router, WebHandler handler) {
-        Route route = createRoute(router, handler);
+        var route = createRoute(router, handler);
         logger.debug("{} Create handler for {}", webConfig.getIdentity(), handler);
         if (handler.isBlocking()) {
             createBlockHandler(handler, route);
@@ -225,8 +210,8 @@ public class WebManager {
         if (WebInterface.class.isAssignableFrom(handler.getInstanceClass())) {
             route.blockingHandler(context -> {
                 try {
-                    Object instance = handler.getInstanceClass().getDeclaredConstructor().newInstance();
-                    WebInterface webInterface = (WebInterface) instance;
+                    var instance = handler.getInstanceClass().getDeclaredConstructor().newInstance();
+                    var webInterface = (WebInterface) instance;
                     WebInterface.Handler theHandler = webInterface.requestHandlers().get(handler.getMethod());
                     theHandler.handle(context);
                     context.next();
@@ -238,7 +223,7 @@ public class WebManager {
         } else {
             route.blockingHandler(context -> {
                 try {
-                    Object instance = handler.getInstanceClass().getDeclaredConstructor().newInstance();
+                    var instance = handler.getInstanceClass().getDeclaredConstructor().newInstance();
                     handler.getFunction().invoke(instance, context);
                     context.next();
                 } catch (NoSuchMethodException | InstantiationException |
@@ -253,22 +238,22 @@ public class WebManager {
         if (WebInterface.class.isAssignableFrom(handler.getInstanceClass())) {
             route.handler(context -> {
                 try {
-                    Object instance = handler.getInstanceClass().getDeclaredConstructor().newInstance();
-                    WebInterface webInterface = (WebInterface) instance;
+                    var instance = handler.getInstanceClass().getDeclaredConstructor().newInstance();
+                    var webInterface = (WebInterface) instance;
                     WebInterface.Handler theHandler = webInterface.requestHandlers().get(handler.getMethod());
                     theHandler.handle(context);
                     context.next();
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     context.fail(e);
                 }
             }).handler(logHandler);
         } else {
             route.handler(context -> {
                 try {
-                    Object instance = handler.getInstanceClass().getDeclaredConstructor().newInstance();
+                    var instance = handler.getInstanceClass().getDeclaredConstructor().newInstance();
                     handler.getFunction().invoke(instance, context);
                     context.next();
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     context.fail(e);
                 }
             }).handler(logHandler);
@@ -276,8 +261,12 @@ public class WebManager {
     }
 
     private final Handler<RoutingContext> logHandler = context -> {
-        logger.info("{} {} from {}\t{}", context.request().method().name(), context.request().path(),
-                context.request().remoteAddress(), context.response().getStatusCode());
+        var req = context.request();
+        var method = req.method().name();
+        var path = req.path();
+        var remoteAddress = req.remoteAddress();
+        var status = req.response().getStatusCode();
+        logger.info("{} {} from {}\t{}", method, path, remoteAddress, status);
         if (!context.response().ended()) {
             context.response().end();
         }
@@ -286,7 +275,7 @@ public class WebManager {
     private void createAuthenticateHandlers(Router router, WebHandler handler) {
         createRoute(router, handler).handler(context -> {
             if (handler.getAuthenticatorTypes().stream().noneMatch(authType -> {
-                Authenticator authenticator = AuthenticatorFactory.createAuthenticator(authType);
+                var authenticator = AuthenticatorFactory.createAuthenticator(authType);
                 return (authenticator != null) && authenticator.authenticate(context);
             })) {
                 logger.error("Authentication failed for {} {}", handler.getMethod(), handler.getPath());
@@ -301,15 +290,15 @@ public class WebManager {
 
     private void createCrossOriginRouteHandlers(Router router, WebHandler handler) {
         if (webConfig.isAllowCrossOriginResourceSharing()) {
-            String pattern = String.join("|", webConfig.getCrossOriginSources());
-            List<String> headers = getAllowedHeaders(handler);
+            var pattern = String.join("|", webConfig.getCrossOriginSources());
+            var headers = getAllowedHeaders(handler);
             createRoute(router, handler)
                     .handler(createCrossOriginHandler(List.of(MethodName.GET), headers, pattern));
         }
     }
 
     private CorsHandler createCrossOriginHandler(List<String> methods, List<String> headers, String pattern) {
-        Set<String> allowHeaders = new HashSet<>();
+        var allowHeaders = new HashSet<String>();
         allowHeaders.addAll(headers);
         allowHeaders.addAll(List.of(
                 "Content-Type",
@@ -317,7 +306,7 @@ public class WebManager {
                 "Access-Control-Allow-Origin",
                 "Access-Control-Allow-Credentials"
         ));
-        Set<String> allowedMethods = new HashSet<>();
+        var allowedMethods = new HashSet<String>();
         allowedMethods.add(MethodName.OPTIONS);
         allowedMethods.addAll(methods);
         logger.info("{} CORS allow: {} {} {}", webConfig.getIdentity(), allowedMethods, allowHeaders, pattern);
@@ -335,8 +324,8 @@ public class WebManager {
 
     private List<String> getAllowedHeaders(WebHandler handler) {
         List<String> headers = new ArrayList<>();
-        for (AuthType authType : handler.getAuthenticatorTypes()) {
-            Authenticator authenticator = AuthenticatorFactory.createAuthenticator(authType);
+        for (var authType : handler.getAuthenticatorTypes()) {
+            var authenticator = AuthenticatorFactory.createAuthenticator(authType);
             assert authenticator != null;
             headers.addAll(Arrays.stream(authenticator.getHeaders()).collect(Collectors.toList()));
         }
@@ -346,10 +335,10 @@ public class WebManager {
 
     private void loadAnnotatedWebHandlers(String packageName) throws CoVaException {
         logger.info("{} searching WebEndPoint annotated methods in {}", webConfig.getIdentity(), packageName);
-        Reflections reflections = new Reflections(packageName, Scanners.MethodsAnnotated);
-        Set<Method> methods = reflections.getMethodsAnnotatedWith(WebEndPoint.class);
-        for (Method method : methods) {
-            Class<?> clz = method.getDeclaringClass();
+        var reflections = new Reflections(packageName, Scanners.MethodsAnnotated);
+        var methods = reflections.getMethodsAnnotatedWith(WebEndPoint.class);
+        for (var method : methods) {
+            var clz = method.getDeclaringClass();
             if ((packageName != null) && !clz.getPackageName().startsWith(packageName)) {
                 continue;
             }
@@ -357,14 +346,14 @@ public class WebManager {
                 logger.error("{} Annotated web handler {}.{} is not public", webConfig.getIdentity(),
                         clz.getPackageName(), method.getName());
             }
-            Class<?>[] paramTypes = method.getParameterTypes();
+            var paramTypes = method.getParameterTypes();
             if ((paramTypes.length < 1) || !paramTypes[0].isAssignableFrom(RoutingContext.class)) {
                 logger.error("{} Annotated web handler {}.{} is not accepting RoutingContext", webConfig.getIdentity(),
                         clz.getPackageName(), method.getName());
             }
             WebEndPoint endPoint = method.getAnnotation(WebEndPoint.class);
-            for (String httpMethod : endPoint.methods()) {
-                WebHandler handler = new WebHandler();
+            for (var httpMethod : endPoint.methods()) {
+                var handler = new WebHandler();
                 handler.setInstanceClass(clz);
                 handler.setAuthenticatorTypes(Arrays.stream(endPoint.authTypes()).collect(Collectors.toList()));
                 handler.setBlocking(endPoint.isBlocking());
@@ -383,16 +372,16 @@ public class WebManager {
 
     private void loadWebInterfaces(String packageName) throws CoVaException {
         logger.info("{} searching WebInterface descendants in {}", webConfig.getIdentity(), packageName);
-        Reflections reflections = new Reflections(packageName, Scanners.SubTypes);
-        Set<Class<? extends WebInterface>> types = reflections.getSubTypesOf(WebInterface.class);
-        for (Class<? extends WebInterface> clz : types) {
+        var reflections = new Reflections(packageName, Scanners.SubTypes);
+        var types = reflections.getSubTypesOf(WebInterface.class);
+        for (var clz : types) {
             if ((packageName != null) && !clz.getPackageName().startsWith(packageName)) {
                 continue;
             }
             try {
-                WebInterface instance = clz.getDeclaredConstructor().newInstance();
-                for (Map.Entry<String, WebInterface.Handler> entry : instance.requestHandlers().entrySet()) {
-                    WebHandler handler = new WebHandler();
+                var instance = clz.getDeclaredConstructor().newInstance();
+                for (var entry : instance.requestHandlers().entrySet()) {
+                    var handler = new WebHandler();
                     handler.setInstanceClass(clz);
                     handler.setAuthenticatorTypes(instance.getAuthTypes());
                     handler.setBlocking(instance.isBlocking());
@@ -421,20 +410,20 @@ public class WebManager {
             generateDuplicateException(handler, map.get(handler.getKey()));
         }
         if (handler.isPathAsRegex()) {
-            Pattern pattern = Pattern.compile(handler.getPath());
-            List<WebHandler> nonRegexHandlers = map.values().stream().filter(entry ->
+            var pattern = Pattern.compile(handler.getPath());
+            var nonRegexHandlers = map.values().stream().filter(entry ->
                             !entry.getMethod().equals(handler.getMethod()) && !entry.isPathAsRegex())
                     .collect(Collectors.toList());
-            for (WebHandler exHandler : nonRegexHandlers) {
+            for (var exHandler : nonRegexHandlers) {
                 if (pattern.matcher(exHandler.getPath()).find()) {
                     generateDuplicateException(handler, exHandler);
                 }
             }
         } else {
-            List<WebHandler> regexHandlers = map.values().stream().filter(webHandler -> webHandler.getMethod().equals(handler.getMethod()) &&
+            var regexHandlers = map.values().stream().filter(webHandler -> webHandler.getMethod().equals(handler.getMethod()) &&
                     webHandler.isPathAsRegex()).collect(Collectors.toList());
-            for (WebHandler exHandler : regexHandlers) {
-                Pattern p = Pattern.compile(exHandler.getPath());
+            for (var exHandler : regexHandlers) {
+                var p = Pattern.compile(exHandler.getPath());
                 if (p.matcher(handler.getPath()).find()) {
                     generateDuplicateException(handler, exHandler);
                 }
@@ -443,7 +432,7 @@ public class WebManager {
     }
 
     private void generateDuplicateException(WebHandler handler1, WebHandler handler2) throws CoVaException {
-        String error = String.format("%s duplicated handler for %s [%s, %s] between %s.%s and %s.%s",
+        var error = String.format("%s duplicated handler for %s [%s, %s] between %s.%s and %s.%s",
                 webConfig.getIdentity(),
                 handler1.getMethod(), handler1.getPath(), handler2.getPath(),
                 handler1.getInstanceClass().getCanonicalName(), handler1.getFunction().getName(),

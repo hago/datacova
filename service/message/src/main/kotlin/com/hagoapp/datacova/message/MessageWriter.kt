@@ -11,10 +11,18 @@ import com.google.gson.GsonBuilder
 import java.io.ByteArrayOutputStream
 import java.nio.charset.StandardCharsets
 
+/**
+ * Message writer to write message to bytes.
+ *
+ * @author suncjs
+ * @since 0.5
+ * @constructor Create empty Message writer
+ */
 class MessageWriter {
     companion object {
         private val gson = GsonBuilder().create()
 
+        @JvmStatic
         fun toBytes(obj: Any): ByteArray {
             val anno = obj.javaClass.getAnnotation(WorkerMessage::class.java)
                 ?: throw UnsupportedOperationException("Message must be annotated with WorkerMessage")
