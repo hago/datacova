@@ -10,7 +10,7 @@ package com.hagoapp.datacova.user.ldap
 import com.hagoapp.datacova.utility.ldap.LdapAttributes
 import com.hagoapp.datacova.data.user.UserCache
 import com.hagoapp.datacova.data.user.UserData
-import com.hagoapp.datacova.utility.ldap.LdapUtils
+import com.hagoapp.datacova.utility.ldap.LdapHelper
 import com.hagoapp.datacova.user.UserAuthProvider
 import com.hagoapp.datacova.user.UserInfo
 import com.hagoapp.datacova.user.UserSearchResultItem
@@ -25,8 +25,8 @@ class LdapAuthProvider : UserAuthProvider {
         const val LDAP_USER_TYPE = 1
     }
 
-    private fun createLdap(): LdapUtils {
-        return LdapUtils(LdapConfigManager.defaultConfig)
+    private fun createLdap(): LdapHelper {
+        return LdapHelper(LdapConfigManager.defaultConfig)
     }
 
     override fun authenticate(context: RoutingContext): UserInfo? {
@@ -53,7 +53,7 @@ class LdapAuthProvider : UserAuthProvider {
     override fun getUserInfo(userId: String): UserInfo? {
         val u = UserCache.getUserByUserId(userId, getProviderType())
         if (u == null) {
-            LdapUtils(LdapConfigManager.defaultConfig).use {
+            LdapHelper(LdapConfigManager.defaultConfig).use {
                 val map = it.getUser(userId)
                 val id = saveUserToDatabase(map)
                 return UserCache.getUser(id)

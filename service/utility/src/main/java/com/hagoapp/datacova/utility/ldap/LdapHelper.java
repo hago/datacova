@@ -35,7 +35,7 @@ import java.util.Map;
  * @author suncj2
  * @since 2.0
  */
-public class LdapUtils implements Closeable, ConnectionClosedEventListener {
+public class LdapHelper implements Closeable, ConnectionClosedEventListener {
 
     private static final int SEARCH_RETURN_LIMIT = 20;
 
@@ -58,7 +58,7 @@ public class LdapUtils implements Closeable, ConnectionClosedEventListener {
             "ATTRIBUTE_DISTINGUISHED_NAME"
     );
 
-    private final Logger logger = LoggerFactory.getLogger(LdapUtils.class);
+    private final Logger logger = LoggerFactory.getLogger(LdapHelper.class);
     private final LdapConfig conf;
 
     /**
@@ -67,7 +67,7 @@ public class LdapUtils implements Closeable, ConnectionClosedEventListener {
      * @param config config of ldap
      * @throws CoVaException if connect to server failed or bind failed
      */
-    public LdapUtils(LdapConfig config) throws CoVaException {
+    public LdapHelper(LdapConfig config) throws CoVaException {
         conf = config;
         conf.getAttributes().normalize();
         init(config.getHost(), config.getPort(), config.getBaseDistinguishName(), config.getBindDistinguishName(),
