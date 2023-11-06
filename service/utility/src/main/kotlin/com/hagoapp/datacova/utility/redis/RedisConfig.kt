@@ -13,18 +13,30 @@ data class RedisConfig(
     val sentinelConfig: RedisSentinelConfig = RedisSentinelConfig(),
     val password: String? = null,
     val database: Int = 0
-)
+) {
+    override fun toString(): String {
+        return "RedisConfig(isSentinel=$isSentinel, serverConfig=$serverConfig, sentinelConfig=$sentinelConfig, password=$password, database=$database)"
+    }
+}
 
 data class RedisServerConfig(
     val host: String = "127.0.0.1",
     val port: Int = 6379
-)
+) {
+    override fun toString(): String {
+        return "RedisServerConfig(host='$host', port=$port)"
+    }
+}
 
 data class RedisSentinelConfig(
     val nodes: Map<String, Int> = mapOf(),
     val master: String = ""
-)
+) {
+    override fun toString(): String {
+        return "RedisSentinelConfig(nodes=$nodes, master='$master')"
+    }
+}
 
-interface RedisConfigProvider {
+fun interface RedisConfigProvider {
     fun getConfig(): RedisConfig
 }
