@@ -10,7 +10,7 @@ package com.hagoapp.datacova.command;
 
 import com.hagoapp.datacova.utility.CoVaException;
 import com.hagoapp.datacova.config.CoVaConfig;
-import com.hagoapp.datacova.lib.util.data.TaskExecutionData;
+import com.hagoapp.datacova.lib.data.TaskExecutionData;
 import com.hagoapp.datacova.execution.TaskExecutionWatcher;
 import com.hagoapp.datacova.execution.Worker;
 import com.hagoapp.datacova.executor.ExecuteResultMailer;

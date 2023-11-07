@@ -7,7 +7,7 @@
 
 package com.hagoapp.datacova.data.workspace
 
-import com.hagoapp.datacova.lib.util.data.CoVaDatabase
+import com.hagoapp.datacova.lib.data.CoVaDatabase
 import com.hagoapp.datacova.entity.connection.WorkspaceConnection
 import com.hagoapp.datacova.lib.data.DatabaseConfig
 import com.hagoapp.datacova.util.data.DatabaseFunctions

@@ -9,7 +9,7 @@ package com.hagoapp.datacova.data.rules
 
 import com.google.gson.reflect.TypeToken
 import com.hagoapp.datacova.config.CoVaConfig
-import com.hagoapp.datacova.lib.util.data.ValidationRuleData
+import com.hagoapp.datacova.lib.data.ValidationRuleData
 import com.hagoapp.datacova.lib.verification.Rule
 import com.hagoapp.datacova.utility.redis.JedisManager
 import com.hagoapp.datacova.utility.redis.RedisCacheReader

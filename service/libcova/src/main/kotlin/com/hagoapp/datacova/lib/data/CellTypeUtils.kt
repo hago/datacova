@@ -6,7 +6,7 @@
  *
  */
 
-package com.hagoapp.datacova.lib.util.data
+package com.hagoapp.datacova.lib.data
 
 import org.apache.poi.ss.format.CellFormatType
 import org.apache.poi.ss.usermodel.CellType

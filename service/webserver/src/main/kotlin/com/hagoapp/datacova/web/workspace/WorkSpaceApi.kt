@@ -5,7 +5,7 @@ import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.execution.TaskExecutionCache
 import com.hagoapp.datacova.data.execution.TaskExecutionCache.Companion.TASK_EXECUTION_DEFAULT_PAGE_SIZE
 import com.hagoapp.datacova.data.rules.ValidationRuleCache
-import com.hagoapp.datacova.lib.util.data.ValidationRuleData
+import com.hagoapp.datacova.lib.data.ValidationRuleData
 import com.hagoapp.datacova.data.user.UserCache
 import com.hagoapp.datacova.data.workspace.WorkSpaceData
 import com.hagoapp.datacova.data.workspace.WorkspaceCache

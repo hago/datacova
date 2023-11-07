@@ -9,7 +9,7 @@ package com.hagoapp.datacova.web.workspace
 
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.execution.TaskExecutionCache
-import com.hagoapp.datacova.lib.util.data.TaskExecutionData
+import com.hagoapp.datacova.lib.data.TaskExecutionData
 import com.hagoapp.datacova.data.workspace.TaskCache
 import com.hagoapp.datacova.data.workspace.TaskData
 import com.hagoapp.datacova.data.workspace.WorkspaceCache

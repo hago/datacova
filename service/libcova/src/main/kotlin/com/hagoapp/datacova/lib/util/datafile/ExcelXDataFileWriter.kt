@@ -8,7 +8,7 @@
 
 package com.hagoapp.datacova.lib.util.datafile
 
-import com.hagoapp.datacova.lib.util.data.CellTypeUtils
+import com.hagoapp.datacova.lib.data.CellTypeUtils
 import com.hagoapp.datacova.utility.CoVaException
 import org.apache.poi.ss.format.CellFormatType
 import org.apache.poi.ss.usermodel.CellType

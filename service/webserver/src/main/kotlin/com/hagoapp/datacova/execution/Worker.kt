@@ -9,7 +9,7 @@
 package com.hagoapp.datacova.execution
 
 import com.hagoapp.datacova.config.CoVaConfig
-import com.hagoapp.datacova.lib.util.data.TaskExecutionData
+import com.hagoapp.datacova.lib.data.TaskExecutionData
 import com.hagoapp.datacova.executor.Executor
 import com.hagoapp.datacova.file.FileStoreFactory
 import com.hagoapp.datacova.lib.action.TaskAction

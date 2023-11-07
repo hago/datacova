@@ -5,7 +5,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package com.hagoapp.datacova.lib.util.data
+package com.hagoapp.datacova.lib.data
 
 import com.hagoapp.datacova.lib.data.DatabaseConfig
 import com.hagoapp.datacova.utility.CoVaException

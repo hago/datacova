@@ -8,7 +8,7 @@
 package com.hagoapp.datacova.data.user
 
 import com.hagoapp.datacova.utility.Utils
-import com.hagoapp.datacova.lib.util.data.CoVaDatabase
+import com.hagoapp.datacova.lib.data.CoVaDatabase
 import com.hagoapp.datacova.lib.data.DatabaseConfig
 import com.hagoapp.datacova.user.*
 import com.hagoapp.datacova.util.data.DatabaseFunctions

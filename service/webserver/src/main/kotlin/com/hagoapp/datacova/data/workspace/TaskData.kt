@@ -8,7 +8,7 @@
 package com.hagoapp.datacova.data.workspace
 
 import com.hagoapp.datacova.utility.MapSerializer
-import com.hagoapp.datacova.lib.util.data.CoVaDatabase
+import com.hagoapp.datacova.lib.data.CoVaDatabase
 import com.hagoapp.datacova.lib.action.TaskAction
 import com.hagoapp.datacova.lib.action.TaskActionFactory
 import com.hagoapp.datacova.lib.task.Task
