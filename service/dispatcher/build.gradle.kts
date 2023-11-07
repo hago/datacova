@@ -13,6 +13,7 @@ repositories {
 dependencies {
     implementation(project(":libcova"))
     implementation(project(":message"))
+    implementation(project(":utility"))
     implementation("org.slf4j", "slf4j-api", "2.0.9")
 
     testImplementation(platform("org.junit:junit-bom:5.9.2"))
