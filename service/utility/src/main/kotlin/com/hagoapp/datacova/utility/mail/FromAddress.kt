@@ -3,10 +3,9 @@
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
- *
  */
 
-package com.hagoapp.datacova.util.mail
+package com.hagoapp.datacova.utility.mail
 
 import com.hagoapp.datacova.utility.CoVaException
 import java.nio.charset.StandardCharsets
@@ -19,7 +18,8 @@ class FromAddress private constructor(input: String){
         }
     }
 
-    private val name: String
+    var name: String
+        private set
     private val email: String
     init {
         val parts = input.trim().split("<")
@@ -43,9 +43,5 @@ class FromAddress private constructor(input: String){
 
     fun toEmail(): String {
         return email
-    }
-
-    fun getName(): String {
-        return name
     }
 }

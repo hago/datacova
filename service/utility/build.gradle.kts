@@ -19,6 +19,7 @@ dependencies {
     implementation("redis.clients:jedis:3.10.0")
     api("redis.clients:jedis:3.10.0")
     implementation("com.github.albfernandez:juniversalchardet:2.4.0")
+    implementation("com.sun.mail", "javax.mail", "1.6.2")
     compileOnly("org.projectlombok:lombok:1.18.30")
     annotationProcessor("org.projectlombok:lombok:1.18.30")
 

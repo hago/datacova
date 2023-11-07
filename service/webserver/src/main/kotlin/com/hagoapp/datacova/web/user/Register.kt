@@ -16,7 +16,7 @@ import com.hagoapp.datacova.user.LocalUserProvider
 import com.hagoapp.datacova.user.UserInfo
 import com.hagoapp.datacova.util.http.RequestHelper
 import com.hagoapp.datacova.util.http.ResponseHelper
-import com.hagoapp.datacova.util.mail.MailHelper
+import com.hagoapp.datacova.utility.mail.MailHelper
 import com.hagoapp.datacova.util.text.TemplateManager
 import com.hagoapp.datacova.util.text.TextResourceManager
 import com.hagoapp.datacova.util.web.CaptchaUtils

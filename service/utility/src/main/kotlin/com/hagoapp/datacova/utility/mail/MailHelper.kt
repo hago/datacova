@@ -3,13 +3,10 @@
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
- *
  */
 
-package com.hagoapp.datacova.util.mail
+package com.hagoapp.datacova.utility.mail
 
-import com.hagoapp.datacova.config.CoVaConfig
-import com.hagoapp.datacova.config.MailConfig
 import org.slf4j.LoggerFactory
 import java.util.*
 import javax.activation.DataHandler
@@ -35,8 +32,6 @@ class MailHelper(val config: MailConfig) {
         get() {
             return recipients.isEmpty() && recipientsCC.isEmpty() && recipientsBCC.isEmpty()
         }
-
-    constructor() : this(CoVaConfig.getConfig().mail)
 
     fun addRecipient(address: InternetAddress): MailHelper {
         recipients.add(address)

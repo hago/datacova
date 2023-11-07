@@ -13,7 +13,7 @@ import com.hagoapp.datacova.execution.TaskExecutionWatcher
 import com.hagoapp.datacova.lib.execution.ExecutionDetail
 import com.hagoapp.datacova.lib.execution.TaskExecution
 import com.hagoapp.datacova.user.UserInfo
-import com.hagoapp.datacova.util.mail.MailHelper
+import com.hagoapp.datacova.utility.mail.MailHelper
 import com.hagoapp.datacova.util.text.TemplateManager
 import java.io.StringWriter
 import java.time.Duration
@@ -43,7 +43,7 @@ class ExecuteResultMailer : TaskExecutionWatcher {
             tpl!!.process(mapOf("execution" to te, "user" to user), writer)
             writer.toString()
         }
-        val mail = MailHelper().setHtmlContent(body)
+        val mail = MailHelper(CoVaConfig.getConfig().mail).setHtmlContent(body)
             .addRecipientList(te.task.extra.mailRecipients.map { InternetAddress(it) })
             .addRecipientCCList(te.task.extra.mailCCRecipients.map { InternetAddress(it) })
             .addRecipientBCCList(te.task.extra.mailBCCRecipients.map { InternetAddress(it) })
@@ -78,7 +78,7 @@ class ExecuteResultMailer : TaskExecutionWatcher {
             tpl!!.process(mapOf("execution" to te, "result" to result, "user" to user), writer)
             writer.toString()
         }
-        val mail = MailHelper().setHtmlContent(body)
+        val mail = MailHelper(CoVaConfig.getConfig().mail).setHtmlContent(body)
             .addRecipientList(te.task.extra.mailRecipients.map { InternetAddress(it) })
             .addRecipientCCList(te.task.extra.mailCCRecipients.map { InternetAddress(it) })
             .addRecipientBCCList(te.task.extra.mailBCCRecipients.map { InternetAddress(it) })
