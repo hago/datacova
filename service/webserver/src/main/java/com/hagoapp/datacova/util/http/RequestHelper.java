@@ -10,6 +10,8 @@ package com.hagoapp.datacova.util.http;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.hagoapp.datacova.utility.http.Forwarded;
+import com.hagoapp.datacova.utility.http.XForwardFor;
 import edazdarevic.commons.net.CIDRUtils;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.vertx.core.MultiMap;

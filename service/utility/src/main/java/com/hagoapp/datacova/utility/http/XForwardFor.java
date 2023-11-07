@@ -1,4 +1,11 @@
-package com.hagoapp.datacova.util.http;
+/*
+ * Copyright (c) 2021.
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
+package com.hagoapp.datacova.utility.http;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +18,7 @@ import java.util.List;
  */
 public class XForwardFor {
     private String clientIp;
-    private List<String> proxies = new ArrayList<>();
+    private final List<String> proxies = new ArrayList<>();
 
     public String getClientIp() {
         return clientIp;
@@ -44,13 +51,13 @@ public class XForwardFor {
         if (text == null) {
             return null;
         }
-        String[] parts = text.split(",");
+        var parts = text.split(",");
         if (parts.length == 0) {
             return null;
         }
-        XForwardFor instance = new XForwardFor();
+        var instance = new XForwardFor();
         instance.setClientIp(parts[0].trim());
-        for (int i = 1; i < parts.length; i++) {
+        for (var i = 1; i < parts.length; i++) {
             instance.getProxies().add(parts[i].trim());
         }
         return instance;
