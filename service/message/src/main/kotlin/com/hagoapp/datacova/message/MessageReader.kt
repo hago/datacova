@@ -13,10 +13,25 @@ import java.io.ByteArrayOutputStream
 import java.io.Closeable
 import java.nio.charset.StandardCharsets
 
+/**
+ * Message reader to read message object into byte buffer.
+ *
+ * @author suncjs
+ * @since 0.5
+ * @constructor Create empty Message reader
+ */
 class MessageReader : Closeable {
 
     companion object {
         private val gson = GsonBuilder().create()
+
+        @JvmStatic
+        fun readMessage(data: ByteArray): Any? {
+            return MessageReader().use {
+                it.update(data)
+                it.parseMessage()
+            }
+        }
     }
 
     private val buffer = ByteArrayOutputStream()
@@ -36,7 +51,7 @@ class MessageReader : Closeable {
             logger.error("Unknown type {}", buf[0])
             return null
         }
-        val json = String(buf, 1, buf.size-1, StandardCharsets.UTF_8)
+        val json = String(buf, 1, buf.size - 1, StandardCharsets.UTF_8)
         return gson.fromJson(json, clz)
     }
 
