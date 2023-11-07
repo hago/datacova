@@ -7,7 +7,6 @@
 
 package com.hagoapp.datacova.lib.data
 
-import com.hagoapp.datacova.lib.data.DatabaseConfig
 import com.hagoapp.datacova.utility.CoVaException
 import org.slf4j.LoggerFactory
 import java.io.Closeable

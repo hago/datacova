@@ -7,7 +7,6 @@
 
 package com.hagoapp.datacova.lib.data
 
-import com.hagoapp.datacova.lib.data.DatabaseConfig
 import com.hagoapp.datacova.lib.execution.ExecutionDetail
 import com.hagoapp.datacova.lib.execution.ExecutionFileInfo
 import com.hagoapp.datacova.lib.execution.ExecutionStatus

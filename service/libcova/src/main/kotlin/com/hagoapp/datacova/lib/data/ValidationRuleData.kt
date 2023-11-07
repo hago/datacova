@@ -7,7 +7,6 @@
 
 package com.hagoapp.datacova.lib.data
 
-import com.hagoapp.datacova.lib.data.DatabaseConfig
 import com.hagoapp.datacova.utility.MapSerializer
 import com.hagoapp.datacova.lib.verification.Rule
 import com.hagoapp.datacova.lib.verification.VerifyConfiguration
