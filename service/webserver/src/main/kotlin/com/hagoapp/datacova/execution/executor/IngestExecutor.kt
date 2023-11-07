@@ -7,6 +7,7 @@
 
 package com.hagoapp.datacova.execution.executor
 
+import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.utility.CoVaException
 import com.hagoapp.datacova.data.workspace.ConnectionData
 import com.hagoapp.datacova.lib.action.TaskAction
@@ -25,7 +26,7 @@ class IngestExecutor : BaseTaskActionExecutor(), ProgressNotify {
             throw CoVaException()
         }
         taskAction = action
-        val connection = ConnectionData().getWorkspaceConnection(action.connectionId)
+        val connection = ConnectionData(CoVaConfig.getConfig().database).getWorkspaceConnection(action.connectionId)
             ?: throw CoVaException()
         val fileTable = DataTable(data.columnDefinition.mapIndexed { i, col ->
             val fileCol = FileColumnDefinition(col.name, setOf(col.dataType), col.dataType)

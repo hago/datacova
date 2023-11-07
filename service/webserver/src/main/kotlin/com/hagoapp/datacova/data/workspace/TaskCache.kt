@@ -8,6 +8,7 @@
 package com.hagoapp.datacova.data.workspace
 
 import com.google.gson.reflect.TypeToken
+import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.lib.task.Task
 import com.hagoapp.datacova.utility.redis.RedisCacheReader
 
@@ -23,7 +24,7 @@ class TaskCache {
                 TASK_LIST, 3600,
                 { params ->
                     if (params.isEmpty()) listOf() else
-                        TaskData().getTasks(params[0] as Int)
+                        TaskData(CoVaConfig.getConfig().database).getTasks(params[0] as Int)
                 }, token.type, id
             )
             return l ?: listOf()

@@ -7,8 +7,9 @@
 
 package com.hagoapp.datacova.web.workspace
 
+import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.execution.TaskExecutionCache
-import com.hagoapp.datacova.data.execution.TaskExecutionData
+import com.hagoapp.datacova.lib.util.data.TaskExecutionData
 import com.hagoapp.datacova.data.workspace.TaskCache
 import com.hagoapp.datacova.data.workspace.TaskData
 import com.hagoapp.datacova.data.workspace.WorkspaceCache
@@ -82,10 +83,10 @@ class Tasks {
         val task0 = TaskCache.listTasks(workspace.id).firstOrNull { it.id == rawTask.id }
         val task = if (task0 == null) {
             rawTask.addBy = user.id
-            TaskData().createTask(rawTask)
+            TaskData(CoVaConfig.getConfig().database).createTask(rawTask)
         } else {
             rawTask.modifyBy = user.id
-            TaskData().updateTask(rawTask)
+            TaskData(CoVaConfig.getConfig().database).updateTask(rawTask)
         }
         TaskCache.clearWorkspaceTasks(workspace.id)
         ResponseHelper.sendResponse(
@@ -119,7 +120,7 @@ class Tasks {
             ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, "access denied")
             return
         }
-        TaskData().deleteTask(id)
+        TaskData(CoVaConfig.getConfig().database).deleteTask(id)
         TaskCache.clearWorkspaceTasks(workspaceId)
         ResponseHelper.sendResponse(context, HttpResponseStatus.OK, mapOf("code" to 0))
     }
@@ -177,7 +178,7 @@ class Tasks {
         }
         val rawInfo = context.request().getParam("extra")
         val fileStore = FileStoreUtils.getUploadedFileStore()
-        val exec = TaskExecutionData().use { db ->
+        val exec = TaskExecutionData(CoVaConfig.getConfig().database).use { db ->
             val target = fileStore.copyFileToStore(file.uploadedFileName())
             val eai = ExecutionFileInfo()
             val fi = FileInfoReader.json2FileInfo(rawInfo)

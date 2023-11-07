@@ -7,6 +7,7 @@
 
 package com.hagoapp.datacova.user.ldap
 
+import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.utility.ldap.LdapAttributes
 import com.hagoapp.datacova.data.user.UserCache
 import com.hagoapp.datacova.data.user.UserData
@@ -76,7 +77,7 @@ class LdapAuthProvider : UserAuthProvider {
                 map.getValue(config.attributes.getActualAttribute(LdapAttributes.ATTRIBUTE_TELEPHONE_NUMBER)).toString()
             pwdHash = ""
         }
-        return UserData().addUserFromProvider(userInfo).id
+        return UserData(CoVaConfig.getConfig().database).addUserFromProvider(userInfo).id
     }
 
     override fun loadThumbnail(userInfo: UserInfo) {

@@ -9,7 +9,7 @@
 package com.hagoapp.datacova.execution
 
 import com.hagoapp.datacova.config.CoVaConfig
-import com.hagoapp.datacova.data.execution.TaskExecutionData
+import com.hagoapp.datacova.lib.util.data.TaskExecutionData
 import com.hagoapp.datacova.executor.Executor
 import com.hagoapp.datacova.file.FileStoreFactory
 import com.hagoapp.datacova.lib.action.TaskAction
@@ -155,7 +155,7 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
     override fun onStart(te: TaskExecution) {
         try {
             WebSocketNotifier.notifyStart(te)
-            TaskExecutionData().startTaskExecution(te)
+            TaskExecutionData(CoVaConfig.getConfig().database).startTaskExecution(te)
             logger.info("Execution ${te.id} of Task ${te.task.name}(${te.taskId}) started")
         } catch (ex: Exception) {
             logger.error("unexpected error in Execution Service call onStart back: $ex")
@@ -166,7 +166,7 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
     override fun onComplete(te: TaskExecution, result: ExecutionDetail) {
         try {
             WebSocketNotifier.notifyComplete(te)
-            TaskExecutionData().completeTaskExecution(result)
+            TaskExecutionData(CoVaConfig.getConfig().database).completeTaskExecution(result)
             logger.info("Execution ${te.id} of Task ${te.task.name}(${te.taskId}) ${if (result.isSucceeded) "succeeded" else "failed"}")
         } catch (ex: Throwable) {
             logger.error("unexpected error in Execution Service call onComplete back: $ex")

@@ -24,7 +24,7 @@ class UserCache {
         @JvmStatic
         fun getUser(id: Long): UserInfo? {
             return RedisCacheReader.readCachedData(USER_INFO, USER_INFO_CACHE_TIME, { params ->
-                UserData().use {
+                UserData(CoVaConfig.getConfig().database).use {
                     it.findUser(params[0] as Long)
                 }
             }, UserInfo::class.java, id)
@@ -42,7 +42,7 @@ class UserCache {
             }.filterNotNull().toMap()
             JedisManager.getJedis(CoVaConfig.getConfig().redis).use { jedis ->
                 val gson = Gson()
-                UserData().batchGetUser(nullUsers.keys).forEach { info ->
+                UserData(CoVaConfig.getConfig().database).batchGetUser(nullUsers.keys).forEach { info ->
                     if (info != null) {
                         val index = nullUsers.getValue(info.id)
                         list[index] = info
@@ -78,7 +78,7 @@ class UserCache {
                 { params ->
                     val uid = params[0].toString()
                     val type = params[1] as Int
-                    UserData().findUser(uid, type)
+                    UserData(CoVaConfig.getConfig().database).findUser(uid, type)
                 },
                 UserInfo::class.java,
                 userId,

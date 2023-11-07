@@ -9,6 +9,7 @@ package com.hagoapp.datacova.data.rules
 
 import com.google.gson.reflect.TypeToken
 import com.hagoapp.datacova.config.CoVaConfig
+import com.hagoapp.datacova.lib.util.data.ValidationRuleData
 import com.hagoapp.datacova.lib.verification.Rule
 import com.hagoapp.datacova.utility.redis.JedisManager
 import com.hagoapp.datacova.utility.redis.RedisCacheReader
@@ -24,7 +25,7 @@ class ValidationRuleCache {
             val l = RedisCacheReader.readCachedData(
                 VALIDATION_RULE_LIST,
                 86400,
-                { params -> ValidationRuleData().getRules(params[0] as Int, params[1] as Int, params[2] as Int) },
+                { params -> ValidationRuleData(CoVaConfig.getConfig().database).getRules(params[0] as Int, params[1] as Int, params[2] as Int) },
                 token.type,
                 workspaceId,
                 start,
@@ -46,7 +47,7 @@ class ValidationRuleCache {
             return RedisCacheReader.readCachedData(
                 VALIDATION_RULE,
                 86400,
-                { params -> ValidationRuleData().getRule(params[0] as Long) },
+                { params -> ValidationRuleData(CoVaConfig.getConfig().database).getRule(params[0] as Long) },
                 Rule::class.java, id
             )
         }

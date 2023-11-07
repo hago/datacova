@@ -8,7 +8,7 @@
 package com.hagoapp.datacova.executor.web
 
 import com.hagoapp.datacova.config.CoVaConfig
-import com.hagoapp.datacova.data.execution.TaskExecutionData
+import com.hagoapp.datacova.lib.util.data.TaskExecutionData
 import com.hagoapp.datacova.execution.Worker
 import com.hagoapp.datacova.executor.ExecuteResultMailer
 import com.hagoapp.datacova.executor.Executor
@@ -30,7 +30,7 @@ class ExecutorApi {
     )
     fun execute(context: RoutingContext) {
         val id = context.pathParam("id").toInt()
-        val te = TaskExecutionData().getTaskExecution(id)
+        val te = TaskExecutionData(CoVaConfig.getConfig().database).getTaskExecution(id)
         if ((te == null) || (te.status != ExecutionStatus.ADDED)) {
             ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "execution $id is not for running")
             return

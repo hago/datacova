@@ -1,10 +1,11 @@
 package com.hagoapp.datacova.web.workspace
 
 import com.google.gson.GsonBuilder
+import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.execution.TaskExecutionCache
 import com.hagoapp.datacova.data.execution.TaskExecutionCache.Companion.TASK_EXECUTION_DEFAULT_PAGE_SIZE
 import com.hagoapp.datacova.data.rules.ValidationRuleCache
-import com.hagoapp.datacova.data.rules.ValidationRuleData
+import com.hagoapp.datacova.lib.util.data.ValidationRuleData
 import com.hagoapp.datacova.data.user.UserCache
 import com.hagoapp.datacova.data.workspace.WorkSpaceData
 import com.hagoapp.datacova.data.workspace.WorkspaceCache
@@ -97,7 +98,7 @@ class WorkSpaceApi {
         }
         wk.ownerId = userInfo.id
         wk.addBy = userInfo.id
-        val workSpace = WorkSpaceData().addWorkSpace(wk)
+        val workSpace = WorkSpaceData(CoVaConfig.getConfig().database).addWorkSpace(wk)
         WorkspaceCache.clearMyWorkspaces(userInfo.id)
         if (workSpace == null) {
             ResponseHelper.respondError(routeContext, HttpResponseStatus.CONFLICT, "duplicated name")
@@ -133,7 +134,7 @@ class WorkSpaceApi {
             return
         }
         wk.modifyBy = user.id
-        val workspace0 = WorkSpaceData().updateWorkSpace(wk)
+        val workspace0 = WorkSpaceData(CoVaConfig.getConfig().database).updateWorkSpace(wk)
         WorkspaceCache.clearMyWorkspaces(user.id)
         ResponseHelper.sendResponse(routeContext, HttpResponseStatus.OK, mapOf("code" to 0, "data" to workspace0))
     }
@@ -262,14 +263,14 @@ class WorkSpaceApi {
         val rule1: Rule?
         if (rule.id <= 0) {
             rule.addBy = user.id
-            rule1 = ValidationRuleData().newRule(rule)
+            rule1 = ValidationRuleData(CoVaConfig.getConfig().database).newRule(rule)
         } else {
             val rule0 = ValidationRuleCache.getRule(rule.id)
             if (rule.id != rule0?.id) {
                 ResponseHelper.respondError(context, HttpResponseStatus.UNAUTHORIZED, "illegal update!")
                 return
             }
-            rule1 = ValidationRuleData().updateRule(rule)
+            rule1 = ValidationRuleData(CoVaConfig.getConfig().database).updateRule(rule)
             ValidationRuleCache.clearRule(rule.id)
         }
         ResponseHelper.sendResponse(

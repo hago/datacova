@@ -1,10 +1,9 @@
 package com.hagoapp.datacova.data.workspace
 
-import com.hagoapp.datacova.config.CoVaConfig
-import com.hagoapp.datacova.config.DatabaseConfig
-import com.hagoapp.datacova.data.CoVaDatabase
+import com.hagoapp.datacova.lib.util.data.CoVaDatabase
 import com.hagoapp.datacova.entity.workspace.WorkSpace
 import com.hagoapp.datacova.entity.workspace.WorkSpaceUserRole
+import com.hagoapp.datacova.lib.data.DatabaseConfig
 import com.hagoapp.datacova.util.data.DatabaseFunctions
 import org.slf4j.LoggerFactory
 import java.sql.ResultSet
@@ -12,7 +11,6 @@ import java.sql.Timestamp
 
 class WorkSpaceData(connectionConfig: DatabaseConfig) : CoVaDatabase(connectionConfig) {
 
-    constructor() : this(CoVaConfig.getConfig().database)
     private val logger = LoggerFactory.getLogger(WorkSpaceData::class.java)
 
     /**

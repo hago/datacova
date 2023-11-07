@@ -7,6 +7,7 @@
 
 package com.hagoapp.datacova.web.workspace
 
+import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.workspace.ConnectionCache
 import com.hagoapp.datacova.data.workspace.ConnectionData
 import com.hagoapp.datacova.data.workspace.WorkspaceCache
@@ -153,7 +154,7 @@ class Connection {
         }
         wsCon.workspaceId = id
         wsCon.addBy = Authenticator.getUser(context).id
-        val wk = ConnectionData().addWorkspaceConnection(wsCon)
+        val wk = ConnectionData(CoVaConfig.getConfig().database).addWorkspaceConnection(wsCon)
         ConnectionCache.clearConnections(id)
         ResponseHelper.sendResponse(
             context, HttpResponseStatus.OK, mapOf(
@@ -197,7 +198,7 @@ class Connection {
         }
         wsCon.workspaceId = id
         wsCon.modifyBy = Authenticator.getUser(context).id
-        val wk = ConnectionData().updateWorkspaceConnection(wsCon)
+        val wk = ConnectionData(CoVaConfig.getConfig().database).updateWorkspaceConnection(wsCon)
         ConnectionCache.clearConnections(id)
         ResponseHelper.sendResponse(
             context, HttpResponseStatus.OK, mapOf(
@@ -231,7 +232,7 @@ class Connection {
             ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, "Access Denied")
             return
         }
-        ConnectionData().deleteConnection(connectionId)
+        ConnectionData(CoVaConfig.getConfig().database).deleteConnection(connectionId)
         ConnectionCache.clearConnections(workspaceId)
         ResponseHelper.sendResponse(context, HttpResponseStatus.OK, mapOf("code" to 0))
     }

@@ -9,6 +9,7 @@ package com.hagoapp.datacova.web.workspace
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.user.UserData
 import com.hagoapp.datacova.data.workspace.WorkSpaceData
 import com.hagoapp.datacova.data.workspace.WorkspaceCache
@@ -57,10 +58,10 @@ class MemberApi {
                     email = it.email
                     pwdHash = ""
                 }
-                UserData().addUserFromProvider(u).id
+                UserData(CoVaConfig.getConfig().database).addUserFromProvider(u).id
             }
         }
-        WorkSpaceData().addMemberForWorkspace(id, WorkSpaceUserRole.parseInt(type), idList)
+        WorkSpaceData(CoVaConfig.getConfig().database).addMemberForWorkspace(id, WorkSpaceUserRole.parseInt(type), idList)
         WorkspaceCache.clearWorkspaceUser(id)
         ResponseHelper.sendResponse(routeContext, HttpResponseStatus.OK, mapOf("code" to 0))
     }
@@ -84,7 +85,7 @@ class MemberApi {
             ResponseHelper.respondError(routeContext, HttpResponseStatus.FORBIDDEN, "denied")
             return
         }
-        WorkSpaceData().removeMemberForWorkspace(id, WorkSpaceUserRole.parseInt(type), listOf(uid))
+        WorkSpaceData(CoVaConfig.getConfig().database).removeMemberForWorkspace(id, WorkSpaceUserRole.parseInt(type), listOf(uid))
         WorkspaceCache.clearWorkspaceUser(id)
         ResponseHelper.sendResponse(routeContext, HttpResponseStatus.OK, mapOf("code" to 0))
     }

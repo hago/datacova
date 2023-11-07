@@ -7,6 +7,7 @@
 
 package com.hagoapp.datacova.data.user
 
+import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.user.UserInfo
 import com.hagoapp.datacova.user.permission.UserPermissions
 import com.hagoapp.datacova.utility.redis.RedisCacheReader
@@ -23,7 +24,7 @@ class PermissionCache {
                 PERMISSION_EXPIRY,
                 { params ->
                     val u = params[0] as UserInfo
-                    PermissionData().getUserPermissions(u)
+                    PermissionData(CoVaConfig.getConfig().database).getUserPermissions(u)
                 },
                 UserPermissions::class.java,
                 userInfo

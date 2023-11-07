@@ -5,19 +5,15 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package com.hagoapp.datacova.data.rules
+package com.hagoapp.datacova.lib.util.data
 
+import com.hagoapp.datacova.lib.data.DatabaseConfig
 import com.hagoapp.datacova.utility.MapSerializer
-import com.hagoapp.datacova.config.CoVaConfig
-import com.hagoapp.datacova.config.DatabaseConfig
-import com.hagoapp.datacova.data.CoVaDatabase
 import com.hagoapp.datacova.lib.verification.Rule
 import com.hagoapp.datacova.lib.verification.VerifyConfiguration
-import com.hagoapp.datacova.util.data.DatabaseFunctions
 import java.sql.ResultSet
 
 class ValidationRuleData(config: DatabaseConfig) : CoVaDatabase(config) {
-    constructor() : this(CoVaConfig.getConfig().database)
 
     fun getRules(workspaceId: Int, start: Int, size: Int): List<Rule> {
         val sql = "select * from rules where wkid = ? offset ? limit ?"

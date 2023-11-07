@@ -24,7 +24,7 @@ class WorkspaceCache {
         fun getWorkspace(id: Int): WorkSpace? {
             return RedisCacheReader.readCachedData(
                 WORKSPACE_INFO, 3600,
-                { params -> WorkSpaceData().getWorkSpace(params[0] as Int) }, WorkSpace::class.java, id
+                { params -> WorkSpaceData(CoVaConfig.getConfig().database).getWorkSpace(params[0] as Int) }, WorkSpace::class.java, id
             )
         }
 
@@ -36,7 +36,7 @@ class WorkspaceCache {
             val token = object : TypeToken<List<WorkSpaceData.WorkspaceBasicUser>>() {}
             val list = RedisCacheReader.readCachedData(
                 WORKSPACE_USER_ROLE, 3600,
-                { params -> WorkSpaceData().getWorkspaceUserIdList(params[0] as Int) }, token.type, id
+                { params -> WorkSpaceData(CoVaConfig.getConfig().database).getWorkspaceUserIdList(params[0] as Int) }, token.type, id
             )
             return list!!.filter { u -> u.role in roles }
         }

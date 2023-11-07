@@ -7,9 +7,8 @@
 
 package com.hagoapp.datacova.data.user
 
-import com.hagoapp.datacova.config.CoVaConfig
-import com.hagoapp.datacova.config.DatabaseConfig
-import com.hagoapp.datacova.data.CoVaDatabase
+import com.hagoapp.datacova.lib.util.data.CoVaDatabase
+import com.hagoapp.datacova.lib.data.DatabaseConfig
 import com.hagoapp.datacova.user.UserInfo
 import com.hagoapp.datacova.user.permission.Permission
 import com.hagoapp.datacova.user.permission.Role
@@ -18,7 +17,6 @@ import com.hagoapp.datacova.user.permission.UserRoles
 import java.sql.ResultSet
 
 class PermissionData(config: DatabaseConfig) : CoVaDatabase(config) {
-    constructor() : this(CoVaConfig.getConfig().database)
 
     fun getUserRoles(userInfo: UserInfo): UserRoles {
         val sql = "select * from userroles where userid = ?"

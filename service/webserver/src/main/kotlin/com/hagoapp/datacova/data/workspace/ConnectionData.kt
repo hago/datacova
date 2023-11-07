@@ -7,18 +7,15 @@
 
 package com.hagoapp.datacova.data.workspace
 
-import com.hagoapp.datacova.config.CoVaConfig
-import com.hagoapp.datacova.config.DatabaseConfig
-import com.hagoapp.datacova.data.CoVaDatabase
+import com.hagoapp.datacova.lib.util.data.CoVaDatabase
 import com.hagoapp.datacova.entity.connection.WorkspaceConnection
+import com.hagoapp.datacova.lib.data.DatabaseConfig
 import com.hagoapp.datacova.util.data.DatabaseFunctions
 import com.hagoapp.f2t.database.config.DbConfigReader
 import java.sql.ResultSet
 import java.sql.Timestamp
 
 class ConnectionData(config: DatabaseConfig) : CoVaDatabase(config) {
-
-    constructor() : this(CoVaConfig.getConfig().database)
 
     fun getWorkspaceConnections(workspaceId: Int): List<WorkspaceConnection> {
         val sql = "select * from connection where wkid = ? order by modifytime desc, addtime desc"

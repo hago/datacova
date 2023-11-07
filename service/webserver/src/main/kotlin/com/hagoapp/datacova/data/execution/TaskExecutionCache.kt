@@ -11,6 +11,7 @@ package com.hagoapp.datacova.data.execution
 import com.google.gson.reflect.TypeToken
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.lib.execution.TaskExecution
+import com.hagoapp.datacova.lib.util.data.TaskExecutionData
 import com.hagoapp.datacova.utility.redis.JedisManager
 import com.hagoapp.datacova.utility.redis.RedisCacheReader
 
@@ -29,7 +30,7 @@ class TaskExecutionCache {
                 3600,
                 { params ->
                     val id = params[0].toString().toInt()
-                    TaskExecutionData().getTaskExecution(id)
+                    TaskExecutionData(CoVaConfig.getConfig().database).getTaskExecution(id)
                 },
                 TaskExecution::class.java,
                 taskId
@@ -56,7 +57,7 @@ class TaskExecutionCache {
                     val id = params[0].toString().toInt()
                     val offset = params[1].toString().toInt()
                     val limit = params[2].toString().toInt()
-                    TaskExecutionData().getTaskExecutionsOfWorkspace(id, offset, limit)
+                    TaskExecutionData(CoVaConfig.getConfig().database).getTaskExecutionsOfWorkspace(id, offset, limit)
                 },
                 token.type,
                 workspaceId, start, size
@@ -80,7 +81,7 @@ class TaskExecutionCache {
                 3600,
                 { params ->
                     val execId = params[0].toString().toInt()
-                    TaskExecutionData().getTaskExecution(execId)
+                    TaskExecutionData(CoVaConfig.getConfig().database).getTaskExecution(execId)
                 },
                 TaskExecution::class.java,
                 id

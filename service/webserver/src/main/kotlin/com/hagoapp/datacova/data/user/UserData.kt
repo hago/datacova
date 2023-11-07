@@ -8,9 +8,8 @@
 package com.hagoapp.datacova.data.user
 
 import com.hagoapp.datacova.utility.Utils
-import com.hagoapp.datacova.config.CoVaConfig
-import com.hagoapp.datacova.config.DatabaseConfig
-import com.hagoapp.datacova.data.CoVaDatabase
+import com.hagoapp.datacova.lib.util.data.CoVaDatabase
+import com.hagoapp.datacova.lib.data.DatabaseConfig
 import com.hagoapp.datacova.user.*
 import com.hagoapp.datacova.util.data.DatabaseFunctions
 import java.sql.ResultSet
@@ -23,8 +22,6 @@ class UserData(config: DatabaseConfig) : CoVaDatabase(config) {
             return Utils.sha1Digest("$password|${Utils.sha256Digest(password)}")
         }
     }
-
-    constructor() : this(CoVaConfig.getConfig().database)
 
     fun findUser(userId: String): UserInfo? {
         val sql = "select * from users where userid = ?"

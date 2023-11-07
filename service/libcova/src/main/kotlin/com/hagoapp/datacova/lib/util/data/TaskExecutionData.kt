@@ -3,25 +3,20 @@
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
- *
  */
 
-package com.hagoapp.datacova.data.execution
+package com.hagoapp.datacova.lib.util.data
 
-import com.hagoapp.datacova.config.CoVaConfig
-import com.hagoapp.datacova.config.DatabaseConfig
-import com.hagoapp.datacova.data.CoVaDatabase
+import com.hagoapp.datacova.lib.data.DatabaseConfig
 import com.hagoapp.datacova.lib.execution.ExecutionDetail
 import com.hagoapp.datacova.lib.execution.ExecutionFileInfo
 import com.hagoapp.datacova.lib.execution.ExecutionStatus
 import com.hagoapp.datacova.lib.execution.TaskExecution
 import com.hagoapp.datacova.lib.task.Task
-import com.hagoapp.datacova.util.data.DatabaseFunctions
 import java.sql.ResultSet
 import java.sql.Timestamp
 
 class TaskExecutionData(config: DatabaseConfig) : CoVaDatabase(config) {
-    constructor() : this(CoVaConfig.getConfig().database)
 
     fun createTaskExecution(taskExec: TaskExecution): TaskExecution {
         val sql = "insert into taskexecution (fileinfo, taskid, addby, task) values(?,?,?,?) returning id"

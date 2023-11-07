@@ -9,6 +9,7 @@ package com.hagoapp.datacova.config;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.hagoapp.datacova.lib.data.DatabaseConfig;
 import com.hagoapp.datacova.utility.CoVaException;
 import com.hagoapp.datacova.utility.JsonStringify;
 import com.hagoapp.datacova.utility.mail.MailConfig;

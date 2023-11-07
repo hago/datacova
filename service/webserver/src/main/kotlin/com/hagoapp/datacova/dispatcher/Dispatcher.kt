@@ -9,7 +9,8 @@ package com.hagoapp.datacova.dispatcher
 
 import com.hagoapp.datacova.utility.CoVaException
 import com.hagoapp.datacova.ExecutorManager
-import com.hagoapp.datacova.data.execution.TaskExecutionData
+import com.hagoapp.datacova.config.CoVaConfig
+import com.hagoapp.datacova.lib.util.data.TaskExecutionData
 import com.hagoapp.datacova.lib.execution.TaskExecution
 import org.slf4j.LoggerFactory
 import java.util.concurrent.LinkedBlockingQueue
@@ -59,7 +60,7 @@ class Dispatcher {
     }
 
     private fun fetchExecutions(): Int {
-        val l = TaskExecutionData().loadQueueingTaskExecution()
+        val l = TaskExecutionData(CoVaConfig.getConfig().database).loadQueueingTaskExecution()
         if (l.isNotEmpty()) {
             queue.addAll(l)
             logger.info("${l.size} executions found and queued.")

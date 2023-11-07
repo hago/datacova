@@ -7,12 +7,13 @@
 
 package com.hagoapp.datacova.user
 
+import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.data.user.UserData
 
 class UserFinder {
     companion object {
         fun search(searchReq: UserSearchReq): UserSearchResult {
-            val users = UserData().searchUser(searchReq.search, searchReq.userProviders, searchReq.count).map {
+            val users = UserData(CoVaConfig.getConfig().database).searchUser(searchReq.search, searchReq.userProviders, searchReq.count).map {
                 UserSearchResultItem.fromUserInfo(it)
             }
             val other = mutableMapOf<Int, List<UserSearchResultItem>>()

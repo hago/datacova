@@ -1,16 +1,14 @@
 /*
- * Copyright (c) 2020.
+ * Copyright (c) 2021.
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
- *
  */
 
-package com.hagoapp.datacova.data
+package com.hagoapp.datacova.lib.util.data
 
+import com.hagoapp.datacova.lib.data.DatabaseConfig
 import com.hagoapp.datacova.utility.CoVaException
-import com.hagoapp.datacova.config.CoVaConfig
-import com.hagoapp.datacova.config.DatabaseConfig
 import org.slf4j.LoggerFactory
 import java.io.Closeable
 import java.sql.Connection
@@ -26,8 +24,6 @@ abstract class CoVaDatabase(connectionConfig: DatabaseConfig) : Closeable {
             Class.forName(PGSQL_DRIVER_CLASS_NAME)
         }
     }
-
-    constructor() : this(CoVaConfig.getConfig().database)
 
     private val config = connectionConfig
 

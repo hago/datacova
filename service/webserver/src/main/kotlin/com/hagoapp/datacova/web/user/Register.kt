@@ -50,7 +50,7 @@ class Register {
         }
         val json = context.body().asString()
         val user = Gson().fromJson(json, UserInfo::class.java)
-        val dal = UserData()
+        val dal = UserData(CoVaConfig.getConfig().database)
         if (dal.isUserIdExisted(user.userId)) {
             ResponseHelper.respondError(context, HttpResponseStatus.CONFLICT, "duplicate user id ${user.userId}")
             return
@@ -128,7 +128,7 @@ class Register {
             ResponseHelper.respondError(context, HttpResponseStatus.NOT_FOUND, "invalid code")
             return
         }
-        if (UserData().activateUser(id) > 0) {
+        if (UserData(CoVaConfig.getConfig().database).activateUser(id) > 0) {
             ResponseHelper.sendResponse(context, HttpResponseStatus.OK, mapOf("code" to 0))
         } else {
             ResponseHelper.respondError(context, HttpResponseStatus.NOT_FOUND, "invalid code")
