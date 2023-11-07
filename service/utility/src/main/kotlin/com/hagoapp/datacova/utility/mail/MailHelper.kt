@@ -8,6 +8,7 @@
 package com.hagoapp.datacova.utility.mail
 
 import org.slf4j.LoggerFactory
+import java.io.InputStream
 import java.util.*
 import javax.activation.DataHandler
 import javax.activation.FileDataSource
@@ -15,6 +16,7 @@ import javax.mail.Message
 import javax.mail.Session
 import javax.mail.Transport
 import javax.mail.internet.*
+import javax.mail.util.ByteArrayDataSource
 
 class MailHelper(val config: MailConfig) {
 
@@ -28,6 +30,7 @@ class MailHelper(val config: MailConfig) {
     private var isHtml = false
     private var content = ""
     private val attachments = mutableListOf<String>()
+    private val streamAttachments = mutableListOf<Pair<String, InputStream>>()
     val recipientsEmpty: Boolean
         get() {
             return recipients.isEmpty() && recipientsCC.isEmpty() && recipientsBCC.isEmpty()
@@ -85,6 +88,11 @@ class MailHelper(val config: MailConfig) {
         return this
     }
 
+    fun addAttachment(attachmentName: String, content: InputStream): MailHelper {
+        streamAttachments.add(Pair(attachmentName, content))
+        return this
+    }
+
     fun sendMail() {
         if (recipients.isEmpty() && recipientsCC.isEmpty() && recipientsBCC.isEmpty()) {
             logger.info("No recipients found, email sending aborted")
@@ -109,6 +117,12 @@ class MailHelper(val config: MailConfig) {
             val mpAttach = MimeBodyPart()
             mpAttach.fileName = MimeUtility.encodeText(dh.name)
             mpAttach.dataHandler = dh
+            mailContent.addBodyPart(mpAttach)
+        }
+        streamAttachments.forEach {
+            val mpAttach = MimeBodyPart()
+            mpAttach.fileName = MimeUtility.encodeText(it.first)
+            mpAttach.dataHandler = DataHandler(ByteArrayDataSource(it.second, "application/octet-stream"))
             mailContent.addBodyPart(mpAttach)
         }
         mailContent.setSubType("mix")
