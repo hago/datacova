@@ -11,6 +11,7 @@ import com.hagoapp.datacova.utility.net.SocketPacketParser
 import org.slf4j.LoggerFactory
 import java.net.ServerSocket
 import java.net.Socket
+import java.net.SocketException
 import java.util.concurrent.atomic.AtomicBoolean
 
 object DispatchServer {
@@ -43,14 +44,22 @@ object DispatchServer {
 
         override fun run() {
             while (!shouldClose.get()) {
-                val data = SocketPacketParser.readPacket(socket)
-                if (data == null) {
-                    Thread.sleep(500L)
-                    continue
-                }
-                val rsp = ClientMessageHandler.get().handle(data)
-                if (rsp != null) {
-                    SocketPacketParser.writePacket(socket, rsp)
+                try {
+                    val data = SocketPacketParser.readPacket(socket)
+                    if (data == null) {
+                        Thread.sleep(500L)
+                        continue
+                    }
+                    val rsp = ClientMessageHandler.get().handle(data)
+                    if (rsp != null) {
+                        SocketPacketParser.writePacket(socket, rsp)
+                    }
+                } catch (e: SocketException) {
+                    logger.error("socket error {}",  e.message)
+                    if (socket.isInputShutdown || socket.isOutputShutdown) {
+                        logger.error("socket is shutdown, closed")
+                        break
+                    }
                 }
             }
         }
