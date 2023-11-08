@@ -14,8 +14,8 @@ import java.util.UUID
 class MessageIoTest {
 
     private val cases = listOf<Any>(
-        RegisterMessage("regular", null),
-        RegisterMessage("regular", "worker demo"),
+        RegisterMessage("regular", "key", null),
+        RegisterMessage("regular", "key", "worker demo"),
         RegisterResponseMessage(true, UUID.randomUUID().toString()),
         RegisterResponseMessage(false, UUID.randomUUID().toString())
     )
