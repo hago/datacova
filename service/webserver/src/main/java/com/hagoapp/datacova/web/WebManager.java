@@ -36,6 +36,7 @@ import org.reflections.scanners.Scanners;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.*;
@@ -179,10 +180,20 @@ public class WebManager {
             session.setDeviceIdentity(RequestHelper.getUserAgent(event.headers()));
             var wsm = WebSocketManager.getManager();
             wsm.addUserSession(session, event);
-            event.binaryMessageHandler(msg -> {
-                var rsp = ClientMessageHandler.get().handle(msg, event);
-                if (rsp != null) {
-                    event.writeBinaryMessage(Buffer.buffer(rsp));
+            event.textMessageHandler(msg -> {
+                MessageHandlerFactory factory;
+                try {
+                    factory = new MessageHandlerFactory(msg);
+                    var handler = factory.createMessageHandler();
+                    var message = ClientMessage.fromJson(msg);
+                    if ((handler == null) || (message == null)) {
+                        throw new IOException(String.format("Message can't be recognized: %s", msg));
+                    } else {
+                        var response = handler.handleMessage(event, message);
+                        event.writeTextMessage(response.toJson());
+                    }
+                } catch (Exception e) {
+                    event.writeTextMessage(new ErrorResponseMessage(e.getMessage()).toJson());
                 }
             });
             event.closeHandler(ignore -> {
