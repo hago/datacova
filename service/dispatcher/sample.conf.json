@@ -7,5 +7,10 @@
     "databaseName": "covadb"
   },
   "port": 9999,
-  "authKey": "M2odnxplocGg3Lk2"
+  "authKeys": [
+    {
+      "key": "M2odnxplocGg3Lk2",
+      "group": ""
+    }
+  ]
 }

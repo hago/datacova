@@ -10,10 +10,14 @@ package com.hagoapp.datacova.message
 import com.hagoapp.datacova.message.RegisterMessage.Companion.MESSAGE_TYPE_REGISTER
 
 @WorkerMessage(type = MESSAGE_TYPE_REGISTER)
-class RegisterMessage(val group: String, var name: String? = null) {
+class RegisterMessage(val group: String, val authKey: String, var name: String? = null) {
 
     companion object {
         const val MESSAGE_TYPE_REGISTER: Byte = 1
+    }
+
+    override fun toString(): String {
+        return "RegisterMessage(group='$group', authKey='$authKey', name=$name)"
     }
 
     override fun equals(other: Any?): Boolean {
@@ -23,6 +27,7 @@ class RegisterMessage(val group: String, var name: String? = null) {
         other as RegisterMessage
 
         if (group != other.group) return false
+        if (authKey != other.authKey) return false
         if (name != other.name) return false
 
         return true
@@ -30,11 +35,10 @@ class RegisterMessage(val group: String, var name: String? = null) {
 
     override fun hashCode(): Int {
         var result = group.hashCode()
+        result = 31 * result + authKey.hashCode()
         result = 31 * result + (name?.hashCode() ?: 0)
         return result
     }
 
-    override fun toString(): String {
-        return "RegisterMessage(group='$group', name=$name)"
-    }
+
 }

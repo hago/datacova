@@ -7,10 +7,7 @@
 
 package com.hagoapp.datacova.dispatcher
 
-import com.hagoapp.datacova.lib.data.DatabaseConfig
-
-data class Config(
-    val db: DatabaseConfig,
-    val port: Int = 8999,
-    val authKeys: List<GroupKey>
+data class GroupKey (
+    val group: String,
+    val authKey: String
 )

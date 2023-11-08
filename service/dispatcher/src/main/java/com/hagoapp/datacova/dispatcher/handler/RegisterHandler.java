@@ -7,11 +7,11 @@
 
 package com.hagoapp.datacova.dispatcher.handler;
 
+import com.hagoapp.datacova.dispatcher.Application;
 import com.hagoapp.datacova.dispatcher.ClientMessageHandler;
 import com.hagoapp.datacova.message.RegisterMessage;
 import com.hagoapp.datacova.message.RegisterResponseMessage;
 
-import java.net.Socket;
 import java.util.UUID;
 
 /**
@@ -26,7 +26,12 @@ public class RegisterHandler implements ClientMessageHandler.MessageHandler {
         if (message.getClass() != RegisterMessage.class) {
             throw new UnsupportedOperationException("Not a register message!");
         }
-        var reg = (RegisterMessage)message;
+        var reg = (RegisterMessage) message;
+        var groupKeys = Application.Companion.getConfig().getAuthKeys();
+        if (groupKeys.stream().noneMatch(gk ->
+                gk.getGroup().equals(reg.getGroup()) && gk.getAuthKey().equals(reg.getAuthKey()))) {
+            return new RegisterResponseMessage(false, "access denied");
+        }
         var name = reg.getName() != null ? reg.getName() : UUID.randomUUID().toString();
         return new RegisterResponseMessage(true, name);
     }
