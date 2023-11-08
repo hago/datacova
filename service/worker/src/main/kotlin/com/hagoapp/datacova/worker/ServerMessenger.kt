@@ -52,6 +52,7 @@ class ServerMessenger private constructor(private val config: Config) {
                     logger.error("connecting to {}:{} failed: {}", config.server, config.port, e.message)
                     logger.info("sleep {} seconds to reconnect", INTERVAL_SECONDS)
                     Thread.sleep(INTERVAL_SECONDS * 1000L)
+                    socket.close()
                     continue
                 }
                 try {
