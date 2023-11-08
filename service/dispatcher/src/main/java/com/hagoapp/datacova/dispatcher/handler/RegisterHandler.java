@@ -27,7 +27,7 @@ public class RegisterHandler implements ClientMessageHandler.MessageHandler {
             throw new UnsupportedOperationException("Not a register message!");
         }
         var reg = (RegisterMessage) message;
-        var groupKeys = Application.Companion.getConfig().getAuthKeys();
+        var groupKeys = Application.getConfig().getAuthKeys();
         if (groupKeys.stream().noneMatch(gk ->
                 gk.getGroup().equals(reg.getGroup()) && gk.getAuthKey().equals(reg.getAuthKey()))) {
             return new RegisterResponseMessage(false, "access denied");

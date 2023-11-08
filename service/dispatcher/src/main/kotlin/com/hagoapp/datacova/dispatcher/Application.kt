@@ -21,6 +21,8 @@ class Application {
 
         lateinit var config: Config
             private set
+            @JvmStatic
+            get
         private var exitFlag = AtomicBoolean(false)
         private val logger = LoggerFactory.getLogger(Application::class.java)
         private const val DEFAULT_CONFIG_FILE = "conf.json"
