@@ -7,6 +7,7 @@
 
 package com.hagoapp.datacova.dispatcher
 
+import com.hagoapp.datacova.utility.net.SocketPacketParser
 import org.slf4j.LoggerFactory
 import java.net.ServerSocket
 import java.net.Socket
