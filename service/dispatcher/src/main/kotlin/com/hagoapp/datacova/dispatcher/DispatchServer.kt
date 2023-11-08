@@ -55,13 +55,11 @@ object DispatchServer {
                         SocketPacketParser.writePacket(socket, rsp)
                     }
                 } catch (e: SocketException) {
-                    logger.error("socket error {}",  e.message)
-                    if (socket.isInputShutdown || socket.isOutputShutdown) {
-                        logger.error("socket is shutdown, closed")
-                        break
-                    }
+                    logger.error("socket error {}", e.message)
+                    break
                 }
             }
+            logger.debug("exit client socket thread")
         }
     }
 }

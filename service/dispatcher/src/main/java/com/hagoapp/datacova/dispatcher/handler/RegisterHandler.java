@@ -11,6 +11,8 @@ import com.hagoapp.datacova.dispatcher.Application;
 import com.hagoapp.datacova.dispatcher.ClientMessageHandler;
 import com.hagoapp.datacova.message.RegisterMessage;
 import com.hagoapp.datacova.message.RegisterResponseMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
 
@@ -21,6 +23,8 @@ import java.util.UUID;
  * @since 0.5
  */
 public class RegisterHandler implements ClientMessageHandler.MessageHandler {
+
+    private final Logger logger = LoggerFactory.getLogger(RegisterHandler.class);
     @Override
     public Object handle(Object message) {
         if (message.getClass() != RegisterMessage.class) {
@@ -33,6 +37,7 @@ public class RegisterHandler implements ClientMessageHandler.MessageHandler {
             return new RegisterResponseMessage(false, "access denied");
         }
         var name = reg.getName() != null ? reg.getName() : UUID.randomUUID().toString();
+        logger.info("Worker {} registered in group {}", name, reg.getGroup());
         return new RegisterResponseMessage(true, name);
     }
 }
