@@ -1,4 +1,6 @@
 {
   "group": "normal",
-  "server": "ws://127.0.0.1/worker"
+  "server": "127.0.0.1",
+  "port": 9999,
+  "authKey": "M2odnxplocGg3Lk2"
 }

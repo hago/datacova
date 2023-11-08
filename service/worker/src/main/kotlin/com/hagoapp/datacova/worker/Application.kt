@@ -23,7 +23,7 @@ class Application {
         fun main(args: Array<String>) {
             val configPath = if (args.isNotEmpty()) args[0] else null
             config = loadConfig(configPath)
-            startWebSocketClient()
+            starSocketClient()
             while (true) {
                 println("input command, ? for help")
                 val kin = readln()
@@ -50,7 +50,7 @@ class Application {
             }
         }
 
-        private fun startWebSocketClient() {
+        private fun starSocketClient() {
             messenger = ServerMessenger.create(config)
         }
     }

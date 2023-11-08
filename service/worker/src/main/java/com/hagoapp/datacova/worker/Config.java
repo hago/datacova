@@ -24,6 +24,8 @@ public class Config implements JsonStringify {
      * The web socket url to connect;
      */
     private String server;
+    private int port;
+    private String authKey;
 
     public String getGroup() {
         return group;
@@ -39,5 +41,21 @@ public class Config implements JsonStringify {
 
     public void setServer(String server) {
         this.server = server;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public String getAuthKey() {
+        return authKey;
+    }
+
+    public void setAuthKey(String authKey) {
+        this.authKey = authKey;
     }
 }
