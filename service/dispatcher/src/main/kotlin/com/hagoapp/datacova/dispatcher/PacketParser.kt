@@ -3,6 +3,11 @@ package com.hagoapp.datacova.dispatcher
 import com.hagoapp.datacova.utility.BytesOps
 import java.net.Socket
 
+/**
+ * Packet parser to pack and unpack message as byte sequence to transmit through socket.
+ *
+ * @constructor Create empty Packet parser
+ */
 class PacketParser {
     companion object {
 
