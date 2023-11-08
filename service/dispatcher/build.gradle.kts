@@ -1,6 +1,9 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     application
     id("java")
+    id("com.github.johnrengelman.shadow") version ("7.1.2")
 }
 
 group = "com.hagoapp.datacova"
@@ -15,9 +18,11 @@ dependencies {
     implementation(project(":message"))
     implementation(project(":utility"))
     implementation("org.slf4j", "slf4j-api", "2.0.9")
+    runtimeOnly("ch.qos.logback", "logback-classic", "1.4.11")
 
     testImplementation(platform("org.junit:junit-bom:5.9.2"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+    testRuntimeOnly("ch.qos.logback", "logback-classic", "1.4.11")
 }
 
 application {
@@ -30,4 +35,15 @@ tasks.test {
 
 kotlin {
     jvmToolchain(11)
+}
+
+tasks.withType<Jar>() {
+    isZip64 = true
+    manifest {
+        attributes(mapOf("Main-Class" to "com.hagoapp.datacova.dispatcher.Application"))
+    }
+}
+
+tasks.withType<ShadowJar>() {
+    isZip64 = true
 }

@@ -1,0 +1,11 @@
+{
+  "db": {
+    "host": "127.0.0.1",
+    "port": 5432,
+    "username": "cova",
+    "password": "cova",
+    "databaseName": "covadb"
+  },
+  "port": 9999,
+  "authKey": "M2odnxplocGg3Lk2"
+}

@@ -8,50 +8,49 @@
 package com.hagoapp.datacova.dispatcher
 
 import org.slf4j.LoggerFactory
-import java.io.ByteArrayOutputStream
 import java.net.ServerSocket
 import java.net.Socket
+import java.util.concurrent.atomic.AtomicBoolean
 
-class DispatchServer private constructor() {
-    companion object {
-        private val server: DispatchServer = DispatchServer()
-
-        fun getServer(): DispatchServer = server
-    }
+object DispatchServer {
 
     private val logger = LoggerFactory.getLogger(DispatchServer::class.java)
-
     private val config = Application.config
+    private val shouldClose = AtomicBoolean(false)
+    private val speakers = mutableListOf<SocketSpeaker>()
 
     fun start() {
         ServerSocket(config.port).use {
-            val sk = it.accept()
-            Thread { dispatch(sk) }.start()
+            while (!shouldClose.get()) {
+                logger.info("socket server started")
+                val sk = it.accept()
+                val speaker = SocketSpeaker(sk)
+                speakers.add(speaker)
+                Thread(speaker).start()
+            }
+            logger.info("socket server, closed")
         }
     }
 
-    private fun dispatch(socket: Socket) {
-        try {
-            val buffer = ByteArray(1024 * 1024)
-            val input = ByteArrayOutputStream().use {
-                while (true) {
-                    val i = socket.getInputStream().read(buffer, 0, buffer.size)
-                    if (i < 0) {
-                        break
-                    }
-                    it.write(buffer, 0, i)
+    fun stop() {
+        shouldClose.set(true)
+    }
+
+    private class SocketSpeaker(private val socket: Socket) : Runnable {
+
+        var shouldClose = AtomicBoolean(false)
+
+        override fun run() {
+            while (!shouldClose.get()) {
+                val data = SocketPacketParser.readPacket(socket)
+                if (data == null) {
+                    Thread.sleep(500L)
+                    continue
                 }
-                it.toByteArray()
-            }
-            val msg = ClientMessageHandler.get().handle(input) ?: return
-            socket.getOutputStream().write(msg)
-        } catch (e: Exception) {
-            logger.error("error: {}", e.message)
-        } finally {
-            try {
-                socket.close()
-            } catch (ignore: Exception) {
-                //
+                val rsp = ClientMessageHandler.get().handle(data)
+                if (rsp != null) {
+                    SocketPacketParser.writePacket(socket, rsp)
+                }
             }
         }
     }

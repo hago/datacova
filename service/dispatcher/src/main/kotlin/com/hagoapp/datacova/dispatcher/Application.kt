@@ -27,22 +27,22 @@ class Application {
 
         @JvmStatic
         fun main(args: Array<String>) {
-            val configFile = if (args.size > 1) args[1] else DEFAULT_CONFIG_FILE
+            val configFile = if (args.isNotEmpty()) args[0] else DEFAULT_CONFIG_FILE
             if (!File(configFile).exists()) {
                 logger.error("config file not found from {}, exit", configFile)
+                return
             }
             config = FileInputStream(configFile).use {
                 val json = String(it.readAllBytes(), StandardCharsets.UTF_8)
                 Gson().fromJson(json, Config::class.java)
             }
-            Thread { DispatchServer.getServer().start() }.start()
+            Thread { DispatchServer.start() }.start()
             while (!exitFlag.get()) {
-                val l = loadActiveTaskExecution()
+                /*val l = loadActiveTaskExecution()
                 if (l.isEmpty()) {
                     Thread.sleep(5000)
                     continue
-                }
-
+                }*/
             }
             logger.info("exit")
         }
