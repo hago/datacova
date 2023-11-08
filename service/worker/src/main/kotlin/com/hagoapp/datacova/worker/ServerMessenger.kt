@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.net.InetSocketAddress
 import java.net.Socket
+import java.net.SocketException
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -26,7 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 class ServerMessenger private constructor(private val config: Config) {
 
     companion object {
-        private const val INTERVAL_SECONDS = 10
+        private const val INTERVAL_SECONDS = 5
         private lateinit var messenger: ServerMessenger
 
         fun create(config: Config): ServerMessenger {
@@ -39,37 +40,57 @@ class ServerMessenger private constructor(private val config: Config) {
 
     private val exitFlag = AtomicBoolean(false)
     private val logger = LoggerFactory.getLogger(ServerMessenger::class.java)
-    private val socket = Socket()
+    private lateinit var socket: Socket
     private var name: String? = null
 
     init {
-        Thread { tryConnect() }.start()
-    }
-
-    private fun tryConnect() {
-        socket.use {
-            try {
-                socket.connect(InetSocketAddress(config.server, config.port))
-            } catch (e: IOException) {
-                logger.error("connecting to {}:{} failed: {}", config.server, config.port, e.message)
-                return
-            }
-            socket.keepAlive = true
-            register()
+        Thread {
             while (!exitFlag.get()) {
-                val received = SocketPacketParser.readPacket(socket)
-                if (received == null) {
-                    logger.debug("no data, sleep {} seconds", INTERVAL_SECONDS)
+                try {
+                    connect()
+                } catch (e: IOException) {
+                    logger.error("connecting to {}:{} failed: {}", config.server, config.port, e.message)
+                    logger.info("sleep {} seconds to reconnect", INTERVAL_SECONDS)
                     Thread.sleep(INTERVAL_SECONDS * 1000L)
                     continue
                 }
-                val msg = MessageReader.readMessage(received)
-                if (msg == null) {
-                    logger.error("unrecognized data received, ignored")
-                    continue
+                try {
+                    communicate()
+                } catch (e: SocketException) {
+                    logger.info("socket error: {}, sleep {} seconds to reconnect", e.message, INTERVAL_SECONDS)
+                    Thread.sleep(INTERVAL_SECONDS * 1000L)
+                    socket.close()
                 }
-                handleMessage(msg)
             }
+            try {
+                socket.close()
+            } finally {
+                logger.debug("worker {} exit", name)
+            }
+        }.start()
+    }
+
+    private fun connect() {
+        socket = Socket()
+        socket.keepAlive = true
+        socket.connect(InetSocketAddress(config.server, config.port))
+        register()
+    }
+
+    private fun communicate() {
+        while (!exitFlag.get()) {
+            val received = SocketPacketParser.readPacket(socket)
+            if (received == null) {
+                logger.debug("no data, sleep {} seconds", INTERVAL_SECONDS)
+                Thread.sleep(INTERVAL_SECONDS * 1000L)
+                continue
+            }
+            val msg = MessageReader.readMessage(received)
+            if (msg == null) {
+                logger.error("unrecognized data received, ignored")
+                continue
+            }
+            handleMessage(msg)
         }
     }
 
