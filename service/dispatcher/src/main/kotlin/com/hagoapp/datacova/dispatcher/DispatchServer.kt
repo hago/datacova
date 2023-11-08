@@ -22,8 +22,8 @@ object DispatchServer {
 
     fun start() {
         ServerSocket(config.port).use {
+            logger.info("socket server started")
             while (!shouldClose.get()) {
-                logger.info("socket server started")
                 val sk = it.accept()
                 val speaker = SocketSpeaker(sk)
                 speakers.add(speaker)
