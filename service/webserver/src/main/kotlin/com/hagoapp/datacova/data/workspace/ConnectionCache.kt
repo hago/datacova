@@ -20,15 +20,19 @@ class ConnectionCache {
         fun getConnections(workspaceId: Int): List<WorkspaceConnection> {
             val token = object : TypeToken<List<WorkspaceConnection>>() {}
             val l = RedisCacheReader.readCachedData(
-                CONNECTION_LIST, 3600,
-                { params -> ConnectionData(CoVaConfig.getConfig().database).getWorkspaceConnections(params[0] as Int) }, token.type, workspaceId
+                CoVaConfig.getConfig().redis,
+                CONNECTION_LIST,
+                3600,
+                { params -> ConnectionData(CoVaConfig.getConfig().database).getWorkspaceConnections(params[0] as Int) },
+                token.type,
+                workspaceId
             )
             return l ?: listOf()
         }
 
         @JvmStatic
         fun clearConnections(workspaceId: Int) {
-            RedisCacheReader.clearData(CONNECTION_LIST, workspaceId)
+            RedisCacheReader.clearData(CoVaConfig.getConfig().redis, CONNECTION_LIST, workspaceId)
         }
 
         @JvmStatic

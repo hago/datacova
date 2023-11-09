@@ -7,6 +7,7 @@
 
 package com.hagoapp.datacova.web.websocket;
 
+import com.hagoapp.datacova.config.CoVaConfig;
 import com.hagoapp.datacova.user.UserInfo;
 import com.hagoapp.datacova.util.http.RequestHelper;
 import com.hagoapp.datacova.util.web.AuthUtils;
@@ -38,7 +39,7 @@ public class Auth {
             return null;
         }
         logger.debug("web socket token: {}", token);
-        return RedisCacheReader.readDataInCacheOnly(token, UserInfo.class);
+        return RedisCacheReader.readDataInCacheOnly(CoVaConfig.getConfig().getRedis(), token, UserInfo.class);
     }
 
     private static String authenticateCookie(ServerWebSocket serverWebSocket) {

@@ -23,8 +23,12 @@ class WorkspaceCache {
         @JvmStatic
         fun getWorkspace(id: Int): WorkSpace? {
             return RedisCacheReader.readCachedData(
-                WORKSPACE_INFO, 3600,
-                { params -> WorkSpaceData(CoVaConfig.getConfig().database).getWorkSpace(params[0] as Int) }, WorkSpace::class.java, id
+                CoVaConfig.getConfig().redis,
+                WORKSPACE_INFO,
+                3600,
+                { params -> WorkSpaceData(CoVaConfig.getConfig().database).getWorkSpace(params[0] as Int) },
+                WorkSpace::class.java,
+                id
             )
         }
 
@@ -35,8 +39,12 @@ class WorkspaceCache {
         ): List<WorkSpaceData.WorkspaceBasicUser> {
             val token = object : TypeToken<List<WorkSpaceData.WorkspaceBasicUser>>() {}
             val list = RedisCacheReader.readCachedData(
-                WORKSPACE_USER_ROLE, 3600,
-                { params -> WorkSpaceData(CoVaConfig.getConfig().database).getWorkspaceUserIdList(params[0] as Int) }, token.type, id
+                CoVaConfig.getConfig().redis,
+                WORKSPACE_USER_ROLE,
+                3600,
+                { params -> WorkSpaceData(CoVaConfig.getConfig().database).getWorkspaceUserIdList(params[0] as Int) },
+                token.type,
+                id
             )
             return list!!.filter { u -> u.role in roles }
         }
@@ -45,6 +53,7 @@ class WorkspaceCache {
         fun getMyWorkSpaces(userId: Long): List<WorkSpace>? {
             val token = object : TypeToken<List<WorkSpace>>() {}
             return RedisCacheReader.readCachedData(
+                CoVaConfig.getConfig().redis,
                 MY_WORKSPACE_INFO, 3600,
                 { params ->
                     if (params.isEmpty()) listOf() else
@@ -55,12 +64,12 @@ class WorkspaceCache {
 
         @JvmStatic
         fun clearWorkspaceUser(id: Int) {
-            RedisCacheReader.clearData(WORKSPACE_USER_ROLE, id)
+            RedisCacheReader.clearData(CoVaConfig.getConfig().redis, WORKSPACE_USER_ROLE, id)
         }
 
         @JvmStatic
         fun clearMyWorkspaces(userId: Long) {
-            RedisCacheReader.clearData(MY_WORKSPACE_INFO, userId)
+            RedisCacheReader.clearData(CoVaConfig.getConfig().redis, MY_WORKSPACE_INFO, userId)
         }
     }
 }

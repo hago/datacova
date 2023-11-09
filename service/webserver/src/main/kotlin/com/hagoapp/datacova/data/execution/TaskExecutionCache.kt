@@ -26,6 +26,7 @@ class TaskExecutionCache {
         @JvmStatic
         fun getExecutionOfTask(taskId: Int): TaskExecution? {
             return RedisCacheReader.readCachedData(
+                CoVaConfig.getConfig().redis,
                 TASK_EXECUTION_OF_TASK,
                 3600,
                 { params ->
@@ -51,6 +52,7 @@ class TaskExecutionCache {
         fun getExecutionsOfWorkspace(workspaceId: Int, start: Int, size: Int): List<TaskExecution> {
             val token = object : TypeToken<List<TaskExecution>>() {}
             return RedisCacheReader.readCachedData(
+                CoVaConfig.getConfig().redis,
                 TASK_EXECUTION_LIST_OF_WORKSPACE,
                 3600,
                 { params ->
@@ -77,6 +79,7 @@ class TaskExecutionCache {
         @JvmStatic
         fun getTaskExecution(id: Int): TaskExecution? {
             return RedisCacheReader.readCachedData(
+                CoVaConfig.getConfig().redis,
                 TASK_EXECUTION,
                 3600,
                 { params ->

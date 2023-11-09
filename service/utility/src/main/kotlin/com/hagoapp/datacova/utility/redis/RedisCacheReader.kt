@@ -20,24 +20,18 @@ class RedisCacheReader<T> private constructor() {
         const val DEFAULT_VALIDITY = 3600L
         var skipCache = false
         private val logger = LoggerFactory.getLogger(RedisCacheReader::class.java)
-        private var redisConfig: RedisConfig? = null
-
-        @JvmStatic
-        fun setRedisConfiguration(cfg: RedisConfig) {
-            redisConfig = cfg
-        }
 
         @JvmStatic
         fun <T> readCachedData(
+            redisConfig: RedisConfig,
             cacheName: String,
             dataLifetime: Long,
             loader: GenericLoader<T>,
             type: Type,
             vararg params: Any?
         ): T? {
-            assert(redisConfig != null)
             val builder = Builder<T>()
-                .withJedisConfig(redisConfig!!)
+                .withJedisConfig(redisConfig)
                 .shouldSkipCache(skipCache)
                 .withLoadFunction(loader)
                 .withDataLifeTime(dataLifetime)
@@ -49,13 +43,13 @@ class RedisCacheReader<T> private constructor() {
 
         @JvmStatic
         fun <T> readDataInCacheOnly(
+            redisConfig: RedisConfig,
             cacheName: String,
             type: Type,
             vararg params: Any?
         ): T? {
-            assert(redisConfig != null)
             val builder = Builder<T>()
-                .withJedisConfig(redisConfig!!)
+                .withJedisConfig(redisConfig)
                 .shouldSkipCache(skipCache)
                 .withCacheName(cacheName)
                 .withType(type)
@@ -65,15 +59,15 @@ class RedisCacheReader<T> private constructor() {
 
         @JvmStatic
         fun <T> readDataAndUpdateCache(
+            redisConfig: RedisConfig,
             cacheName: String,
             dataLifetime: Long,
             loader: GenericLoader<T>,
             type: Type,
             vararg params: Any?
         ): T? {
-            assert(redisConfig != null)
             val builder = Builder<T>()
-                .withJedisConfig(redisConfig!!)
+                .withJedisConfig(redisConfig)
                 .shouldSkipCache(true)
                 .withLoadFunction(loader)
                 .withDataLifeTime(dataLifetime)
@@ -85,14 +79,14 @@ class RedisCacheReader<T> private constructor() {
 
         @JvmStatic
         fun <T> readDataAndClearCache(
+            redisConfig: RedisConfig,
             cacheName: String,
             loader: GenericLoader<T>,
             type: Type,
             vararg params: Any?
         ): T? {
-            assert(redisConfig != null)
             val builder = Builder<T>()
-                .withJedisConfig(redisConfig!!)
+                .withJedisConfig(redisConfig)
                 .shouldSkipCache(skipCache)
                 .withLoadFunction(loader)
                 .withDataLifeTime(-1)
@@ -105,10 +99,9 @@ class RedisCacheReader<T> private constructor() {
         }
 
         @JvmStatic
-        fun clearData(cacheName: String, vararg params: Any?) {
-            assert(redisConfig != null)
+        fun clearData(redisConfig: RedisConfig, cacheName: String, vararg params: Any?) {
             val builder = Builder<String>()
-                .withJedisConfig(redisConfig!!)
+                .withJedisConfig(redisConfig)
                 .shouldSkipCache(skipCache)
                 .withDataLifeTime(-1)
                 .withCacheName(cacheName)
@@ -248,7 +241,7 @@ class RedisCacheReader<T> private constructor() {
         return try {
             val jsonStr = createGson().toJson(data)
             when {
-                dataLifeTime == 0L -> jedis.set(key, jsonStr)
+                dataLifeTime == 0L -> jedis[key] = jsonStr
                 dataLifeTime > 0L -> jedis.setex(key, dataLifeTime, jsonStr)
                 else -> jedis.del(key)
             }

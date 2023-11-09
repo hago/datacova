@@ -79,6 +79,7 @@ class LocalUserProvider : UserAuthProvider {
 
     override fun getUserInfo(userId: String): UserInfo? {
         return RedisCacheReader.readCachedData(
+            CoVaConfig.getConfig().redis,
             "UserInfo", 60 * 30,
             userInfoLoader, UserInfo::class.java, userId
         )

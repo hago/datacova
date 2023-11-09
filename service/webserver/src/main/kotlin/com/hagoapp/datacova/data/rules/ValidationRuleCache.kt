@@ -23,9 +23,16 @@ class ValidationRuleCache {
         fun getRules(workspaceId: Int, start: Int, size: Int): List<Rule> {
             val token = object : TypeToken<List<Rule>>() {}
             val l = RedisCacheReader.readCachedData(
+                CoVaConfig.getConfig().redis,
                 VALIDATION_RULE_LIST,
                 86400,
-                { params -> ValidationRuleData(CoVaConfig.getConfig().database).getRules(params[0] as Int, params[1] as Int, params[2] as Int) },
+                { params ->
+                    ValidationRuleData(CoVaConfig.getConfig().database).getRules(
+                        params[0] as Int,
+                        params[1] as Int,
+                        params[2] as Int
+                    )
+                },
                 token.type,
                 workspaceId,
                 start,
@@ -45,6 +52,7 @@ class ValidationRuleCache {
 
         fun getRule(id: Long): Rule? {
             return RedisCacheReader.readCachedData(
+                CoVaConfig.getConfig().redis,
                 VALIDATION_RULE,
                 86400,
                 { params -> ValidationRuleData(CoVaConfig.getConfig().database).getRule(params[0] as Long) },
@@ -53,7 +61,7 @@ class ValidationRuleCache {
         }
 
         fun clearRule(id: Long) {
-            RedisCacheReader.clearData(VALIDATION_RULE, id)
+            RedisCacheReader.clearData(CoVaConfig.getConfig().redis, VALIDATION_RULE, id)
         }
     }
 }

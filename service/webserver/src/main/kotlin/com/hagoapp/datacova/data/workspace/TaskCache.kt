@@ -21,6 +21,7 @@ class TaskCache {
         fun listTasks(id: Int): List<Task> {
             val token = object : TypeToken<List<Task>>() {}
             val l = RedisCacheReader.readCachedData(
+                CoVaConfig.getConfig().redis,
                 TASK_LIST, 3600,
                 { params ->
                     if (params.isEmpty()) listOf() else
@@ -32,7 +33,7 @@ class TaskCache {
 
         @JvmStatic
         fun clearWorkspaceTasks(workspaceId: Int) {
-            RedisCacheReader.clearData(TASK_LIST, workspaceId)
+            RedisCacheReader.clearData(CoVaConfig.getConfig().redis, TASK_LIST, workspaceId)
         }
 
         @JvmStatic

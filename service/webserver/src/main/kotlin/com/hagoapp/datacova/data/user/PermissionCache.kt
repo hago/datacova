@@ -20,6 +20,7 @@ class PermissionCache {
 
         fun getUserPermissions(userInfo: UserInfo): UserPermissions {
             val up = RedisCacheReader.readCachedData(
+                CoVaConfig.getConfig().redis,
                 USER_PERMISSIONS,
                 PERMISSION_EXPIRY,
                 { params ->

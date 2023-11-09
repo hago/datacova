@@ -23,17 +23,22 @@ class UserCache {
 
         @JvmStatic
         fun getUser(id: Long): UserInfo? {
-            return RedisCacheReader.readCachedData(USER_INFO, USER_INFO_CACHE_TIME, { params ->
-                UserData(CoVaConfig.getConfig().database).use {
-                    it.findUser(params[0] as Long)
-                }
-            }, UserInfo::class.java, id)
+            return RedisCacheReader.readCachedData(
+                CoVaConfig.getConfig().redis,
+                USER_INFO, USER_INFO_CACHE_TIME, { params ->
+                    UserData(CoVaConfig.getConfig().database).use {
+                        it.findUser(params[0] as Long)
+                    }
+                }, UserInfo::class.java, id
+            )
         }
 
         @JvmStatic
         fun batchGetUser(idList: List<Long>): List<UserInfo?> {
             val list = idList.map { id ->
-                RedisCacheReader.readCachedData<UserInfo?>(USER_INFO, 3600,
+                RedisCacheReader.readCachedData<UserInfo?>(
+                    CoVaConfig.getConfig().redis,
+                    USER_INFO, 3600,
                     { null }, UserInfo::class.java, id
                 )
             }.toMutableList()
@@ -73,6 +78,7 @@ class UserCache {
         @JvmStatic
         fun getUserByUserId(userId: String, userType: Int): UserInfo? {
             return RedisCacheReader.readCachedData(
+                CoVaConfig.getConfig().redis,
                 USER_INFO_BY_USERID,
                 USER_INFO_CACHE_TIME,
                 { params ->
