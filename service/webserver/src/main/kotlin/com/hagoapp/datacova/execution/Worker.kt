@@ -10,7 +10,6 @@ package com.hagoapp.datacova.execution
 
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.lib.data.TaskExecutionData
-import com.hagoapp.datacova.executor.Executor
 import com.hagoapp.datacova.file.FileStoreFactory
 import com.hagoapp.datacova.lib.action.TaskAction
 import com.hagoapp.datacova.lib.execution.*
@@ -38,11 +37,7 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
     }
 
     init {
-        val executor = Executor.getExecutor()
         addWatcher(this)
-        if (executor != null) {
-            addWatcher(executor)
-        }
     }
 
     private fun createTempFile(fileInfo: ExecutionFileInfo): String {

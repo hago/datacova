@@ -6,7 +6,6 @@ import com.hagoapp.datacova.data.execution.TaskExecutionCache
 import com.hagoapp.datacova.lib.data.TaskExecutionData
 import com.hagoapp.datacova.data.workspace.TaskCache
 import com.hagoapp.datacova.data.workspace.WorkspaceCache
-import com.hagoapp.datacova.dispatcher.Dispatcher
 import com.hagoapp.datacova.file.FileStoreFactory
 import com.hagoapp.datacova.lib.execution.ExecutionFileInfo
 import com.hagoapp.datacova.lib.execution.TaskExecution
@@ -207,7 +206,6 @@ class DataFile {
             db.createTaskExecution(execTask)
         }
         TaskExecutionCache.clearWorkspaceTaskExecutions(workspaceId)
-        Dispatcher.get().executionComing(exec)
         ResponseHelper.sendResponse(
             context, HttpResponseStatus.OK, mapOf(
                 "code" to 0,

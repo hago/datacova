@@ -10,8 +10,6 @@ package com.hagoapp.datacova.command;
 
 import com.hagoapp.datacova.utility.CoVaException;
 import com.hagoapp.datacova.config.CoVaConfig;
-import com.hagoapp.datacova.dispatcher.Dispatcher;
-import com.hagoapp.datacova.executor.Executor;
 import com.hagoapp.datacova.web.WebManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,29 +27,10 @@ public class Start extends CommandWithConfig {
         CoVaConfig.loadConfig(configFile);
         var config = CoVaConfig.getConfig();
 
-        boolean runDispatcher = config.getWeb() != null;
-        boolean runExecutor = config.getExecutor() != null;
-        if (runDispatcher) {
-            logger.info("Starting dispatcher functions");
-            var packages = List.of("com.hagoapp.datacova.web");
-            WebManager.getManager(config.getWeb(), packages);
-            logger.info("Web server started");
-            Dispatcher.Companion.get().startDispatcher();
-            logger.info("Dispatcher started");
-        }
-        if (runExecutor) {
-            logger.info("Starting executor functions");
-            var packages = List.of("com.hagoapp.datacova.executor.web");
-            WebManager.getManager(config.getExecutor(), packages);
-            logger.info("Executor web API started");
-            var executor = Executor.Companion.getExecutor();
-            if (executor == null) {
-                logger.error("Error executor creation");
-            } else {
-                executor.start();
-            }
-            logger.info("Executor service created");
-        }
+        logger.info("Starting dispatcher functions");
+        var packages = List.of("com.hagoapp.datacova.web");
+        WebManager.getManager(config.getWeb(), packages);
+        logger.info("Web server started");
         return super.call();
     }
 }
