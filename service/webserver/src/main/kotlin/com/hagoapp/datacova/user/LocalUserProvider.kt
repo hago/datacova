@@ -81,7 +81,7 @@ class LocalUserProvider : UserAuthProvider {
         return RedisCacheReader.readCachedData(
             CoVaConfig.getConfig().redis,
             "UserInfo", 60 * 30,
-            userInfoLoader, UserInfo::class.java, userId
+            userInfoLoader, null, UserInfo::class.java, userId
         )
     }
 

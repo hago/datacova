@@ -13,8 +13,16 @@ import com.hagoapp.datacova.utility.MapSerializer;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+/**
+ * Basic definition of a rule.
+ *
+ * @author suncjs
+ * @since 0.1
+ */
 public class Rule implements JsonStringify {
     private long id;
     private String name;
@@ -98,13 +106,28 @@ public class Rule implements JsonStringify {
         this.modifyTime = modifyTime;
     }
 
-    @SuppressWarnings("unchecked")
     @NotNull
     public static Rule fromJson(@NotNull String json) throws IOException {
         Map<String, Object> map = MapSerializer.deserializeMap(json);
+        return fromMap(map, json);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Rule fromMap(Map<String, Object> map, String mapJson) {
         Map<String, Object> configMap = (Map<String, Object>)map.get("ruleConfig");
-        Rule rule = new Gson().fromJson(json, Rule.class);
+        Rule rule = new Gson().fromJson(mapJson, Rule.class);
         rule.ruleConfig = VerifyConfiguration.create(configMap);
         return rule;
+    }
+
+    @NotNull
+    public static List<Rule> listFromJson(@NotNull String json) throws IOException {
+        var list = MapSerializer.deserializeList(json);
+        var ret = new ArrayList<Rule>();
+        for (var map: list) {
+            var rule = fromMap(map, MapSerializer.serializeMap(map));
+            ret.add(rule);
+        }
+        return ret;
     }
 }

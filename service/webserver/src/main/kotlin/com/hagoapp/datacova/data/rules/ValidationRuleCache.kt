@@ -33,6 +33,7 @@ class ValidationRuleCache {
                         params[2] as Int
                     )
                 },
+                { json -> Rule.listFromJson(json) },
                 token.type,
                 workspaceId,
                 start,
@@ -56,6 +57,7 @@ class ValidationRuleCache {
                 VALIDATION_RULE,
                 86400,
                 { params -> ValidationRuleData(CoVaConfig.getConfig().database).getRule(params[0] as Long) },
+                { json -> if (json == null) null else Rule.fromJson(json) },
                 Rule::class.java, id
             )
         }

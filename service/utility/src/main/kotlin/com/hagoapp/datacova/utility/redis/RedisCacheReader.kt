@@ -20,6 +20,7 @@ class RedisCacheReader<T> private constructor() {
         const val DEFAULT_VALIDITY = 3600L
         var skipCache = false
         private val logger = LoggerFactory.getLogger(RedisCacheReader::class.java)
+        private val gson = GsonBuilder().serializeNulls().create()
 
         @JvmStatic
         fun <T> readCachedData(
@@ -27,6 +28,7 @@ class RedisCacheReader<T> private constructor() {
             cacheName: String,
             dataLifetime: Long,
             loader: GenericLoader<T>,
+            deserializer: Deserializer<T>?,
             type: Type,
             vararg params: Any?
         ): T? {
@@ -36,6 +38,7 @@ class RedisCacheReader<T> private constructor() {
                 .withLoadFunction(loader)
                 .withDataLifeTime(dataLifetime)
                 .withCacheName(cacheName)
+                .withDeserializer(deserializer ?: Deserializer { json -> Gson().fromJson(json, type) })
                 .withType(type)
             val reader = builder.create()
             return reader.readData(*params)
@@ -46,12 +49,14 @@ class RedisCacheReader<T> private constructor() {
             redisConfig: RedisConfig,
             cacheName: String,
             type: Type,
+            deserializer: Deserializer<T>?,
             vararg params: Any?
         ): T? {
             val builder = Builder<T>()
                 .withJedisConfig(redisConfig)
                 .shouldSkipCache(skipCache)
                 .withCacheName(cacheName)
+                .withDeserializer(deserializer ?: Deserializer { json -> Gson().fromJson(json, type) })
                 .withType(type)
             val reader = builder.create()
             return reader.readData(*params)
@@ -63,6 +68,7 @@ class RedisCacheReader<T> private constructor() {
             cacheName: String,
             dataLifetime: Long,
             loader: GenericLoader<T>,
+            deserializer: Deserializer<T>?,
             type: Type,
             vararg params: Any?
         ): T? {
@@ -72,6 +78,7 @@ class RedisCacheReader<T> private constructor() {
                 .withLoadFunction(loader)
                 .withDataLifeTime(dataLifetime)
                 .withCacheName(cacheName)
+                .withDeserializer(deserializer ?: Deserializer { json -> Gson().fromJson(json, type) })
                 .withType(type)
             val reader = builder.create()
             return reader.readData(*params)
@@ -128,6 +135,7 @@ class RedisCacheReader<T> private constructor() {
     private var cacheName: String? = null
     private lateinit var actualKey: String
     private var redisConfig: RedisConfig? = null
+    private var deserializer: Deserializer<T> = Deserializer<T> { json -> gson.fromJson<T>(json, type) }
 
     val lastKey: String
         get() = actualKey
@@ -173,6 +181,11 @@ class RedisCacheReader<T> private constructor() {
             return this
         }
 
+        fun withDeserializer(deserializer: Deserializer<T>): Builder<T> {
+            reader.deserializer = deserializer
+            return this
+        }
+
         fun create(): RedisCacheReader<T> {
             return reader
         }
@@ -190,17 +203,17 @@ class RedisCacheReader<T> private constructor() {
         createJedis().use { jedis ->
             return when {
                 loadFunction == null -> {
-                    val jsonStr = jedis.get(actualKey)
+                    val jsonStr = jedis[actualKey]
                     if (jsonStr == null) null else Gson().fromJson<T>(jsonStr, type)
                 }
 
                 skipCache -> doDataLoadAndUpdateRedis(jedis, actualKey, *params)
                 else -> {
-                    val jsonStr = jedis.get(actualKey)
+                    val jsonStr = jedis[actualKey]
                     if (jsonStr == null) {
                         doDataLoadAndUpdateRedis(jedis, actualKey, *params)
                     } else {
-                        Gson().fromJson<T>(jsonStr, type)
+                        deserializer.deserialize(jsonStr)
                     }
                 }
             }
@@ -239,7 +252,7 @@ class RedisCacheReader<T> private constructor() {
     private fun doDataLoadAndUpdateRedis(jedis: Jedis, key: String, vararg params: Any?): T? {
         val data = loadFunction?.perform(*params) ?: return null
         return try {
-            val jsonStr = createGson().toJson(data)
+            val jsonStr = gson.toJson(data)
             when {
                 dataLifeTime == 0L -> jedis[key] = jsonStr
                 dataLifeTime > 0L -> jedis.setex(key, dataLifeTime, jsonStr)
@@ -249,10 +262,6 @@ class RedisCacheReader<T> private constructor() {
         } catch (e: JsonSyntaxException) {
             null
         }
-    }
-
-    private fun createGson(): Gson {
-        return GsonBuilder().serializeNulls().create()
     }
 
     private fun createKey(vararg params: Any?): String {

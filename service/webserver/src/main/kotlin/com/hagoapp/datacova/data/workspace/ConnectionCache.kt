@@ -10,6 +10,7 @@ package com.hagoapp.datacova.data.workspace
 import com.google.gson.reflect.TypeToken
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.entity.connection.WorkspaceConnection
+import com.hagoapp.datacova.utility.MapSerializer
 import com.hagoapp.datacova.utility.redis.RedisCacheReader
 
 class ConnectionCache {
@@ -24,6 +25,11 @@ class ConnectionCache {
                 CONNECTION_LIST,
                 3600,
                 { params -> ConnectionData(CoVaConfig.getConfig().database).getWorkspaceConnections(params[0] as Int) },
+                { json ->
+                    MapSerializer.deserializeList(json).map { map ->
+                        WorkspaceConnection.load(MapSerializer.serializeMap(map))
+                    }
+                },
                 token.type,
                 workspaceId
             )

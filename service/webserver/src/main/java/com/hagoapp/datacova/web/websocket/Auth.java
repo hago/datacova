@@ -39,7 +39,7 @@ public class Auth {
             return null;
         }
         logger.debug("web socket token: {}", token);
-        return RedisCacheReader.readDataInCacheOnly(CoVaConfig.getConfig().getRedis(), token, UserInfo.class);
+        return RedisCacheReader.readDataInCacheOnly(CoVaConfig.getConfig().getRedis(), token, UserInfo.class, null);
     }
 
     private static String authenticateCookie(ServerWebSocket serverWebSocket) {

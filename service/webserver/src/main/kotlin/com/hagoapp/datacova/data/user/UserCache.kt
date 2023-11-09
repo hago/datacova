@@ -29,7 +29,7 @@ class UserCache {
                     UserData(CoVaConfig.getConfig().database).use {
                         it.findUser(params[0] as Long)
                     }
-                }, UserInfo::class.java, id
+                }, null, UserInfo::class.java, id
             )
         }
 
@@ -39,7 +39,7 @@ class UserCache {
                 RedisCacheReader.readCachedData<UserInfo?>(
                     CoVaConfig.getConfig().redis,
                     USER_INFO, 3600,
-                    { null }, UserInfo::class.java, id
+                    { null }, null, UserInfo::class.java, id
                 )
             }.toMutableList()
             val nullUsers = list.mapIndexed { i, info ->
@@ -86,6 +86,7 @@ class UserCache {
                     val type = params[1] as Int
                     UserData(CoVaConfig.getConfig().database).findUser(uid, type)
                 },
+                null,
                 UserInfo::class.java,
                 userId,
                 userType

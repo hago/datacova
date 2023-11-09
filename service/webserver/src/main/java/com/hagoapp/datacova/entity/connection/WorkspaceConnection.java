@@ -105,10 +105,9 @@ public class WorkspaceConnection implements JsonStringify {
         Map<String, Object> map = null;
         try {
             map = MapSerializer.deserializeMap(json);
-            Object o = map.get("configuration");
-            Map<String, Object> configMap = (Map<String, Object>) map.get("configuration");
-            WorkspaceConnection w = new Gson().fromJson(json, WorkspaceConnection.class);
-            DbConfig config = DbConfigReader.json2DbConfig(MapSerializer.serializeMap(configMap));
+            var configMap = (Map<String, Object>) map.get("configuration");
+            var w = new Gson().fromJson(json, WorkspaceConnection.class);
+            var config = DbConfigReader.json2DbConfig(MapSerializer.serializeMap(configMap));
             w.setConfiguration(config);
             return w;
         } catch (IOException | F2TException e) {

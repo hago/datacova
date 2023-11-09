@@ -10,6 +10,7 @@ package com.hagoapp.datacova.data.workspace
 import com.google.gson.reflect.TypeToken
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.lib.task.Task
+import com.hagoapp.datacova.utility.MapSerializer
 import com.hagoapp.datacova.utility.redis.RedisCacheReader
 
 class TaskCache {
@@ -26,7 +27,9 @@ class TaskCache {
                 { params ->
                     if (params.isEmpty()) listOf() else
                         TaskData(CoVaConfig.getConfig().database).getTasks(params[0] as Int)
-                }, token.type, id
+                },
+                { json -> MapSerializer.deserializeList(json).map { Task.fromJson(MapSerializer.serializeMap(it)) }},
+                token.type, id
             )
             return l ?: listOf()
         }

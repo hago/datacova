@@ -27,6 +27,7 @@ class WorkspaceCache {
                 WORKSPACE_INFO,
                 3600,
                 { params -> WorkSpaceData(CoVaConfig.getConfig().database).getWorkSpace(params[0] as Int) },
+                null,
                 WorkSpace::class.java,
                 id
             )
@@ -43,6 +44,7 @@ class WorkspaceCache {
                 WORKSPACE_USER_ROLE,
                 3600,
                 { params -> WorkSpaceData(CoVaConfig.getConfig().database).getWorkspaceUserIdList(params[0] as Int) },
+                null,
                 token.type,
                 id
             )
@@ -58,7 +60,7 @@ class WorkspaceCache {
                 { params ->
                     if (params.isEmpty()) listOf() else
                         WorkSpaceData(CoVaConfig.getConfig().database).getMyWorkSpaces(params[0] as Long)
-                }, token.type, userId
+                }, null, token.type, userId
             )
         }
 

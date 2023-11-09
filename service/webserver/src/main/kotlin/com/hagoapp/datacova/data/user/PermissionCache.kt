@@ -27,6 +27,7 @@ class PermissionCache {
                     val u = params[0] as UserInfo
                     PermissionData(CoVaConfig.getConfig().database).getUserPermissions(u)
                 },
+                null,
                 UserPermissions::class.java,
                 userInfo
             )
