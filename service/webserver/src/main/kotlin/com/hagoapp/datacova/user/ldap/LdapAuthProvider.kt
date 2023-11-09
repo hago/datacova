@@ -8,7 +8,7 @@
 package com.hagoapp.datacova.user.ldap
 
 import com.hagoapp.datacova.config.CoVaConfig
-import com.hagoapp.datacova.utility.ldap.LdapAttributes
+import com.hagoapp.datacova.utility.ldap.LdapAttributeNames
 import com.hagoapp.datacova.data.user.UserCache
 import com.hagoapp.datacova.data.user.UserData
 import com.hagoapp.datacova.utility.ldap.LdapHelper
@@ -68,13 +68,13 @@ class LdapAuthProvider : UserAuthProvider {
         val userInfo = UserInfo()
         val config = LdapConfigManager.defaultConfig!!
         with(userInfo) {
-            userId = map.getValue(config.attributes.getActualAttribute(LdapAttributes.ATTRIBUTE_USERID)).toString()
+            userId = map.getValue(config.attributeNames.getActualAttribute(LdapAttributeNames.ATTRIBUTE_USERID)).toString()
             provider = getProviderName()
             userType = UserType.parseInt(getProviderType())
-            name = map.getValue(config.attributes.getActualAttribute(LdapAttributes.ATTRIBUTE_DISPLAY_NAME)).toString()
-            email = map.getValue(config.attributes.getActualAttribute(LdapAttributes.ATTRIBUTE_MAIL)).toString()
+            name = map.getValue(config.attributeNames.getActualAttribute(LdapAttributeNames.ATTRIBUTE_DISPLAY_NAME)).toString()
+            email = map.getValue(config.attributeNames.getActualAttribute(LdapAttributeNames.ATTRIBUTE_MAIL)).toString()
             mobile =
-                map.getValue(config.attributes.getActualAttribute(LdapAttributes.ATTRIBUTE_TELEPHONE_NUMBER)).toString()
+                map.getValue(config.attributeNames.getActualAttribute(LdapAttributeNames.ATTRIBUTE_TELEPHONE_NUMBER)).toString()
             pwdHash = ""
         }
         return UserData(CoVaConfig.getConfig().database).addUserFromProvider(userInfo).id
@@ -90,11 +90,11 @@ class LdapAuthProvider : UserAuthProvider {
 
     override fun searchUser(search: String, count: Int): List<UserSearchResultItem> {
         createLdap().use { ldap ->
-            val attributes = LdapConfigManager.defaultConfig!!.attributes
-            val cn = attributes.getActualAttribute(LdapAttributes.ATTRIBUTE_USERID)
-            val name = attributes.getActualAttribute(LdapAttributes.ATTRIBUTE_DISPLAY_NAME)
-            val mobile = attributes.getActualAttribute(LdapAttributes.ATTRIBUTE_TELEPHONE_NUMBER)
-            val email = attributes.getActualAttribute(LdapAttributes.ATTRIBUTE_MAIL)
+            val attributes = LdapConfigManager.defaultConfig!!.attributeNames
+            val cn = attributes.getActualAttribute(LdapAttributeNames.ATTRIBUTE_USERID)
+            val name = attributes.getActualAttribute(LdapAttributeNames.ATTRIBUTE_DISPLAY_NAME)
+            val mobile = attributes.getActualAttribute(LdapAttributeNames.ATTRIBUTE_TELEPHONE_NUMBER)
+            val email = attributes.getActualAttribute(LdapAttributeNames.ATTRIBUTE_MAIL)
             val l = ldap.searchUser(search, listOf(cn, name, mobile, email), count)
             return l.map { item ->
                 UserSearchResultItem(

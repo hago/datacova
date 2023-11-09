@@ -19,7 +19,7 @@ public class LdapConfig implements JsonStringify {
     private String userFilter;
     private String groupFilter;
     private boolean ssl;
-    private LdapAttributes attributes;
+    private LdapAttributeNames attributeNames;
 
     public String getHost() {
         return host;
@@ -93,12 +93,12 @@ public class LdapConfig implements JsonStringify {
         this.userDnPattern = userDnPattern;
     }
 
-    public LdapAttributes getAttributes() {
-        return attributes;
+    public LdapAttributeNames getAttributeNames() {
+        return attributeNames;
     }
 
-    public void setAttributes(LdapAttributes attributes) {
-        this.attributes = attributes;
+    public void setAttributeNames(LdapAttributeNames attributeNames) {
+        this.attributeNames = attributeNames;
     }
 
     @Override
@@ -113,7 +113,7 @@ public class LdapConfig implements JsonStringify {
                 ", userFilter='" + userFilter + '\'' +
                 ", groupFilter='" + groupFilter + '\'' +
                 ", ssl=" + ssl +
-                ", attributes=" + attributes +
+                ", attributes=" + attributeNames +
                 '}';
     }
 }

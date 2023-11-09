@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class LdapAttributes implements JsonStringify {
+public class LdapAttributeNames implements JsonStringify {
     public static final String ATTRIBUTE_DISPLAY_NAME = "ATTRIBUTE_DISPLAY_NAME";
     public static final String ATTRIBUTE_USERID = "ATTRIBUTE_USERID";
     public static final String ATTRIBUTE_EMPLOYEE_NUMBER = "ATTRIBUTE_EMPLOYEE_NUMBER";
@@ -52,11 +52,11 @@ public class LdapAttributes implements JsonStringify {
     public static final String DEFAULT_ATTRIBUTE_DISTINGUISHED_NAME = "distinguishedName";
     public static final String DEFAULT_ATTRIBUTE_DN = "dn";
 
-    private static final Map<String, String> defaults = new HashMap<>();
-    private static final Logger logger = LoggerFactory.getLogger(LdapAttributes.class);
+    protected static final Map<String, String> DEFAULT_ATTRIBUTE_NAMES = new HashMap<>();
+    private static final Logger logger = LoggerFactory.getLogger(LdapAttributeNames.class);
 
     static {
-        var fields = LdapAttributes.class.getDeclaredFields();
+        var fields = LdapAttributeNames.class.getDeclaredFields();
         for (var field : fields) {
             int modifiers = field.getModifiers();
             if (!Modifier.isStatic(modifiers) || !Modifier.isPublic(modifiers) || !Modifier.isFinal(modifiers) ||
@@ -64,10 +64,10 @@ public class LdapAttributes implements JsonStringify {
                 continue;
             }
             try {
-                var defaultNameField = LdapAttributes.class.getDeclaredField(String.format("DEFAULT_%s", field.getName()));
+                var defaultNameField = LdapAttributeNames.class.getDeclaredField(String.format("DEFAULT_%s", field.getName()));
                 var attrIdentity = field.getName();
                 var attrDefaultName = defaultNameField.get(null).toString();
-                defaults.putIfAbsent(attrIdentity, attrDefaultName);
+                DEFAULT_ATTRIBUTE_NAMES.putIfAbsent(attrIdentity, attrDefaultName);
             } catch (IllegalAccessException e) {
                 logger.error("LDAP attribute {} read error", field.getName());
             } catch (NoSuchFieldException e) {
@@ -76,32 +76,24 @@ public class LdapAttributes implements JsonStringify {
         }
     }
 
-    public static LdapAttributes defaultAttributes() {
-        var instance = new LdapAttributes();
+    public static LdapAttributeNames defaultAttributes() {
+        var instance = new LdapAttributeNames();
         instance.normalize();
         return instance;
-    }
-
-    public static Map<String, String> getDefaults() {
-        return defaults;
     }
 
     private final Map<String, String> items = new HashMap<>();
 
     public void normalize() {
-        defaults.forEach((k, v) -> {
+        DEFAULT_ATTRIBUTE_NAMES.forEach((k, v) -> {
             if (!items.containsKey(k)) {
                 items.put(k, v);
             }
         });
     }
 
-    public Map<String, String> getItems() {
+    public Map<String, String> getAttributeNames() {
         return items;
-    }
-
-    public Map<String, String> getAttributes() {
-        return getItems();
     }
 
     public String getActualAttribute(String name) {
@@ -117,5 +109,12 @@ public class LdapAttributes implements JsonStringify {
                 return k;
             }
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    public String toString() {
+        var pairString = items.entrySet().stream().map(e -> String.format("%s: %s", e.getKey(), e.getValue()))
+                .collect(Collectors.joining(", "));
+        return "LdapAttributeNames{" + pairString + '}';
     }
 }

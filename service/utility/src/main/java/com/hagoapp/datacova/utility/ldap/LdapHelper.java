@@ -69,7 +69,7 @@ public class LdapHelper implements Closeable, ConnectionClosedEventListener {
      */
     public LdapHelper(LdapConfig config) throws CoVaException {
         conf = config;
-        conf.getAttributes().normalize();
+        conf.getAttributeNames().normalize();
         init(config.getHost(), config.getPort(), config.getBaseDistinguishName(), config.getBindDistinguishName(),
                 config.getBindPassword(), config.isSsl());
     }
@@ -192,7 +192,7 @@ public class LdapHelper implements Closeable, ConnectionClosedEventListener {
         }
         int pos = userId.indexOf("@");
         String un = pos > 0 ? userId.substring(0, pos) : userId;
-        var dnField = conf.getAttributes().getActualAttribute(LdapAttributes.ATTRIBUTE_DISTINGUISHED_NAME);
+        var dnField = conf.getAttributeNames().getActualAttribute(LdapAttributeNames.ATTRIBUTE_DISTINGUISHED_NAME);
         Map<String, Object> userMap = getUser(un, List.of(dnField));
         if (userMap == null) {
             throw new CoVaException(String.format("user %s not found", userId));
@@ -208,7 +208,7 @@ public class LdapHelper implements Closeable, ConnectionClosedEventListener {
      * @throws CoVaException if LDAP binding failed or connection corrupted
      */
     public Map<String, Object> getUser(String userName) throws CoVaException {
-        return getUser(userName, conf.getAttributes().getActualAttributes(DEFAULT_ATTRIBUTE_NAMES));
+        return getUser(userName, conf.getAttributeNames().getActualAttributes(DEFAULT_ATTRIBUTE_NAMES));
     }
 
     /**
@@ -220,7 +220,7 @@ public class LdapHelper implements Closeable, ConnectionClosedEventListener {
      * @throws CoVaException if LDAP binding failed or connection corrupted
      */
     public Map<String, Object> getUser(String userName, List<String> attributeIdentities) throws CoVaException {
-        var cn = conf.getAttributes().getActualAttribute(LdapAttributes.ATTRIBUTE_USERID);
+        var cn = conf.getAttributeNames().getActualAttribute(LdapAttributeNames.ATTRIBUTE_USERID);
         final List<Map<String, Object>> list = search(String.format("(%s=%s)", cn, userName), attributeIdentities, 1);
         if (list.isEmpty()) {
             return null;
@@ -237,7 +237,7 @@ public class LdapHelper implements Closeable, ConnectionClosedEventListener {
      * @throws CoVaException if LDAP binding failed or connection corrupted
      */
     public List<Map<String, Object>> searchUser(String userId, int count) throws CoVaException {
-        return searchUser(userId, conf.getAttributes().getActualAttributes(DEFAULT_ATTRIBUTE_NAMES), count);
+        return searchUser(userId, conf.getAttributeNames().getActualAttributes(DEFAULT_ATTRIBUTE_NAMES), count);
     }
 
     /**
@@ -250,8 +250,8 @@ public class LdapHelper implements Closeable, ConnectionClosedEventListener {
      */
     public List<Map<String, Object>> searchUser(String userId, List<String> attributeIdentities, int count)
             throws CoVaException {
-        var uid = conf.getAttributes().getActualAttribute(LdapAttributes.ATTRIBUTE_USERID);
-        var name = conf.getAttributes().getActualAttribute(LdapAttributes.ATTRIBUTE_DISPLAY_NAME);
+        var uid = conf.getAttributeNames().getActualAttribute(LdapAttributeNames.ATTRIBUTE_USERID);
+        var name = conf.getAttributeNames().getActualAttribute(LdapAttributeNames.ATTRIBUTE_DISPLAY_NAME);
         return search(String.format("(|(%s=%s*)(%s=%s*))", uid, userId, name, userId), attributeIdentities, count);
     }
 
@@ -287,7 +287,7 @@ public class LdapHelper implements Closeable, ConnectionClosedEventListener {
      * @throws CoVaException if LDAP binding failed or connection corrupted
      */
     public List<Map<String, Object>> search(String filter) throws CoVaException {
-        return search(filter, conf.getAttributes().getActualAttributes(DEFAULT_ATTRIBUTE_NAMES), baseDn, SEARCH_RETURN_LIMIT);
+        return search(filter, conf.getAttributeNames().getActualAttributes(DEFAULT_ATTRIBUTE_NAMES), baseDn, SEARCH_RETURN_LIMIT);
     }
 
     /**
@@ -311,7 +311,7 @@ public class LdapHelper implements Closeable, ConnectionClosedEventListener {
      * @throws CoVaException if LDAP binding failed or connection corrupted
      */
     public List<Map<String, Object>> search(String filter, long max) throws CoVaException {
-        return search(filter, conf.getAttributes().getActualAttributes(DEFAULT_ATTRIBUTE_NAMES), baseDn, max);
+        return search(filter, conf.getAttributeNames().getActualAttributes(DEFAULT_ATTRIBUTE_NAMES), baseDn, max);
     }
 
     /**
@@ -354,7 +354,7 @@ public class LdapHelper implements Closeable, ConnectionClosedEventListener {
     public List<Map<String, Object>> search(String filter, List<String> attributeIdentities, String searchBasedDn, long max)
             throws CoVaException {
         List<Map<String, Object>> maps = new ArrayList<>();
-        var dnField = conf.getAttributes().getActualAttribute(LdapAttributes.ATTRIBUTE_DISTINGUISHED_NAME);
+        var dnField = conf.getAttributeNames().getActualAttribute(LdapAttributeNames.ATTRIBUTE_DISTINGUISHED_NAME);
         try {
             if (!bound) {
                 bind();

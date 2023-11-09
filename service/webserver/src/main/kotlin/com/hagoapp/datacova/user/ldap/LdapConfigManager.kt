@@ -24,7 +24,7 @@ class LdapConfigManager {
         fun getConfig(content: String): LdapConfig? {
             return try {
                 val conf = Gson().fromJson(content, LdapConfig::class.java)
-                conf.attributes.normalize()
+                conf.attributeNames.normalize()
                 conf
             } catch (e: JsonSyntaxException) {
                 null
