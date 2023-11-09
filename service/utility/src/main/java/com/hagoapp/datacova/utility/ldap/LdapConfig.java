@@ -100,4 +100,20 @@ public class LdapConfig implements JsonStringify {
     public void setAttributes(LdapAttributes attributes) {
         this.attributes = attributes;
     }
+
+    @Override
+    public String toString() {
+        return "LdapConfig{" +
+                "host='" + host + '\'' +
+                ", port=" + port +
+                ", baseDistinguishName='" + baseDistinguishName + '\'' +
+                ", bindDistinguishName='" + bindDistinguishName + '\'' +
+                ", bindPassword='" + bindPassword + '\'' +
+                ", userDnPattern='" + userDnPattern + '\'' +
+                ", userFilter='" + userFilter + '\'' +
+                ", groupFilter='" + groupFilter + '\'' +
+                ", ssl=" + ssl +
+                ", attributes=" + attributes +
+                '}';
+    }
 }
