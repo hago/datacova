@@ -35,6 +35,8 @@ kotlin {
     jvmToolchain(11)
 }
 
+@Suppress("unchecked_cast")
 tasks.test {
     useJUnitPlatform()
+    systemProperties(System.getProperties() as Map<String, Any>)
 }
