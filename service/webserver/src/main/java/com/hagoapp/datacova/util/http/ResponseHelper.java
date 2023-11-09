@@ -25,6 +25,7 @@ import java.util.Map;
 public class ResponseHelper {
 
     private static final String CONTENT_TYPE_HEADER = "Content-Type";
+    private static final String CONTENT_LENGTH_HEADER = "Content-Length";
     private static final String JSON_CONTENT_TYPE = "application/json";
 
     private ResponseHelper() {
@@ -94,6 +95,7 @@ public class ResponseHelper {
             HttpServerResponse rsp = routeContext.response();
             if (headers != null) headers.forEach(rsp::putHeader);
             rsp.putHeader(CONTENT_TYPE_HEADER, String.valueOf(buffer.length));
+            rsp.putHeader(CONTENT_LENGTH_HEADER, String.valueOf(buffer.length));
             rsp.setStatusCode(status.code());
             rsp.write(Buffer.buffer(buffer));
         } else {
