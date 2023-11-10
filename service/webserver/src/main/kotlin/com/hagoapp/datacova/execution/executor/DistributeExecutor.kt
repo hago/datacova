@@ -14,6 +14,8 @@ import com.hagoapp.datacova.lib.util.datafile.CSVDataFileWriter
 import com.hagoapp.datacova.lib.util.datafile.ExcelDataFileWriter
 import com.hagoapp.datacova.lib.util.datafile.ExcelXDataFileWriter
 import com.hagoapp.datacova.execution.distribute.DistributorFactory
+import com.hagoapp.datacova.file.memory.MemFsConfig
+import com.hagoapp.datacova.file.memory.MemoryFileStore
 import com.hagoapp.datacova.lib.action.TaskAction
 import com.hagoapp.datacova.lib.distribute.Configuration
 import com.hagoapp.datacova.lib.distribute.TaskActionDistribute
@@ -74,10 +76,11 @@ class DistributeExecutor : BaseTaskActionExecutor() {
             for (i in 0 until data.rows.size) {
                 writer.addData(data.rows[i].cells.map { it.data })
             }
-            val fs = FileStoreUtils.getTemporaryFileStore()
+            val fs = MemoryFileStore(MemFsConfig())
             ByteArrayOutputStream().use {
                 writer.write(it)
-                return fs.saveFileToStore(p, ByteArrayInputStream(it.toByteArray()))
+                val bytes = it.toByteArray()
+                return fs.putFile(ByteArrayInputStream(bytes), p, bytes.size.toLong())
             }
         }
     }
