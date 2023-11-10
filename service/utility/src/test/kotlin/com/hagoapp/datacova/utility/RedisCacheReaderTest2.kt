@@ -129,27 +129,26 @@ class RedisCacheReaderTest2 {
     @Test
     fun testCompanion() {
         dataLoadCount = 0
-        RedisCacheReader.setRedisConfiguration(config)
         var s = RedisCacheReader.readCachedData(
-            "CompanionObject", 10, regularLoaderObject, TestClass::class.java, 1, "b", 2.01, false, null
+            config, "CompanionObject", 10, regularLoaderObject, null, TestClass::class.java, 1, "b", 2.01, false, null
         )
         Assertions.assertNotNull(s)
         Assertions.assertTrue(s is TestClass)
         Assertions.assertEquals(1, dataLoadCount)
         s = RedisCacheReader.readDataAndUpdateCache(
-            "CompanionObject", 10, regularLoaderObject, TestClass::class.java, 1, "b", 2.01, false, null
+            config, "CompanionObject", 10, regularLoaderObject, null, TestClass::class.java, 1, "b", 2.01, false, null
         )
         Assertions.assertNotNull(s)
         Assertions.assertTrue(s is TestClass)
         Assertions.assertEquals(2, dataLoadCount)
         s = RedisCacheReader.readDataAndClearCache(
-            "CompanionObject", regularLoaderObject, TestClass::class.java, 1, "b", 2.01, false, null
+            config, "CompanionObject", regularLoaderObject, TestClass::class.java, 1, "b", 2.01, false, null
         )
         Assertions.assertNotNull(s)
         Assertions.assertTrue(s is TestClass)
         Assertions.assertEquals(2, dataLoadCount)
         s = RedisCacheReader.readCachedData(
-            "CompanionObject", 10, regularLoaderObject, TestClass::class.java, 1, "b", 2.01, false, null
+            config, "CompanionObject", 10, regularLoaderObject, null, TestClass::class.java, 1, "b", 2.01, false, null
         )
         Assertions.assertNotNull(s)
         Assertions.assertTrue(s is TestClass)

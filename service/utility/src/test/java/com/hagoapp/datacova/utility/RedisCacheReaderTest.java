@@ -72,22 +72,21 @@ class RedisCacheReaderTest {
     @Test
     void testRedisCacheReaderConvenientMethods() {
         try (var jedis = JedisManager.getJedis(config)) {
-            RedisCacheReader.setRedisConfiguration(config);
             jedis.flushAll();
-            var v = RedisCacheReader.readDataInCacheOnly(CACHE_NAME, String.class, params);
+            var v = RedisCacheReader.readDataInCacheOnly(config, CACHE_NAME, String.class, null, params);
             Assertions.assertNull(v);
             log.debug("readDataInCacheOnly done");
-            v = RedisCacheReader.readCachedData(CACHE_NAME, CACHE_LIFE_SECOND, dataFunction, String.class, params);
+            v = RedisCacheReader.readCachedData(config, CACHE_NAME, CACHE_LIFE_SECOND, dataFunction, null, String.class, params);
             Assertions.assertEquals(expect, v);
             var keys = jedis.keys("*");
             Assertions.assertFalse(keys.isEmpty());
-            v = RedisCacheReader.readCachedData(CACHE_NAME, CACHE_LIFE_SECOND, dataFunction2, String.class, params);
+            v = RedisCacheReader.readCachedData(config, CACHE_NAME, CACHE_LIFE_SECOND, dataFunction2, null, String.class, params);
             Assertions.assertEquals(expect, v);
             log.debug("readCachedData done");
-            v = RedisCacheReader.readDataAndUpdateCache(CACHE_NAME, CACHE_LIFE_SECOND, dataFunction2, String.class, params);
+            v = RedisCacheReader.readDataAndUpdateCache(config, CACHE_NAME, CACHE_LIFE_SECOND, dataFunction2, null, String.class, params);
             Assertions.assertEquals(expect2, v);
             log.debug("readDataAndUpdateCache done");
-            v = RedisCacheReader.readDataAndClearCache(CACHE_NAME, dataFunction, String.class, params);
+            v = RedisCacheReader.readDataAndClearCache(config, CACHE_NAME, dataFunction, String.class, params);
             Assertions.assertEquals(expect2, v);
             keys = jedis.keys("*");
             Assertions.assertTrue(keys.isEmpty());
