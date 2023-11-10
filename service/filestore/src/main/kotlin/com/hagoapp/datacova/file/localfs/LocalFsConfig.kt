@@ -12,6 +12,13 @@ import com.hagoapp.datacova.file.FsScheme
 import java.io.File
 import java.io.InvalidObjectException
 
+/**
+ * Local file store config. Connection string example:
+ * localfs:c://temp
+ * localfs:/home/xyz/downloaded
+ *
+ * @constructor Create empty Local fs config
+ */
 @FsScheme(name = LocalFsConfig.LOCAL_FS_SCHEME)
 class LocalFsConfig() : FsConfig() {
 
@@ -32,6 +39,6 @@ class LocalFsConfig() : FsConfig() {
         if (!input.startsWith("$LOCAL_FS_SCHEME:", true)) {
             throw InvalidObjectException("Not a valid LocalFsConfig connection string: $input")
         }
-        rootPath = input.substring(LOCAL_FS_SCHEME.length+1).trim()
+        rootPath = input.substring(LOCAL_FS_SCHEME.length + 1).trim()
     }
 }
