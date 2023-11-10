@@ -2,11 +2,11 @@ package com.hagoapp.datacova.web.file
 
 import com.hagoapp.datacova.utility.Utils
 import com.hagoapp.datacova.config.CoVaConfig
+import com.hagoapp.datacova.config.FileStorageConfig
 import com.hagoapp.datacova.data.execution.TaskExecutionCache
 import com.hagoapp.datacova.lib.data.TaskExecutionData
 import com.hagoapp.datacova.data.workspace.TaskCache
 import com.hagoapp.datacova.data.workspace.WorkspaceCache
-import com.hagoapp.datacova.file.FileStoreFactory
 import com.hagoapp.datacova.lib.execution.ExecutionFileInfo
 import com.hagoapp.datacova.lib.execution.TaskExecution
 import com.hagoapp.datacova.util.WorkspaceUserRoleUtil
@@ -50,7 +50,7 @@ class DataFile {
             ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "No file")
             return
         }
-        val fs = FileStoreFactory.createFileStore(CoVaConfig.getConfig().fileStorage.uploadDirectory)
+        val fs = FileStorageConfig.createFileStore(CoVaConfig.getConfig().fileStorage.uploadFileStore)
         val fileIdList = context.fileUploads().map { upload ->
             val id = FileInputStream(upload.uploadedFileName()).use { fis ->
                 fs.putFile(fis, upload.fileName(), upload.size())
@@ -119,14 +119,14 @@ class DataFile {
     fun previewFile(context: RoutingContext) {
         val id = context.pathParam("id")
         val count = context.pathParam("count").toIntOrNull() ?: 20
-        val fs = FileStoreFactory.createFileStore(CoVaConfig.getConfig().fileStorage.uploadDirectory)
+        val fs = FileStorageConfig.createFileStore(CoVaConfig.getConfig().fileStorage.uploadFileStore)
         if (!fs.exists(id)) {
             ResponseHelper.sendResponse(context, HttpResponseStatus.NOT_FOUND)
             return
         }
         val info = fs.getFileInfo(id)
         val tmpFile = File(
-            CoVaConfig.getConfig().fileStorage.tempDirectory,
+            CoVaConfig.getConfig().fileStorage.tempFileStore,
             UUID.randomUUID().toString() + info.originalFileName
         )
         fs.getFile(id).use { fis ->
@@ -178,7 +178,7 @@ class DataFile {
         }
         val id = context.pathParam("id")
         val taskId = context.pathParam("taskid").toInt()
-        val fs = FileStoreFactory.createFileStore(CoVaConfig.getConfig().fileStorage.uploadDirectory)
+        val fs = FileStorageConfig.createFileStore(CoVaConfig.getConfig().fileStorage.uploadFileStore)
         if (!fs.exists(id)) {
             ResponseHelper.sendResponse(context, HttpResponseStatus.NOT_FOUND)
             return

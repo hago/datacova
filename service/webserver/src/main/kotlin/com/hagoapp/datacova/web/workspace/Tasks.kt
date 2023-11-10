@@ -8,6 +8,7 @@
 package com.hagoapp.datacova.web.workspace
 
 import com.hagoapp.datacova.config.CoVaConfig
+import com.hagoapp.datacova.config.FileStorageConfig
 import com.hagoapp.datacova.data.execution.TaskExecutionCache
 import com.hagoapp.datacova.lib.data.TaskExecutionData
 import com.hagoapp.datacova.data.workspace.TaskCache
@@ -16,7 +17,6 @@ import com.hagoapp.datacova.data.workspace.WorkspaceCache
 import com.hagoapp.datacova.lib.execution.ExecutionFileInfo
 import com.hagoapp.datacova.lib.execution.TaskExecution
 import com.hagoapp.datacova.lib.task.Task
-import com.hagoapp.datacova.util.FileStoreUtils
 import com.hagoapp.datacova.util.WorkspaceUserRoleUtil
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.web.MethodName
@@ -32,6 +32,7 @@ import com.hagoapp.f2t.util.JDBCTypeUtils
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.ext.web.RoutingContext
 import org.slf4j.LoggerFactory
+import java.io.FileInputStream
 import java.sql.JDBCType
 import java.time.LocalDate
 import java.time.LocalTime
@@ -176,12 +177,14 @@ class Tasks {
             return
         }
         val rawInfo = context.request().getParam("extra")
-        val fileStore = FileStoreUtils.getUploadedFileStore()
+        val fileStore = FileStorageConfig.createFileStore(CoVaConfig.getConfig().fileStorage.uploadFileStore)
         val exec = TaskExecutionData(CoVaConfig.getConfig().database).use { db ->
-            val target = fileStore.copyFileToStore(file.uploadedFileName())
+            val target = FileInputStream(file.uploadedFileName()).use {
+                fileStore.putFile(it, file.fileName(), file.size())
+            }
             val eai = ExecutionFileInfo()
             val fi = FileInfoReader.json2FileInfo(rawInfo)
-            fi.filename = fileStore.getRelativeFileName(target.absoluteFileName)
+            fi.filename = target
             with(eai) {
                 originalName = file.fileName()
                 size = file.size()

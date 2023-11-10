@@ -7,6 +7,7 @@
 
 package com.hagoapp.datacova.execution.executor
 
+import com.hagoapp.datacova.config.FileStorageConfig
 import com.hagoapp.datacova.utility.CoVaException
 import com.hagoapp.datacova.utility.Utils
 import com.hagoapp.datacova.lib.util.datafile.CSVDataFileWriter
@@ -18,7 +19,6 @@ import com.hagoapp.datacova.lib.distribute.Configuration
 import com.hagoapp.datacova.lib.distribute.TaskActionDistribute
 import com.hagoapp.datacova.lib.distribute.TaskActionDistribute.TASK_ACTION_TYPE_DISTRIBUTE
 import com.hagoapp.datacova.lib.execution.TaskExecution
-import com.hagoapp.datacova.util.FileStoreUtils
 import com.hagoapp.f2t.ColumnDefinition
 import com.hagoapp.f2t.DataTable
 import com.hagoapp.f2t.datafile.FileInfo

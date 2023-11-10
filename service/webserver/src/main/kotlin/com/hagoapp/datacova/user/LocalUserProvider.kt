@@ -9,8 +9,8 @@ package com.hagoapp.datacova.user
 
 import com.hagoapp.datacova.utility.Utils
 import com.hagoapp.datacova.config.CoVaConfig
+import com.hagoapp.datacova.config.FileStorageConfig
 import com.hagoapp.datacova.data.user.UserData
-import com.hagoapp.datacova.util.FileStoreUtils
 import com.hagoapp.datacova.util.web.CaptchaUtils
 import com.hagoapp.datacova.utility.redis.RedisCacheReader
 import io.vertx.ext.web.RoutingContext
@@ -87,17 +87,19 @@ class LocalUserProvider : UserAuthProvider {
 
     override fun loadThumbnail(userInfo: UserInfo) {
         val path = calcThumbPath(userInfo.userId)
-        val fs = FileStoreUtils.getThumbnailFileStore()
-        val buffer = fs.readFileInStore(path)
+        val fs = FileStorageConfig.createFileStore(CoVaConfig.getConfig().fileStorage.thumbnailFileStore)
+        val buffer = fs.getFile(path).use {
+            it.readAllBytes()
+        }
         if (buffer != null) {
             userInfo.thumbnail = Base64.getEncoder().encodeToString(buffer)
         }
     }
 
     override fun saveThumbnail(userId: String, thumbnail: ByteArray): String {
-        val fs = FileStoreUtils.getThumbnailFileStore()
+        val fs = FileStorageConfig.createFileStore(CoVaConfig.getConfig().fileStorage.thumbnailFileStore)
         val targetName = calcThumbPath(userId)
-        ByteArrayInputStream(thumbnail).use { fs.saveFileToStore(targetName, it) }
+        ByteArrayInputStream(thumbnail).use { fs.putFile(it, targetName, thumbnail.size.toLong()) }
         return targetName
     }
 

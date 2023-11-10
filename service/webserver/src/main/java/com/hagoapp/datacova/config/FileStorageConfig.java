@@ -7,43 +7,65 @@
 
 package com.hagoapp.datacova.config;
 
+import com.hagoapp.datacova.file.FileStore;
+import com.hagoapp.datacova.file.FileStoreFactory;
 import com.hagoapp.datacova.utility.Utils;
 
+/**
+ * Configuration of file storages.
+ *
+ * @author suncjs
+ * @since 0.1
+ */
 public class FileStorageConfig {
-    private String uploadDirectory;
-    private String thumbnailDirectory;
-    private String tempDirectory;
-    private String sshDirectory;
+    private String uploadFileStore;
+    private String thumbnailFileStore;
+    private String tempFileStore;
+    private String sshFileStore;
 
-    public String getUploadDirectory() {
-        return uploadDirectory;
+    private static final String LOCAL_FS_SCHEME_TEMPLATE = "localFs:%s";
+
+    public String getUploadFileStore() {
+        return uploadFileStore != null ? uploadFileStore :
+                String.format(LOCAL_FS_SCHEME_TEMPLATE, Utils.getSystemTemporaryDirectory());
     }
 
-    public void setUploadDirectory(String uploadDirectory) {
-        this.uploadDirectory = uploadDirectory;
+    public void setUploadFileStore(String uploadFileStore) {
+        this.uploadFileStore = uploadFileStore;
     }
 
-    public String getThumbnailDirectory() {
-        return thumbnailDirectory;
+    public String getThumbnailFileStore() {
+        return thumbnailFileStore != null ? thumbnailFileStore :
+                String.format(LOCAL_FS_SCHEME_TEMPLATE, Utils.getSystemTemporaryDirectory());
     }
 
-    public void setThumbnailDirectory(String thumbnailDirectory) {
-        this.thumbnailDirectory = thumbnailDirectory;
+    public void setThumbnailFileStore(String thumbnailFileStore) {
+        this.thumbnailFileStore = thumbnailFileStore;
     }
 
-    public String getTempDirectory() {
-        return tempDirectory != null ? tempDirectory : Utils.getSystemTemporaryDirectory();
+    public String getTempFileStore() {
+        return tempFileStore != null ? tempFileStore :
+                String.format(LOCAL_FS_SCHEME_TEMPLATE, Utils.getSystemTemporaryDirectory());
     }
 
-    public void setTempDirectory(String tempDirectory) {
-        this.tempDirectory = tempDirectory != null ? tempDirectory : Utils.getSystemTemporaryDirectory();
+    public void setTempFileStore(String tempFileStore) {
+        this.tempFileStore = tempFileStore;
     }
 
-    public String getSshDirectory() {
-        return sshDirectory;
+    public String getSshFileStore() {
+        return sshFileStore != null ? sshFileStore :
+                String.format(LOCAL_FS_SCHEME_TEMPLATE, Utils.getSystemTemporaryDirectory());
     }
 
-    public void setSshDirectory(String sshDirectory) {
-        this.sshDirectory = sshDirectory;
+    public void setSshFileStore(String sshFileStore) {
+        this.sshFileStore = sshFileStore;
+    }
+
+    public static FileStore createFileStore(String fileStoreConnectionString) {
+        var store = FileStoreFactory.createFileStore(fileStoreConnectionString);
+        if (store == null) {
+            throw new UnsupportedOperationException("File store creation error: " + fileStoreConnectionString);
+        }
+        return store;
     }
 }

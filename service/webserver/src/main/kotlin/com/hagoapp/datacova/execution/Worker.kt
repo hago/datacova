@@ -41,8 +41,8 @@ class Worker(taskExecution: TaskExecution) : TaskExecutionActionWatcher, TaskExe
     }
 
     private fun createTempFile(fileInfo: ExecutionFileInfo): String {
-        val fs = FileStoreFactory.createFileStore(CoVaConfig.getConfig().fileStorage.uploadDirectory)
-        val f = File(CoVaConfig.getConfig().fileStorage.tempDirectory, UUID.randomUUID().toString()).absolutePath
+        val fs = FileStoreFactory.createFileStore(CoVaConfig.getConfig().fileStorage.uploadFileStore)
+        val f = File(CoVaConfig.getConfig().fileStorage.tempFileStore, UUID.randomUUID().toString()).absolutePath
         fs.getFile(fileInfo.fileId).use { reader ->
             FileOutputStream(f).use { writer ->
                 val buffer = ByteArray(1024 * 1024 * 5)
