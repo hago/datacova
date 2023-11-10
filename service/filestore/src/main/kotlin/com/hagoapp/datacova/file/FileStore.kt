@@ -11,6 +11,12 @@ import java.io.FileNotFoundException
 import java.io.InputStream
 import kotlin.jvm.Throws
 
+/**
+ * Descendants of <code>FileStore</code> should implement a constructor with 1 parameter typed as FsConfig.
+ *
+ * @author suncjs
+ * @since 0.5
+ */
 interface FileStore {
     fun putFile(src: InputStream, fileName: String, size: Long): String
     fun getFile(id: String): InputStream

@@ -7,6 +7,7 @@
 
 package com.hagoapp.datacova.file
 
+import com.hagoapp.datacova.file.localfs.LocalFsConfig
 import com.hagoapp.datacova.file.localfs.LocalFsFileStore
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions
@@ -36,7 +37,7 @@ class LocalFsTest {
         private lateinit var store: LocalFsFileStore
         private val logger = LoggerFactory.getLogger(LocalFsTest::class.java)
         private lateinit var testRootPath: String
-        private const val testFileName = "Test测试試験테스트"
+        private const val TEST_FILENAME = "Test测试試験테스트"
         private val len = Random.nextInt(1024 * 1024 * 10)
         private val data = ByteArray(len)
         private val rand = SecureRandom()
@@ -76,7 +77,7 @@ class LocalFsTest {
     fun testWriteFile() {
         logger.debug("write file")
         ByteArrayInputStream(data).use { src ->
-            id = store.putFile(src, testFileName, len.toLong())
+            id = store.putFile(src, TEST_FILENAME, len.toLong())
             logger.debug("File saved, returned id: {}", id)
             //Assertions.assertTrue(store.exists(id))
         }
