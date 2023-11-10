@@ -7,7 +7,6 @@
 
 package com.hagoapp.datacova.utility.redis
 
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonSyntaxException
 import com.hagoapp.datacova.utility.CoVaException
@@ -38,7 +37,7 @@ class RedisCacheReader<T> private constructor() {
                 .withLoadFunction(loader)
                 .withDataLifeTime(dataLifetime)
                 .withCacheName(cacheName)
-                .withDeserializer(deserializer ?: Deserializer { json -> Gson().fromJson(json, type) })
+                .withDeserializer(deserializer ?: Deserializer { json -> gson.fromJson(json, type) })
                 .withType(type)
             val reader = builder.create()
             return reader.readData(*params)
@@ -56,7 +55,7 @@ class RedisCacheReader<T> private constructor() {
                 .withJedisConfig(redisConfig)
                 .shouldSkipCache(skipCache)
                 .withCacheName(cacheName)
-                .withDeserializer(deserializer ?: Deserializer { json -> Gson().fromJson(json, type) })
+                .withDeserializer(deserializer ?: Deserializer { json -> gson.fromJson(json, type) })
                 .withType(type)
             val reader = builder.create()
             return reader.readData(*params)
@@ -78,7 +77,7 @@ class RedisCacheReader<T> private constructor() {
                 .withLoadFunction(loader)
                 .withDataLifeTime(dataLifetime)
                 .withCacheName(cacheName)
-                .withDeserializer(deserializer ?: Deserializer { json -> Gson().fromJson(json, type) })
+                .withDeserializer(deserializer ?: Deserializer { json -> gson.fromJson(json, type) })
                 .withType(type)
             val reader = builder.create()
             return reader.readData(*params)
@@ -204,7 +203,7 @@ class RedisCacheReader<T> private constructor() {
             return when {
                 loadFunction == null -> {
                     val jsonStr = jedis[actualKey]
-                    if (jsonStr == null) null else Gson().fromJson<T>(jsonStr, type)
+                    if (jsonStr == null) null else gson.fromJson<T>(jsonStr, type)
                 }
 
                 skipCache -> doDataLoadAndUpdateRedis(jedis, actualKey, *params)
@@ -222,7 +221,6 @@ class RedisCacheReader<T> private constructor() {
 
     fun readBatchData(paramsBatch: List<List<Any?>>): List<T?> {
         val keys = paramsBatch.map { createKey(it.toTypedArray()) }
-        val gson = GsonBuilder().create()
         createJedis().use { jedis ->
             val current = if (skipCache) paramsBatch.map { null }
             else jedis.mget(*keys.toTypedArray()).map { if (it == "nil") null else it }
@@ -241,7 +239,7 @@ class RedisCacheReader<T> private constructor() {
             } else mapOf()
             return current.mapIndexed { i, s ->
                 when {
-                    s != null -> gson.fromJson<T>(s, type)
+                    s != null -> deserializer.deserialize(s)
                     supplements.containsKey(i) -> supplements.getValue(i)
                     else -> null
                 }
