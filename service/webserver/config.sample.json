@@ -63,31 +63,9 @@
     }
   },
   "fileStorage": {
-    "uploadDirectory": "",
-    "thumbnailDirectory": "",
+    "uploadDirectory": null,
+    "thumbnailDirectory": null,
     "tempDirectory": null,
-    "sshDirectory": ""
-  },
-  "executor": {
-    "__comments": "When this section exists, the application will launch execution service",
-    "bindIp": "0.0.0.0",
-    "port": 6787,
-    "allowCrossOriginResourceSharing": true,
-    "crossOriginSources": [
-      "127.0.0.1",
-      "192.168.0.0/24",
-      "10.*.*.*"
-    ],
-    "privilegedIpAddresses": [
-      "127.0.0.1"
-    ],
-    "tempDirectory": null,
-    "uploadTempDirectory": null,
-    "uploadSizeLimit": -1,
-    "outputStackTrace": true,
-    "baseUrl": null,
-    "dispatcherUrl": "http://127.0.0.1:6786",
-    "name": "exe1",
-    "executorUrl": "http://127.0.0.1:6787"
+    "sshDirectory": null
   }
 }
