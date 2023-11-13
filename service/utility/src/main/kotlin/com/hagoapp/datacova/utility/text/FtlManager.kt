@@ -63,28 +63,28 @@ abstract class FtlManager private constructor(protected val conf: FtlConfig) {
                 else -> FileFtlManager(conf)
             }
         }
+    }
 
-        class FileFtlManager(conf: FtlConfig) : FtlManager(conf) {
+    class FileFtlManager(conf: FtlConfig) : FtlManager(conf) {
 
-            private val logger = LoggerFactory.getLogger(FileFtlManager::class.java)
+        private val logger = LoggerFactory.getLogger(FileFtlManager::class.java)
 
-            init {
-                config.setDirectoryForTemplateLoading(File(conf.directory))
-            }
+        init {
+            config.setDirectoryForTemplateLoading(File(conf.directory))
+        }
 
-            private fun findTemplateFile(name: String, locale: Locale): String? {
-                for (fileName in createPossibleTemplateFileNames(name, locale)) {
-                    if (File(conf.directory, fileName).exists()) {
-                        return fileName
-                    }
+        private fun findTemplateFile(name: String, locale: Locale): String? {
+            for (fileName in createPossibleTemplateFileNames(name, locale)) {
+                if (File(conf.directory, fileName).exists()) {
+                    return fileName
                 }
-                return null
             }
+            return null
+        }
 
-            override fun getTemplate(name: String, locale: Locale): Template? {
-                val actualName = findTemplateFile(name, locale) ?: return null
-                return config.getTemplate(actualName, locale)
-            }
+        override fun getTemplate(name: String, locale: Locale): Template? {
+            val actualName = findTemplateFile(name, locale) ?: return null
+            return config.getTemplate(actualName, locale)
         }
     }
 

@@ -13,6 +13,7 @@ import freemarker.template.Template
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
+import java.io.File
 import java.io.StringWriter
 import java.time.DayOfWeek
 import java.time.ZonedDateTime
@@ -47,15 +48,21 @@ class FtlManagerTest {
         }
     }
 
-//    @Test
-//    fun testTemplatesInLocalDirectory() {
-//        val config = TemplateConfig()
-//        config.isUseResource = false
-//        config.directory = "resources/freemarker"
-//        val man = TemplateManager.ResourceTemplateManager(config)
-//        val tpl = man.getTemplate("demoTemplate")
-//        render(tpl)
-//    }
+    @Test
+    fun testTemplatesInLocalDirectory() {
+        val config = FtlConfig()
+        config.isUseResource = false
+        val pwd = File("").absolutePath
+        logger.debug("pwd {}", pwd)
+        config.directory = if (pwd.endsWith("utility")) File(pwd, "src/test/resources").absolutePath
+        else File(pwd, "utility/src/test/resources").absolutePath
+        val man = FtlManager.FileFtlManager(config)
+        locales.forEach { locale ->
+            val data = generateData(locale)
+            val tpl = man.getTemplate("freemarker/demoTemplate", locale)
+            render(tpl, data, locale)
+        }
+    }
 
     private fun render(tpl: Template?, data: Map<String, Any>, locale: Locale) {
         Assertions.assertNotNull(tpl)
