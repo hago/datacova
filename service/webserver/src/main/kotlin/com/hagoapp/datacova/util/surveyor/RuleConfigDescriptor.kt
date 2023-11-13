@@ -10,9 +10,9 @@ package com.hagoapp.datacova.util.surveyor
 
 import com.hagoapp.datacova.utility.CoVaException
 import com.hagoapp.datacova.lib.verification.VerifyConfiguration
-import com.hagoapp.datacova.util.text.TextResourceManager
 import com.hagoapp.datacova.surveyor.RuleConfig
 import com.hagoapp.datacova.surveyor.rule.*
+import com.hagoapp.datacova.utility.text.TextResources
 import org.stringtemplate.v4.ST
 import java.lang.Exception
 import java.util.Locale
@@ -59,7 +59,7 @@ abstract class RuleConfigDescriptor {
         }
         val template = localizedTemplates.compute(locale) { loc, st ->
             if (st != null) st else {
-                val template = TextResourceManager.getManager().getString(loc)
+                val template = TextResources.getString(loc)
                 if (template != null) DescriptionTemplate(template, ST(template)) else null
             }
         }

@@ -23,7 +23,6 @@ dependencies {
     implementation("com.sun.mail", "javax.mail", "1.6.2")
     implementation("org.freemarker", "freemarker", "2.3.32")
     api("org.freemarker", "freemarker", "2.3.32")
-    implementation("org.antlr", "ST4", "4.3.4")
     compileOnly("org.projectlombok:lombok:1.18.30")
     annotationProcessor("org.projectlombok:lombok:1.18.30")
 
