@@ -14,6 +14,7 @@ import com.hagoapp.datacova.utility.CoVaException;
 import com.hagoapp.datacova.utility.JsonStringify;
 import com.hagoapp.datacova.utility.mail.MailConfig;
 import com.hagoapp.datacova.utility.redis.RedisConfig;
+import com.hagoapp.datacova.utility.text.FtlConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +68,7 @@ public class CoVaConfig implements JsonStringify {
     private DatabaseConfig database;
     private RedisConfig redis;
     private MailConfig mail;
-    private TemplateConfig template;
+    private FtlConfig template;
     private FileStorageConfig fileStorage;
 
     public FileStorageConfig getFileStorage() {
@@ -110,11 +111,11 @@ public class CoVaConfig implements JsonStringify {
         this.redis = redis;
     }
 
-    public TemplateConfig getTemplate() {
+    public FtlConfig getTemplate() {
         return template;
     }
 
-    public void setTemplate(TemplateConfig template) {
+    public void setTemplate(FtlConfig template) {
         this.template = template;
     }
 

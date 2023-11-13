@@ -14,7 +14,7 @@ import com.hagoapp.datacova.lib.execution.ExecutionDetail
 import com.hagoapp.datacova.lib.execution.TaskExecution
 import com.hagoapp.datacova.user.UserInfo
 import com.hagoapp.datacova.utility.mail.MailHelper
-import com.hagoapp.datacova.util.text.TemplateManager
+import com.hagoapp.datacova.utility.text.FtlManager
 import java.io.StringWriter
 import java.time.Duration
 import javax.mail.internet.InternetAddress
@@ -31,7 +31,7 @@ class ExecuteResultMailer : TaskExecutionWatcher {
     private lateinit var user: UserInfo
 
     override fun onStart(te: TaskExecution) {
-        val tplMgr = TemplateManager.getManager(CoVaConfig.getConfig().template)
+        val tplMgr = FtlManager.getManager(CoVaConfig.getConfig().template)
         user = UserCache.getUser(te.addBy) ?: createUser(te.addBy)
         val body = StringWriter().use { writer ->
             val tpl = tplMgr.getTemplate(MAIL_START_BODY_TEMPLATE_NAME, te.task.extra.locale)
@@ -60,7 +60,7 @@ class ExecuteResultMailer : TaskExecutionWatcher {
     }
 
     override fun onComplete(te: TaskExecution, result: ExecutionDetail) {
-        val tplMgr = TemplateManager.getManager(CoVaConfig.getConfig().template)
+        val tplMgr = FtlManager.getManager(CoVaConfig.getConfig().template)
         val body = StringWriter().use { writer ->
             val tpl = tplMgr.getTemplate(MAIL_COMPLETE_BODY_TEMPLATE_NAME, te.task.extra.locale)
             tpl!!.process(

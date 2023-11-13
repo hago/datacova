@@ -47,7 +47,6 @@ dependencies {
 
     implementation group: 'com.sun.mail', name: 'javax.mail', version: '1.6.2'
 
-    implementation group: "org.freemarker", name: 'freemarker', version: '2.3.32'
     implementation group: 'org.antlr', name: 'ST4', version: '4.3.4'
 
     implementation group: 'com.github.whvcse', name: 'easy-captcha', version: '1.6.2'

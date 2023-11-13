@@ -17,9 +17,9 @@ import com.hagoapp.datacova.user.UserInfo
 import com.hagoapp.datacova.util.http.RequestHelper
 import com.hagoapp.datacova.util.http.ResponseHelper
 import com.hagoapp.datacova.utility.mail.MailHelper
-import com.hagoapp.datacova.util.text.TemplateManager
 import com.hagoapp.datacova.util.text.TextResourceManager
 import com.hagoapp.datacova.util.web.CaptchaUtils
+import com.hagoapp.datacova.utility.text.FtlManager
 import com.hagoapp.datacova.web.MethodName
 import com.hagoapp.datacova.web.annotation.WebEndPoint
 import com.hagoapp.datacova.web.authentication.AuthType
@@ -83,7 +83,7 @@ class Register {
     private fun sendActivation(context: RoutingContext, user: UserInfo, locale: Locale) {
         val resourceName = "user/register/activation"
         val tm = TextResourceManager.getManager()
-        val manager = TemplateManager.getResourcedTemplateManager()
+        val manager = FtlManager.getResourcedTemplateManager()
         val template = manager.getTemplate(resourceName, locale)
         val sw = StringWriter()
         template!!.process(
