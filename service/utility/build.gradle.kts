@@ -21,6 +21,8 @@ dependencies {
     api("redis.clients:jedis:5.0.2")
     implementation("com.github.albfernandez:juniversalchardet:2.4.0")
     implementation("com.sun.mail", "javax.mail", "1.6.2")
+    implementation("org.freemarker", "freemarker", "2.3.32")
+    api("org.freemarker", "freemarker", "2.3.32")
     compileOnly("org.projectlombok:lombok:1.18.30")
     annotationProcessor("org.projectlombok:lombok:1.18.30")
 
