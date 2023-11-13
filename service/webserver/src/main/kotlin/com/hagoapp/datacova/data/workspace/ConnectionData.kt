@@ -10,7 +10,7 @@ package com.hagoapp.datacova.data.workspace
 import com.hagoapp.datacova.lib.data.CoVaDatabase
 import com.hagoapp.datacova.entity.connection.WorkspaceConnection
 import com.hagoapp.datacova.lib.data.DatabaseConfig
-import com.hagoapp.datacova.util.data.DatabaseFunctions
+import com.hagoapp.datacova.lib.data.DatabaseFunctions
 import com.hagoapp.f2t.database.config.DbConfigReader
 import java.sql.ResultSet
 import java.sql.Timestamp
