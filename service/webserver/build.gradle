@@ -25,9 +25,9 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.10.1'
     implementation group: 'com.fasterxml.jackson.jr', name: 'jackson-jr-objects', version: '2.15.3'
 
-    implementation 'io.vertx:vertx-core:4.3.0'
-    implementation 'io.vertx:vertx-lang-kotlin:4.3.0'
-    implementation 'io.vertx:vertx-web:4.3.0'
+    implementation 'io.vertx:vertx-core:4.4.6'
+    implementation 'io.vertx:vertx-lang-kotlin:4.4.6'
+    implementation 'io.vertx:vertx-web:4.4.6'
 
     implementation 'com.hagoapp:f2t:0.8.3'
 

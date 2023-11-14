@@ -321,9 +321,10 @@ public class WebManager {
         allowedMethods.add(MethodName.OPTIONS);
         allowedMethods.addAll(methods);
         logger.info("{} CORS allow: {} {} {}", webConfig.getIdentity(), allowedMethods, allowHeaders, pattern);
-        return CorsHandler.create(pattern)
-                .allowedMethods(allowedMethods.stream().map(HttpMethod::valueOf).collect(Collectors.toSet())).
-                allowedHeaders(allowHeaders)
+        return CorsHandler.create()
+                .addOrigin(pattern)
+                .allowedMethods(allowedMethods.stream().map(HttpMethod::valueOf).collect(Collectors.toSet()))
+                .allowedHeaders(allowHeaders)
                 .allowCredentials(true);
     }
 
