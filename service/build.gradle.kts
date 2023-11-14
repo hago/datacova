@@ -15,6 +15,8 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.8.22")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22")
+
+    testImplementation(kotlin("test", "1.8.22"))
 }
 
 subprojects {
@@ -23,6 +25,7 @@ subprojects {
     apply(plugin = "kotlin").apply { version = "1.8.22" }
     dependencies {
         implementation("com.google.code.gson:gson:2.10.1")
+        testImplementation(kotlin("test", "1.8.22"))
     }
 }
 
