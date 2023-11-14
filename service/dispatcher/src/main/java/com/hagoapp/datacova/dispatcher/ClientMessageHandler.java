@@ -59,13 +59,18 @@ public class ClientMessageHandler {
             reader.update(data);
             var message = reader.parseMessage();
             logger.debug("processing message {}", message == null ? null : message.getClass().getCanonicalName());
-            var handler = message == null ? defaultHandler : handlerMap.get(message.getClass());
-            if (handler == null) {
+            if (message == null) {
                 defaultHandler.handle(null);
                 return null;
             } else {
-                var response = handler.handle(message);
-                return response != null ? MessageWriter.toBytes(response) : null;
+                var handler = handlerMap.get(message.getClass());
+                if (handler == null) {
+                    defaultHandler.handle(message);
+                    return null;
+                } else {
+                    var responseMsg = handler.handle(message);
+                    return responseMsg == null ? null : MessageWriter.toBytes(responseMsg);
+                }
             }
         }
     }
