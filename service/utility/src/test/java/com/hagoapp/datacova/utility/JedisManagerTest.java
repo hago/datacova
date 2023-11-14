@@ -72,9 +72,7 @@ class JedisManagerTest {
             });
         }
         pool.shutdown();
-        while (!pool.isTerminated()) {
-            Thread.sleep(200);
-        }
+        Assertions.assertTrue(pool.awaitTermination(5, TimeUnit.MINUTES));
         log.info("success cont: {}", success);
         Assertions.assertEquals(success.get(), count);
     }

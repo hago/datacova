@@ -1,5 +1,13 @@
 plugins {
     id("java-library")
+    id("jacoco")
+    id("org.sonarqube") version "4.3.1.3277"
+}
+
+tasks.jacocoTestReport {
+    reports {
+        xml.required.set(true)
+    }
 }
 
 group = "com.hagoapp.dataccova"

@@ -21,13 +21,13 @@ public class StackTraceWriter {
     private StackTraceWriter() {}
     public static List<String> write(Throwable e, Logger logger) {
         List<String> stacktrace = new ArrayList<>();
-        try (StringWriter sw = new StringWriter()) {
-            try (PrintWriter writer = new PrintWriter(sw)) {
+        try (var sw = new StringWriter()) {
+            try (var writer = new PrintWriter(sw)) {
                 e.printStackTrace(writer);
                 stacktrace = Arrays.asList(sw.toString().split(System.lineSeparator()).clone());
             }
         } catch (IOException ignored) {
-            //
+            // ignore
         }
         stacktrace.forEach(logger::error);
         return stacktrace;

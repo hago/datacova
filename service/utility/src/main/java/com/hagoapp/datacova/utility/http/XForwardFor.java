@@ -34,7 +34,7 @@ public class XForwardFor {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(clientIp);
+        var sb = new StringBuilder(clientIp);
         for (String proxy : proxies) {
             sb.append(", ").append(proxy);
         }

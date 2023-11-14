@@ -63,7 +63,10 @@ class RedisCacheReaderTest {
             var v1 = gson.fromJson(jedis.get(k), String.class);
             Assertions.assertEquals(expect, v);
             Assertions.assertEquals(v, v1);
-            Thread.sleep((CACHE_LIFE_SECOND + 1) * 1000L);
+            var lock = new Object();
+            synchronized (lock) {
+                lock.wait((CACHE_LIFE_SECOND + 1) * 1000L);
+            }
             var v2 = jedis.get(k);
             Assertions.assertNull(v2);
         }
