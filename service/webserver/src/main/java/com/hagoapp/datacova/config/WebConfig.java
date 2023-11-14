@@ -16,14 +16,19 @@ import java.util.List;
  * Configuration of web interfaces.
  */
 public class WebConfig implements JsonStringify {
-    private String bindIp = "127.0.0.1";
+
+    private static final String LOCAL_HOST = "127.0.0.1";
+    private static final String SUBNET_MASK_C = "192.168.0.0/24";
+    private static final String SUBNET_MASK_A = "10.*.*.*";
+
+    private String bindIp = LOCAL_HOST;
     private int port = 6786;
     private boolean allowCrossOriginResourceSharing = false;
     private List<String> crossOriginSources = new ArrayList<>();
     private List<String> privilegedIpAddresses = List.of(
-            "127.0.0.1",
-            "192.168.0.0/24",
-            "10.*.*.*"
+            LOCAL_HOST,
+            SUBNET_MASK_A,
+            SUBNET_MASK_C
     );
     private String tempDirectory = "./";
     private String uploadTempDirectory = "./";

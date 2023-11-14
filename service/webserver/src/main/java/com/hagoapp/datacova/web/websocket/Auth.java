@@ -9,7 +9,6 @@ package com.hagoapp.datacova.web.websocket;
 
 import com.hagoapp.datacova.config.CoVaConfig;
 import com.hagoapp.datacova.user.UserInfo;
-import com.hagoapp.datacova.util.http.RequestHelper;
 import com.hagoapp.datacova.util.web.AuthUtils;
 import com.hagoapp.datacova.utility.redis.RedisCacheReader;
 import io.netty.handler.codec.http.HttpHeaderNames;
@@ -49,7 +48,10 @@ public class Auth {
         if (cookieStr == null) {
             return null;
         }
-        List<HttpCookie> cookies = RequestHelper.parseCookie(cookieStr);
+        List<HttpCookie> cookies = HttpCookie.parse(cookieStr);
+        if (cookies.isEmpty()) {
+            return null;
+        }
         cookies.forEach(cookie -> logger.debug("cookie {}", cookie.getName()));
         var authCookie = cookies.stream()
                 .filter(cookie -> cookie.getName().equals(LOGIN_COOKIE)).findFirst();

@@ -17,17 +17,19 @@ import io.netty.handler.codec.http.HttpHeaderNames;
 import io.vertx.core.MultiMap;
 import io.vertx.ext.web.RoutingContext;
 
-import java.net.HttpCookie;
 import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Helper class to construct http request.
+ *
+ * @author suncjs
+ * @since 0.1
+ */
 public class RequestHelper {
     private RequestHelper() {
     }
@@ -77,21 +79,6 @@ public class RequestHelper {
         }
     }
 
-    public static List<HttpCookie> parseCookie(RoutingContext context) {
-        var cookieString = context.request().getHeader(HttpHeaderNames.COOKIE);
-        return parseCookie(cookieString);
-    }
-
-    public static List<HttpCookie> parseCookie(String cookieString) {
-        if (cookieString == null) {
-            return List.of();
-        }
-        return Arrays.stream(cookieString.split(";")).map(element -> {
-            var parts = element.split("=");
-            return parts.length == 2 ? new HttpCookie(parts[0], parts[1]) : null;
-        }).filter(Objects::nonNull).collect(Collectors.toList());
-    }
-
     public static String getBaseUrl(RoutingContext context) {
         return String.format("%s://%s", context.request().scheme(), context.request());
     }
@@ -134,8 +121,12 @@ public class RequestHelper {
                 .anyMatch(header -> context.request().getHeader(header) != null);
     }
 
+    private static final String SUBNET_C_MASK = "192.168.0.0/24";
+    private static final String SUBNET_A_MASK = "10.0.0.0/8";
+    private static final String SUBNET_B_MASK = "172.1.0.0/11";
+    private static final String LOCAL_LOOP_MASK = "127.0.0.0/8";
     private static final List<String> INTRANET_RANGES = List.of(
-            "192.168.0.0/24", "10.0.0.0/8", "172.1.0.0/11", "127.0.0.0/8"
+            SUBNET_A_MASK, SUBNET_B_MASK, SUBNET_C_MASK, LOCAL_LOOP_MASK
     );
 
     /**
