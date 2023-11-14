@@ -7,7 +7,6 @@
 
 package com.hagoapp.datacova.utility;
 
-import com.hagoapp.datacova.utility.CoVaException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
