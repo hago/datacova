@@ -108,14 +108,14 @@ public class Rule implements JsonStringify {
 
     @NotNull
     public static Rule fromJson(@NotNull String json) throws IOException {
-        Map<String, Object> map = MapSerializer.deserializeMap(json);
+        var map = MapSerializer.deserializeMap(json);
         return fromMap(map, json);
     }
 
     @SuppressWarnings("unchecked")
     private static Rule fromMap(Map<String, Object> map, String mapJson) {
-        Map<String, Object> configMap = (Map<String, Object>)map.get("ruleConfig");
-        Rule rule = new Gson().fromJson(mapJson, Rule.class);
+        var configMap = (Map<String, Object>)map.get("ruleConfig");
+        var rule = new Gson().fromJson(mapJson, Rule.class);
         rule.ruleConfig = VerifyConfiguration.create(configMap);
         return rule;
     }

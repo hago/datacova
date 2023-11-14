@@ -40,7 +40,7 @@ public class ClientMessageHandler {
     }
 
     private final Logger logger = LoggerFactory.getLogger(ClientMessageHandler.class);
-    private final MessageHandler defaultHandler = (registerMessage) -> {
+    private final MessageHandler defaultHandler = registerMessage -> {
         logger.warn("Message not recognized, skipped");
         return null;
     };

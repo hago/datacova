@@ -124,11 +124,11 @@ public class Task implements JsonStringify {
     @NotNull
     @SuppressWarnings("unchecked")
     public static Task fromJson(String s) throws CoVaException, IOException {
-        Task task = gson.fromJson(s, Task.class);
-        Map<String, Object> map = JSON.std.mapFrom(s);
-        List<Map<String, Object>> mapActions = (List<Map<String, Object>>) map.get("actions");
+        var task = gson.fromJson(s, Task.class);
+        var map = JSON.std.mapFrom(s);
+        var mapActions = (List<Map<String, Object>>) map.get("actions");
         List<TaskAction> actions = new ArrayList<>();
-        for (Map<String, Object> mapAction : mapActions) {
+        for (var mapAction : mapActions) {
             actions.add(TaskActionFactory.getTaskAction(mapAction));
         }
         task.actions = actions;
@@ -137,12 +137,12 @@ public class Task implements JsonStringify {
 
     @NotNull
     public static List<TaskAction> actionsFromJson(String s) throws CoVaException, IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        JavaType elemType = mapper.getTypeFactory().constructMapType(HashMap.class, String.class, Object.class);
-        JavaType javaType = mapper.getTypeFactory().constructCollectionType(List.class, elemType);
+        var mapper = new ObjectMapper();
+        var elemType = mapper.getTypeFactory().constructMapType(HashMap.class, String.class, Object.class);
+        var javaType = mapper.getTypeFactory().constructCollectionType(List.class, elemType);
         List<Map<String, Object>> actionsMap = mapper.readValue(s, javaType);
         List<TaskAction> actions = new ArrayList<>();
-        for (Map<String, Object> map : actionsMap) {
+        for (var map : actionsMap) {
             actions.add(TaskActionFactory.getTaskAction(map));
         }
         return actions;

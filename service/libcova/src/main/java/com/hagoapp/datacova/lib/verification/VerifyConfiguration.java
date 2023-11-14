@@ -70,7 +70,7 @@ public class VerifyConfiguration implements JsonStringify {
     }
 
     public boolean isValid() {
-        if (fields.size() == 0) {
+        if (fields.isEmpty()) {
             return false;
         }
         long distinctSize = ignoreFieldCase ?

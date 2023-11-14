@@ -71,7 +71,7 @@ public class TaskActionFactory {
 
     private static TaskAction doGetTaskAction(String json, Map<String, Object> map) throws CoVaException {
         try {
-            int type = Integer.parseInt(map.get("type").toString());
+            var type = Integer.parseInt(map.get("type").toString());
             TaskAction action = new Gson().fromJson(json, typeActionMap.get(type));
             action.loadActualContent(map);
             return action;
