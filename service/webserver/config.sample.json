@@ -63,9 +63,9 @@
     }
   },
   "fileStorage": {
-    "uploadDirectory": null,
-    "thumbnailDirectory": null,
-    "tempDirectory": null,
-    "sshDirectory": null
+    "uploadFileStore": "localfs:c:/temp/datacova/upload",
+    "thumbnailFileStore": "localfs:/usr/local/temp/datacova/thumb",
+    "tempFileStore": null,
+    "sshFileStore": "memfs:"
   }
 }
