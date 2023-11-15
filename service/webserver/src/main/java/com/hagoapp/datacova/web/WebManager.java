@@ -301,14 +301,14 @@ public class WebManager {
 
     private void createCrossOriginRouteHandlers(Router router, WebHandler handler) {
         if (webConfig.isAllowCrossOriginResourceSharing()) {
-            var pattern = String.join("|", webConfig.getCrossOriginSources());
+            var origins = webConfig.getCrossOriginSources();
             var headers = getAllowedHeaders(handler);
             createRoute(router, handler)
-                    .handler(createCrossOriginHandler(List.of(MethodName.GET), headers, pattern));
+                    .handler(createCrossOriginHandler(List.of(MethodName.GET), headers, origins));
         }
     }
 
-    private CorsHandler createCrossOriginHandler(List<String> methods, List<String> headers, String pattern) {
+    private CorsHandler createCrossOriginHandler(List<String> methods, List<String> headers, List<String> origins) {
         var allowHeaders = new HashSet<String>();
         allowHeaders.addAll(headers);
         allowHeaders.addAll(List.of(
@@ -320,9 +320,9 @@ public class WebManager {
         var allowedMethods = new HashSet<String>();
         allowedMethods.add(MethodName.OPTIONS);
         allowedMethods.addAll(methods);
-        logger.info("{} CORS allow: {} {} {}", webConfig.getIdentity(), allowedMethods, allowHeaders, pattern);
+        logger.info("{} CORS allow: {} {} {}", webConfig.getIdentity(), allowedMethods, allowHeaders, origins);
         return CorsHandler.create()
-                .addOrigin(pattern)
+                .addOrigins(origins)
                 .allowedMethods(allowedMethods.stream().map(HttpMethod::valueOf).collect(Collectors.toSet()))
                 .allowedHeaders(allowHeaders)
                 .allowCredentials(true);
