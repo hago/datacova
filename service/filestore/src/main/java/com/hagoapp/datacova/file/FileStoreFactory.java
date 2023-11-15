@@ -48,7 +48,7 @@ public class FileStoreFactory {
                 } else {
                     try {
                         var constructor = config.getConstructor(FsConfig.class);
-                        fileStoreMaps.put(a.name(), constructor);
+                        fileStoreMaps.put(a.name().toLowerCase(), constructor);
                         log.info("Sub FileStore: {} is registered with {}", config.getCanonicalName(), a.name());
                     } catch (NoSuchMethodException e) {
                         log.error("Sub FileStore: {} has no constructor with FsConfig", config.getCanonicalName());
@@ -69,7 +69,7 @@ public class FileStoreFactory {
                 } else {
                     try {
                         var constructor = config.getConstructor();
-                        fsConfigMaps.put(a.name(), constructor);
+                        fsConfigMaps.put(a.name().toLowerCase(), constructor);
                         log.info("Sub FsConfig: {} is registered with {}", config.getCanonicalName(), a.name());
                     } catch (NoSuchMethodException e) {
                         log.error("Sub FsConfig: {} has no constructor with FsConfig", config.getCanonicalName());
@@ -89,7 +89,7 @@ public class FileStoreFactory {
             log.error("{} is not a valid FsConfig", config.getClass().getCanonicalName());
             return null;
         }
-        var scheme = anno.name();
+        var scheme = anno.name().toLowerCase();
         var constructor = fileStoreMaps.get(scheme);
         if (constructor == null) {
             log.error("{} has no registered FileStore", scheme);
@@ -109,7 +109,7 @@ public class FileStoreFactory {
             log.error("{} is not valid file store string", connectionString);
             return null;
         }
-        var scheme = connectionString.substring(0, schemeLen);
+        var scheme = connectionString.substring(0, schemeLen).toLowerCase();
         var constructor = fsConfigMaps.get(scheme);
         if (constructor == null) {
             log.error("{} has no registered FileStore", connectionString);

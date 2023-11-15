@@ -41,6 +41,10 @@ class LocalFsFileStore constructor(private val config: FsConfig) : FileStore {
             throw UnsupportedOperationException("Not a LocalFsConfig instance")
         }
         conf = config
+        val f = File(conf.rootPath)
+        if (!f.exists()) {
+            f.mkdirs()
+        }
     }
 
     override fun putFile(src: InputStream, fileName: String, size: Long): String {

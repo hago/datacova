@@ -122,4 +122,12 @@ class LocalFsTest {
         logger.debug("file not exists?")
         Assertions.assertFalse(store.exists(id))
     }
+
+    @Test
+    fun testLoadFromConnectionString() {
+        val str = "localfs:" + System.getProperty("java.io.tmpdir")
+        val fs = FileStoreFactory.createFileStore(str)
+        Assertions.assertNotNull(fs)
+        Assertions.assertTrue(fs is LocalFsFileStore)
+    }
 }
