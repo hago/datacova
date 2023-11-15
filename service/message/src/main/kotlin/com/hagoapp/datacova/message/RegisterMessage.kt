@@ -14,8 +14,8 @@ class RegisterMessage(
     val group: String,
     val authKey: String,
     var name: String? = null,
-    val taskExecutionJob: String?,
-    val jobTime: Long?
+    val taskExecutionJob: String? = null,
+    val jobTime: Long? = null
 ) {
 
     companion object {
