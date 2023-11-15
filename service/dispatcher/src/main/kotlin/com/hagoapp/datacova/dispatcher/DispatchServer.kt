@@ -7,11 +7,12 @@
 
 package com.hagoapp.datacova.dispatcher
 
-import com.hagoapp.datacova.utility.net.SocketPacketParser
+import com.hagoapp.datacova.dispatcher.server.ServerState
+import com.hagoapp.datacova.dispatcher.server.WorkerSpeaker
+import com.hagoapp.datacova.lib.data.TaskExecutionData
+import com.hagoapp.datacova.lib.execution.TaskExecution
 import org.slf4j.LoggerFactory
 import java.net.ServerSocket
-import java.net.Socket
-import java.net.SocketException
 import java.util.concurrent.atomic.AtomicBoolean
 
 object DispatchServer {
@@ -19,15 +20,14 @@ object DispatchServer {
     private val logger = LoggerFactory.getLogger(DispatchServer::class.java)
     private val config = Application.config
     private val shouldClose = AtomicBoolean(false)
-    private val speakers = mutableListOf<SocketSpeaker>()
 
     fun start() {
+        Thread { dispatchData() }.start()
         ServerSocket(config.port).use {
             logger.info("socket server started")
             while (!shouldClose.get()) {
                 val sk = it.accept()
-                val speaker = SocketSpeaker(sk)
-                speakers.add(speaker)
+                val speaker = WorkerSpeaker(sk)
                 Thread(speaker).start()
             }
             logger.info("socket server, closed")
@@ -38,28 +38,29 @@ object DispatchServer {
         shouldClose.set(true)
     }
 
-    private class SocketSpeaker(private val socket: Socket) : Runnable {
-
-        var shouldClose = AtomicBoolean(false)
-
-        override fun run() {
-            while (!shouldClose.get()) {
-                try {
-                    val data = SocketPacketParser.readPacket(socket)
-                    if (data == null) {
-                        Thread.sleep(500L)
-                        continue
-                    }
-                    val rsp = ClientMessageHandler.get().handle(data)
-                    if (rsp != null) {
-                        SocketPacketParser.writePacket(socket, rsp)
-                    }
-                } catch (e: SocketException) {
-                    logger.error("socket error {}", e.message)
-                    break
-                }
+    private const val FREE_INTERVAL = 5000L
+    private fun dispatchData() {
+        val executions = mutableListOf<TaskExecution>()
+        val sleeper = Object()
+        while (shouldClose.get()) {
+            if (executions.isEmpty()) {
+                executions.addAll(TaskExecutionData(Application.config.db).use {
+                    it.loadQueueingTaskExecution()
+                })
             }
-            logger.debug("exit client socket thread")
+            if (executions.isEmpty()) {
+                logger.debug("no task execution to run, sleep")
+                sleeper.wait(FREE_INTERVAL)
+                continue
+            }
+            val speaker = ServerState.findAvailableWorker()
+            if (speaker == null) {
+                logger.debug("no available worker")
+                sleeper.wait(FREE_INTERVAL)
+                continue
+            }
+            val te = executions.removeAt(0)
+            ServerState.issueJob(speaker, te)
         }
     }
 }

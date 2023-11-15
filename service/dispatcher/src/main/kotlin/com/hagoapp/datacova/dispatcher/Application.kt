@@ -8,8 +8,6 @@
 package com.hagoapp.datacova.dispatcher
 
 import com.google.gson.Gson
-import com.hagoapp.datacova.lib.data.TaskExecutionData
-import com.hagoapp.datacova.lib.execution.TaskExecution
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.FileInputStream
@@ -39,20 +37,11 @@ class Application {
                 Gson().fromJson(json, Config::class.java)
             }
             Thread { DispatchServer.start() }.start()
+            val sleeper = Object()
             while (!exitFlag.get()) {
-                /*val l = loadActiveTaskExecution()
-                if (l.isEmpty()) {
-                    Thread.sleep(5000)
-                    continue
-                }*/
+                sleeper.wait(5000)
             }
             logger.info("exit")
-        }
-
-        private fun loadActiveTaskExecution(): List<TaskExecution> {
-            return TaskExecutionData(config.db).use {
-                it.loadQueueingTaskExecution()
-            }
         }
     }
 }
