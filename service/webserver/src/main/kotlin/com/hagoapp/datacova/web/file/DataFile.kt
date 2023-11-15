@@ -125,10 +125,7 @@ class DataFile {
             return
         }
         val info = fs.getFileInfo(id)
-        val tmpFile = File(
-            CoVaConfig.getConfig().fileStorage.tempFileStore,
-            UUID.randomUUID().toString() + info.originalFileName
-        )
+        val tmpFile = File(Utils.getSystemTemporaryDirectory(), UUID.randomUUID().toString() + info.originalFileName)
         fs.getFile(id).use { fis ->
             FileOutputStream(tmpFile).use { fos ->
                 Utils.copyStream(fis, fos)
