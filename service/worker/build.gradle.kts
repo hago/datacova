@@ -17,6 +17,7 @@ dependencies {
     implementation(project(":utility"))
     implementation(project(":libcova"))
     implementation(project(":message"))
+    implementation("info.picocli:picocli:4.7.5")
     implementation("org.slf4j", "slf4j-api", "2.0.9")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("org.reflections", "reflections", "0.10.2")
