@@ -107,4 +107,14 @@ class TaskExecutionData(config: DatabaseConfig) : CoVaDatabase(config) {
             return ret
         }
     }
+
+    fun getIngestDbConfigString(connectionId: Int): String? {
+        val sql = "select configuration from connection where id = ?"
+        return connection.prepareStatement(sql).use { stmt ->
+            stmt.setInt(1, connectionId)
+            stmt.executeQuery().use { rs ->
+                if (rs.next()) rs.getString(1) else null
+            }
+        }
+    }
 }
