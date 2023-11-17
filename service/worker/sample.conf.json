@@ -2,5 +2,13 @@
   "group": "normal",
   "server": "127.0.0.1",
   "port": 9999,
-  "authKey": "M2odnxplocGg3Lk2"
+  "authKey": "M2odnxplocGg3Lk2",
+  "fileStore": null,
+  "db": {
+    "_comment": "optional section, only needed by DbExecutionCmd",
+    "host": "127.0.0.1",
+    "databaseName": "covadb",
+    "username": "cova",
+    "password": "cova"
+  }
 }
