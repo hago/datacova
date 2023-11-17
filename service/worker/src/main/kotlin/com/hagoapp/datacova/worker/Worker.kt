@@ -149,35 +149,54 @@ class Worker(private val taskExec: TaskExecution) : TaskExecutionActionWatcher, 
      * begin of TaskExecutionWatcher
      **/
     override fun onStart(te: TaskExecution) {
-
+        logger.debug("task execution {} of Task {}({}) started", te.id, te.task.name, te.taskId)
     }
 
     override fun onComplete(te: TaskExecution, result: ExecutionDetail) {
-
+        logger.debug("task execution {} of Task {}({}) completed", te.id, te.task.name, te.taskId)
     }
 
     override fun onError(te: TaskExecution, error: java.lang.Exception) {
-        logger.info("Error occurs in execution ${te.id} of Task ${te.task.name}(${te.taskId}): $error")
+        logger.debug("Error occurs in execution {} of Task {}({}): {}", te.id, te.task.name, te.taskId, error.message)
     }
 
     override fun onActionStart(te: TaskExecution, actionIndex: Int) {
-        logger.info("Execution ${te.id} of action (${te.task.actions[actionIndex].name} in Task ${te.task.name}(${te.taskId}) started")
+        logger.debug(
+            "Execution {}, action {} in task {}({}) started",
+            te.id,
+            te.task.actions[actionIndex].name,
+            te.task.name,
+            te.taskId
+        )
     }
 
     override fun onActionComplete(te: TaskExecution, actionIndex: Int, result: ExecutionActionDetail) {
-        logger.info("Execution ${te.id} of action (${te.task.actions[actionIndex].name} in Task ${te.task.name}(${te.taskId}) ${if (result.isSucceeded) "succeeded" else "failed"}")
+        logger.debug(
+            "Execution {}, action {} in task {}({}) {}",
+            te.id,
+            te.task.actions[actionIndex].name,
+            te.task.name,
+            te.taskId,
+            if (result.isSucceeded) "succeeded" else "failed"
+        )
     }
 
     override fun onActionError(te: TaskExecution, actionIndex: Int, error: java.lang.Exception) {
-        logger.info("Error occurs in execution ${te.id} of action (${te.task.actions[actionIndex].name} in Task ${te.task.name}(${te.taskId}): $error")
+        logger.debug(
+            "Action error occurs in execution {}, action {} in Task {}({}): {}",
+            te.id, te.task.actions[actionIndex].name, te.task.name, te.task.id, error.message
+        )
     }
 
     override fun onDataLoadStart(te: TaskExecution) {
-        logger.info("Data loading of execution ${te.id} of Task ${te.task.name}(${te.taskId}) started")
+        logger.debug("Data loading of execution {} of Task {}({}) started", te.id, te.task.name, te.taskId)
     }
 
     override fun onDataLoadComplete(te: TaskExecution, isLoadingSuccessful: Boolean) {
-        logger.info("Data loading of execution ${te.id} of Task ${te.task.name}(${te.taskId}) ${if (isLoadingSuccessful) "succeeded" else "failed"}")
+        logger.debug(
+            "Data loading of execution {} of task {}({}) {}", te.id, te.task.name, te.taskId,
+            if (isLoadingSuccessful) "succeeded" else "failed"
+        )
     }
 
 }
