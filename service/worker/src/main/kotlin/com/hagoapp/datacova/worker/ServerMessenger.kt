@@ -12,6 +12,7 @@ import com.hagoapp.datacova.message.MessageWriter
 import com.hagoapp.datacova.message.RegisterMessage
 import com.hagoapp.datacova.message.RegisterResponseMessage
 import com.hagoapp.datacova.utility.net.SocketPacketParser
+import com.hagoapp.datacova.worker.command.Parser
 import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.net.InetSocketAddress
@@ -24,26 +25,28 @@ import java.util.concurrent.atomic.AtomicBoolean
  *
  * @constructor Create empty Server messenger
  */
-class ServerMessenger private constructor(private val config: Config) {
+object ServerMessenger {
 
-    companion object {
-        private const val INTERVAL_SECONDS = 5
-        private lateinit var messenger: ServerMessenger
-
-        fun create(config: Config): ServerMessenger {
-            if (!this::messenger.isInitialized) {
-                messenger = ServerMessenger(config)
-            }
-            return messenger
-        }
-    }
+    private const val INTERVAL_SECONDS = 5
 
     private val exitFlag = AtomicBoolean(false)
     private val logger = LoggerFactory.getLogger(ServerMessenger::class.java)
     private lateinit var socket: Socket
     private var name: String? = null
+    private val config = Application.oneApp().config
 
-    init {
+    fun start() {
+        startWorker()
+        while (true) {
+            val input = readln().trim()
+            val result = Parser.runCommand(input)
+            if (result.exit) {
+                break
+            }
+        }
+    }
+
+    private fun startWorker() {
         Thread {
             while (!exitFlag.get()) {
                 try {

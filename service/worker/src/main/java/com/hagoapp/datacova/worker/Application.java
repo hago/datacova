@@ -9,6 +9,7 @@
 package com.hagoapp.datacova.worker;
 
 import com.google.gson.Gson;
+import com.hagoapp.datacova.worker.cli.Execute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
@@ -17,53 +18,50 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+@CommandLine.Command(name = "worker", subcommands = {Execute.class})
 public class Application {
 
-    @CommandLine.Option(names = {"-c", "--config"})
-    private static String configFile;
-    private static final Application app = new Application();
+    private static final String DEFAULT_CONFIG_PATH = "./worker.conf";
+
+    @CommandLine.Option(names = {"-c", "--config"}, defaultValue = DEFAULT_CONFIG_PATH)
+    private String configFile;
+    private static Application app;
     private Config config;
     private final Logger logger = LoggerFactory.getLogger(Application.class);
 
     public static void main(String[] args) {
-        app.config = app.loadConfig(configFile);
-        if (app.config == null) {
-            return;
-        }
+        app = new Application();
         var cli = new CommandLine(app);
         cli.setExecutionStrategy(app::executionStrategy).execute(args);
     }
 
     public Config getConfig() {
+        if (config == null) {
+            config = loadConfig();
+        }
         return config;
     }
 
-    public static Application application() {
+    public static Application oneApp() {
         return app;
+    }
+
+    private Application() {
     }
 
     private int executionStrategy(CommandLine.ParseResult parseResult) {
         return new CommandLine.RunLast().execute(parseResult); // default execution strategy
     }
 
-    private static final String DEFAULT_CONFIG_PATH = "./worker.conf";
-
-    private Config loadConfig(String path) {
-        String fn;
-        if ((path == null) || !new File(path).exists()) {
-            var f = new File(DEFAULT_CONFIG_PATH);
-            if (!f.exists()) {
-                throw new UnsupportedOperationException(
-                        String.format("config file not found, from neither %s nor %s.", path, f.getAbsolutePath()));
-            }
-            fn = DEFAULT_CONFIG_PATH;
-        } else {
-            fn = path;
+    private Config loadConfig() {
+        if (!new File(configFile).exists()) {
+            logger.error("config file not found, from {}.", configFile);
+            return null;
         }
-        try (var it = new FileInputStream(fn)) {
+        try (var it = new FileInputStream(configFile)) {
             return new Gson().fromJson(new String(it.readAllBytes()), Config.class);
         } catch (IOException e) {
-            logger.error("config file loading failed: {}, exit.", fn);
+            logger.error("config file loading failed: {}, exit.", configFile);
             return null;
         }
     }
