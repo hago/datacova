@@ -20,12 +20,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.Callable;
 
 @CommandLine.Command(name = "exec", description = {"run a task execution"})
-public class Execute implements Callable<Integer> {
+public class ExecuteCmd implements Callable<Integer> {
     @CommandLine.Option(
             names = {"-e", "--execution"}, description = {"file contains task execution information"}, required = true
     )
     private String teFile;
-    private final Logger logger = LoggerFactory.getLogger(Execute.class);
+    private final Logger logger = LoggerFactory.getLogger(ExecuteCmd.class);
     private final Config config = Application.oneApp().getConfig();
     private TaskExecution taskExecution;
 

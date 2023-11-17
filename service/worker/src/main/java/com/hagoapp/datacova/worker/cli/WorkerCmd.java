@@ -13,7 +13,7 @@ import picocli.CommandLine;
 import java.util.concurrent.Callable;
 
 @CommandLine.Command(name = "worker")
-public class Worker implements Callable<Integer> {
+public class WorkerCmd implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         ServerMessenger.INSTANCE.start();
