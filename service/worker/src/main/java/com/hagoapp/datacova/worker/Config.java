@@ -7,6 +7,7 @@
 
 package com.hagoapp.datacova.worker;
 
+import com.hagoapp.datacova.lib.data.DatabaseConfig;
 import com.hagoapp.datacova.utility.JsonStringify;
 
 /**
@@ -26,6 +27,8 @@ public class Config implements JsonStringify {
     private String server;
     private int port;
     private String authKey;
+    private DatabaseConfig db;
+    private String fileStore;
 
     public String getGroup() {
         return group;
@@ -57,5 +60,21 @@ public class Config implements JsonStringify {
 
     public void setAuthKey(String authKey) {
         this.authKey = authKey;
+    }
+
+    public DatabaseConfig getDb() {
+        return db;
+    }
+
+    public void setDb(DatabaseConfig db) {
+        this.db = db;
+    }
+
+    public String getFileStore() {
+        return fileStore;
+    }
+
+    public void setFileStore(String fileStore) {
+        this.fileStore = fileStore;
     }
 }

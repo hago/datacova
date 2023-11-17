@@ -7,7 +7,6 @@
 
 package com.hagoapp.datacova.worker.command
 
-import com.hagoapp.datacova.worker.Application
 import com.hagoapp.datacova.worker.ServerMessenger
 
 /**
@@ -19,7 +18,7 @@ import com.hagoapp.datacova.worker.ServerMessenger
 @CommandName(names = ["exit", "quit"], help = "exit application")
 class ExitCommand : Command {
     override fun run(cmd: String, args: List<String>): Result {
-        ServerMessenger.create(Application.oneApp().config).shutDown()
+        ServerMessenger.shutDown()
         return Result(true)
     }
 }
