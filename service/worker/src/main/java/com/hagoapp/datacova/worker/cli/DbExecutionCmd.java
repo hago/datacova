@@ -59,7 +59,7 @@ public class DbExecutionCmd implements Callable<Integer>, TaskExecutionWatcher {
     /* Watcher for execution */
     @Override
     public void onStart(@NotNull TaskExecution te) {
-        //
+        TaskExecutionWatcher.super.onStart(te);
     }
 
     @Override

@@ -13,16 +13,20 @@ import com.hagoapp.datacova.lib.execution.TaskExecution
 import org.slf4j.LoggerFactory
 import java.lang.reflect.Method
 
-class TaskExecutionGroupWatcher(private val watchers: MutableSet<TaskExecutionWatcher>) : TaskExecutionWatcher {
+class TaskExecutionGroupWatcher(private val initialWatchers: Set<TaskExecutionWatcher>) : TaskExecutionWatcher {
 
-    constructor() : this(mutableListOf())
+    private val watchers: MutableSet<TaskExecutionWatcher> = mutableSetOf()
 
-    constructor(vararg manyWatchers: TaskExecutionWatcher) : this(manyWatchers.toMutableSet())
+    constructor(vararg manyWatchers: TaskExecutionWatcher) : this(manyWatchers.toSet())
 
-    constructor(watcherList: List<TaskExecutionWatcher>) : this(watcherList.toMutableSet())
+    constructor(watcherList: List<TaskExecutionWatcher>) : this(watcherList.toSet())
 
     private val watcherMethods = TaskExecutionWatcher::class.java.methods.associateBy { it.name }
     private val logger = LoggerFactory.getLogger(TaskExecutionGroupWatcher::class.java)
+
+    init {
+        watchers.addAll(initialWatchers)
+    }
 
     fun addWatcher(watcher: TaskExecutionWatcher) {
         watchers.add(watcher)
