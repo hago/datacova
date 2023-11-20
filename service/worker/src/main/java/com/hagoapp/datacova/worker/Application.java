@@ -19,7 +19,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-@CommandLine.Command(name = "worker", subcommands = {ExecuteCmd.class, DbExecutionCmd.class})
+@CommandLine.Command(name = "worker", subcommands = {ExecuteCmd.class, DbExecutionCmd.class, Worker.class})
 public class Application {
 
     private static final String DEFAULT_CONFIG_PATH = "./worker.conf";
@@ -31,7 +31,7 @@ public class Application {
     private final Logger logger = LoggerFactory.getLogger(Application.class);
 
     public static void main(String[] args) {
-        app = new Application();
+        app = oneApp();
         var cli = new CommandLine(app);
         cli.setExecutionStrategy(app::executionStrategy).execute(args);
     }
@@ -43,7 +43,10 @@ public class Application {
         return config;
     }
 
-    public static Application oneApp() {
+    public static synchronized Application oneApp() {
+        if (app == null) {
+            app = new Application();
+        }
         return app;
     }
 
