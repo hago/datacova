@@ -9,6 +9,8 @@ package com.hagoapp.datacova.worker;
 
 import com.hagoapp.datacova.lib.data.DatabaseConfig;
 import com.hagoapp.datacova.utility.JsonStringify;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The config for worker.
@@ -17,6 +19,9 @@ import com.hagoapp.datacova.utility.JsonStringify;
  * @since 0.5
  */
 public class Config implements JsonStringify {
+
+    private static final String DEFAULT_FILE_STORE = String.format("localFs:%s", System.getProperty("java.io.tmpdir"));
+    private final Logger logger = LoggerFactory.getLogger(Config.class);
     /**
      * The group that this worker belongs.
      */
@@ -71,7 +76,12 @@ public class Config implements JsonStringify {
     }
 
     public String getFileStore() {
-        return fileStore;
+        if (fileStore != null) {
+            return fileStore;
+        } else {
+            logger.warn("{} used as config file", DEFAULT_FILE_STORE);
+            return DEFAULT_FILE_STORE;
+        }
     }
 
     public void setFileStore(String fileStore) {
