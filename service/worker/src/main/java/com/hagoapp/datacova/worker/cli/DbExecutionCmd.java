@@ -34,26 +34,32 @@ public class DbExecutionCmd implements Callable<Integer>, TaskExecutionWatcher {
 
     @Override
     public Integer call() {
-        if (config == null) {
-            logger.error("No config found, exit");
-            return -1;
-        }
-        if (config.getDb() == null) {
-            logger.error("No database config found, exit");
-            return -2;
-        }
-        TaskExecution taskExecution;
-        try (var db = new TaskExecutionData(config.getDb())) {
-            taskExecution = db.getTaskExecution(id);
-            if (taskExecution == null) {
-                logger.error("task execution with id {} not found, exit", id);
-                return -3;
+        try {
+            if (config == null) {
+                logger.error("No config found, exit");
+                return -1;
             }
+            if (config.getDb() == null) {
+                logger.error("No database config found, exit");
+                return -2;
+            }
+            TaskExecution taskExecution;
+            try (var db = new TaskExecutionData(config.getDb())) {
+                taskExecution = db.getTaskExecution(id);
+                if (taskExecution == null) {
+                    logger.error("task execution with id {} not found, exit", id);
+                    return -3;
+                }
+            }
+            var worker = new Worker(taskExecution);
+            worker.addWatcher(this);
+            worker.execute();
+            return 0;
+        } catch (Exception ex) {
+            logger.error("DbExecutionCmd error: {}", ex.getMessage());
+            StackTraceWriter.write(ex, logger);
+            return -10;
         }
-        var worker = new Worker(taskExecution);
-        worker.addWatcher(this);
-        worker.execute();
-        return 0;
     }
 
     /* Watcher for execution */
