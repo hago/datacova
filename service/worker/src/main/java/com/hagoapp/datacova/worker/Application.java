@@ -9,6 +9,7 @@
 package com.hagoapp.datacova.worker;
 
 import com.google.gson.Gson;
+import com.hagoapp.datacova.worker.cli.DbExecutionCmd;
 import com.hagoapp.datacova.worker.cli.ExecuteCmd;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +19,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-@CommandLine.Command(name = "worker", subcommands = {ExecuteCmd.class})
+@CommandLine.Command(name = "worker", subcommands = {ExecuteCmd.class, DbExecutionCmd.class})
 public class Application {
 
     private static final String DEFAULT_CONFIG_PATH = "./worker.conf";
@@ -54,14 +55,16 @@ public class Application {
     }
 
     private Config loadConfig() {
-        if (!new File(configFile).exists()) {
+        if ((configFile == null) || !new File(configFile).exists()) {
             logger.error("config file not found, from {}.", configFile);
+            System.exit(-1);
             return null;
         }
         try (var it = new FileInputStream(configFile)) {
             return new Gson().fromJson(new String(it.readAllBytes()), Config.class);
         } catch (IOException e) {
             logger.error("config file loading failed: {}, exit.", configFile);
+            System.exit(-2);
             return null;
         }
     }
