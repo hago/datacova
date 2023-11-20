@@ -80,7 +80,7 @@ public class FileStoreFactory {
     }
 
     static {
-        register("com.", "org.");
+        register("com.hagoapp.datacova");
     }
 
     public static FileStore createFileStore(FsConfig config) {
