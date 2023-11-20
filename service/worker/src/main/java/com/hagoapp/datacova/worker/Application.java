@@ -11,6 +11,7 @@ package com.hagoapp.datacova.worker;
 import com.google.gson.Gson;
 import com.hagoapp.datacova.worker.cli.DbExecutionCmd;
 import com.hagoapp.datacova.worker.cli.ExecuteCmd;
+import com.hagoapp.datacova.worker.cli.WorkerCmd;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
@@ -19,7 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-@CommandLine.Command(name = "worker", subcommands = {ExecuteCmd.class, DbExecutionCmd.class, Worker.class})
+@CommandLine.Command(name = "worker", subcommands = {ExecuteCmd.class, DbExecutionCmd.class, WorkerCmd.class})
 public class Application {
 
     private static final String DEFAULT_CONFIG_PATH = "./worker.conf";
