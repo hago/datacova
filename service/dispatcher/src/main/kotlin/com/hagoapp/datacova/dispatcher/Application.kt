@@ -8,6 +8,8 @@
 package com.hagoapp.datacova.dispatcher
 
 import com.google.gson.Gson
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.FileInputStream
@@ -37,9 +39,8 @@ class Application {
                 Gson().fromJson(json, Config::class.java)
             }
             Thread { DispatchServer.start() }.start()
-            val sleeper = Object()
             while (!exitFlag.get()) {
-                sleeper.wait(5000)
+                runBlocking { delay(5000) }
             }
             logger.info("exit")
         }

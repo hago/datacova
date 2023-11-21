@@ -10,12 +10,14 @@ package com.hagoapp.datacova.dispatcher.server
 import com.hagoapp.datacova.lib.execution.TaskExecution
 import com.hagoapp.datacova.message.RegisterMessage
 import org.slf4j.LoggerFactory
+import java.time.Instant
 import java.util.concurrent.ConcurrentHashMap
 
 object ServerState {
     private val logger = LoggerFactory.getLogger(ServerState::class.java)
     private val speakers = ConcurrentHashMap<String, WorkerSpeaker>()
     private val workerStates = ConcurrentHashMap<String, WorkerStatus>()
+    private val taskExecutionsInProcess = ConcurrentHashMap<Int, TaskExecution>()
 
     fun workerRegister(workerSpeaker: WorkerSpeaker, registerMessage: RegisterMessage): Boolean {
         val state = WorkerStatus(workerSpeaker.id, registerMessage.name, null, registerMessage.jobTime)
@@ -43,6 +45,17 @@ object ServerState {
     }
 
     fun issueJob(speaker: WorkerSpeaker, taskExecution: TaskExecution) {
+        taskExecutionsInProcess[taskExecution.id] = taskExecution
+        workerStates[speaker.id] = WorkerStatus(
+            speaker.id,
+            speaker.id,
+            taskExecution,
+            Instant.now().toEpochMilli()
+        )
 
+    }
+
+    fun findNewTaskExecutions(list: List<TaskExecution>): List<TaskExecution> {
+        return list.filter { !taskExecutionsInProcess.contains(it.id) }
     }
 }

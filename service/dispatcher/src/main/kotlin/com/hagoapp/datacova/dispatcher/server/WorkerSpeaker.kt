@@ -8,6 +8,8 @@
 package com.hagoapp.datacova.dispatcher.server
 
 import com.hagoapp.datacova.dispatcher.ClientMessageHandler
+import com.hagoapp.datacova.message.MessageReader
+import com.hagoapp.datacova.message.RegisterMessage
 import com.hagoapp.datacova.utility.net.SocketPacketParser
 import org.slf4j.LoggerFactory
 import java.net.Socket
@@ -28,6 +30,10 @@ class WorkerSpeaker(private val socket: Socket) : Runnable {
     private val logger = LoggerFactory.getLogger(WorkerSpeaker::class.java)
 
     override fun run() {
+        if (!register()) {
+            logger.debug("unsuccessful registration")
+            return
+        }
         while (!shouldClose.get()) {
             try {
                 val data = SocketPacketParser.readPacket(socket)
@@ -45,5 +51,20 @@ class WorkerSpeaker(private val socket: Socket) : Runnable {
             }
         }
         logger.debug("exit client socket thread")
+    }
+
+    private fun register(): Boolean {
+        val data = SocketPacketParser.readPacket(socket)
+        if (data == null) {
+            logger.error("1st message after connected should be register, somehow null")
+            return false
+        }
+        val msg = MessageReader.readMessage(data)
+        if (msg !is RegisterMessage) {
+            logger.error("1st message after connected should be register, somehow it's {}", msg)
+            return false
+        }
+        ServerState.workerRegister(this, msg)
+        return true
     }
 }
