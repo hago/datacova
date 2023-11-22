@@ -11,6 +11,7 @@ import com.hagoapp.datacova.lib.execution.TaskExecution
 import com.hagoapp.datacova.message.RegisterMessage
 import org.slf4j.LoggerFactory
 import java.time.Instant
+import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 
 object ServerState {
@@ -19,7 +20,7 @@ object ServerState {
     private val workerStates = ConcurrentHashMap<String, WorkerStatus>()
     private val taskExecutionsInProcess = ConcurrentHashMap<Int, TaskExecution>()
 
-    fun workerRegister(workerSpeaker: WorkerSpeaker, registerMessage: RegisterMessage): Boolean {
+    fun workerRegister(workerSpeaker: WorkerSpeaker, registerMessage: RegisterMessage): String? {
         val state = WorkerStatus(workerSpeaker.id, registerMessage.name, null, registerMessage.jobTime)
         if (registerMessage.taskExecutionJob != null) {
             val te = TaskExecution.loadFromJson(registerMessage.taskExecutionJob)
@@ -29,18 +30,21 @@ object ServerState {
                     registerMessage.name,
                     workerSpeaker.id
                 )
-                return false
+                return null
             } else {
                 state.taskExecution = te
             }
         }
         speakers[workerSpeaker.id] = workerSpeaker
         workerStates[workerSpeaker.id] = state
-        return true
+        if (registerMessage.name == null) {
+            registerMessage.name = UUID.randomUUID().toString()
+        }
+        return registerMessage.name
     }
 
     fun findAvailableWorker(): WorkerSpeaker? {
-        val id = workerStates.values.firstOrNull { it.taskExecution != null } ?.speakerId
+        val id = workerStates.values.firstOrNull { it.taskExecution == null } ?.speakerId
         return if (id == null) null else speakers[id]
     }
 

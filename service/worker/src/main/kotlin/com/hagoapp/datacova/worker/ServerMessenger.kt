@@ -102,6 +102,7 @@ object ServerMessenger {
         val message = RegisterMessage(config.group, config.authKey, name)
         val load = MessageWriter.toBytes(message)
         SocketPacketParser.writePacket(socket, load)
+        logger.debug("registration sent")
     }
 
     fun shutDown() {

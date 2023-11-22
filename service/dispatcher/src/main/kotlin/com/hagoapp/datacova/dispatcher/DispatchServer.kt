@@ -29,6 +29,7 @@ object DispatchServer {
             logger.info("socket server started")
             while (!shouldClose.get()) {
                 val sk = it.accept()
+                logger.debug("new client connected {}", sk)
                 val speaker = WorkerSpeaker(sk)
                 Thread(speaker).start()
             }
@@ -46,7 +47,6 @@ object DispatchServer {
         val executions = mutableListOf<TaskExecution>()
         while (!shouldClose.get()) {
             val speaker = ServerState.findAvailableWorker()
-            logger.info("speaker {}", speaker)
             if (speaker == null) {
                 logger.debug("no available worker")
                 runBlocking { delay(FREE_INTERVAL) }

@@ -9,7 +9,9 @@ package com.hagoapp.datacova.dispatcher.server
 
 import com.hagoapp.datacova.dispatcher.ClientMessageHandler
 import com.hagoapp.datacova.message.MessageReader
+import com.hagoapp.datacova.message.MessageWriter
 import com.hagoapp.datacova.message.RegisterMessage
+import com.hagoapp.datacova.message.RegisterResponseMessage
 import com.hagoapp.datacova.utility.net.SocketPacketParser
 import org.slf4j.LoggerFactory
 import java.net.Socket
@@ -64,7 +66,9 @@ class WorkerSpeaker(private val socket: Socket) : Runnable {
             logger.error("1st message after connected should be register, somehow it's {}", msg)
             return false
         }
-        ServerState.workerRegister(this, msg)
-        return true
+        val name = ServerState.workerRegister(this, msg)
+        val response = RegisterResponseMessage(name != null, name ?: "Failed")
+        SocketPacketParser.writePacket(socket, MessageWriter.toBytes(response))
+        return name != null
     }
 }
