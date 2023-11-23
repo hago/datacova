@@ -71,4 +71,9 @@ class WorkerSpeaker(private val socket: Socket) : Runnable {
         SocketPacketParser.writePacket(socket, MessageWriter.toBytes(response))
         return name != null
     }
+
+    fun sendMessage(message: Any) {
+        val bytes = MessageWriter.toBytes(message)
+        SocketPacketParser.writePacket(socket, bytes)
+    }
 }

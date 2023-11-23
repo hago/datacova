@@ -7,8 +7,12 @@
 
 package com.hagoapp.datacova.dispatcher.server
 
+import com.hagoapp.datacova.dispatcher.Application
+import com.hagoapp.datacova.lib.data.TaskExecutionData
 import com.hagoapp.datacova.lib.execution.TaskExecution
+import com.hagoapp.datacova.lib.ingest.TaskActionIngest
 import com.hagoapp.datacova.message.RegisterMessage
+import com.hagoapp.datacova.message.TaskExecutionMessage
 import org.slf4j.LoggerFactory
 import java.time.Instant
 import java.util.UUID
@@ -44,7 +48,7 @@ object ServerState {
     }
 
     fun findAvailableWorker(): WorkerSpeaker? {
-        val id = workerStates.values.firstOrNull { it.taskExecution == null } ?.speakerId
+        val id = workerStates.values.firstOrNull { it.taskExecution == null }?.speakerId
         return if (id == null) null else speakers[id]
     }
 
@@ -56,7 +60,12 @@ object ServerState {
             taskExecution,
             Instant.now().toEpochMilli()
         )
-
+        val conMap = TaskExecutionData(Application.config.db).use { db ->
+            db.getIngestDbConfigStrings(
+                taskExecution.task.actions.filterIsInstance<TaskActionIngest>().map { it.connectionId })
+        }
+        val msg = TaskExecutionMessage(taskExecution.toJson(), conMap)
+        speaker.sendMessage(msg)
     }
 
     fun findNewTaskExecutions(list: List<TaskExecution>): List<TaskExecution> {
