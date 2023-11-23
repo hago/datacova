@@ -20,7 +20,25 @@ import com.hagoapp.datacova.message.TaskExecutionMessage.Companion.MESSAGE_JOB_I
 class TaskExecutionMessage(val taskExecutionJob: String, val connections: Map<Int, String>) {
 
     companion object {
-        const val MESSAGE_JOB_ISSUING: Byte = 1
+        const val MESSAGE_JOB_ISSUING: Byte = 2
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as TaskExecutionMessage
+
+        if (taskExecutionJob != other.taskExecutionJob) return false
+        if (connections != other.connections) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = taskExecutionJob.hashCode()
+        result = 31 * result + connections.hashCode()
+        return result
     }
 
 }

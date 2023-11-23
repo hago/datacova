@@ -17,7 +17,8 @@ class MessageIoTest {
         RegisterMessage("regular", "key", null),
         RegisterMessage("regular", "key", "worker demo"),
         RegisterResponseMessage(true, UUID.randomUUID().toString()),
-        RegisterResponseMessage(false, UUID.randomUUID().toString())
+        RegisterResponseMessage(false, UUID.randomUUID().toString()),
+        TaskExecutionMessage("", mapOf(1 to ""))
     )
 
     @Test
