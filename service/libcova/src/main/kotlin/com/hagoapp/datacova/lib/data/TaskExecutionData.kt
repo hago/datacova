@@ -117,4 +117,19 @@ class TaskExecutionData(config: DatabaseConfig) : CoVaDatabase(config) {
             }
         }
     }
+
+    fun getIngestDbConfigStrings(connectionIdList: List<Int>): Map<Int, String> {
+        val sql =
+            "select id, configuration from connection where id in (${connectionIdList.joinToString(", ") { "?" }})"
+        return connection.prepareStatement(sql).use { stmt ->
+            connectionIdList.forEachIndexed { i, id -> stmt.setInt(i + 1, id) }
+            val ret = mutableMapOf<Int, String>()
+            stmt.executeQuery().use { rs ->
+                while (rs.next()) {
+                    ret[rs.getInt(1)] = rs.getString(2)
+                }
+            }
+            ret
+        }
+    }
 }
