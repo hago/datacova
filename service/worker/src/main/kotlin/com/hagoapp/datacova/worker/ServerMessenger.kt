@@ -7,12 +7,13 @@
 
 package com.hagoapp.datacova.worker
 
-import com.hagoapp.datacova.message.MessageReader
-import com.hagoapp.datacova.message.MessageWriter
-import com.hagoapp.datacova.message.RegisterMessage
-import com.hagoapp.datacova.message.RegisterResponseMessage
+import com.hagoapp.datacova.lib.execution.TaskExecution
+import com.hagoapp.datacova.message.*
 import com.hagoapp.datacova.utility.net.SocketPacketParser
 import com.hagoapp.datacova.worker.command.Parser
+import com.hagoapp.datacova.worker.execution.CachedDbConfigLookup
+import com.hagoapp.datacova.worker.execution.DbConfigLoader
+import com.hagoapp.f2t.database.config.DbConfigReader
 import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.net.InetSocketAddress
@@ -112,6 +113,7 @@ object ServerMessenger {
     private fun handleMessage(message: Any) {
         when (message) {
             is RegisterResponseMessage -> handleRegisterResponseMessage(message)
+            is TaskExecutionMessage -> handleTaskExecutionMessage(message)
             else -> {
                 logger.error("Unexpected message with type {}, ignored", message::class.java.canonicalName)
             }
@@ -125,5 +127,15 @@ object ServerMessenger {
         } else {
             logger.error("Register not acknowledged: {}, registration not successful", msg.name)
         }
+    }
+
+    private fun handleTaskExecutionMessage(msg: TaskExecutionMessage) {
+        val te = TaskExecution.loadFromJson(msg.taskExecutionJob)
+        val connections = msg.connections.map { Pair(
+            it.key,
+            DbConfigReader.json2DbConfig(it.value)
+        ) }.toMap()
+        DbConfigLoader.provider = CachedDbConfigLookup(connections)
+        Worker(te).execute()
     }
 }

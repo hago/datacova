@@ -9,13 +9,12 @@ package com.hagoapp.datacova.worker.executor
 
 import com.hagoapp.datacova.utility.CoVaException
 import com.hagoapp.datacova.lib.action.TaskAction
-import com.hagoapp.datacova.lib.data.TaskExecutionData
 import com.hagoapp.datacova.lib.execution.TaskExecution
 import com.hagoapp.datacova.lib.ingest.TaskActionIngest
 import com.hagoapp.datacova.lib.ingest.TaskActionIngest.TASK_ACTION_TYPE_INGEST
 import com.hagoapp.datacova.worker.Application
+import com.hagoapp.datacova.worker.execution.DbConfigLoader
 import com.hagoapp.f2t.*
-import com.hagoapp.f2t.database.config.DbConfigReader
 import com.hagoapp.f2t.datafile.ParseResult
 
 class IngestExecutor : BaseTaskActionExecutor(), ProgressNotify {
@@ -28,9 +27,7 @@ class IngestExecutor : BaseTaskActionExecutor(), ProgressNotify {
             throw CoVaException()
         }
         taskAction = action
-        val conStr = TaskExecutionData(config.db).getIngestDbConfigString(action.connectionId)
-            ?: throw CoVaException()
-        val dbConfig = DbConfigReader.json2DbConfig(conStr)
+        val dbConfig = DbConfigLoader.provider.lookup(action.connectionId) ?: throw CoVaException()
         val fileTable = DataTable(data.columnDefinition.mapIndexed { i, col ->
             val fileCol = FileColumnDefinition(col.name, setOf(col.dataType), col.dataType)
             fileCol.order = i
