@@ -26,7 +26,7 @@ public interface TaskExecutionWatcher {
     default void onComplete(@NotNull TaskExecution te, @NotNull ExecutionDetail result) {
     }
 
-    default void onError(@NotNull TaskExecution te, @NotNull Exception errot) {
+    default void onError(@NotNull TaskExecution te, @NotNull Exception error) {
     }
 
     default void onActionStart(@NotNull TaskExecution te, int actionIndex) {
