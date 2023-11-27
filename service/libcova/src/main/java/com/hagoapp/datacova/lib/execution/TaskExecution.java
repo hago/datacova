@@ -134,6 +134,9 @@ public class TaskExecution implements JsonStringify {
         var taskExecution = new Gson().fromJson(json, TaskExecution.class);
         var task = Task.fromJson(taskJson);
         taskExecution.setTask(task);
+        var fileJson = MapSerializer.serializeMap((Map<String, Object>) map.get("fileInfo"));
+        var fileInfo = ExecutionFileInfo.getFileInfo(fileJson);
+        taskExecution.setFileInfo(fileInfo);
         return taskExecution;
     }
 
