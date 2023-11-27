@@ -111,4 +111,19 @@ object ServerState {
     fun findNewTaskExecutions(list: List<TaskExecution>): List<TaskExecution> {
         return list.filterNot { taskExecutionsInProcess.containsKey(it.id) }
     }
+
+    fun jobDone(taskExecution: TaskExecution) {
+        val speakerId = workerStates.firstNotNullOfOrNull {
+            if (it.value.taskExecution?.id != taskExecution.id) null
+            else it.key
+        }
+        if (speakerId == null) {
+            logger.warn("attempt to log task execution {}'s completion but not found", taskExecution.id)
+        } else {
+            val te = workerStates.getValue(speakerId)
+            te.taskExecution = null
+            te.issueTime = null
+            taskExecutionsInProcess.remove(taskExecution.id)
+        }
+    }
 }
