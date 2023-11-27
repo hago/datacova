@@ -34,6 +34,7 @@ public class Config implements JsonStringify {
     private String authKey;
     private DatabaseConfig db;
     private String fileStore;
+    private String localTempDir;
 
     public String getGroup() {
         return group;
@@ -73,6 +74,14 @@ public class Config implements JsonStringify {
 
     public void setDb(DatabaseConfig db) {
         this.db = db;
+    }
+
+    public String getLocalTempDir() {
+        return localTempDir == null ? System.getProperty("java.io.tmpdir") : localTempDir;
+    }
+
+    public void setLocalTempDir(String localTempDir) {
+        this.localTempDir = localTempDir;
     }
 
     public String getFileStore() {
