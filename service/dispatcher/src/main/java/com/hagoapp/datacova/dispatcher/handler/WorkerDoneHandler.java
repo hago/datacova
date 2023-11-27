@@ -1,0 +1,44 @@
+/*
+ * Copyright (c) 2021.
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ */
+
+package com.hagoapp.datacova.dispatcher.handler;
+
+import com.hagoapp.datacova.dispatcher.Application;
+import com.hagoapp.datacova.dispatcher.ClientMessageHandler;
+import com.hagoapp.datacova.dispatcher.server.ServerState;
+import com.hagoapp.datacova.lib.data.TaskExecutionData;
+import com.hagoapp.datacova.lib.execution.ExecutionDetail;
+import com.hagoapp.datacova.lib.execution.TaskExecution;
+import com.hagoapp.datacova.message.WorkerDoneMessage;
+import com.hagoapp.datacova.utility.CoVaException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class WorkerDoneHandler implements ClientMessageHandler.MessageHandler {
+
+    private static final Logger logger = LoggerFactory.getLogger(WorkerDoneHandler.class);
+
+    @Override
+    public Object handle(Object message) {
+        if (!(message instanceof WorkerDoneMessage)) {
+            throw new UnsupportedOperationException("Not a worker done message!");
+        }
+        var msg = (WorkerDoneMessage) message;
+        try {
+            var te = TaskExecution.loadFromJson(msg.getTaskExecutionJson());
+            var result = ExecutionDetail.fromString(msg.getResultJson());
+            ServerState.INSTANCE.jobDone(te);
+            try (var db = new TaskExecutionData(Application.getConfig().getDb())) {
+                db.completeTaskExecution(result);
+            }
+        } catch (CoVaException ex) {
+            logger.error("invalid task execution in worker done message: {}", msg.getTaskExecutionJson());
+        }
+        return null;
+    }
+}

@@ -8,9 +8,11 @@
 package com.hagoapp.datacova.dispatcher;
 
 import com.hagoapp.datacova.dispatcher.handler.RegisterHandler;
+import com.hagoapp.datacova.dispatcher.handler.WorkerDoneHandler;
 import com.hagoapp.datacova.message.MessageReader;
 import com.hagoapp.datacova.message.MessageWriter;
 import com.hagoapp.datacova.message.RegisterMessage;
+import com.hagoapp.datacova.message.WorkerDoneMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +47,8 @@ public class ClientMessageHandler {
         return null;
     };
     private final Map<Class<?>, MessageHandler> handlerMap = Map.of(
-            RegisterMessage.class, new RegisterHandler()
+            RegisterMessage.class, new RegisterHandler(),
+            WorkerDoneMessage.class, new WorkerDoneHandler()
     );
 
     /**
