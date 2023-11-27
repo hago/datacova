@@ -11,6 +11,7 @@ import com.hagoapp.datacova.file.FileStoreFactory
 import com.hagoapp.datacova.lib.action.TaskAction
 import com.hagoapp.datacova.lib.execution.*
 import com.hagoapp.datacova.utility.StackTraceWriter
+import com.hagoapp.datacova.utility.Utils
 import com.hagoapp.datacova.worker.execution.TaskActionExecutorFactory
 import com.hagoapp.datacova.worker.execution.TaskExecutionActionWatcher
 import com.hagoapp.datacova.worker.execution.TaskExecutionGroupWatcher
@@ -30,7 +31,6 @@ class Worker(private val taskExec: TaskExecution) : TaskExecutionActionWatcher, 
     private var currentActionIndex: Int = 0
     private val watcherGroup = TaskExecutionGroupWatcher(this)
     private val config = Application.oneApp().config
-    private val localTempDir = System.clearProperty("java.io.tmpdir")
 
     fun addWatcher(watcher: TaskExecutionWatcher): Worker {
         watcherGroup.addWatcher(watcher)
@@ -43,7 +43,12 @@ class Worker(private val taskExec: TaskExecution) : TaskExecutionActionWatcher, 
 
     private fun createTempFile(fileInfo: ExecutionFileInfo): String {
         val fs = FileStoreFactory.createFileStore(config.fileStore)
-        val f = File(localTempDir, UUID.randomUUID().toString()).absolutePath
+        val fnParts = Utils.parseFileName(fileInfo.originalName)
+        val f = File(
+            Application.oneApp().config.localTempDir,
+            String.format("%s.%s", UUID.randomUUID().toString(), fnParts.ext)
+        ).absolutePath
+        logger.debug("local temp {}", f)
         fs.getFile(fileInfo.fileId).use { reader ->
             FileOutputStream(f).use { writer ->
                 val buffer = ByteArray(1024 * 1024 * 5)
