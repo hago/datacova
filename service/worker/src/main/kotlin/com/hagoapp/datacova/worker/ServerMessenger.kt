@@ -7,18 +7,22 @@
 
 package com.hagoapp.datacova.worker
 
+import com.hagoapp.datacova.lib.execution.ExecutionDetail
 import com.hagoapp.datacova.lib.execution.TaskExecution
 import com.hagoapp.datacova.message.*
 import com.hagoapp.datacova.utility.net.SocketPacketParser
 import com.hagoapp.datacova.worker.command.Parser
 import com.hagoapp.datacova.worker.execution.CachedDbConfigLookup
 import com.hagoapp.datacova.worker.execution.DbConfigLoader
+import com.hagoapp.datacova.worker.execution.TaskExecutionWatcher
 import com.hagoapp.f2t.database.config.DbConfigReader
 import org.slf4j.LoggerFactory
 import java.io.IOException
+import java.lang.Exception
 import java.net.InetSocketAddress
 import java.net.Socket
 import java.net.SocketException
+import java.time.Instant
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -26,7 +30,7 @@ import java.util.concurrent.atomic.AtomicBoolean
  *
  * @constructor Create empty Server messenger
  */
-object ServerMessenger {
+object ServerMessenger : TaskExecutionWatcher {
 
     private const val INTERVAL_SECONDS = 5
 
@@ -35,6 +39,8 @@ object ServerMessenger {
     private lateinit var socket: Socket
     private var name: String? = null
     private val config = Application.oneApp().config
+    private var taskExecution: TaskExecution? = null
+    private var taskExecutionTime: Long? = null
 
     fun start() {
         startWorker()
@@ -100,7 +106,7 @@ object ServerMessenger {
     }
 
     private fun register() {
-        val message = RegisterMessage(config.group, config.authKey, name)
+        val message = RegisterMessage(config.group, config.authKey, name, taskExecution?.toJson(), taskExecutionTime)
         val load = MessageWriter.toBytes(message)
         SocketPacketParser.writePacket(socket, load)
         logger.debug("registration sent")
@@ -130,12 +136,27 @@ object ServerMessenger {
     }
 
     private fun handleTaskExecutionMessage(msg: TaskExecutionMessage) {
-        val te = TaskExecution.loadFromJson(msg.taskExecutionJob)
-        val connections = msg.connections.map { Pair(
-            it.key,
-            DbConfigReader.json2DbConfig(it.value)
-        ) }.toMap()
+        taskExecution = TaskExecution.loadFromJson(msg.taskExecutionJob)
+        taskExecutionTime = Instant.now().toEpochMilli()
+        val connections = msg.connections.map {
+            Pair(
+                it.key,
+                DbConfigReader.json2DbConfig(it.value)
+            )
+        }.toMap()
         DbConfigLoader.provider = CachedDbConfigLookup(connections)
-        Worker(te).execute()
+        Worker(taskExecution!!).addWatcher(this).execute()
+    }
+
+    override fun onComplete(te: TaskExecution, result: ExecutionDetail) {
+        val message = WorkerDoneMessage(te.toJson(), result.toJson())
+        val bytes = MessageWriter.toBytes(message)
+        SocketPacketParser.writePacket(socket, bytes)
+        taskExecution = null
+        taskExecutionTime = null
+    }
+
+    override fun onError(te: TaskExecution, error: Exception) {
+        logger.error("ERROR in execution: {}", error.message)
     }
 }
