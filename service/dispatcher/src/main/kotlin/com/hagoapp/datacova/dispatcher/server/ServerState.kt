@@ -15,7 +15,10 @@ import com.hagoapp.datacova.message.RegisterMessage
 import com.hagoapp.datacova.message.TaskExecutionMessage
 import org.slf4j.LoggerFactory
 import java.time.Instant
-import java.util.UUID
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 object ServerState {
@@ -23,6 +26,42 @@ object ServerState {
     private val speakers = ConcurrentHashMap<String, WorkerSpeaker>()
     private val workerStates = ConcurrentHashMap<String, WorkerStatus>()
     private val taskExecutionsInProcess = ConcurrentHashMap<Int, TaskExecution>()
+    private const val MONITOR_INTERVAL = 5000L
+
+    init {
+        logger.debug("starting monitor timer")
+        Timer().schedule(
+            object : TimerTask() {
+                override fun run() {
+                    logger.debug(
+                        "internal status: {} workers registered, {} task executions in processing",
+                        speakers.size,
+                        taskExecutionsInProcess.size
+                    )
+                    logger.debug("executions in process: {}", taskExecutionsInProcess.keys.sorted())
+                    workerStates.forEach { (speakerId, status) ->
+                        if (status.taskExecution != null) {
+                            logger.debug(
+                                "worker {} is running execution {}({}) since {}",
+                                speakerId,
+                                status.taskExecution!!.id,
+                                status.taskExecution!!.task.name,
+                                DateTimeFormatter.ISO_DATE_TIME.format(
+                                    ZonedDateTime.ofInstant(
+                                        Instant.ofEpochMilli(
+                                            status.issueTime!!
+                                        ), ZoneId.of("UTC")
+                                    )
+                                )
+                            )
+                        } else {
+                            logger.debug("worker {} is not assigned", speakerId)
+                        }
+                    }
+                }
+            }, 100L, MONITOR_INTERVAL
+        )
+    }
 
     fun workerRegister(workerSpeaker: WorkerSpeaker, registerMessage: RegisterMessage): String? {
         val state = WorkerStatus(workerSpeaker.id, registerMessage.name, null, registerMessage.jobTime)
@@ -53,6 +92,10 @@ object ServerState {
     }
 
     fun issueJob(speaker: WorkerSpeaker, taskExecution: TaskExecution) {
+        val conMap = TaskExecutionData(Application.config.db).use { db ->
+            db.getIngestDbConfigStrings(
+                taskExecution.task.actions.filterIsInstance<TaskActionIngest>().map { it.connectionId })
+        }
         taskExecutionsInProcess[taskExecution.id] = taskExecution
         workerStates[speaker.id] = WorkerStatus(
             speaker.id,
@@ -60,15 +103,12 @@ object ServerState {
             taskExecution,
             Instant.now().toEpochMilli()
         )
-        val conMap = TaskExecutionData(Application.config.db).use { db ->
-            db.getIngestDbConfigStrings(
-                taskExecution.task.actions.filterIsInstance<TaskActionIngest>().map { it.connectionId })
-        }
         val msg = TaskExecutionMessage(taskExecution.toJson(), conMap)
         speaker.sendMessage(msg)
+        logger.debug("execution {} is issued to worker {}", taskExecution.id, speaker.id)
     }
 
     fun findNewTaskExecutions(list: List<TaskExecution>): List<TaskExecution> {
-        return list.filter { !taskExecutionsInProcess.contains(it.id) }
+        return list.filterNot { taskExecutionsInProcess.containsKey(it.id) }
     }
 }
