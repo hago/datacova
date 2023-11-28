@@ -31,6 +31,7 @@ public class WorkerDoneHandler implements ClientMessageHandler.MessageHandler {
         var msg = (WorkerDoneMessage) message;
         try {
             var te = TaskExecution.loadFromJson(msg.getTaskExecutionJson());
+            logger.debug("done message for {} received", te.getId());
             var result = ExecutionDetail.fromString(msg.getResultJson());
             ServerState.INSTANCE.jobDone(te);
             try (var db = new TaskExecutionData(Application.getConfig().getDb())) {

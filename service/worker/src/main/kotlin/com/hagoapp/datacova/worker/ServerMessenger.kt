@@ -152,8 +152,10 @@ object ServerMessenger : TaskExecutionWatcher {
         val message = WorkerDoneMessage(te.toJson(), result.toJson())
         val bytes = MessageWriter.toBytes(message)
         SocketPacketParser.writePacket(socket, bytes)
+        logger.debug("done message for {} sent", te.id)
         taskExecution = null
         taskExecutionTime = null
+        logger.debug("local job info cleaned")
     }
 
     override fun onError(te: TaskExecution, error: Exception) {
