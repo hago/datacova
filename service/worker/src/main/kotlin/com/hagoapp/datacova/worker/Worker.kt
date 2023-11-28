@@ -87,7 +87,9 @@ class Worker(private val taskExec: TaskExecution) : TaskExecutionActionWatcher, 
             watcherGroup.onComplete(taskExec, detail)
             return
         } finally {
-            File(tempFile).delete()
+            if (!File(tempFile).delete()) {
+                logger.warn("delete temporary file {} failed, ignored", tempFile)
+            }
         }
         for (i in 0 until taskExec.task.actions.size) {
             currentActionIndex = i
