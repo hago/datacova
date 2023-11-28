@@ -8,14 +8,13 @@
 package com.hagoapp.datacova.dispatcher.server
 
 import com.hagoapp.datacova.dispatcher.ClientMessageHandler
-import com.hagoapp.datacova.message.MessageReader
-import com.hagoapp.datacova.message.MessageWriter
-import com.hagoapp.datacova.message.RegisterMessage
-import com.hagoapp.datacova.message.RegisterResponseMessage
+import com.hagoapp.datacova.message.*
 import com.hagoapp.datacova.utility.net.SocketPacketParser
 import org.slf4j.LoggerFactory
+import java.io.IOException
 import java.net.Socket
 import java.net.SocketException
+import java.time.Instant
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -27,9 +26,16 @@ import java.util.concurrent.atomic.AtomicBoolean
  */
 class WorkerSpeaker(private val socket: Socket) : Runnable {
 
+    companion object {
+        private const val HEARTBEAT_INTERVAL = 1000L * 60 * 5
+        private const val HEARTBEAT_NO_RESPONSE_THRESHOLD = 1000L * 60 * 15
+    }
+
     val id = UUID.randomUUID().toString()
     val shouldClose = AtomicBoolean(false)
     private val logger = LoggerFactory.getLogger(WorkerSpeaker::class.java)
+    private var timer: Timer? = null
+    private var lastHeartbeatResponseTime = 0L
 
     override fun run() {
         if (!register()) {
@@ -52,6 +58,14 @@ class WorkerSpeaker(private val socket: Socket) : Runnable {
                 break
             }
         }
+        timer?.cancel()
+        if (socket.isConnected) {
+            try {
+                socket.close()
+            } catch (e: IOException) {
+                logger.warn("close socket error: {}", e.message)
+            }
+        }
         logger.debug("exit client socket thread")
     }
 
@@ -69,11 +83,33 @@ class WorkerSpeaker(private val socket: Socket) : Runnable {
         val name = ServerState.workerRegister(this, msg)
         val response = RegisterResponseMessage(name != null, name ?: "Failed")
         SocketPacketParser.writePacket(socket, MessageWriter.toBytes(response))
+        if (name != null) {
+            timer = Timer()
+            timer!!.schedule(object : TimerTask() {
+                override fun run() {
+                    val heartbeatTime = Instant.now().toEpochMilli()
+                    if ((heartbeatTime - lastHeartbeatResponseTime > HEARTBEAT_NO_RESPONSE_THRESHOLD)
+                        && (lastHeartbeatResponseTime > 0)
+                    ) {
+                        shouldClose.set(true)
+                        return
+                    }
+                    val heartBeatMessage = HeartBeatMessage(heartbeatTime, UUID.randomUUID().toString())
+                    sendMessage(heartBeatMessage)
+                    logger.debug("heart beat {}", heartBeatMessage.id)
+                }
+            }, HEARTBEAT_INTERVAL, HEARTBEAT_INTERVAL)
+        }
         return name != null
     }
 
     fun sendMessage(message: Any) {
         val bytes = MessageWriter.toBytes(message)
         SocketPacketParser.writePacket(socket, bytes)
+    }
+
+    fun heartbeatResponded(msg: HeartBeatResponseMessage) {
+        lastHeartbeatResponseTime = msg.timeStamp
+        logger.debug("heart beat responded: {} {}", msg.originId, msg.timeStamp)
     }
 }
