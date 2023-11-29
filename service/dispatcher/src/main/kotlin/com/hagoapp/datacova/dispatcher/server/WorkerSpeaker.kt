@@ -9,7 +9,7 @@ package com.hagoapp.datacova.dispatcher.server
 
 import com.hagoapp.datacova.dispatcher.ClientMessageHandler
 import com.hagoapp.datacova.message.*
-import com.hagoapp.datacova.utility.net.SocketPacketParser
+import com.hagoapp.datacova.utility.net.SocketPacketIO
 import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.net.Socket
@@ -44,14 +44,14 @@ class WorkerSpeaker(private val socket: Socket) : Runnable {
         }
         while (!shouldClose.get()) {
             try {
-                val data = SocketPacketParser.readPacket(socket)
+                val data = SocketPacketIO.readPacket(socket)
                 if (data == null) {
                     Thread.sleep(500L)
                     continue
                 }
                 val rsp = ClientMessageHandler.get().handle(this, data)
                 if (rsp != null) {
-                    SocketPacketParser.writePacket(socket, rsp)
+                    SocketPacketIO.writePacket(socket, rsp)
                 }
             } catch (e: SocketException) {
                 logger.error("socket error {}", e.message)
@@ -70,7 +70,7 @@ class WorkerSpeaker(private val socket: Socket) : Runnable {
     }
 
     private fun register(): Boolean {
-        val data = SocketPacketParser.readPacket(socket)
+        val data = SocketPacketIO.readPacket(socket)
         if (data == null) {
             logger.error("1st message after connected should be register, somehow null")
             return false
@@ -82,7 +82,7 @@ class WorkerSpeaker(private val socket: Socket) : Runnable {
         }
         val name = ServerState.workerRegister(this, msg)
         val response = RegisterResponseMessage(name != null, name ?: "Failed")
-        SocketPacketParser.writePacket(socket, MessageWriter.toBytes(response))
+        SocketPacketIO.writePacket(socket, MessageWriter.toBytes(response))
         if (name != null) {
             timer = Timer()
             timer!!.schedule(object : TimerTask() {
@@ -105,7 +105,7 @@ class WorkerSpeaker(private val socket: Socket) : Runnable {
 
     fun sendMessage(message: Any) {
         val bytes = MessageWriter.toBytes(message)
-        SocketPacketParser.writePacket(socket, bytes)
+        SocketPacketIO.writePacket(socket, bytes)
     }
 
     fun heartbeatResponded(msg: HeartBeatResponseMessage) {

@@ -10,7 +10,7 @@ package com.hagoapp.datacova.worker
 import com.hagoapp.datacova.lib.execution.ExecutionDetail
 import com.hagoapp.datacova.lib.execution.TaskExecution
 import com.hagoapp.datacova.message.*
-import com.hagoapp.datacova.utility.net.SocketPacketParser
+import com.hagoapp.datacova.utility.net.SocketPacketIO
 import com.hagoapp.datacova.worker.command.Parser
 import com.hagoapp.datacova.worker.execution.CachedDbConfigLookup
 import com.hagoapp.datacova.worker.execution.DbConfigLoader
@@ -90,7 +90,7 @@ object ServerMessenger : TaskExecutionWatcher {
 
     private fun communicate() {
         while (!exitFlag.get()) {
-            val received = SocketPacketParser.readPacket(socket)
+            val received = SocketPacketIO.readPacket(socket)
             if (received == null) {
                 logger.debug("no data, sleep {} seconds", INTERVAL_SECONDS)
                 Thread.sleep(INTERVAL_SECONDS * 1000L)
@@ -104,7 +104,7 @@ object ServerMessenger : TaskExecutionWatcher {
             val rsp = handleMessage(msg)
             if (rsp != null) {
                 val bytes = MessageWriter.toBytes(rsp)
-                SocketPacketParser.writePacket(socket, bytes)
+                SocketPacketIO.writePacket(socket, bytes)
             }
         }
     }
@@ -112,7 +112,7 @@ object ServerMessenger : TaskExecutionWatcher {
     private fun register() {
         val message = RegisterMessage(config.group, config.authKey, name, taskExecution?.toJson(), taskExecutionTime)
         val load = MessageWriter.toBytes(message)
-        SocketPacketParser.writePacket(socket, load)
+        SocketPacketIO.writePacket(socket, load)
         logger.debug("registration sent")
     }
 
@@ -165,7 +165,7 @@ object ServerMessenger : TaskExecutionWatcher {
     override fun onComplete(te: TaskExecution, result: ExecutionDetail) {
         val message = WorkerDoneMessage(te.toJson(), result.toJson())
         val bytes = MessageWriter.toBytes(message)
-        SocketPacketParser.writePacket(socket, bytes)
+        SocketPacketIO.writePacket(socket, bytes)
         logger.debug("done message for {} sent", te.id)
         taskExecution = null
         taskExecutionTime = null

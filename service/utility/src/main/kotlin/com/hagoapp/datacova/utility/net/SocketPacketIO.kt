@@ -16,7 +16,7 @@ import java.net.SocketTimeoutException
  *
  * @constructor Create empty Packet parser
  */
-object SocketPacketParser {
+object SocketPacketIO {
 
     private const val DEFAULT_TIME_OUT = 500
 
