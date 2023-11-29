@@ -21,4 +21,22 @@ class HeartBeatMessage(val timeStamp: Long, val id: String) {
     companion object {
         const val MESSAGE_TYPE_HEART_BEAT: Byte = 4
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as HeartBeatMessage
+
+        if (timeStamp != other.timeStamp) return false
+        if (id != other.id) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = timeStamp.hashCode()
+        result = 31 * result + id.hashCode()
+        return result
+    }
 }

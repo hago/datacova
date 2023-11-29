@@ -21,4 +21,22 @@ class WorkerDoneMessage(val taskExecutionJson: String, val resultJson: String) {
     companion object {
         const val MESSAGE_TYPE_MESSAGE_DONE: Byte = 3
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as WorkerDoneMessage
+
+        if (taskExecutionJson != other.taskExecutionJson) return false
+        if (resultJson != other.resultJson) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = taskExecutionJson.hashCode()
+        result = 31 * result + resultJson.hashCode()
+        return result
+    }
 }

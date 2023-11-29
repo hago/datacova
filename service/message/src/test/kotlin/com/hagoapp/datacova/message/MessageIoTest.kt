@@ -9,7 +9,9 @@ package com.hagoapp.datacova.message
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import java.time.Instant
 import java.util.UUID
+import kotlin.random.Random
 
 class MessageIoTest {
 
@@ -18,8 +20,16 @@ class MessageIoTest {
         RegisterMessage("regular", "key", "worker demo"),
         RegisterResponseMessage(true, UUID.randomUUID().toString()),
         RegisterResponseMessage(false, UUID.randomUUID().toString()),
-        TaskExecutionMessage("", mapOf(1 to ""))
+        TaskExecutionMessage("", mapOf(1 to "")),
+        HeartBeatMessage(Instant.now().toEpochMilli(), randomString(16)),
+        HeartBeatResponseMessage(Instant.now().toEpochMilli(), randomString(19)),
+        WorkerDoneMessage(randomString(10), randomString(20))
     )
+
+    private fun randomString(length: Int): String {
+        val random = Random(Instant.now().toEpochMilli())
+        return IntRange(0, length).map { _ -> Char(random.nextInt(10, 127)) }.joinToString("")
+    }
 
     @Test
     fun testMessageReadWrite() {
