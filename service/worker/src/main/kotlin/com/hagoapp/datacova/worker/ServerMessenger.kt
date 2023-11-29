@@ -120,10 +120,18 @@ object ServerMessenger : TaskExecutionWatcher {
         when (message) {
             is RegisterResponseMessage -> handleRegisterResponseMessage(message)
             is TaskExecutionMessage -> handleTaskExecutionMessage(message)
+            is HeartBeatMessage -> handleHeartbeatMessage(message)
             else -> {
                 logger.error("Unexpected message with type {}, ignored", message::class.java.canonicalName)
             }
         }
+    }
+
+    private fun handleHeartbeatMessage(msg: HeartBeatMessage) {
+        val rsp = HeartBeatResponseMessage(Instant.now().toEpochMilli(), msg.id)
+        val bytes = MessageWriter.toBytes(rsp)
+        SocketPacketParser.writePacket(socket, bytes)
+        logger.debug("Heartbeat {} responded: {} -> {}", msg.id, msg.timeStamp, rsp.timeStamp)
     }
 
     private fun handleRegisterResponseMessage(msg: RegisterResponseMessage) {
