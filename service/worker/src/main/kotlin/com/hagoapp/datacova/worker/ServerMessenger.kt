@@ -101,7 +101,11 @@ object ServerMessenger : TaskExecutionWatcher {
                 logger.error("unrecognized data received, ignored")
                 continue
             }
-            handleMessage(msg)
+            val rsp = handleMessage(msg)
+            if (rsp != null) {
+                val bytes = MessageWriter.toBytes(rsp)
+                SocketPacketParser.writePacket(socket, bytes)
+            }
         }
     }
 
@@ -116,34 +120,35 @@ object ServerMessenger : TaskExecutionWatcher {
         exitFlag.set(true)
     }
 
-    private fun handleMessage(message: Any) {
-        when (message) {
+    private fun handleMessage(message: Any): Any? {
+        return when (message) {
             is RegisterResponseMessage -> handleRegisterResponseMessage(message)
             is TaskExecutionMessage -> handleTaskExecutionMessage(message)
             is HeartBeatMessage -> handleHeartbeatMessage(message)
             else -> {
                 logger.error("Unexpected message with type {}, ignored", message::class.java.canonicalName)
+                null
             }
         }
     }
 
-    private fun handleHeartbeatMessage(msg: HeartBeatMessage) {
+    private fun handleHeartbeatMessage(msg: HeartBeatMessage): Any {
         val rsp = HeartBeatResponseMessage(Instant.now().toEpochMilli(), msg.id)
-        val bytes = MessageWriter.toBytes(rsp)
-        SocketPacketParser.writePacket(socket, bytes)
         logger.debug("Heartbeat {} responded: {} -> {}", msg.id, msg.timeStamp, rsp.timeStamp)
+        return rsp
     }
 
-    private fun handleRegisterResponseMessage(msg: RegisterResponseMessage) {
+    private fun handleRegisterResponseMessage(msg: RegisterResponseMessage): Any? {
         if (msg.acknowledged) {
             name = msg.name
             logger.info("Registration succeeded with name {}", msg.name)
         } else {
             logger.error("Register not acknowledged: {}, registration not successful", msg.name)
         }
+        return null
     }
 
-    private fun handleTaskExecutionMessage(msg: TaskExecutionMessage) {
+    private fun handleTaskExecutionMessage(msg: TaskExecutionMessage): Any? {
         taskExecution = TaskExecution.loadFromJson(msg.taskExecutionJob)
         taskExecutionTime = Instant.now().toEpochMilli()
         val connections = msg.connections.map {
@@ -154,6 +159,7 @@ object ServerMessenger : TaskExecutionWatcher {
         }.toMap()
         DbConfigLoader.provider = CachedDbConfigLookup(connections)
         Worker(taskExecution!!).addWatcher(this).execute()
+        return null
     }
 
     override fun onComplete(te: TaskExecution, result: ExecutionDetail) {
