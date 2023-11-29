@@ -9,6 +9,7 @@ package com.hagoapp.datacova.dispatcher.handler;
 
 import com.hagoapp.datacova.dispatcher.Application;
 import com.hagoapp.datacova.dispatcher.ClientMessageHandler;
+import com.hagoapp.datacova.dispatcher.server.WorkerSpeaker;
 import com.hagoapp.datacova.message.RegisterMessage;
 import com.hagoapp.datacova.message.RegisterResponseMessage;
 import org.slf4j.Logger;
@@ -26,7 +27,7 @@ public class RegisterHandler implements ClientMessageHandler.MessageHandler {
 
     private final Logger logger = LoggerFactory.getLogger(RegisterHandler.class);
     @Override
-    public Object handle(Object message) {
+    public Object handle(WorkerSpeaker speaker, Object message) {
         if (message.getClass() != RegisterMessage.class) {
             throw new UnsupportedOperationException("Not a register message!");
         }

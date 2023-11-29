@@ -8,14 +8,21 @@
 package com.hagoapp.datacova.dispatcher.handler;
 
 import com.hagoapp.datacova.dispatcher.ClientMessageHandler;
+import com.hagoapp.datacova.dispatcher.server.WorkerSpeaker;
+import com.hagoapp.datacova.message.HeartBeatResponseMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HeartbeatResponseHandler implements ClientMessageHandler.MessageHandler {
     private final Logger logger = LoggerFactory.getLogger(HeartbeatResponseHandler.class);
-
     @Override
-    public Object handle(Object message) {
+    public Object handle(WorkerSpeaker speaker, Object message) {
+        if (!(message instanceof HeartBeatResponseMessage)) {
+            logger.error("Not a HeartBeatResponseMessage!!");
+            return null;
+        }
+        var hbMsg = (HeartBeatResponseMessage) message;
+        speaker.heartbeatResponded(hbMsg);
         return null;
     }
 }

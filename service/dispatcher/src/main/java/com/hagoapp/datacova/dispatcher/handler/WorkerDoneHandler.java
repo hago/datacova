@@ -11,6 +11,7 @@ package com.hagoapp.datacova.dispatcher.handler;
 import com.hagoapp.datacova.dispatcher.Application;
 import com.hagoapp.datacova.dispatcher.ClientMessageHandler;
 import com.hagoapp.datacova.dispatcher.server.ServerState;
+import com.hagoapp.datacova.dispatcher.server.WorkerSpeaker;
 import com.hagoapp.datacova.lib.data.TaskExecutionData;
 import com.hagoapp.datacova.lib.execution.ExecutionDetail;
 import com.hagoapp.datacova.lib.execution.TaskExecution;
@@ -24,7 +25,7 @@ public class WorkerDoneHandler implements ClientMessageHandler.MessageHandler {
     private static final Logger logger = LoggerFactory.getLogger(WorkerDoneHandler.class);
 
     @Override
-    public Object handle(Object message) {
+    public Object handle(WorkerSpeaker speaker, Object message) {
         if (!(message instanceof WorkerDoneMessage)) {
             throw new UnsupportedOperationException("Not a worker done message!");
         }

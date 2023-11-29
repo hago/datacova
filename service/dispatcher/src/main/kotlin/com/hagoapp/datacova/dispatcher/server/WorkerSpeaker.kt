@@ -49,7 +49,7 @@ class WorkerSpeaker(private val socket: Socket) : Runnable {
                     Thread.sleep(500L)
                     continue
                 }
-                val rsp = ClientMessageHandler.get().handle(data)
+                val rsp = ClientMessageHandler.get().handle(this, data)
                 if (rsp != null) {
                     SocketPacketParser.writePacket(socket, rsp)
                 }

@@ -7,12 +7,11 @@
 
 package com.hagoapp.datacova.dispatcher;
 
+import com.hagoapp.datacova.dispatcher.handler.HeartbeatResponseHandler;
 import com.hagoapp.datacova.dispatcher.handler.RegisterHandler;
 import com.hagoapp.datacova.dispatcher.handler.WorkerDoneHandler;
-import com.hagoapp.datacova.message.MessageReader;
-import com.hagoapp.datacova.message.MessageWriter;
-import com.hagoapp.datacova.message.RegisterMessage;
-import com.hagoapp.datacova.message.WorkerDoneMessage;
+import com.hagoapp.datacova.dispatcher.server.WorkerSpeaker;
+import com.hagoapp.datacova.message.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,17 +37,18 @@ public class ClientMessageHandler {
     }
 
     public interface MessageHandler {
-        Object handle(Object message);
+        Object handle(WorkerSpeaker speaker, Object message);
     }
 
     private final Logger logger = LoggerFactory.getLogger(ClientMessageHandler.class);
-    private final MessageHandler defaultHandler = registerMessage -> {
+    private final MessageHandler defaultHandler = (speaker, registerMessage) -> {
         logger.warn("Message not recognized, skipped");
         return null;
     };
     private final Map<Class<?>, MessageHandler> handlerMap = Map.of(
             RegisterMessage.class, new RegisterHandler(),
-            WorkerDoneMessage.class, new WorkerDoneHandler()
+            WorkerDoneMessage.class, new WorkerDoneHandler(),
+            HeartBeatResponseMessage.class, new HeartbeatResponseHandler()
     );
 
     /**
@@ -57,21 +57,21 @@ public class ClientMessageHandler {
      * @param data incoming message
      * @return outgoing response
      */
-    public byte[] handle(byte[] data) {
+    public byte[] handle(WorkerSpeaker speaker, byte[] data) {
         try (var reader = new MessageReader()) {
             reader.update(data);
             var message = reader.parseMessage();
             logger.debug("processing message {}", message == null ? null : message.getClass().getCanonicalName());
             if (message == null) {
-                defaultHandler.handle(null);
+                defaultHandler.handle(speaker,null);
                 return null;
             } else {
                 var handler = handlerMap.get(message.getClass());
                 if (handler == null) {
-                    defaultHandler.handle(message);
+                    defaultHandler.handle(speaker, message);
                     return null;
                 } else {
-                    var responseMsg = handler.handle(message);
+                    var responseMsg = handler.handle(speaker,message);
                     return responseMsg == null ? null : MessageWriter.toBytes(responseMsg);
                 }
             }
