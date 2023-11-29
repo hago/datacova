@@ -9,6 +9,16 @@ package com.hagoapp.datacova.message
 
 import com.hagoapp.datacova.message.RegisterMessage.Companion.MESSAGE_TYPE_REGISTER
 
+/**
+ * Register message, from client to server for registration.
+ *
+ * @property group group the worker belongs
+ * @property authKey authentication credential
+ * @property name worker name, null for the first time registration
+ * @property taskExecutionJob the task execution that the worker is working on, null if the worker is free
+ * @property jobTime the time that the work load was issued, null if the worker is free
+ * @constructor Create empty Register message
+ */
 @WorkerMessage(type = MESSAGE_TYPE_REGISTER)
 class RegisterMessage(
     val group: String,

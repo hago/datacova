@@ -9,6 +9,13 @@ package com.hagoapp.datacova.message
 
 import com.hagoapp.datacova.message.RegisterResponseMessage.Companion.MESSAGE_TYPE_REGISTER_RESPONSE
 
+/**
+ * Register response message from server to client
+ *
+ * @property acknowledged true for successful registration, otherwise false
+ * @property name the unique worker name assigned by server
+ * @constructor Create empty Register response message
+ */
 @WorkerMessage(type = MESSAGE_TYPE_REGISTER_RESPONSE)
 class RegisterResponseMessage(val acknowledged: Boolean, val name: String) {
 

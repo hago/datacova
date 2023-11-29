@@ -9,6 +9,13 @@ package com.hagoapp.datacova.message
 
 import com.hagoapp.datacova.message.HeartBeatResponseMessage.Companion.MESSAGE_TYPE_HEART_BEAT_RESPONSE
 
+/**
+ * Heart beat response message from client to server.
+ *
+ * @property timeStamp the timestamp when the heartbeat is responded
+ * @property originId the identity of heartbeat
+ * @constructor Create empty Heart beat response message
+ */
 @WorkerMessage(type = MESSAGE_TYPE_HEART_BEAT_RESPONSE)
 class HeartBeatResponseMessage(val timeStamp: Long, val originId: String) {
     companion object {
