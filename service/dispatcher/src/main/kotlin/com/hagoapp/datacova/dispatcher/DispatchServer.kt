@@ -17,6 +17,11 @@ import org.slf4j.LoggerFactory
 import java.net.ServerSocket
 import java.util.concurrent.atomic.AtomicBoolean
 
+/**
+ * The server to manage workers and dispatch task executions to them.
+ *
+ * @constructor Create empty Dispatch server
+ */
 object DispatchServer {
 
     private val logger = LoggerFactory.getLogger(DispatchServer::class.java)

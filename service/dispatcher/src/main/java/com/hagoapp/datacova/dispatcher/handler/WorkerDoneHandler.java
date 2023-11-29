@@ -20,6 +20,12 @@ import com.hagoapp.datacova.utility.CoVaException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The message handler for the message that notifies a task execution is done running.
+ *
+ * @author suncjs
+ * @since 0.5
+ */
 public class WorkerDoneHandler implements ClientMessageHandler.MessageHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(WorkerDoneHandler.class);

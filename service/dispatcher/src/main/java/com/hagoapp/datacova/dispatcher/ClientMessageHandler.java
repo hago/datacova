@@ -36,7 +36,17 @@ public class ClientMessageHandler {
         return instance;
     }
 
+    /**
+     * The handler interface all server message handlers should conform.
+     */
     public interface MessageHandler {
+        /**
+         * Implement processing of messages.
+         *
+         * @param speaker the speaker instance that receives the message
+         * @param message the message
+         * @return response message, null means response is unnecessary
+         */
         Object handle(WorkerSpeaker speaker, Object message);
     }
 
@@ -63,7 +73,7 @@ public class ClientMessageHandler {
             var message = reader.parseMessage();
             logger.debug("processing message {}", message == null ? null : message.getClass().getCanonicalName());
             if (message == null) {
-                defaultHandler.handle(speaker,null);
+                defaultHandler.handle(speaker, null);
                 return null;
             } else {
                 var handler = handlerMap.get(message.getClass());
@@ -71,7 +81,7 @@ public class ClientMessageHandler {
                     defaultHandler.handle(speaker, message);
                     return null;
                 } else {
-                    var responseMsg = handler.handle(speaker,message);
+                    var responseMsg = handler.handle(speaker, message);
                     return responseMsg == null ? null : MessageWriter.toBytes(responseMsg);
                 }
             }

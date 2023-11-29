@@ -13,8 +13,15 @@ import com.hagoapp.datacova.message.HeartBeatResponseMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The message handler for the response message for a heartbeat sent earlier.
+ *
+ * @author suncjs
+ * @since 0.5
+ */
 public class HeartbeatResponseHandler implements ClientMessageHandler.MessageHandler {
     private final Logger logger = LoggerFactory.getLogger(HeartbeatResponseHandler.class);
+
     @Override
     public Object handle(WorkerSpeaker speaker, Object message) {
         if (!(message instanceof HeartBeatResponseMessage)) {

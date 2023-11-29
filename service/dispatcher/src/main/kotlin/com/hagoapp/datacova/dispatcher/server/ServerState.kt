@@ -21,6 +21,11 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
+/**
+ * The states information holder for dispatch server.
+ *
+ * @constructor Create empty Server state
+ */
 object ServerState {
     private val logger = LoggerFactory.getLogger(ServerState::class.java)
     private val speakers = ConcurrentHashMap<String, WorkerSpeaker>()
