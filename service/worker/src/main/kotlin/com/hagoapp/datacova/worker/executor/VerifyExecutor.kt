@@ -45,7 +45,7 @@ class VerifyExecutor : BaseTaskActionExecutor(), ProgressNotify {
         data.rows.forEachIndexed { i, row ->
             validators.forEachIndexed { j, validator ->
                 try {
-                    val r = validator.first.process(validator.second.map { row.cells[it] })
+                    val r = validator.first.process(validator.second.map { row.cells[it].data })
                     logger.trace("""validate {} against validator "{}", result: {}""", row, action.configurations[j].ruleConfig, r)
                     if (!r) {
                         verificationFailed = true
