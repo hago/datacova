@@ -6,12 +6,11 @@
  *
  */
 
-package com.hagoapp.datacova.util.surveyor
+package com.hagoapp.datacova.worker.executor.surveyordescriptor
 
 import com.hagoapp.datacova.lib.verification.VerifyConfiguration
 import com.hagoapp.datacova.surveyor.RuleConfig
 import com.hagoapp.datacova.surveyor.rule.RegexRuleConfig
-import com.hagoapp.datacova.worker.executor.surveyordescriptor.RuleConfigDescriptor
 import java.util.*
 
 class RegexRuleConfigDescriptor internal constructor() : RuleConfigDescriptor() {
@@ -29,10 +28,9 @@ class RegexRuleConfigDescriptor internal constructor() : RuleConfigDescriptor() 
 
     override fun doDescribe(dt: DescriptionTemplate, config: VerifyConfiguration, locale: Locale): String {
         val regexConfig = config.ruleConfig as RegexRuleConfig
-        val params = mutableListOf("")
+        val params = mutableListOf<String>()
             .plus(if (config.fields.isEmpty()) listOf("") else config.fields).plus(regexConfig.pattern)
             .toTypedArray()
-        return dt.rawTemplate.format(locale, params)
-        // return String.format(dt.rawTemplate, params)
+        return dt.rawTemplate.format(locale, *params)
     }
 }

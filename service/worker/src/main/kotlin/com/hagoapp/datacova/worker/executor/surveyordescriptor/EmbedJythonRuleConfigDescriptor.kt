@@ -6,12 +6,11 @@
  *
  */
 
-package com.hagoapp.datacova.util.surveyor
+package com.hagoapp.datacova.worker.executor.surveyordescriptor
 
 import com.hagoapp.datacova.lib.verification.VerifyConfiguration
 import com.hagoapp.datacova.surveyor.RuleConfig
 import com.hagoapp.datacova.surveyor.rule.EmbedJythonRuleConfig
-import com.hagoapp.datacova.worker.executor.surveyordescriptor.RuleConfigDescriptor
 import java.util.*
 
 class EmbedJythonRuleConfigDescriptor internal constructor() : RuleConfigDescriptor() {

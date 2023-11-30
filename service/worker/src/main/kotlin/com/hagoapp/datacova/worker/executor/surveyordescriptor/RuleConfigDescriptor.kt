@@ -12,7 +12,6 @@ import com.hagoapp.datacova.utility.CoVaException
 import com.hagoapp.datacova.lib.verification.VerifyConfiguration
 import com.hagoapp.datacova.surveyor.RuleConfig
 import com.hagoapp.datacova.surveyor.rule.*
-import com.hagoapp.datacova.util.surveyor.*
 import com.hagoapp.datacova.utility.text.TextResources
 import org.stringtemplate.v4.ST
 import java.lang.Exception
@@ -60,11 +59,12 @@ abstract class RuleConfigDescriptor {
         }
         val template = localizedTemplates.compute(locale) { loc, st ->
             if (st != null) st else {
-                val template = TextResources.getString(loc)
+                val descriptor = create(config.ruleConfig)
+                val template = TextResources.getString(loc, descriptor.templateDirName)
                 if (template != null) DescriptionTemplate(template, ST(template)) else null
             }
         }
-            ?: throw UnsupportedOperationException("template for ${config::class.java.canonicalName} with locale ${locale.displayName} not found")
+            ?: throw UnsupportedOperationException("template for ${config::class.java.canonicalName} with locale $locale not found")
         return doDescribe(template, config, locale)
     }
 
