@@ -1,0 +1,4 @@
+Values of fields ["<fields; separator="\", \"">"] was used for calculation in script
+"
+<snippet>
+", and the result is either false or not set to variable "ret" properly.
