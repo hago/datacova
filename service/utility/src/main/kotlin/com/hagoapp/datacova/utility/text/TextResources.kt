@@ -27,21 +27,22 @@ object TextResources {
     private val textMap = ConcurrentHashMap<String, String>()
 
     private fun buildPathLocalIrrelevant(vararg paths: String): String {
-        return "/text/${createPath(*paths)}/default"
+        return "${createPath(*paths)}/default"
     }
 
     private fun buildPath(locale: Locale, vararg paths: String): String {
-        return "/text/${createPath(*paths)}/${locale}"
+        return "${createPath(*paths)}/${locale}"
     }
 
     private fun createPath(vararg paths: String): String {
         if (paths.any { it.all { ch -> ch == '/' } || it.contains("//") }) {
             throw CoVaException("Illegal name ${paths.joinToString(",")}")
         }
-        return paths.joinToString("/") {
+        val joined =  paths.joinToString("/") {
             val s = if (it.startsWith("/")) it.substring(1) else it
             if (s.endsWith("/")) s.substring(0, s.lastIndex - 1) else s
         }
+        return if (joined.startsWith("/")) joined else "/$joined"
     }
 
     fun getString(locale: Locale, vararg paths: String): String? {

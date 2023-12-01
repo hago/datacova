@@ -17,22 +17,22 @@ class TextResourceTest {
     fun textLoad() {
         val cases = listOf(
             Case(
-                name = "demo",
+                name = "text/demo",
                 locale = Locale.SIMPLIFIED_CHINESE,
                 text = "这是一个中国(简体中文)的文本例子"
             ),
             Case(
-                name = "demo",
+                name = "text/demo",
                 locale = Locale.UK,
                 text = "This is a text demo as default"
             ),
             Case(
-                name = "demo/subdemo",
+                name = "text/demo/subdemo",
                 locale = Locale.US,
                 text = "This is a text demo for en_US."
             ),
             Case(
-                name = "demo/subdemo",
+                name = "text/demo/subdemo",
                 locale = Locale.UK,
                 text = null
             )

@@ -81,7 +81,7 @@ class Register {
     }
 
     private fun sendActivation(context: RoutingContext, user: UserInfo, locale: Locale) {
-        val resourceName = "user/register/activation"
+        val resourceName = "text/user/register/activation"
         val manager = FtlManager.getResourcedTemplateManager()
         val template = manager.getTemplate(resourceName, locale)
         val sw = StringWriter()

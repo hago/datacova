@@ -17,7 +17,7 @@ import java.util.*
 class RelativeTimeRangeRuleConfigDescriptor internal constructor() : RuleConfigDescriptor() {
 
     companion object {
-        private const val RELATIVE_RANGE_RULE_TEMPLATE_DIR = "/validators/relative_time_range"
+        private const val RELATIVE_RANGE_RULE_TEMPLATE_DIR = "text/validators/relative_time_range"
     }
 
     override val templateDirName: String

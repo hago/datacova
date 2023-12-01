@@ -16,7 +16,7 @@ import java.util.*
 class RegexRuleConfigDescriptor internal constructor() : RuleConfigDescriptor() {
 
     companion object {
-        private const val REGEX_RULE_TEMPLATE_DIR = "/validators/regex"
+        private const val REGEX_RULE_TEMPLATE_DIR = "text/validators/regex"
     }
 
     override val templateDirName: String

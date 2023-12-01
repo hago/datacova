@@ -19,7 +19,7 @@ import java.util.*
 class TimerRangeRuleConfigDescriptor internal constructor() : RuleConfigDescriptor() {
 
     companion object {
-        private const val TIME_RANGE_RULE_TEMPLATE_DIR = "/validators/time_range"
+        private const val TIME_RANGE_RULE_TEMPLATE_DIR = "text/validators/time_range"
     }
 
     override val templateDirName: String

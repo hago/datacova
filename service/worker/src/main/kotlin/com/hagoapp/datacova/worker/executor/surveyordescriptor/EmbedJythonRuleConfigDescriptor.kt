@@ -16,7 +16,7 @@ import java.util.*
 class EmbedJythonRuleConfigDescriptor internal constructor() : RuleConfigDescriptor() {
 
     companion object {
-        private const val EMBED_PYTHON_TEMPLATE_DIR = "/validators/pythonscript"
+        private const val EMBED_PYTHON_TEMPLATE_DIR = "text/validators/pythonscript"
     }
 
     override val templateDirName: String

@@ -16,7 +16,7 @@ import java.util.*
 class OptionsRuleConfigDescriptor internal constructor() : RuleConfigDescriptor() {
 
     companion object {
-        private const val OPTIONS_RULE_TEMPLATE_DIR = "/validators/options"
+        private const val OPTIONS_RULE_TEMPLATE_DIR = "text/validators/options"
     }
 
     override val templateDirName: String

@@ -16,7 +16,7 @@ import java.util.Locale
 class NumberRangeRuleConfigDescriptor internal constructor() : RuleConfigDescriptor() {
 
     companion object {
-        private const val NUMBER_RANGE_RULE_TEMPLATE_DIR = "/validators/number_range"
+        private const val NUMBER_RANGE_RULE_TEMPLATE_DIR = "text/validators/number_range"
     }
 
     override val templateDirName: String
