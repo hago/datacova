@@ -76,6 +76,14 @@ public class DbExecutionCmd implements Callable<Integer>, TaskExecutionWatcher {
             logger.error("FAILED");
         }
         logger.info("detail: {}", result);
+        result.getActionDetailMap().forEach((i, detail) -> {
+            logger.info("action {}: {} -> {}", i, detail.getAction().getName(), detail.isSucceeded() ? "succeeded" : "failed");
+            detail.getDataMessages().forEach((j, messages) -> {
+                for (var msg: messages) {
+                    logger.info("line {}: {}", j, msg);
+                }
+            });
+        });
     }
 
     @Override
