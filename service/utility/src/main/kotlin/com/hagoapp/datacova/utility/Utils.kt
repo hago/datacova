@@ -15,13 +15,23 @@ import java.math.BigInteger
 import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.security.MessageDigest
+import java.security.SecureRandom
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import kotlin.random.Random
 
 class Utils {
     companion object {
+        private val random = SecureRandom(toBytes(Instant.now().toEpochMilli()))
+        private const val DIGEST_ALGORITHM = "SHA-256"
+
+        @JvmStatic
+        fun toBytes(input: Long): ByteArray {
+            return ByteArray(8) {
+                input.shr(it).and(0x000000f).toByte()
+            }
+        }
+
         @JvmStatic
         fun joinPath(vararg paths: String): String {
             var f = File(paths[0])
@@ -40,36 +50,32 @@ class Utils {
         fun generateUploadedFileName(original: String): String {
             val f = File(original)
             val path = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"))
-            val md5 = MessageDigest.getInstance("MD5")
-            md5.update(Random(Instant.now().epochSecond).nextBytes(1))
+            val md5 = MessageDigest.getInstance(DIGEST_ALGORITHM)
+            md5.update(path.toByteArray())
+            val bytes = ByteArray(1)
+            random.nextBytes(bytes)
+            md5.update(bytes)
             val name = BigInteger(1, md5.digest()).toString(16).uppercase()
             return "$path/$name.${f.extension}"
         }
 
         @JvmStatic
         fun md5Digest(obj: Any): String {
-            val md5 = MessageDigest.getInstance("MD5")
+            val md5 = MessageDigest.getInstance(DIGEST_ALGORITHM)
             md5.update("$obj".toByteArray())
             return BigInteger(1, md5.digest()).toString(16)
         }
 
         @JvmStatic
-        fun sha1Digest(obj: Any): String {
-            val sha1 = MessageDigest.getInstance("SHA-1")
-            sha1.update("$obj".toByteArray())
-            return BigInteger(1, sha1.digest()).toString(16)
-        }
-
-        @JvmStatic
         fun sha256Digest(obj: Any): String {
-            val sha1 = MessageDigest.getInstance("SHA-256")
+            val sha1 = MessageDigest.getInstance(DIGEST_ALGORITHM)
             sha1.update("$obj".toByteArray())
             return BigInteger(1, sha1.digest()).toString(16)
         }
 
         @JvmStatic
         fun getRandomNumber(): Long {
-            return Instant.now().toEpochMilli() + Random(Instant.now().toEpochMilli()).nextLong()
+            return Instant.now().toEpochMilli() + random.nextLong()
         }
 
         @JvmStatic
@@ -81,10 +87,9 @@ class Utils {
             return when {
                 length <= 0 -> throw Exception("Length of string to be generated must be positive")
                 else -> {
-                    val rand = Random(Instant.now().toEpochMilli())
                     val sb = StringBuilder()
                     for (i in 0 until length) {
-                        sb.append(chars[rand.nextInt(0, chars.length)])
+                        sb.append(chars[random.nextInt(chars.length)])
                     }
                     sb.toString()
                 }

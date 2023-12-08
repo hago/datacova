@@ -19,7 +19,7 @@ class UserData(config: DatabaseConfig) : CoVaDatabase(config) {
 
     companion object {
         fun computePwdHash(password: String): String {
-            return Utils.sha1Digest("$password|${Utils.sha256Digest(password)}")
+            return Utils.sha256Digest("$password|${Utils.sha256Digest(password)}")
         }
     }
 
