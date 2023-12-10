@@ -11,15 +11,15 @@ import com.google.gson.annotations.SerializedName;
 
 public enum UserStatus {
     @SerializedName("-2")
-    Registered(-2),
+    REGISTERED(-2),
     @SerializedName("-1")
-    Unknown(-1),
+    UNKNOWN(-1),
     @SerializedName("0")
-    Normal(0),
+    NORMAL(0),
     @SerializedName("1")
-    Deleted(1),
+    DELETED(1),
     @SerializedName("2")
-    PasswordReset(2);
+    PASSWORD_RESET(2);
 
     private final int value;
 
@@ -33,6 +33,6 @@ public enum UserStatus {
                 return u;
             }
         }
-        return UserStatus.Normal;
+        return UserStatus.NORMAL;
     }
 }

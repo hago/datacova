@@ -10,10 +10,10 @@ package com.hagoapp.datacova.web.workspace
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.config.FileStorageConfig
 import com.hagoapp.datacova.data.execution.TaskExecutionCache
-import com.hagoapp.datacova.lib.data.TaskExecutionData
 import com.hagoapp.datacova.data.workspace.TaskCache
 import com.hagoapp.datacova.data.workspace.TaskData
 import com.hagoapp.datacova.data.workspace.WorkspaceCache
+import com.hagoapp.datacova.lib.data.TaskExecutionData
 import com.hagoapp.datacova.lib.execution.ExecutionFileInfo
 import com.hagoapp.datacova.lib.execution.TaskExecution
 import com.hagoapp.datacova.lib.task.Task
@@ -41,6 +41,11 @@ import java.time.format.DateTimeFormatter
 
 class Tasks {
 
+    companion object {
+        private const val MESSAGE_ACCESS_DENIED = "access denied"
+        private const val MESSAGE_INVALID_WORKSPACE = "invalid workspaced"
+    }
+
     private val logger = LoggerFactory.getLogger(Tasks::class.java)
 
     @WebEndPoint(
@@ -51,12 +56,12 @@ class Tasks {
     fun listTasksOfWorkspace(context: RoutingContext) {
         val id = context.pathParam("id").toIntOrNull()
         if (id == null) {
-            ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "invalid workspace")
+            ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, MESSAGE_INVALID_WORKSPACE)
             return
         }
         val user = Authenticator.getUser(context)
         if (!WorkspaceUserRoleUtil.isUser(user, id)) {
-            ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, "access denied")
+            ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, MESSAGE_ACCESS_DENIED)
             return
         }
         val l = TaskCache.listTasks(id)
@@ -72,11 +77,11 @@ class Tasks {
         val workspace = WorkspaceCache.getWorkspace(context.pathParam("id").toInt())
         val user = Authenticator.getUser(context)
         if (workspace == null) {
-            ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "invalid workspace")
+            ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, MESSAGE_INVALID_WORKSPACE)
             return
         }
         if (!WorkspaceUserRoleUtil.isAdmin(user, workspace) && !WorkspaceUserRoleUtil.isMaintainer(user, workspace)) {
-            ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, "access denied")
+            ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, MESSAGE_ACCESS_DENIED)
             return
         }
         val rawTask = Task.fromJson(context.body().asString())
@@ -107,7 +112,7 @@ class Tasks {
         val id = context.pathParam("id").toInt()
         val workspace = WorkspaceCache.getWorkspace(workspaceId)
         if (workspace == null) {
-            ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "invalid workspace")
+            ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, MESSAGE_INVALID_WORKSPACE)
             return
         }
         val task = TaskCache.listTasks(workspaceId).firstOrNull { t -> t.id == id }
@@ -117,7 +122,7 @@ class Tasks {
         }
         val user = Authenticator.getUser(context)
         if (!WorkspaceUserRoleUtil.isAdmin(user, workspace) && !WorkspaceUserRoleUtil.isMaintainer(user, workspace)) {
-            ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, "access denied")
+            ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, MESSAGE_ACCESS_DENIED)
             return
         }
         TaskData(CoVaConfig.getConfig().database).deleteTask(id)
@@ -135,12 +140,12 @@ class Tasks {
         val id = context.pathParam("id").toInt()
         val workspace = WorkspaceCache.getWorkspace(workspaceId)
         if (workspace == null) {
-            ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "invalid workspace")
+            ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, MESSAGE_INVALID_WORKSPACE)
             return
         }
         val user = Authenticator.getUser(context)
         if (!WorkspaceUserRoleUtil.isUser(user, workspaceId)) {
-            ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, "access denied")
+            ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, MESSAGE_ACCESS_DENIED)
             return
         }
         val task = TaskCache.listTasks(workspaceId).firstOrNull { t -> t.id == id }
@@ -167,7 +172,7 @@ class Tasks {
         val workSpace = WorkspaceCache.getWorkspace(workspaceId)
         val user = Authenticator.getUser(context)
         if ((workSpace == null) || !WorkspaceUserRoleUtil.isUser(user, workspaceId)) {
-            ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, "access denied")
+            ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, MESSAGE_ACCESS_DENIED)
             return
         }
         val taskId = context.pathParam("id").toInt()

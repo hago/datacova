@@ -26,7 +26,7 @@ public class UserInfo implements JsonStringify {
     public static final int HIDE_USERINFO_MOBILE = 0x400;
     public static final String DEFAULT_STRING_MASK = "********";
     public static final long DEFAULT_LONG_MASK = 0L;
-    public static final UserStatus DEFAULT_USER_STATUS_MASK = UserStatus.Unknown;
+    public static final UserStatus DEFAULT_USER_STATUS_MASK = UserStatus.UNKNOWN;
 
     private long id;
     private String userId;

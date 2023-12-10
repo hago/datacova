@@ -18,7 +18,7 @@ class UserFinder {
             }
             val other = mutableMapOf<Int, List<UserSearchResultItem>>()
             searchReq.userProviders.forEach { providerType ->
-                val provider = UserAuthFactory.getFactory().getAuthProvider(providerType)
+                val provider = UserAuthFactory.getAuthProvider(providerType)
                 val alreadyFound = users.filter { it.provider == providerType }.map { Pair(it.userId, 1) }.toMap()
                 val list = provider.searchUser(searchReq.search, searchReq.count + alreadyFound.size).filter {
                     !alreadyFound.containsKey(it.userId)

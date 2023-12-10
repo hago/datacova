@@ -7,7 +7,6 @@
 
 package com.hagoapp.datacova.lib.task;
 
-import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jr.ob.JSON;
 import com.google.gson.Gson;

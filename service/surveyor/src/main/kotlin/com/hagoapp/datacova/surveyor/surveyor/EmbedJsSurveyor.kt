@@ -32,10 +32,10 @@ class EmbedJsSurveyor : Surveyor {
     }
 
     override fun process(params: MutableList<Any>): Boolean {
+        require((conf.paramCount == null) || (conf.paramCount == params.size)) {
+            "expect ${conf.paramCount} parameters, ${params.size} given"
+        }
         return try {
-            if ((conf.paramCount != null) && (conf.paramCount != params.size)) {
-                throw IllegalArgumentException("expect ${conf.paramCount} parameters, ${params.size} given")
-            }
             val result = function.execute(*params.toTypedArray())
             logger.debug("result: {}", result)
             if (result !is Boolean) {

@@ -26,7 +26,7 @@ public class VerifyConfiguration implements JsonStringify {
     private List<String> fields = new ArrayList<>();
     private boolean nullable = false;
     private boolean ignoreFieldCase = false;
-    private int FieldsCountLimit = 1;
+    private int fieldsCountLimit = 1;
     private RuleConfig ruleConfig;
 
     public List<String> getFields() {
@@ -54,11 +54,11 @@ public class VerifyConfiguration implements JsonStringify {
     }
 
     public int getFieldsCountLimit() {
-        return FieldsCountLimit;
+        return fieldsCountLimit;
     }
 
     public void setFieldsCountLimit(int fieldsCountLimit) {
-        FieldsCountLimit = fieldsCountLimit;
+        this.fieldsCountLimit = fieldsCountLimit;
     }
 
     public RuleConfig getRuleConfig() {
@@ -79,8 +79,8 @@ public class VerifyConfiguration implements JsonStringify {
         if (distinctSize != fields.size()) {
             return false;
         }
-        if (FieldsCountLimit > 0) {
-            fields = fields.subList(0, FieldsCountLimit);
+        if (fieldsCountLimit > 0) {
+            fields = fields.subList(0, fieldsCountLimit);
         }
         return true;
     }

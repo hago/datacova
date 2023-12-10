@@ -78,10 +78,10 @@ class ScriptOps {
                     }.toMap()
                 ), setOf("result")
             )
-            println(ret)
-            val x = ret["result"] ?: throw CoVaException("no variable \"ret\" defined")
+            logger.debug("result value: {}", ret)
+            val x = ret["result"] ?: throw CoVaException("no variable \"result\" defined")
             if (x !is Boolean) {
-                throw CoVaException("the variable \"ret\" should be boolean")
+                throw CoVaException("the variable \"result\" should be boolean")
             }
             ResponseHelper.sendResponse(
                 context, OK, mapOf(
@@ -95,7 +95,7 @@ class ScriptOps {
         }
     }
 
-    data class EvaluateData4Js (
+    data class EvaluateData4Js(
         val config: EmbedJsRuleConfig,
         val params: List<Any?>
     )
@@ -120,10 +120,12 @@ class ScriptOps {
         }
         EmbedJsFunctionHelper(data.config.snippet).use { js ->
             val r = js.execute(*data.params.toTypedArray())
-            ResponseHelper.sendResponse(context, OK, mapOf(
-                "code" to 0,
-                "data" to r
-            ))
+            ResponseHelper.sendResponse(
+                context, OK, mapOf(
+                    "code" to 0,
+                    "data" to r
+                )
+            )
         }
     }
 }

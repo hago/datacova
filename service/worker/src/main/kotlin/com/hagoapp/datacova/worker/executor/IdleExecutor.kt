@@ -12,7 +12,6 @@ import com.hagoapp.datacova.lib.action.TaskAction
 import com.hagoapp.datacova.lib.action.idle.TaskActionIdle
 import com.hagoapp.datacova.lib.action.idle.TaskActionIdle.TASK_ACTION_TYPE_IDLE
 import com.hagoapp.datacova.lib.execution.TaskExecution
-import com.hagoapp.datacova.worker.executor.BaseTaskActionExecutor
 import com.hagoapp.f2t.ColumnDefinition
 import com.hagoapp.f2t.DataTable
 import java.security.SecureRandom
