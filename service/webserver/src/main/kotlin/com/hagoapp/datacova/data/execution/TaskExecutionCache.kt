@@ -12,7 +12,6 @@ import com.google.gson.reflect.TypeToken
 import com.hagoapp.datacova.config.CoVaConfig
 import com.hagoapp.datacova.lib.execution.TaskExecution
 import com.hagoapp.datacova.lib.data.TaskExecutionData
-import com.hagoapp.datacova.utility.MapSerializer
 import com.hagoapp.datacova.utility.redis.JedisManager
 import com.hagoapp.datacova.utility.redis.RedisCacheReader
 
