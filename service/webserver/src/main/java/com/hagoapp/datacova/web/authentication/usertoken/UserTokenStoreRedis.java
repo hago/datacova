@@ -17,7 +17,7 @@ import java.util.Set;
 public class UserTokenStoreRedis implements UserTokenStore {
 
     private final RedisConfig config;
-    private final long TOKEN_LIFE = 3600L;
+    private static final long TOKEN_LIFE = 3600L;
 
     public UserTokenStoreRedis(RedisConfig config) {
         this.config = config;
@@ -62,8 +62,7 @@ public class UserTokenStoreRedis implements UserTokenStore {
     @Override
     public Set<String> findTokensOfUser(UserInfo userInfo) {
         try (var redis = JedisManager.getJedis(config)) {
-            var l = redis.hgetAll(userInfo.toString()).keySet();
-            return l;
+            return redis.hgetAll(userInfo.toString()).keySet();
         }
     }
 }

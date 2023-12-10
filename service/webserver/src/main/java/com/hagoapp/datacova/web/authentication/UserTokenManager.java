@@ -18,7 +18,7 @@ public class UserTokenManager {
         manager.stores.add(new UserTokenStoreRedis(CoVaConfig.getConfig().getRedis()));
     }
 
-    public static UserTokenManager getManager() {
+    public static synchronized UserTokenManager getManager() {
         return manager;
     }
 

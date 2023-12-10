@@ -11,7 +11,7 @@ import com.google.gson.annotations.SerializedName;
 
 public enum UserType {
     @SerializedName("0")
-    Registered(0),
+    REGISTERED(0),
     @SerializedName("1")
     LDAP(1);
 
@@ -31,6 +31,6 @@ public enum UserType {
                 return u;
             }
         }
-        return UserType.Registered;
+        return UserType.REGISTERED;
     }
 }

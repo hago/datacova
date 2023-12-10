@@ -55,7 +55,7 @@ class RedisFileStore(private val config: FsConfig) : FileStore {
                     logger.warn("actual size of file $fileName is $s, not expected $size")
                 }
                 jedis.hset(FILE_SIZES_KEY, id, size.toString())
-                jedis.set(id.toByteArray(), it.toByteArray())
+                jedis[id.toByteArray()] = it.toByteArray()
             }
             return id
         }
@@ -63,7 +63,7 @@ class RedisFileStore(private val config: FsConfig) : FileStore {
 
     override fun getFile(id: String): InputStream {
         JedisManager.getJedis(fsConfig.config).use { jedis ->
-            val bytes = jedis.get(id.toByteArray()) ?: throw UnsupportedOperationException("Not existed: $id")
+            val bytes = jedis[id.toByteArray()] ?: throw UnsupportedOperationException("Not existed: $id")
             return ByteArrayInputStream(bytes)
         }
     }

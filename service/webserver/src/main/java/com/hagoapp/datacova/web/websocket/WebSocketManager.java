@@ -18,13 +18,16 @@ import java.util.stream.Collectors;
 
 public class WebSocketManager {
 
-    private static final WebSocketManager instance = new WebSocketManager();
+    private static WebSocketManager instance = null;
 
     private WebSocketManager() {
 
     }
 
-    public static WebSocketManager getManager() {
+    public static synchronized WebSocketManager getManager() {
+        if (instance == null) {
+            instance = new WebSocketManager();
+        }
         return instance;
     }
 
