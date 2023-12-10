@@ -47,12 +47,12 @@ class LocalUserProvider : UserAuthProvider {
                 null
             }
 
-            userInfo.status == UserStatus.Registered -> {
+            userInfo.status == UserStatus.REGISTERED -> {
                 logger.error("Local Database user auth: user not activated for {} when try to login", userId)
                 null
             }
 
-            userInfo.status == UserStatus.Deleted -> {
+            userInfo.status == UserStatus.DELETED -> {
                 logger.error("Local Database user auth: user has been deleted for {} when try to login", userId)
                 null
             }
