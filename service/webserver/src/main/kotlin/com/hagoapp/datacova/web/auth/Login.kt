@@ -37,17 +37,16 @@ class Login : WebInterface {
 
     private val respondFunc = object : WebInterface.Handler {
         override fun handle(routeContext: RoutingContext) {
-            val factory = UserAuthFactory.getFactory()
             if (routeContext.request().params().contains(LOGIN_PROVIDER)) {
                 val providerType = routeContext.request().getParam(LOGIN_PROVIDER).toIntOrNull() ?: 0
-                val provider = factory.getAuthProvider(providerType)
+                val provider = UserAuthFactory.getAuthProvider(providerType)
                 val userInfo = provider.authenticate(routeContext)
                 if (userInfo != null) {
                     loginSucceed(routeContext, userInfo, provider)
                     return
                 }
             } else {
-                for (providerCandidate in UserAuthFactory.getFactory().availableAuthProviders()) {
+                for (providerCandidate in UserAuthFactory.availableAuthProviders()) {
                     when (val userInfo = providerCandidate.authenticate(routeContext)) {
                         null -> continue
                         else -> {

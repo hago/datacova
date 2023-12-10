@@ -73,7 +73,7 @@ class UserData(config: DatabaseConfig) : CoVaDatabase(config) {
             mobile = rs.getString("mobile")
         }
         if (user.thumbnail != null) {
-            UserAuthFactory.getFactory().getAuthProvider(user.userType.value).loadThumbnail(user)
+            UserAuthFactory.getAuthProvider(user.userType.value).loadThumbnail(user)
         }
         return user
     }

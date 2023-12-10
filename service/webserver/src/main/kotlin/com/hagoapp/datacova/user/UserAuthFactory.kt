@@ -12,14 +12,7 @@ import org.reflections.Reflections
 import org.reflections.scanners.Scanners
 import org.slf4j.LoggerFactory
 
-class UserAuthFactory private constructor() {
-    companion object {
-        private val factory0 = UserAuthFactory()
-
-        fun getFactory(): UserAuthFactory {
-            return factory0
-        }
-    }
+object UserAuthFactory {
 
     private val providers: MutableMap<String, UserAuthProvider> = mutableMapOf()
 
@@ -39,8 +32,8 @@ class UserAuthFactory private constructor() {
 
     fun getAuthProvider(name: String?): UserAuthProvider {
         return when {
-            name == null -> providers[LocalUserProvider.PROVIDER_NAME]!!
-            !providers.containsKey(name) -> providers[LocalUserProvider.PROVIDER_NAME]!!
+            name == null -> providers.getValue(LocalUserProvider.PROVIDER_NAME)
+            !providers.containsKey(name) -> providers.getValue(LocalUserProvider.PROVIDER_NAME)
             else -> providers.getValue(name)
         }
     }

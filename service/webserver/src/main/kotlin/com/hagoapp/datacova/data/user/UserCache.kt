@@ -49,8 +49,6 @@ class UserCache {
                 val gson = Gson()
                 UserData(CoVaConfig.getConfig().database).batchGetUser(nullUsers.keys).forEach { info ->
                     if (info != null) {
-                        val index = nullUsers.getValue(info.id)
-                        list[index] = info
                         val key = RedisCacheReader.createCacheKey(USER_INFO, info.id)
                         jedis.setex(key, USER_INFO_CACHE_TIME, gson.toJson(info))
                     }
