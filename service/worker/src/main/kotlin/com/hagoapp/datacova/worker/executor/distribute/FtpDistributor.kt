@@ -30,7 +30,7 @@ class FtpDistributor() : Distributor() {
             createDirectoryIfNecessary(ftp, config.remotePath)
             ftp.cd(config.remotePath)
             val rName = if (config.remoteName != null) config.remoteName else config.targetFileName
-            if (ftp.ls(config.remotePath).any { file -> file.compareTo(rName) == 0 }) {
+            if (ftp.list(config.remotePath).any { file -> file.name.compareTo(rName) == 0 }) {
                 if (config.isOverwriteExisted) {
                     ftp.delete(rName)
                 } else {
@@ -38,11 +38,10 @@ class FtpDistributor() : Distributor() {
                 }
             }
             ftp.put(rName, src)
-            if (!ftp.ls(config.remotePath).any { file ->
-                    //println(file)
-                    file.compareTo(rName) == 0
+            if (!ftp.list(config.remotePath).any { file ->
+                    file.name.compareTo(rName) == 0
                 }) {
-                throw CoVaException("ftp uploaded store file $rName in ${config.remotePath} not found")
+                throw CoVaException("ftp uploaded store file $rName successfully, however not found from server path ${config.remotePath}")
             }
         }
     }

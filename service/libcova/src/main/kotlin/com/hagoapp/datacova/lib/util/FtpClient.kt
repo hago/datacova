@@ -102,20 +102,12 @@ class FtpClient(private val config: FtpConfig) : Closeable {
         }
     }
 
-    fun ls(): Array<String> {
-        return ftp.listNames() ?: arrayOf()
-    }
-
-    fun ls(path: String): Array<String> {
-        return ftp.listNames(path) ?: arrayOf()
-    }
-
     fun list(): List<RemoteFile> {
         val pwd = pwd()
         return list(pwd)
     }
 
-    private fun list(path: String): List<RemoteFile> {
+    fun list(path: String): List<RemoteFile> {
         val ret = mutableListOf<RemoteFile>()
         ftp.listFiles(path).forEach {
             if (it != null) {
