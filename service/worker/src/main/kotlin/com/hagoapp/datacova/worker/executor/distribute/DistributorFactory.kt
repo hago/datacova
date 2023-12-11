@@ -31,7 +31,7 @@ class DistributorFactory {
                 if (distributorMap.containsKey(t)) {
                     logger.error(
                         "distributor type {} from {} conflicts with{}",
-                        t, clz.canonicalName, distributorMap[t]!!.declaringClass.canonicalName
+                        t, clz.canonicalName, distributorMap.getValue(t).declaringClass.canonicalName
                     )
                 } else {
                     distributorMap[t] = constructor
