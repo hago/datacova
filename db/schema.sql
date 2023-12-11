@@ -62,23 +62,23 @@ create table if not exists users (
 
 /* create test user with password 123456 */
 insert into users (userid, name, pwdhash, addby, modifyby, modifytime, email, mobile)
-values ('Admin', 'System Administrator', '4e7dde2c5adfd4189fd0962ed9e7e821ef43b1d6', 0, 0, now(), 'admin@datacova.com', '12345')
+values ('Admin', 'System Administrator', 'c8b90ad0de2dc8c6996315296b2718434d677df4cd37688a2a6f86c71c462e6a', 0, 0, now(), 'admin@datacova.com', '12345')
 returning id;
 insert into users (userid, name, pwdhash, addby, modifyby, modifytime, email, mobile)
 select
-'test', 'CoVa Test', '4e7dde2c5adfd4189fd0962ed9e7e821ef43b1d6', id, id, now(), 'test@datacova.com', '123456'
+'test', 'CoVa Test', 'c8b90ad0de2dc8c6996315296b2718434d677df4cd37688a2a6f86c71c462e6a', id, id, now(), 'test@datacova.com', '123456'
 from users where userid = 'Admin';
 insert into users (userid, name, pwdhash, addby, modifyby, modifytime, email, mobile)
 select
-'uadmin', 'Role Admin Test', '4e7dde2c5adfd4189fd0962ed9e7e821ef43b1d6', id, id, now(), 'uadmin@datacova.com', '123457'
+'uadmin', 'Role Admin Test', 'c8b90ad0de2dc8c6996315296b2718434d677df4cd37688a2a6f86c71c462e6a', id, id, now(), 'uadmin@datacova.com', '123457'
 from users where userid = 'Admin';
 insert into users (userid, name, pwdhash, addby, modifyby, modifytime, email, mobile)
 select
-'umaintain', 'Role Maintainer Test', '4e7dde2c5adfd4189fd0962ed9e7e821ef43b1d6', id, id, now(), 'umaintain@datacova.com', '123458'
+'umaintain', 'Role Maintainer Test', 'c8b90ad0de2dc8c6996315296b2718434d677df4cd37688a2a6f86c71c462e6a', id, id, now(), 'umaintain@datacova.com', '123458'
 from users where userid = 'Admin';
 insert into users (userid, name, pwdhash, addby, modifyby, modifytime, email, mobile)
 select
-'uuser', 'Role User Test', '4e7dde2c5adfd4189fd0962ed9e7e821ef43b1d6', id, id, now(), 'uuser@datacova.com', '123451'
+'uuser', 'Role User Test', 'c8b90ad0de2dc8c6996315296b2718434d677df4cd37688a2a6f86c71c462e6a', id, id, now(), 'uuser@datacova.com', '123451'
 from users where userid = 'Admin';
 
 /*
