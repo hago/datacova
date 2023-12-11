@@ -58,7 +58,7 @@ class LocalUserProvider : UserAuthProvider {
             }
 
             userInfo.pwdHash != UserData.computePwdHash(password) -> {
-                logger.error("Local Database user auth: password mismatch when user '{} try to login", userId)
+                logger.error("Local Database user auth: password mismatch when user '{}‘ try to login", userId)
                 null
             }
 
