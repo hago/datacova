@@ -13,4 +13,8 @@ class RemoteFile(
     val isSymbolLink: Boolean,
     val size: Long,
     val base: String
-)
+) {
+    override fun toString(): String {
+        return "RemoteFile(name='$name', isDirectory=$isDirectory, isSymbolLink=$isSymbolLink, size=$size, base='$base')"
+    }
+}
