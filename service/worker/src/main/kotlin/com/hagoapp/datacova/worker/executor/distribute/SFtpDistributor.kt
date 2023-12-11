@@ -13,6 +13,7 @@ import com.hagoapp.datacova.lib.distribute.conf.SFtpConfig
 import com.hagoapp.datacova.lib.util.SFtpClient
 import com.hagoapp.datacova.lib.util.ssh.KnownHostsStore
 import java.io.FileInputStream
+import java.io.InputStream
 
 class SFtpDistributor() : Distributor() {
     private lateinit var config: SFtpConfig
@@ -24,7 +25,7 @@ class SFtpDistributor() : Distributor() {
         config = action.configuration as SFtpConfig
     }
 
-    override fun distribute(source: String?) {
+    override fun distribute(src: InputStream) {
         SFtpClient(config, KnownHostsStore.MemoryKnownHostStore()).use {
             try {
                 if (!it.cd(config.remotePath)) {
@@ -38,9 +39,7 @@ class SFtpDistributor() : Distributor() {
                     if (config.isOverwriteExisted) it.rm(rName)
                     else throw CoVaException("remote file $rName in ${config.remotePath} existed")
                 }
-                FileInputStream(source!!).use { src ->
-                    it.put(src, rName)
-                }
+                it.put(src, rName)
             } catch (ex: Exception) {
                 throw CoVaException(ex.message, ex.cause)
             }

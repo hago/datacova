@@ -11,6 +11,8 @@ import com.hagoapp.datacova.lib.distribute.TaskActionDistribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.InputStream;
+
 /**
  * Base class for distributor, this type of executor is to distribute data file to somewhere.
  *
@@ -29,7 +31,7 @@ public abstract class Distributor {
     protected Distributor() {
     }
 
-    public abstract void distribute(String source);
+    public abstract void distribute(InputStream src);
 
     public abstract String supportedDistributionType();
 }

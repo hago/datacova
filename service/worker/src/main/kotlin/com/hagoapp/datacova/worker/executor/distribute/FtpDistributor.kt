@@ -12,6 +12,7 @@ import com.hagoapp.datacova.utility.Utils
 import com.hagoapp.datacova.lib.distribute.TaskActionDistribute
 import com.hagoapp.datacova.lib.distribute.conf.FtpConfig
 import com.hagoapp.datacova.lib.util.FtpClient
+import java.io.InputStream
 
 class FtpDistributor() : Distributor() {
     private lateinit var config: FtpConfig
@@ -23,7 +24,7 @@ class FtpDistributor() : Distributor() {
         config = action.configuration as FtpConfig
     }
 
-    override fun distribute(source: String) {
+    override fun distribute(src: InputStream) {
         FtpClient(config).use { ftp ->
             ftp.ftpMode = if (config.isBinaryTransport) FtpClient.FtpMode.BINARY else FtpClient.FtpMode.ASCII
             createDirectoryIfNecessary(ftp, config.remotePath)
@@ -36,7 +37,7 @@ class FtpDistributor() : Distributor() {
                     throw CoVaException("remote file $rName in ${config.remotePath} existed")
                 }
             }
-            ftp.put(rName, source)
+            ftp.put(rName, src)
             if (!ftp.ls(config.remotePath).any { file ->
                     //println(file)
                     file.compareTo(rName) == 0
