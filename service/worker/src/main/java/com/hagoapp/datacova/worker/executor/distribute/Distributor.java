@@ -11,6 +11,12 @@ import com.hagoapp.datacova.lib.distribute.TaskActionDistribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Base class for distributor, this type of executor is to distribute data file to somewhere.
+ *
+ * @author suncjs
+ * @since 0.1
+ */
 public abstract class Distributor {
 
     protected TaskActionDistribute distAction;
