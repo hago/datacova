@@ -18,6 +18,7 @@ import java.sql.Timestamp
 class UserData(config: DatabaseConfig) : CoVaDatabase(config) {
 
     companion object {
+        @JvmStatic
         fun computePwdHash(password: String): String {
             return Utils.sha256Digest("$password|${Utils.sha256Digest(password)}")
         }
