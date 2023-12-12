@@ -27,7 +27,7 @@ export const newDistSFtpConfiguration = (conf: DistributeConfiguraton): DistSFtp
         ret.password = ""
     }
     if (ret.remotePath === undefined) {
-        ret.remotePath = "/"
+        ret.remotePath = "~"
     }
     if (ret.authType === undefined) {
         ret.authType = "PASSWORD"
