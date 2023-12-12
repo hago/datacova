@@ -143,15 +143,6 @@ class SFtpClient(
         return getClient().pwd()
     }
 
-    fun isPathExist(path: String) {
-        getClient().ls(path)
-    }
-
-    fun mkdir(path: String) {
-        val sftp = getClient()
-        sftp.mkdir(path)
-    }
-
     fun rm(path: String) {
         val sftp = getClient()
         sftp.rm(path)
