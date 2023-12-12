@@ -12,7 +12,6 @@ import com.hagoapp.datacova.lib.distribute.TaskActionDistribute
 import com.hagoapp.datacova.lib.distribute.conf.SFtpConfig
 import com.hagoapp.datacova.lib.util.SFtpClient
 import com.hagoapp.datacova.lib.util.ssh.KnownHostsStore
-import java.io.FileInputStream
 import java.io.InputStream
 
 class SFtpDistributor() : Distributor() {
@@ -28,11 +27,12 @@ class SFtpDistributor() : Distributor() {
     override fun distribute(src: InputStream) {
         SFtpClient(config, KnownHostsStore.MemoryKnownHostStore()).use {
             try {
-                if (!it.cd(config.remotePath)) {
+                val remotePath = if (!config.remotePath.startsWith("~")) config.remotePath
+                else config.remotePath.replaceFirst("~", it.pwd())
+                if (!it.cd(remotePath)) {
                     throw CoVaException("remote path ${config.remotePath} doesn't exist")
                 }
-                val actualPath = normalizePath(it, config.remotePath)
-                it.mkdir(actualPath)
+                val actualPath = it.pwd()
                 val rName = if ((config.remoteName != null) && config.remoteName.isNotBlank()) config.remoteName
                 else config.targetFileName
                 if (it.list(actualPath).any { item -> item.name.compareTo(rName) == 0 }) {
@@ -41,7 +41,7 @@ class SFtpDistributor() : Distributor() {
                 }
                 it.put(src, rName)
             } catch (ex: Exception) {
-                throw CoVaException(ex.message, ex.cause)
+                throw CoVaException("SFtp error: ${ex.message} with $config", ex.cause)
             }
         }
     }
