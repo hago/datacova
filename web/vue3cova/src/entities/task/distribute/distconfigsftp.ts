@@ -7,7 +7,7 @@ export default interface DistSFtpConfiguration extends DistributeConfiguraton {
     password: string | undefined
     remotePath: string
     remoteName: string | undefined
-    authType: "Password" | "PrivateKey"
+    authType: "PASSWORD" | "PRIVATE_KEY"
     privateKeyFile: string | undefined
     passPhrase: string | undefined
 }
@@ -30,7 +30,7 @@ export const newDistSFtpConfiguration = (conf: DistributeConfiguraton): DistSFtp
         ret.remotePath = "/"
     }
     if (ret.authType === undefined) {
-        ret.authType = "Password"
+        ret.authType = "PASSWORD"
     }
     return ret
 }

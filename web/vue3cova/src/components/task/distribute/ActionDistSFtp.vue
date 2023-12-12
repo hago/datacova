@@ -33,8 +33,8 @@ export default defineComponent({
             },
             sftpmsgstyle: "sftpsuccess",
             authOptions: [
-                { label: "Password", value: "Password" },
-                { label: "PrivateKey", value: "PrivateKey" }
+                { label: "Password", value: "PASSWORD" },
+                { label: "PrivateKey", value: "PRIVATE_KEY" }
             ],
             port: computed({
                 get: () => (conf.port.toString()),
@@ -54,7 +54,7 @@ export default defineComponent({
     },
     methods: {
         verifySFtp() {
-            if (this.conf.authType === 'Password') {
+            if (this.conf.authType === 'PASSWORD') {
                 this.verifySFtpPassword()
             } else {
                 this.verifySFtpPrivateKey()
@@ -89,7 +89,7 @@ export default defineComponent({
                 this.showMessage(false, "Port information missing")
                 return false
             }
-            if (config.authType === 'Password') {
+            if (config.authType === 'PASSWORD') {
                 if ((config.login === undefined) || (config.login === null) || (config.login.trim() === "")) {
                     (this.$refs["login"] as HTMLInputElement).focus()
                     this.showMessage(false, "Login name missing")
@@ -148,7 +148,7 @@ export default defineComponent({
             <n-input type="text" v-model:value="conf.login" placeholder="Login name" :disabled="readonly"
                 ref="login"></n-input>
         </n-gi>
-        <n-gi v-if="conf.authType === 'Password'">
+        <n-gi v-if="conf.authType === 'PASSWORD'">
             <span>Password</span>
             <n-input type="password" v-model:value="conf.password" placeholder="Password" :disabled="readonly"
                 ref="password"></n-input>
@@ -156,16 +156,16 @@ export default defineComponent({
         <n-gi span="2">
             <span style="margin-right: 5px">AuthType</span>
             <n-popselect :options="authOptions" v-model:value="conf.authType">
-                <n-button>{{ conf.authType }}</n-button>
+                <n-button>{{ authOptions.find(o => o.value == conf.authType)?.label }}</n-button>
             </n-popselect>
         </n-gi>
-        <n-gi v-if="conf.authType === 'PrivateKey'">
+        <n-gi v-if="conf.authType === 'PRIVATE_KEY'">
             <span>Private Key File</span>
             <n-upload :custom-request="sslectPrivateKey">
                 <n-button>上传文件</n-button>
             </n-upload>
         </n-gi>
-        <n-gi v-if="conf.authType === 'PrivateKey'">
+        <n-gi v-if="conf.authType === 'PRIVATE_KEY'">
             <span>Pass Phrase for Key</span>
             <n-input type="text" :value="conf.passPhrase" :disabled="readonly"></n-input>
         </n-gi>
