@@ -30,6 +30,9 @@ public class StackTraceWriter {
             // ignore
         }
         stacktrace.forEach(logger::error);
+        if (e.getCause() != null) {
+            stacktrace.addAll(write(e.getCause(), logger));
+        }
         return stacktrace;
     }
 }
