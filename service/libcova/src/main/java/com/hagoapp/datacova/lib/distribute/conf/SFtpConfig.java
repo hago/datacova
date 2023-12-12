@@ -10,6 +10,8 @@ package com.hagoapp.datacova.lib.distribute.conf;
 import com.hagoapp.datacova.lib.distribute.Configuration;
 import com.hagoapp.datacova.lib.distribute.sftp.SFtpAuthType;
 
+import java.util.Arrays;
+
 /**
  * Configuration file for an sftp target.
  *
@@ -114,5 +116,24 @@ public class SFtpConfig extends Configuration {
 
     public void setPassPhrase(String passPhrase) {
         this.passPhrase = passPhrase;
+    }
+
+    @Override
+    public String toString() {
+        return "SFtpConfig{" +
+                "host='" + host + '\'' +
+                ", port=" + port +
+                ", login='" + login + '\'' +
+                ", password='" + password + '\'' +
+                ", remotePath='" + remotePath + '\'' +
+                ", remoteName='" + remoteName + '\'' +
+                ", authType=" + authType +
+                ", privateKeyFile='" + privateKeyFile + '\'' +
+                ", privateKey=" + Arrays.toString(privateKey) +
+                ", passPhrase='" + passPhrase + '\'' +
+                ", copyOriginal=" + copyOriginal +
+                ", overwriteExisted=" + overwriteExisted +
+                ", targetFileName='" + targetFileName + '\'' +
+                '}';
     }
 }
