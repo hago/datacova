@@ -42,15 +42,4 @@ public class Application {
     private int executionStrategy(CommandLine.ParseResult parseResult) {
         return new CommandLine.RunLast().execute(parseResult); // default execution strategy
     }
-
-    public static final boolean PRODUCTION_MODE = isProduction();
-
-    private static boolean isProduction() {
-        try {
-            Class.forName("com.hagoapp.datacova.TestMode");
-            return false;
-        } catch (ClassNotFoundException e) {
-            return true;
-        }
-    }
 }
