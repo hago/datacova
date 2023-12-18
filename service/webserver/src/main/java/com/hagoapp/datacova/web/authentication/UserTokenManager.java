@@ -13,17 +13,13 @@ import java.util.List;
 public class UserTokenManager {
     private static final UserTokenManager manager = new UserTokenManager();
 
-    static {
-        manager.stores.add(new UserTokenStoreMemory());
-        manager.stores.add(new UserTokenStoreRedis(CoVaConfig.getConfig().getRedis()));
-    }
-
     public static synchronized UserTokenManager getManager() {
         return manager;
     }
 
     private UserTokenManager() {
-        //
+        stores.add(new UserTokenStoreMemory());
+        stores.add(new UserTokenStoreRedis(CoVaConfig.getConfig().getRedis()));
     }
 
     private final List<UserTokenStore> stores = new ArrayList<>();

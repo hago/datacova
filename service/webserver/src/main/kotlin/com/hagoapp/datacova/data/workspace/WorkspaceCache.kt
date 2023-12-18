@@ -36,7 +36,7 @@ class WorkspaceCache {
         @JvmStatic
         fun getWorkspaceUserInRoles(
             id: Int,
-            roles: List<WorkSpaceUserRole> = listOf(Admin, Maintainer, Loader)
+            roles: List<WorkSpaceUserRole> = listOf(ADMIN, MAINTAINER, LOADER)
         ): List<WorkSpaceData.WorkspaceBasicUser> {
             val token = object : TypeToken<List<WorkSpaceData.WorkspaceBasicUser>>() {}
             val list = RedisCacheReader.readCachedData(

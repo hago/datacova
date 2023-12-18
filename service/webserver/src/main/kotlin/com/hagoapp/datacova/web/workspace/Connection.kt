@@ -146,7 +146,7 @@ class Connection {
         if (!WorkspaceUserRoleUtil.isAnyRolesOf(
                 user,
                 workspace,
-                setOf(WorkSpaceUserRole.Admin, WorkSpaceUserRole.Maintainer)
+                setOf(WorkSpaceUserRole.ADMIN, WorkSpaceUserRole.MAINTAINER)
             )
         ) {
             ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, Messages.ACCESS_DENIED)
@@ -190,7 +190,7 @@ class Connection {
         if (!WorkspaceUserRoleUtil.isAnyRolesOf(
                 user,
                 workspace,
-                setOf(WorkSpaceUserRole.Admin, WorkSpaceUserRole.Maintainer)
+                setOf(WorkSpaceUserRole.ADMIN, WorkSpaceUserRole.MAINTAINER)
             )
         ) {
             ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, Messages.ACCESS_DENIED)
@@ -226,7 +226,7 @@ class Connection {
         if (!WorkspaceUserRoleUtil.isAnyRolesOf(
                 user,
                 workspace,
-                setOf(WorkSpaceUserRole.Admin, WorkSpaceUserRole.Maintainer)
+                setOf(WorkSpaceUserRole.ADMIN, WorkSpaceUserRole.MAINTAINER)
             )
         ) {
             ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, "Access Denied")

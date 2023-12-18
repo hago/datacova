@@ -23,6 +23,12 @@ import io.vertx.ext.web.RoutingContext
 
 class WorkSpaceApi {
 
+    companion object {
+        private const val INVALID_WORK_SPACE_DATA = "Invalid Workspace Data"
+        private const val ACCESS_DENIED = "access denied"
+        private const val NOT_EXISTED = "Not existed"
+    }
+
     @WebEndPoint(
         methods = [MethodName.GET],
         path = "/api/workspaces/mine",
@@ -73,7 +79,7 @@ class WorkSpaceApi {
         val workspaceId = context.pathParam("id").toInt()
         val wk = WorkspaceCache.getWorkspace(workspaceId)
         if ((wk == null) || !WorkspaceUserRoleUtil.isUser(userInfo, workspaceId)) {
-            ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, "Invalid Workspace Data")
+            ResponseHelper.respondError(context, HttpResponseStatus.BAD_REQUEST, INVALID_WORK_SPACE_DATA)
             return
         }
         ResponseHelper.sendResponse(
@@ -93,7 +99,7 @@ class WorkSpaceApi {
         val userInfo = Authenticator.getUser(routeContext)
         val wk = parseWorkSpace(routeContext)
         if (wk == null) {
-            ResponseHelper.respondError(routeContext, HttpResponseStatus.BAD_REQUEST, "Invalid Workspace Data")
+            ResponseHelper.respondError(routeContext, HttpResponseStatus.BAD_REQUEST, INVALID_WORK_SPACE_DATA)
             return
         }
         wk.ownerId = userInfo.id
@@ -124,7 +130,7 @@ class WorkSpaceApi {
     fun updateWorkSpace(routeContext: RoutingContext) {
         val wk = parseWorkSpace(routeContext)
         if (wk == null) {
-            ResponseHelper.respondError(routeContext, HttpResponseStatus.BAD_REQUEST, "Invalid Workspace Data")
+            ResponseHelper.respondError(routeContext, HttpResponseStatus.BAD_REQUEST, INVALID_WORK_SPACE_DATA)
             return
         }
         val user = Authenticator.getUser(routeContext)
@@ -175,7 +181,7 @@ class WorkSpaceApi {
     private fun doGetExecutionRage(context: RoutingContext, workspaceId: Int, start: Int, size: Int) {
         val user = Authenticator.getUser(context)
         if (!WorkspaceUserRoleUtil.isUser(user, workspaceId)) {
-            ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, "access denied")
+            ResponseHelper.respondError(context, HttpResponseStatus.FORBIDDEN, ACCESS_DENIED)
             return
         }
         val executions = TaskExecutionCache.getExecutionsOfWorkspace(workspaceId, start, size)
@@ -195,12 +201,12 @@ class WorkSpaceApi {
     fun getTaskExecution(context: RoutingContext) {
         val id = context.pathParam("id").toIntOrNull()
         if (id == null) {
-            ResponseHelper.respondError(context, HttpResponseStatus.NOT_FOUND, "Not existed")
+            ResponseHelper.respondError(context, HttpResponseStatus.NOT_FOUND, NOT_EXISTED)
             return
         }
         val execution = TaskExecutionCache.getTaskExecution(id)
         if (execution == null) {
-            ResponseHelper.respondError(context, HttpResponseStatus.NOT_FOUND, "Not existed")
+            ResponseHelper.respondError(context, HttpResponseStatus.NOT_FOUND, NOT_EXISTED)
             return
         } else {
             ResponseHelper.sendResponse(
@@ -224,7 +230,7 @@ class WorkSpaceApi {
         val user = Authenticator.getUser(context)
         val workspace = WorkspaceCache.getWorkspace(workspaceId)
         if ((workspace == null) || !WorkspaceUserRoleUtil.isUser(user, workspaceId)) {
-            ResponseHelper.respondError(context, HttpResponseStatus.UNAUTHORIZED, "access denied")
+            ResponseHelper.respondError(context, HttpResponseStatus.UNAUTHORIZED, ACCESS_DENIED)
             return
         }
         val rules = ValidationRuleCache.getRules(workspaceId, start, size)
@@ -249,10 +255,10 @@ class WorkSpaceApi {
         if ((workspace == null) || !WorkspaceUserRoleUtil.isAnyRolesOf(
                 user,
                 workspace,
-                setOf(WorkSpaceUserRole.Admin, WorkSpaceUserRole.Maintainer)
+                setOf(WorkSpaceUserRole.ADMIN, WorkSpaceUserRole.MAINTAINER)
             )
         ) {
-            ResponseHelper.respondError(context, HttpResponseStatus.UNAUTHORIZED, "access denied")
+            ResponseHelper.respondError(context, HttpResponseStatus.UNAUTHORIZED, ACCESS_DENIED)
             return
         }
         if (rule.name == null) {

@@ -13,9 +13,9 @@ export interface Workspace {
 }
 
 export enum WorkSpaceUserRole {
-    Admin = 0,
-    Maintainer = 1,
-    Loader = 2
+    ADMIN = 0,
+    MAINTAINER = 1,
+    LOADER = 2
 }
 
 export interface WorkspaceUser {
