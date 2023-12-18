@@ -12,7 +12,6 @@ import com.hagoapp.datacova.lib.distribute.TaskActionDistribute
 import com.hagoapp.datacova.lib.distribute.conf.SFtpConfig
 import com.hagoapp.datacova.lib.util.SFtpClient
 import com.hagoapp.datacova.lib.util.ssh.KnownHostsStore
-import java.io.FileInputStream
 import java.io.InputStream
 
 class SFtpDistributor() : Distributor() {
