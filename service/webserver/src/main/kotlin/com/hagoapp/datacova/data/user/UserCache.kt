@@ -27,7 +27,7 @@ class UserCache {
                 CoVaConfig.getConfig().redis,
                 USER_INFO, USER_INFO_CACHE_TIME, { params ->
                     UserData(CoVaConfig.getConfig().database).use {
-                        return@use it.findUser(params[0] as Long)
+                        it.findUser(params[0] as Long)
                     }
                 }, null, UserInfo::class.java, id
             )
@@ -69,7 +69,7 @@ class UserCache {
         fun getUserIdByRegistrationCode(code: String): Long? {
             JedisManager.getJedis(CoVaConfig.getConfig().redis).use {
                 val key = "$USER_REGISTRATION_CODE_KEY_PREFIX|$code"
-                return it.get(key)?.toLong()
+                return it[key]?.toLong()
             }
         }
 

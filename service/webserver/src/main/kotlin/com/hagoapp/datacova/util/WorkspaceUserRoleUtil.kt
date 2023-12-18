@@ -17,19 +17,19 @@ class WorkspaceUserRoleUtil(private val userId: Long, private val workspace: Wor
         @JvmStatic
         fun isAdmin(user: UserInfo, workspace: WorkSpace): Boolean {
             return workspace.ownerId == user.id || WorkspaceCache.getWorkspaceUserInRoles(
-                workspace.id, listOf(WorkSpaceUserRole.Admin)
+                workspace.id, listOf(WorkSpaceUserRole.ADMIN)
             ).any { it.userid == user.id }
         }
 
         @JvmStatic
         fun isMaintainer(user: UserInfo, workspace: WorkSpace): Boolean {
-            return WorkspaceCache.getWorkspaceUserInRoles(workspace.id, listOf(WorkSpaceUserRole.Maintainer))
+            return WorkspaceCache.getWorkspaceUserInRoles(workspace.id, listOf(WorkSpaceUserRole.MAINTAINER))
                 .any { it.userid == user.id }
         }
 
         @JvmStatic
         fun isLoader(user: UserInfo, workspace: WorkSpace): Boolean {
-            return WorkspaceCache.getWorkspaceUserInRoles(workspace.id, listOf(WorkSpaceUserRole.Loader))
+            return WorkspaceCache.getWorkspaceUserInRoles(workspace.id, listOf(WorkSpaceUserRole.LOADER))
                 .any { it.userid == user.id }
         }
 
@@ -42,7 +42,7 @@ class WorkspaceUserRoleUtil(private val userId: Long, private val workspace: Wor
         fun isAnyRolesOf(user: UserInfo, workspace: WorkSpace, roles: Set<WorkSpaceUserRole>): Boolean {
             val r = WorkspaceCache.getWorkspaceUserInRoles(workspace.id)
                 .any { user.id == it.userid && it.role in roles }
-            return if (WorkSpaceUserRole.Admin in roles) (r || (user.id == workspace.ownerId)) else r
+            return if (WorkSpaceUserRole.ADMIN in roles) (r || (user.id == workspace.ownerId)) else r
         }
     }
 
@@ -53,15 +53,15 @@ class WorkspaceUserRoleUtil(private val userId: Long, private val workspace: Wor
     }
 
     fun isAdmin(): Boolean {
-        return isOwner() || wkUserRoles.firstOrNull { it.userid == userId }?.role == WorkSpaceUserRole.Admin
+        return isOwner() || wkUserRoles.firstOrNull { it.userid == userId }?.role == WorkSpaceUserRole.ADMIN
     }
 
     fun isMaintainer(): Boolean {
-        return wkUserRoles.firstOrNull { it.userid == userId }?.role == WorkSpaceUserRole.Maintainer
+        return wkUserRoles.firstOrNull { it.userid == userId }?.role == WorkSpaceUserRole.MAINTAINER
     }
 
     fun isLoader(): Boolean {
-        return wkUserRoles.firstOrNull { it.userid == userId }?.role == WorkSpaceUserRole.Loader
+        return wkUserRoles.firstOrNull { it.userid == userId }?.role == WorkSpaceUserRole.LOADER
     }
 
     fun isUser(): Boolean {

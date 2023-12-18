@@ -110,7 +110,7 @@ class WorkSpaceData(connectionConfig: DatabaseConfig) : CoVaDatabase(connectionC
         }
         connection.prepareStatement("insert into workspaceuser (wkid, usergroup, userid) values (?,?,?)").use { stmt ->
             stmt.setInt(1, id)
-            stmt.setInt(2, WorkSpaceUserRole.Admin.value)
+            stmt.setInt(2, WorkSpaceUserRole.ADMIN.value)
             stmt.setLong(3, workSpace.ownerId)
             stmt.addBatch()
             stmt.executeBatch()

@@ -11,11 +11,11 @@ import com.google.gson.annotations.SerializedName;
 
 public enum WorkSpaceUserRole {
     @SerializedName("0")
-    Admin(0),
+    ADMIN(0),
     @SerializedName("1")
-    Maintainer(1),
+    MAINTAINER(1),
     @SerializedName("2")
-    Loader(2);
+    LOADER(2);
 
     private final int value;
 
@@ -33,6 +33,6 @@ public enum WorkSpaceUserRole {
                 return u;
             }
         }
-        return WorkSpaceUserRole.Loader;
+        return WorkSpaceUserRole.LOADER;
     }
 }
