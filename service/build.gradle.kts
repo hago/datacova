@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.config.JvmTarget
+
 plugins {
     java
     kotlin("jvm") version "1.8.22"
@@ -10,7 +12,9 @@ tasks.jacocoTestReport {
     reports {
         xml.required.set(true)
     }
+    dependsOn(tasks.test)
 }
+
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.8.22")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22")
@@ -27,6 +31,15 @@ subprojects {
         implementation("com.google.code.gson:gson:2.10.1")
         testImplementation(kotlin("test", "1.8.22"))
     }
+    java {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+    kotlin {
+        target {
+            JvmTarget.JVM_11
+        }
+    }
 }
 
 group = "org.hagoapp.datacova"
@@ -38,8 +51,5 @@ repositories {
 
 tasks.test {
     useJUnitPlatform()
-}
 
-kotlin {
-    jvmToolchain(11)
 }

@@ -19,11 +19,11 @@ dependencies {
     implementation(project(":message"))
     implementation(project(":utility"))
     implementation("org.slf4j", "slf4j-api", "2.0.9")
-    runtimeOnly("ch.qos.logback", "logback-classic", "1.4.11")
+    runtimeOnly("ch.qos.logback", "logback-classic", "1.4.12")
 
     testImplementation(platform("org.junit:junit-bom:5.9.2"))
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
-    testRuntimeOnly("ch.qos.logback", "logback-classic", "1.4.11")
+    testRuntimeOnly("ch.qos.logback", "logback-classic", "1.4.12")
 }
 
 application {
@@ -32,10 +32,6 @@ application {
 
 tasks.test {
     useJUnitPlatform()
-}
-
-kotlin {
-    jvmToolchain(11)
 }
 
 tasks.withType<Jar>() {
