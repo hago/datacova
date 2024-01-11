@@ -31,7 +31,7 @@ class ExcelOperation {
             return
         }
         val file = context.fileUploads().first()
-        val info = ExcelDataFileParser(file.uploadedFileName()).getInfo()
+        val info = ExcelDataFileParser(file.uploadedFileName()).excelInfo()
         ResponseHelper.sendResponse(
             context, HttpResponseStatus.OK, mapOf(
                 "code" to 0,

@@ -104,7 +104,7 @@ class DataFile {
     }
 
     private fun excelInfo(stream: InputStream): ExcelInfo {
-        return ExcelDataFileParser(stream).getInfo()
+        return ExcelDataFileParser(stream).excelInfo()
     }
 
     private fun excelXInfo(stream: InputStream): ExcelInfo {

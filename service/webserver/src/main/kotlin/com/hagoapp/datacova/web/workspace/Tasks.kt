@@ -228,7 +228,7 @@ class Tasks {
         val rawInfo = context.request().getParam("extra")
         val fi = FileInfoReader.json2FileInfo(rawInfo)
         fi.filename = file.uploadedFileName()
-        val info = if (fi is FileInfoExcel) ExcelDataFileParser(file.uploadedFileName()).getInfo() else null
+        val info = if (fi is FileInfoExcel) ExcelDataFileParser(file.uploadedFileName()).excelInfo() else null
         ReaderFactory.getReader(fi).use { reader ->
             val size = context.request().getParam("size", "20").toInt()
             val start = context.request().getParam("start", "0").toInt()

@@ -16,7 +16,7 @@ dependencies {
     implementation("org.reflections", "reflections", "0.10.2")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.15.3")
-    implementation("com.hagoapp:f2t:0.8.3")
+    implementation("com.hagoapp:f2t:0.8.5")
     implementation("com.fasterxml.jackson.jr:jackson-jr-objects:2.15.3")
     implementation("org.postgresql", "postgresql", "42.6.0")
     implementation("org.apache.poi", "poi", "5.2.4")

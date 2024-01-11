@@ -19,7 +19,7 @@ dependencies {
     implementation(project(":message"))
     implementation(project(":filestore"))
     implementation(project(":surveyor"))
-    implementation("com.hagoapp:f2t:0.8.3")
+    implementation("com.hagoapp:f2t:0.8.5")
     implementation("info.picocli:picocli:4.7.5")
     implementation("org.slf4j", "slf4j-api", "2.0.9")
     implementation("com.google.code.gson:gson:2.10.1")
