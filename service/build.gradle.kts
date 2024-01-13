@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     java
@@ -31,13 +31,13 @@ subprojects {
         implementation("com.google.code.gson:gson:2.10.1")
         testImplementation(kotlin("test", "1.8.22"))
     }
-    java {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+    tasks.withType(JavaCompile::class.java).configureEach {
+        sourceCompatibility = "11"
+        targetCompatibility = "11"
     }
-    kotlin {
-        target {
-            JvmTarget.JVM_11
+    tasks.withType(KotlinCompile::class.java).configureEach {
+        kotlinOptions {
+            jvmTarget = "11"
         }
     }
 }
